@@ -88,7 +88,7 @@ export function emailCode<T>(data: {
 
 export function residueCount<T>() {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn/luomacode-api/chat/getUserInfo',
+    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/chat/getUserInfo',
     data: {},
   })
 }

@@ -104,7 +104,6 @@ async function loginEvent() {
 
     authStore.setToken(res.loginToken)
 
-    // router.push({ name: "Chat" });
     handleClick()
   }
   catch (error: any) {
@@ -156,7 +155,8 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="loginForm.password"
-            clearable
+            type="password"
+            show-password-on="mousedown"
           />
         </NFormItem>
 
@@ -209,7 +209,8 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="registerForm.password"
-            clearable
+            type="password"
+            show-password-on="mousedown"
           />
         </NFormItem>
         <NFormItem
