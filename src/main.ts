@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { NoticeBar, Swipe, SwipeItem } from 'vant'
+import { NoticeBar, Swipe, SwipeItem, Switch } from 'vant'
 import App from './App.vue'
 import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
@@ -12,6 +12,7 @@ async function bootstrap() {
   app.use(NoticeBar)
   app.use(Swipe)
   app.use(SwipeItem)
+  app.use(Switch)
   setupAssets()
 
   await setupRouter(app)

@@ -18,9 +18,11 @@ const userStore = useUserStore()
 const showModal = ref(false)
 const showSettingModal = ref(false)
 const apiKey = ref(localStorage.getItem('apiKey')) as any
-
 const appStore = useAppStore()
+
 appStore.setTheme('dark')
+
+const isCorrelation = ref(true)
 
 let controller = new AbortController()
 
@@ -32,7 +34,7 @@ const chatStore = useChatStore()
 useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
-  = useChat()
+	= useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 
 const { uuid } = route.params as { uuid: string }
@@ -77,8 +79,8 @@ async function onConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext
-    = conversationList.value[conversationList.value.length - 1]
-      ?.conversationOptions
+		= conversationList.value[conversationList.value.length - 1]
+		  ?.conversationOptions
 
   if (lastContext)
     options = { ...lastContext }
@@ -95,10 +97,10 @@ async function onConversation() {
   scrollToBottom()
 
   try {
-    const texts = dataSources.value.map(item => item.text)
+    const texts = isCorrelation.value ? dataSources.value.map(item => item.text).join('\n') : message
     // 在这里拼接用户所有的上下文
     await fetchChatAPIProcess<Chat.ConversationResponse>({
-      prompt: texts.join('\n'),
+      prompt: texts,
       options,
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -371,6 +373,7 @@ function handleSettingSubmit() {
   }
   showSettingModal.value = true
 }
+
 function settingBtn() {
   localStorage.setItem('apiKey', apiKey.value)
   showSettingModal.value = false
@@ -386,6 +389,10 @@ function settingBtn() {
         <div class="setting-text">
           设置apiKey（解锁ChatMoss使用限制）
         </div>
+      </div>
+      <div class="relevance-main">
+        <van-switch v-model="isCorrelation" active-color="#FF6666" inactive-color="#dcdee0" />
+        关联上下文
       </div>
     </div>
     <NModal v-model:show="showSettingModal">
@@ -418,7 +425,10 @@ function settingBtn() {
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
           <template v-if="!dataSources.length">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
-              <img width="20" class="mr-2 text-3xl" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo.png" alt="">
+              <img
+                width="20" class="mr-2 text-3xl"
+                src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo.png" alt=""
+              >
               <span>Hi~ {{ userStore.userInfo.user.nickname }}</span>
             </div>
           </template>
@@ -426,7 +436,8 @@ function settingBtn() {
             <div>
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
-                :inversion="item.inversion" :error="item.error" :loading="item.loading" @regenerate="onRegenerate(index)"
+                :inversion="item.inversion" :error="item.error" :loading="item.loading"
+                @regenerate="onRegenerate(index)"
                 @delete="handleDelete(index)"
               />
 
@@ -465,7 +476,9 @@ function settingBtn() {
               </template>
             </NButton>
             <div class="moss-text">
-              下次消耗{{ Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length) / 10) }}🤖
+              下次消耗{{
+                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length) / 10)}` : `${Math.ceil((prompt.length / 10))}`
+              }}🤖
             </div>
           </div>
         </div>
@@ -481,106 +494,131 @@ function settingBtn() {
 
 <style lang="less">
 .tip {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 5px;
 }
 
 .sustain {
-  height: 20px;
-  font-size: 0.75rem;
-  letter-spacing: 0.2rem;
-  color: #666;
-  width: auto;
-  text-align: center;
-  margin-right: 20px;
+	height: 20px;
+	font-size: 0.75rem;
+	letter-spacing: 0.2rem;
+	color: #666;
+	width: auto;
+	text-align: center;
+	margin-right: 20px;
 }
+
 .n-input.n-input--textarea {
-  border-radius: 50px;
+	border-radius: 50px;
 }
+
 /* 隐藏滚动进度条 */
 ::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
+
 .moss-btns {
-  position: relative;
+	position: relative;
 }
+
 .btn-style {
-  width: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	width: 80px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
+
 .btn-style button {
-  width: 50px;
-  height: 30px;
+	width: 50px;
+	height: 30px;
 }
+
 .moss-text {
-  width: 80px;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2px;
-  white-space: nowrap;
+	width: 80px;
+	font-size: 12px;
+	text-align: center;
+	margin-top: 2px;
+	white-space: nowrap;
 }
+
 .setting {
-  width: 100%;
-  padding: 0px 10px;
-  height: 40px;
-  background-color: #000000;
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  .setting-main {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    .setting-text {
-      color: #FF6666;
-      font-size: 10px;
-    }
-    .setting-btn {
-      width: 20px;
-      height: 20px;
-      margin-right: 2px;
-    }
-  }
+	width: 100%;
+	padding: 0px 10px;
+	height: 40px;
+	background-color: #000000;
+	backdrop-filter: blur(10px);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.setting-main {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		.setting-text {
+			color: #FF6666;
+			font-size: 10px;
+		}
+
+		.setting-btn {
+			width: 20px;
+			height: 20px;
+			margin-right: 2px;
+		}
+	}
 }
 
 .line {
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .color {
-  color: #f87171;
+	color: #f87171;
 }
 
 .tip-text {
-  font-size: 12px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+	font-size: 12px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .mt10 {
-  margin-top: 10px;
+	margin-top: 10px;
 }
+
 .notice-swipe {
-  height: 40px;
-  line-height: 40px;
+	height: 40px;
+	line-height: 40px;
 }
+
 .van-notice-bar {
-  background-color: #111114 !important;
-  color: #fff;
-  text-align: center;
-  .van-notice-bar__wrap {
-    display: flex;
-    justify-content: center;
-    .van-swipe-item {
-      color: #FF6666;
-      font-size: 12px;
-    }
-  }
+	background-color: #111114 !important;
+	color: #fff;
+	text-align: center;
+
+	.van-notice-bar__wrap {
+		display: flex;
+		justify-content: center;
+
+		.van-swipe-item {
+			color: #FF6666;
+			font-size: 12px;
+		}
+	}
+}
+
+.relevance-main {
+	display: flex;
+	justify-items: center;
+	color: #FF6666 !important;
+	align-items: center;
+}
+
+:root:root {
+	--van-switch-size: 15px;
 }
 </style>
