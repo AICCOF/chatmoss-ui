@@ -137,7 +137,7 @@ async function onConversation() {
   catch (error: any) {
     console.error(error)
     ms.error(error.msg || error.message)
-    if (error.code == 204) {
+    if (error.code === 204) {
       // error.msg
       ms.error(error.msg)
       // 代表未登录
@@ -331,6 +331,7 @@ const footerClass = computed(() => {
 
 onMounted(() => {
   const selectedText = localStorage.getItem('selectedText')
+  /* eslint no-console: "off" */
   console.log('selectedText', selectedText)
   if (selectedText) {
     setTimeout(() => {

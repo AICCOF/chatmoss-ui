@@ -1,34 +1,47 @@
 <script setup lang='ts'>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 const emit = defineEmits<Emit>()
 
 const userStore = useUserStore()
+const token = ref('')
 
 interface Emit {
   (e: 'login'): void
 }
 
-function loginEvent(e: Event) {
-  const dom = e.target as Element
-  if (dom && dom.className == 'vlogin')
+function loginEvent(type: string) {
+  if (type === 'login')
     emit('login')
-  if (dom && dom.className == 'vexit') {
+  if (type === 'exit') {
     localStorage.removeItem('SECRET_TOKEN')
     location.reload()
   }
 }
 
-const showTips = computed(() => {
-  const token = getToken() as string
-  return token
-    ? `剩余额度 <span class='number'>${(localStorage.getItem('apiKey') !== '' && localStorage.getItem('apiKey') !== null) ? '∞' : `${userStore.userInfo.residueCount}🤖`}</span>${localStorage.getItem('apiKey') ? ' ' : '（1🤖=10字）'}<span class='vexit'>退出登录</span>`
-    : `
-    <div><span class='vlogin'>未登录</span> 还可试用${userStore.userInfo.residueCount}🤖（1🤖=10字）
-  `
+// moss数量
+const mossCount = computed(() => {
+  return (localStorage.getItem('apiKey') !== '' && localStorage.getItem('apiKey') !== null) ? '∞' : `${userStore.userInfo.residueCount}🤖`
 })
+// moss 描述
+const mossDesc = computed(() => localStorage.getItem('apiKey') ? ' ' : '（1🤖=10字）')
+// 未登录状态下描述
+const mossNoLogin = computed(() => `还可试用${userStore.userInfo.residueCount}🤖（1🤖=10字）`)
+
+// 重置token
+const resetToken = () => {
+  token.value = getToken() as string
+}
+
+watchEffect(() => {
+  const { user } = userStore.userInfo
+  if (user.email)
+    resetToken()
+})
+
 onMounted(() => {
+  resetToken()
 })
 </script>
 
@@ -52,21 +65,33 @@ onMounted(() => {
         <van-swipe-item>您当前使用的版本为v1.5.0</van-swipe-item>
       </van-swipe>
     </van-notice-bar>
-    <div class="tip-text-content" @click="loginEvent" v-html="showTips" />
+
+    <div class="tip-text-content">
+      <p v-if="token">
+        剩余额度
+        <span class="number">{{ mossCount }}</span>
+        {{ mossDesc }}
+        <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
+      </p>
+      <p v-else>
+        <span class="v-login" @click="loginEvent('login')">未登录</span>
+        {{ mossNoLogin }}
+      </p>
+    </div>
   </div>
 </template>
 
 <style lang="less">
 .tip-main {
-	display: flex;
+  display: flex;
 }
-.vlogin{
+.v-login{
   color: #FF6666;
   text-decoration: underline;
   cursor: grab;
   font-size:12px;
 }
-.vexit{
+.v-exit{
   color: #FF6666;
   text-decoration: underline;
   cursor: grab;
