@@ -12,8 +12,12 @@ interface Props {
   text?: string
   loading?: boolean
 }
+interface Emit {
+  (e: 'copy'): void
+}
 
 const props = defineProps<Props>()
+const emit = defineEmits<Emit>()
 
 const { isMobile } = useBasicLayout()
 
@@ -52,6 +56,10 @@ const text = computed(() => {
   return value
 })
 
+const handleDoubleClick = () => {
+  emit('copy')
+}
+
 function highlightBlock(str: string, lang?: string) {
   return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">${t('chat.copyCode')}</span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`
 }
@@ -64,8 +72,9 @@ defineExpose({ textRef })
     <template v-if="loading">
       <span class="dark:text-white w-[4px] h-[20px] block animate-blink" />
     </template>
-    <template v-else>
-      <div ref="textRef" class="leading-relaxed break-words">
+    <template v-if="!loading">
+      <!-- emit('copy-text') -->
+      <div ref="textRef" class="leading-relaxed break-words" @dblclick="handleDoubleClick">
         <div v-if="!inversion" class="markdown-body" v-html="text" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>

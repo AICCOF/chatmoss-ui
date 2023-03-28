@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
-import { NDropdown } from 'naive-ui'
+import { NDropdown, useMessage } from 'naive-ui'
 import AvatarComponent from './Avatar.vue'
 import TextComponent from './Text.vue'
 import { SvgIcon } from '@/components/common'
@@ -24,6 +24,7 @@ interface Emit {
 const props = defineProps<Props>()
 
 const emit = defineEmits<Emit>()
+const Message = useMessage()
 
 const { iconRender } = useIconRender()
 
@@ -46,6 +47,7 @@ function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
   switch (key) {
     case 'copyText':
       copyText({ text: props.text ?? '' })
+      Message.success('已复制到剪切板')
       return
     case 'delete':
       emit('delete')
@@ -79,6 +81,7 @@ function handleRegenerate() {
           :error="error"
           :text="text"
           :loading="loading"
+          @copy="() => handleSelect('copyText')"
         />
         <div class="flex flex-col">
           <button
