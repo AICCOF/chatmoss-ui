@@ -21,8 +21,8 @@ const apiKey = ref(localStorage.getItem('apiKey')) as any
 const appStore = useAppStore()
 
 appStore.setTheme('dark')
-
-const isCorrelation = ref(true)
+// 设置一下缓存什么的搞起
+const isCorrelation = ref(false)
 
 let controller = new AbortController()
 
