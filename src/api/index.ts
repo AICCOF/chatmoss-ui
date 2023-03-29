@@ -85,6 +85,26 @@ export function emailCode<T>(data: {
     data,
   })
 }
+// 重置密码-邮箱验证码
+export function forgetPwdEmailCode<T>(data: {
+  email: String
+}) {
+  return post<T>({
+    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/forgetPwdEmailCode',
+    data,
+  })
+}
+// 重置密码
+export function resetPwd<T>(data: {
+  email: string
+  password: string
+  emailCode: string
+}) {
+  return post<T>({
+    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/resetPwd',
+    data,
+  })
+}
 
 export function residueCount<T>() {
   return post<T>({
