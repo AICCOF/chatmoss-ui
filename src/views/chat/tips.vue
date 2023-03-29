@@ -22,12 +22,15 @@ function loginEvent(type: string) {
 
 // moss数量
 const mossCount = computed(() => {
-  return (localStorage.getItem('apiKey') !== '' && localStorage.getItem('apiKey') !== null) ? '∞' : `${userStore.userInfo.residueCount}🤖`
+  const residueCount = userStore.userInfo.residueCount * 10
+  return (localStorage.getItem('apiKey') !== '' && localStorage.getItem('apiKey') !== null)
+    ? '∞ 字符'
+    : `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
 })
 // moss 描述
-const mossDesc = computed(() => localStorage.getItem('apiKey') ? ' ' : '（1🤖=10字）')
+// const mossDesc = computed(() => localStorage.getItem('apiKey') ? ' ' : `（${userStore.userInfo.residueCount * 10}字符）`)
 // 未登录状态下描述
-const mossNoLogin = computed(() => `还可试用${userStore.userInfo.residueCount}🤖（1🤖=10字）`)
+const mossNoLogin = computed(() => `还可试用${userStore.userInfo.residueCount * 10}字符`)
 
 // 重置token
 const resetToken = () => {
@@ -47,7 +50,7 @@ onMounted(() => {
 
 <template>
   <div class="tip-main">
-    <van-notice-bar :scrollable="false">
+    <!-- <van-notice-bar :scrollable="false">
       <van-swipe
         vertical
         class="notice-swipe"
@@ -64,13 +67,11 @@ onMounted(() => {
         <van-swipe-item>小提示：每天免费获得🤖 不能累加</van-swipe-item>
         <van-swipe-item>您当前使用的版本为v1.5.0</van-swipe-item>
       </van-swipe>
-    </van-notice-bar>
-
+    </van-notice-bar> -->
     <div class="tip-text-content">
       <p v-if="token">
         剩余额度
         <span class="number">{{ mossCount }}</span>
-        {{ mossDesc }}
         <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
       </p>
       <p v-else>
@@ -96,6 +97,7 @@ onMounted(() => {
   text-decoration: underline;
   cursor: grab;
   font-size:12px;
+	margin-left: 10px;
 }
 .number{
   color: #FF6666;
@@ -109,7 +111,7 @@ onMounted(() => {
 .tip-text-content {
   font-size: 10px;
   color:#fff;
-  width: 40%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;

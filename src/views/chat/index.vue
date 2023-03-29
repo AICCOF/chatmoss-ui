@@ -380,26 +380,32 @@ function settingBtn() {
   showSettingModal.value = false
   ms.info('设置成功~', { duration: 5000 })
 }
+
+function getIsApiKey() {
+  return !localStorage.getItem('apiKey') || !localStorage.getItem('SECRET_TOKEN')
+}
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <div class="setting">
       <div class="setting-main" @click="handleSettingSubmit">
-        <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v1.3/setting.png" alt="">
+        <img class="setting-btn" :class="{ shake: getIsApiKey() }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v1.3/setting.png" alt="">
         <div class="setting-text">
-          设置apiKey（解锁ChatMoss使用限制）
+          设置ApiKey（解锁ChatMoss使用限制）
         </div>
       </div>
       <div class="relevance-main">
         <van-switch v-model="isCorrelation" active-color="#FF6666" inactive-color="#dcdee0" />
-        关联上下文
+        <div class="relevance-main-text">
+          启动上下文
+        </div>
       </div>
     </div>
     <NModal v-model:show="showSettingModal">
       <NCard
         style="width: 600px"
-        title="设置apiKey"
+        title="设置ApiKey"
         :bordered="false"
         size="huge"
         role="dialog"
@@ -411,7 +417,7 @@ function settingBtn() {
         </NButton>
         <hr class="line">
         <div>如何获得key</div>
-        <div>最便捷 购买ChatMoss官方key | 自动发货 | <span class="color">支付宝/微信 扫码购买</span></div>
+        <div>最便捷 购买ChatMoss官方key | 自动发货 | <span class="color">支付宝 扫码购买</span></div>
         <img width="150" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v1.3/zfbgm.png" alt="">
         <div class="tip-text">
           ChatMoss提供的apiKey要稍微贵一些，支持官方，让官方做更多更好的功能，感谢大家
@@ -476,10 +482,10 @@ function settingBtn() {
                 </span>
               </template>
             </NButton>
-            <div class="moss-text">
+            <div v-if="getIsApiKey()" class="moss-text">
               下次消耗{{
-                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length) / 10)}` : `${Math.ceil((prompt.length / 10))}`
-              }}🤖
+                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}` : `${Math.ceil((prompt.length))}`
+              }}字符
             </div>
           </div>
         </div>
@@ -548,8 +554,6 @@ function settingBtn() {
 	width: 100%;
 	padding: 0px 10px;
 	height: 40px;
-	background-color: #000000;
-	backdrop-filter: blur(10px);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -617,9 +621,55 @@ function settingBtn() {
 	justify-items: center;
 	color: #FF6666 !important;
 	align-items: center;
+	margin-right: 20px;
+	.relevance-main-text {
+		font-size: 12px;
+		margin-left: 6px;
+	}
 }
 
 :root:root {
 	--van-switch-size: 15px;
+}
+
+.shake {
+	transform-origin: bottom bottom;
+	animation: animashake 1.5s .2s ease-in-out both infinite;
+}
+
+@keyframes animashake {
+	0%,
+	100% {
+			transform: rotate(0deg);
+			transform-origin: 50% 0;
+	}
+
+	5% {
+			transform: rotate(2deg);
+	}
+
+	10%,
+	20%,
+	30% {
+			transform: rotate(-4deg);
+	}
+
+	15%,
+	25%,
+	35% {
+			transform: rotate(4deg);
+	}
+
+	40% {
+			transform: rotate(-2deg);
+	}
+
+	45% {
+			transform: rotate(2deg);
+	}
+
+	50% {
+			transform: rotate(0deg);
+	}
 }
 </style>
