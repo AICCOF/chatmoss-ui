@@ -11,7 +11,7 @@ import {
 } from 'naive-ui'
 import { reactive, ref } from 'vue'
 import { useAuthStoreWithout } from '@/store'
-import { emailCode, login, register } from '@/api'
+import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
 interface Emit {
   (e: 'loginSuccess'): void
 }
@@ -48,6 +48,11 @@ const loginForm = reactive({
   email: '',
   password: '',
 })
+const forgetForm = reactive({
+  email: '',
+  emailCode: '',
+  password: '',
+})
 
 async function sendCode() {
   try {
@@ -79,6 +84,49 @@ async function sendCode() {
       return
     }
     message.warning(error.msg, { duration: 5000 })
+  }
+}
+
+// 重置密码-邮箱验证码
+async function sendForgetCode() {
+  try {
+    const res = await forgetPwdEmailCode<{ msg: string }>({
+      email: forgetForm.email,
+    })
+
+    buttonInfo.time = 60
+
+    timer = setInterval(() => {
+      if (buttonInfo.time == 0 && timer) {
+        clearInterval(timer)
+        buttonInfo.text = '发送验证码'
+        return
+      }
+      buttonInfo.time--
+      buttonInfo.text = `${buttonInfo.time}s后，重新发送`
+    }, 1000)
+
+    message.info(res.data?.msg || '发送成功', { duration: 5000 })
+  }
+  catch (error: any) {
+    const list: any = error.data || {}
+    // 增加错误提示
+    for (const key in list) {
+      message.warning(list[key], { duration: 5000 })
+      return
+    }
+    message.warning(error.msg, { duration: 5000 })
+  }
+}
+
+// 重置密码
+async function forgetEvent() {
+  try {
+    await resetPwd<any>(forgetForm) as any
+    message.info('重置成功，快去登录吧', { duration: 5000 })
+  }
+  catch (error: any) {
+    message.info(error.msg, { duration: 5000 })
   }
 }
 
@@ -172,7 +220,6 @@ async function loginEvent() {
         </NFormItem>
       </NForm>
     </NTabPane>
-
     <NTabPane
       name="register"
       tab="注册"
@@ -262,9 +309,8 @@ async function loginEvent() {
             {{ buttonInfo.text }}
           </NButton>
         </NFormItem>
-
         <NFormItem
-          label="邀请人邮箱（双方都可获得5000moss）"
+          label="邀请人邮箱（双方都可获得50000字符额度）"
           path="email"
           :rule="{
             required: false,
@@ -285,6 +331,79 @@ async function loginEvent() {
               @click="registerEvent"
             >
               注册
+            </NButton>
+          </NSpace>
+        </NFormItem>
+      </NForm>
+    </NTabPane>
+    <NTabPane
+      name="forget"
+      tab="重置密码"
+    >
+      <NForm
+        ref="formRef"
+        :model="forgetForm"
+        :style="{ maxWidth: '640px' }"
+        class="auto"
+        style="margin:0 auto;"
+      >
+        <NFormItem
+          label="注册邮箱"
+          path="email"
+          :rule="{
+            required: true,
+            message: '请输入注册邮箱',
+            trigger: ['input', 'blur'],
+          }"
+        >
+          <NInput
+            v-model:value="forgetForm.email"
+            clearable
+          />
+        </NFormItem>
+        <NFormItem
+          label="邮箱验证码"
+          path="emailCode"
+          :rule="{
+            required: true,
+            message: '请输入重置邮箱验证码',
+            trigger: ['input', 'blur'],
+          }"
+        >
+          <NInput
+            v-model:value="forgetForm.emailCode"
+            clearable
+          />
+          <NButton
+            style="margin-left: 12px"
+            @click="sendForgetCode"
+          >
+            {{ buttonInfo.text }}
+          </NButton>
+        </NFormItem>
+        <NFormItem
+          label="新的密码"
+          path="password"
+          :rule="{
+            required: true,
+            message: '请输入重置密码',
+            trigger: ['input', 'blur'],
+          }"
+        >
+          <NInput
+            v-model:value="forgetForm.password"
+            type="password"
+            show-password-on="mousedown"
+          />
+        </NFormItem>
+
+        <NFormItem>
+          <NSpace>
+            <NButton
+              attr-type="button"
+              @click="forgetEvent"
+            >
+              确定重置
             </NButton>
           </NSpace>
         </NFormItem>
