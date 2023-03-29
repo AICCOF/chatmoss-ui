@@ -21,8 +21,8 @@ const apiKey = ref(localStorage.getItem('apiKey')) as any
 const appStore = useAppStore()
 
 appStore.setTheme('dark')
-// 设置一下缓存什么的搞起
-const isCorrelation = ref(false)
+
+const isCorrelation = JSON.parse(localStorage.getItem('CORRELATION')) ?? ref(false)
 
 let controller = new AbortController()
 
@@ -380,6 +380,10 @@ function settingBtn() {
   showSettingModal.value = false
   ms.info('设置成功~', { duration: 5000 })
 }
+
+function handleCorrelation(value: string){
+  localStorage.setItem('CORRELATION', JSON.stringify(value));
+}
 </script>
 
 <template>
@@ -392,7 +396,7 @@ function settingBtn() {
         </div>
       </div>
       <div class="relevance-main">
-        <van-switch v-model="isCorrelation" active-color="#FF6666" inactive-color="#dcdee0" />
+        <van-switch v-model="isCorrelation" @change="handleCorrelation" active-color="#FF6666" inactive-color="#dcdee0" />
         关联上下文
       </div>
     </div>
