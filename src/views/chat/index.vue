@@ -22,7 +22,7 @@ const appStore = useAppStore()
 
 appStore.setTheme('dark')
 
-const isCorrelation = ref(true)
+const isCorrelation = ref(false)
 
 let controller = new AbortController()
 
