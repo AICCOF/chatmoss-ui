@@ -22,7 +22,7 @@ const appStore = useAppStore()
 
 appStore.setTheme('dark')
 
-const isCorrelation = ref(true)
+const isCorrelation = ref(!!(apiKey.value && localStorage.getItem('SECRET_TOKEN')))
 
 let controller = new AbortController()
 
@@ -378,6 +378,7 @@ function handleSettingSubmit() {
 function settingBtn() {
   localStorage.setItem('apiKey', apiKey.value)
   showSettingModal.value = false
+  isCorrelation.value = true
   ms.info('设置成功~', { duration: 5000 })
 }
 
@@ -389,12 +390,13 @@ function getIsApiKey() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <div class="setting">
-      <div class="setting-main" @click="handleSettingSubmit">
+      <div v-if="getIsApiKey()" class="setting-main" @click="handleSettingSubmit">
         <img class="setting-btn" :class="{ shake: getIsApiKey() }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v1.3/setting.png" alt="">
         <div class="setting-text">
           设置ApiKey（解锁ChatMoss使用限制）
         </div>
       </div>
+      <div v-else />
       <div class="relevance-main">
         <van-switch v-model="isCorrelation" active-color="#FF6666" inactive-color="#dcdee0" />
         <div class="relevance-main-text">
