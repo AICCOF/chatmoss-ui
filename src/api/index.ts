@@ -29,7 +29,7 @@ export function fetchChatAPIProcess<T = any>(
   },
 ) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn/api/chat-process?version=v1.5',
+    url: 'http://chatmoss.aihao123.cn:80/api/chat-process?version=v1.5',
     data: {
       prompt: params.prompt,
       options: {},
@@ -63,6 +63,15 @@ export function register<T>(data: {
   return post<T>({
     url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/register',
     data,
+  })
+}
+export function networkSearch<T = any>(
+  params: {
+    search: string
+  },
+) {
+  return post<T>({
+    url: `http://chatmoss.aihao123.cn:5656/luomacode-node/search?search=${params.search}`,
   })
 }
 export function login<T>(data: {
