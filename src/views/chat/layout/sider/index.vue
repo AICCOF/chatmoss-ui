@@ -57,7 +57,7 @@ function handleSettingSubmit() {
 }
 const apiKey = ref(localStorage.getItem('apiKey')) as any
 function settingBtn() {
-  if (apiKey.value.startsWith('sk-')) {
+	if (apiKey.value === '' || apiKey.value.startsWith('sk-')) {
     localStorage.setItem('apiKey', apiKey.value)
     showSettingModal.value = false
     ms.info('设置成功~', { duration: 5000 })
