@@ -50,28 +50,10 @@ onMounted(() => {
 
 <template>
   <div class="tip-main">
-    <!-- <van-notice-bar :scrollable="false">
-      <van-swipe
-        vertical
-        class="notice-swipe"
-        :autoplay="3000"
-        :touchable="false"
-        :show-indicators="false"
-      >
-        <van-swipe-item>小提示：生成的代码并不完全可靠</van-swipe-item>
-        <van-swipe-item>消耗的🤖 和您的上下文长度有关</van-swipe-item>
-        <van-swipe-item>ChatMoss已经开源：https://github.com/AICCOF</van-swipe-item>
-        <van-swipe-item>ChatMoss开源已经交由 AI共建开源基金会托管（AICCOF）</van-swipe-item>
-        <van-swipe-item>多支持官方将会加速官方的迭代速度哦~</van-swipe-item>
-        <van-swipe-item>加入官方群，获取最新ChatMoss动态</van-swipe-item>
-        <van-swipe-item>小提示：每天免费获得🤖 不能累加</van-swipe-item>
-        <van-swipe-item>您当前使用的版本为v1.5.0</van-swipe-item>
-      </van-swipe>
-    </van-notice-bar> -->
     <div class="tip-text-content">
       <p v-if="token">
-        剩余额度
-        <span class="number">{{ mossCount }}</span>
+        剩余
+        <span>{{ mossCount }}</span>
         <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
       </p>
       <p v-else>
@@ -84,7 +66,19 @@ onMounted(() => {
 
 <style lang="less">
 .tip-main {
+	width: 90%;
   display: flex;
+  padding: 6px;
+	border-radius: 6px;
+	background-color: #323232;
+	margin: 0 auto;
+  cursor: pointer;
+  &:active {
+		transform: scale(.96);
+	}
+	&:hover {
+		background-color: #3c4250;
+	}
 }
 .v-login{
   color: #FF6666;
@@ -110,7 +104,7 @@ onMounted(() => {
 }
 .tip-text-content {
   font-size: 10px;
-  color:#fff;
+	color: rgba(232, 236, 239, 0.75);
   width: 100%;
   display: flex;
   align-items: center;

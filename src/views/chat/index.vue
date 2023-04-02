@@ -1,28 +1,30 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { NButton, NCard, NInput, NModal, useDialog, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NModal, NPopover, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
-import Tips from './tips.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
-import { fetchChatAPIProcess } from '@/api'
+import { fetchChatAPIProcess, networkSearch } from '@/api'
 import Login from '@/views/login/index.vue'
 import { t } from '@/locales'
 
 const userStore = useUserStore()
 const showModal = ref(false)
-const showSettingModal = ref(false)
-const apiKey = ref(localStorage.getItem('apiKey')) as any
 const appStore = useAppStore()
 
 appStore.setTheme('dark')
 
-const isCorrelation = ref(!!(apiKey.value && localStorage.getItem('SECRET_TOKEN')))
+const isPlus = computed(() => {
+  return !userStore.userInfo.user.plusEndTime
+})
+
+const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
+const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
 
 let controller = new AbortController()
 
@@ -97,7 +99,24 @@ async function onConversation() {
   scrollToBottom()
 
   try {
-    const texts = isCorrelation.value ? dataSources.value.map(item => item.text).join('\n') : message
+    let texts = isCorrelation.value ? dataSources.value.map(item => item.text).join('\n') : message
+
+    if (getIsApiKey() || isPlus.value) {
+      showNetwork.value = false
+      localStorage.setItem('showNetwork', 'false')
+    }
+
+    // 联网功能接口
+    if (showNetwork.value) {
+      const networkData = await networkSearch({
+        search: encodeURIComponent(message),
+      })
+      console.log('联网功能', networkData)
+      if (networkData.data.length > 0)
+        texts = `下面的问题我将给你辅助的网络信息，你从里面提炼出内容返回给用户，优先使用网络信息中的内容，并将参考的网址以[title](href)的形式输出到最后 \n 这是问题：${message} \n 这是网络信息: ${JSON.stringify(networkData.data)} \n 这是你前面的对话信息：${texts}`
+      else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
+    }
+
     // 在这里拼接用户所有的上下文
     await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
@@ -295,10 +314,6 @@ function handleEnter(event: KeyboardEvent) {
   }
 }
 
-function showModelEvent() {
-  showModal.value = true
-}
-
 function handleStop() {
   if (loading.value) {
     controller.abort()
@@ -367,78 +382,107 @@ onUnmounted(() => {
     controller.abort()
 })
 
-function handleSettingSubmit() {
-  if (!localStorage.getItem('SECRET_TOKEN')) {
-    ms.info('请先登录~', { duration: 5000 })
-    return
-  }
-  showSettingModal.value = true
-}
-
-function settingBtn() {
-  localStorage.setItem('apiKey', apiKey.value)
-  showSettingModal.value = false
-  isCorrelation.value = true
-  ms.info('设置成功~', { duration: 5000 })
-}
-
 function getIsApiKey() {
   return !localStorage.getItem('apiKey') || !localStorage.getItem('SECRET_TOKEN')
 }
+
+const noDataInfo = [
+  {
+    text: '出一道算法题',
+  },
+  {
+    text: '出一道脑筋急转弯',
+  },
+  {
+    text: '给我讲一个冷笑话',
+  },
+  {
+    text: '用Python写一个猜数字的游戏',
+  },
+  {
+    text: '推荐一下每日健康饮食规划',
+  },
+]
+function noDataInfoEvent(index: any) {
+  prompt.value = ''
+  prompt.value = noDataInfo[index].text
+  handleSubmit()
+}
+
+// 是否开启联网功能
+function networkEvnet() {
+  if (getIsApiKey()) {
+    ms.error('需要登录并且上传key才能使用联网功能')
+    return
+  }
+  if (isPlus.value) {
+    ms.error('你还不是Plus用户，不能开启联网功能')
+    return
+  }
+  showNetwork.value = !showNetwork.value
+  localStorage.setItem('showNetwork', `${showNetwork.value}`)
+  if (showNetwork.value)
+    ms.info('ChatMoss已接入联网，请谨慎对待联网回答')
+  else
+    ms.info('ChatMoss已退出联网')
+}
+// 是否开启上下文功能
+function correlationEvnet() {
+  isCorrelation.value = !isCorrelation.value
+  localStorage.setItem('isCorrelation', `${isCorrelation.value}`)
+  if (isCorrelation.value)
+    ms.info('已开启上下文功能')
+  else
+    ms.info('已关闭上下文功能')
+}
+const mossCount = computed(() => {
+  if (!userStore.userInfo.user.plusEndTime)
+    return ''
+  console.log('时间', userStore.userInfo.user.plusEndTime)
+  const timestamp = userStore.userInfo.user.plusEndTime
+  const date = new Date(timestamp)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const dateString = `${year}/${month}/${day} ${hours}:${minutes} 到期`
+  return dateString
+})
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
-    <div class="setting">
-      <div v-if="getIsApiKey()" class="setting-main" @click="handleSettingSubmit">
-        <img class="setting-btn" :class="{ shake: getIsApiKey() }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v1.3/setting.png" alt="">
-        <div class="setting-text">
-          设置ApiKey（解锁ChatMoss使用限制）
-        </div>
-      </div>
-      <div v-else />
-      <div class="relevance-main">
-        <van-switch v-model="isCorrelation" active-color="#FF6666" inactive-color="#dcdee0" />
-        <div class="relevance-main-text">
-          启动上下文
-        </div>
-      </div>
-    </div>
-    <NModal v-model:show="showSettingModal">
-      <NCard
-        style="width: 600px"
-        title="设置ApiKey"
-        :bordered="false"
-        size="huge"
-        role="dialog"
-        aria-modal="true"
-      >
-        <NInput v-model:value="apiKey" type="text" placeholder="请输入您的apiKey" />
-        <NButton class="mt10" type="primary" ghost @click="settingBtn">
-          确定
-        </NButton>
-        <hr class="line">
-        <div>如何获得key</div>
-        <div>最便捷 购买ChatMoss官方key | 自动发货 | <span class="color">支付宝 扫码购买</span></div>
-        <img width="150" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v1.3/zfbgm.png" alt="">
-        <div class="tip-text">
-          ChatMoss提供的apiKey要稍微贵一些，支持官方，让官方做更多更好的功能，感谢大家
-        </div>
-        <hr class="line">
-        <div>其他获取key的方式</div>
-        <div>注册OpenAi账号，访问这里即可：https://platform.openai.com/account/billing/overview</div>
-      </NCard>
-    </NModal>
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
           <template v-if="!dataSources.length">
-            <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
-              <img
-                width="20" class="mr-2 text-3xl"
-                src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo.png" alt=""
-              >
-              <span>Hi~ {{ userStore.userInfo.user.nickname }}</span>
+            <div class="no-data-info">
+              <!-- 标题 -->
+              <div class="no-data-info-title">
+                ChatMoss
+                <span v-if="!isPlus" class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
+                  Plus
+                </span>
+              </div>
+              <div class="no-data-info-tip">
+                {{ mossCount }}
+              </div>
+              <!-- 功能展示列表 -->
+              <div class="no-data-btns-list">
+                <div
+                  v-for="(item, index) in noDataInfo"
+                  :key="index"
+                  class="no-data-btns-item"
+                  @click="noDataInfoEvent(index)"
+                >
+                  <img class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt="">
+                  <div class="btns-item-text">
+                    {{ item.text }}
+                  </div>
+                  <img class="btns-item-right-icon" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt="">
+                </div>
+              </div>
             </div>
           </template>
           <template v-else>
@@ -463,10 +507,25 @@ function getIsApiKey() {
         </div>
       </div>
     </main>
-    <Tips @login="showModelEvent" />
+    <!-- <Tips @login="showModelEvent" /> -->
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex items-center justify-between space-x-2">
+          <!-- 左侧拓展区域 -->
+          <div class="left-btns">
+            <NPopover trigger="hover">
+              <template #trigger>
+                <img class="network-btn" :class="{ 'network-btn-filter': !isCorrelation }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能" @click="correlationEvnet">
+              </template>
+              <span>是否开启上下文</span>
+            </NPopover>
+            <NPopover trigger="hover">
+              <template #trigger>
+                <img class="network-btn" :class="{ 'network-btn-filter': !showNetwork }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能" @click="networkEvnet">
+              </template>
+              <span>是否开启联网</span>
+            </NPopover>
+          </div>
           <NInput
             v-model:value="prompt"
             autofocus
@@ -502,34 +561,96 @@ function getIsApiKey() {
 </template>
 
 <style lang="less">
+.no-data-info {
+  margin-top: 5%;
+  .no-data-info-title {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 600;
+    width: 100%;
+    color: #6C7275;
+    text-align: center;
+    span {
+      position: absolute;
+      margin-left: 10px;
+    }
+  }
+	.no-data-info-tip {
+		font-size: 12px;
+    line-height: 12px;
+    font-weight: 600;
+    width: 100%;
+    color: #6C7275;
+    text-align: center;
+		margin-top: 14px;
+		margin-bottom: -14px;
+	}
+  .no-data-btns-list {
+    width: 80%;
+    max-width: 520px;
+    height: auto;
+    margin: 0 auto;
+    margin-top: 40px;
+    .no-data-btns-item {
+      width: 100%;
+      padding: 20px 20px;
+      height: auto;
+      border: 1px solid #343839;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer; /* 显示小手 */
+      &:hover {
+        border: 1px solid #3c9af7;
+      }
+      .btns-item-img {
+        width: 20px;
+        height: 20px;
+      }
+      .btns-item-text {
+        width: 400px;
+        margin-left: 20px;
+        margin-right: 20px;
+        color: #c9c9c9;
+      }
+      .btns-item-right-icon {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
 .tip {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
 .sustain {
-	height: 20px;
-	font-size: 0.75rem;
-	letter-spacing: 0.2rem;
-	color: #666;
-	width: auto;
-	text-align: center;
-	margin-right: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  letter-spacing: 0.2rem;
+  color: #666;
+  width: auto;
+  text-align: center;
+  margin-right: 20px;
 }
 
 .n-input.n-input--textarea {
-	border-radius: 50px;
+  border-radius: 50px;
 }
 
 /* 隐藏滚动进度条 */
 ::-webkit-scrollbar {
-	display: none;
+  display: none;
 }
 
 .moss-btns {
-	position: relative;
+  position: relative;
 }
 
 .btn-style {
@@ -673,5 +794,28 @@ function getIsApiKey() {
 	50% {
 			transform: rotate(0deg);
 	}
+}
+
+#scrollRef {
+	display: flex;
+}
+
+.left-btns {
+	width: 80px;
+  display: flex;
+  align-items: center;
+	justify-content: space-around;
+  .network-btn {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    filter: grayscale(0%);
+    &:active {
+        transform: scale(.96);
+    }
+  }
+  .network-btn-filter {
+    filter: grayscale(90%);
+  }
 }
 </style>

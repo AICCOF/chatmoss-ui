@@ -8,7 +8,7 @@ export interface UserInfo {
   description: string
   paymentType: number
   residueCount: number
-  user: { nickname: string; email: string }
+  user: { nickname: string; email: string; plusEndTime: undefined }
 }
 
 export interface UserState {
@@ -23,7 +23,7 @@ export function defaultSetting(): UserState {
       description: '罗码Code出品',
       paymentType: 0,
       residueCount: 0,
-      user: { nickname: '', email: '' },
+      user: { nickname: '', email: '', plusEndTime: undefined },
     },
 
   }
