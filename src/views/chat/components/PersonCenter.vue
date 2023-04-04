@@ -50,10 +50,13 @@ const personCenter = ref<any>({
 })
 
 onMounted(() => {
+ updated()
+})
+function updated() {
   getPlusInfoAPI()
   getSystemNoticeAPI()
   getKeyListAPI();
-})
+}
 async function getSystemNoticeAPI() {
   let res = await getSystemNotice()
   personCenter.value.notices = res.data || [];
@@ -189,7 +192,7 @@ async function deleteClick(row: any) {
 }
 
 
-
+defineExpose({ updated })
 
 </script>
 

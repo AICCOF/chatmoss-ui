@@ -10,12 +10,16 @@ import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import PersonCenter from './../../components/PersonCenter.vue'
 import { useModel } from '../../components/Modal/hooks/useModal'
+import { getToken } from '@/store/modules/auth/helper'
+
+let person = ref(null)
 let [registerModal,{openModel}] = useModel()
 const userStore = useUserStore()
 const showModal = ref(false)
 const ms = useMessage()
 const appStore = useAppStore()
 const chatStore = useChatStore()
+const token = ref(getToken());
 
 const { isMobile } = useBasicLayout()
 let tab = ref('login')
@@ -71,8 +75,11 @@ function settingBtn() {
 // 个人中心
 function myHomeSubmit() {
   // ms.info('正在开发中~本周发布', { duration: 5000 })
+// let personCenterEle = ref('personCenterEle')
   
   openModel();
+  person.value.updated()
+  
 }
 
 function modifyPassword() {
@@ -81,12 +88,13 @@ function modifyPassword() {
 }
 // 登录注册功能
 function showModelEvent() {
-   tab.value = 'forget'
+  tab.value = 'login'
   showModal.value = true
 }
 function handleSubmit() {
   showModal.value = false
   userStore.residueCountAPI()
+  token.value = getToken();
 }
 
 watch(
@@ -125,7 +133,7 @@ watch(
         </div>
         <!-- 拓展功能区域 -->
         <div class="continuation">
-          <div class="setting-main" @click="myHomeSubmit">
+          <div class="setting-main" v-if="token" @click="myHomeSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="">
             <div class="setting-text">
               个人中心
@@ -173,7 +181,7 @@ watch(
             <Login @loginSuccess="() => { handleSubmit() }" :tab="tab"  />
           </NCard>
         </NModal>
-        <PersonCenter @register="registerModal" @modify-password="modifyPassword" ></PersonCenter>
+        <PersonCenter ref="person" @register="registerModal" @modify-password="modifyPassword" ></PersonCenter>
       </main>
       <Footer />
     </div>
