@@ -17,6 +17,7 @@ interface Emit {
 }
 
 const emit = defineEmits<Emit>()
+let props = defineProps(['tab'])
 
 function handleClick() {
   emit('loginSuccess')
@@ -34,7 +35,7 @@ const buttonInfo = reactive({
   time: 0,
 })
 
-const tabStr = ref('login')
+const tabStr = ref(props.tab || 'login')
 // const router = useRouter()
 const registerForm = reactive({
   email: '',

@@ -8,7 +8,9 @@ import Footer from './Footer.vue'
 import Login from '@/views/login/index.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-
+import PersonCenter from './../../components/PersonCenter.vue'
+import { useModel } from '../../components/Modal/hooks/useModal'
+let [registerModal,{openModel}] = useModel()
 const userStore = useUserStore()
 const showModal = ref(false)
 const ms = useMessage()
@@ -16,7 +18,7 @@ const appStore = useAppStore()
 const chatStore = useChatStore()
 
 const { isMobile } = useBasicLayout()
-
+let tab = ref('login')
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
@@ -55,9 +57,9 @@ function handleSettingSubmit() {
   }
   showSettingModal.value = true
 }
-const apiKey = ref(localStorage.getItem('apiKey')) as any
+const apiKey = ref(localStorage.getItem('apiKey')||'') as any
 function settingBtn() {
-	if (apiKey.value === '' || apiKey.value.startsWith('sk-')) {
+	if (apiKey.value !== '' && apiKey.value.startsWith('sk-')) {
     localStorage.setItem('apiKey', apiKey.value)
     showSettingModal.value = false
     ms.info('设置成功~', { duration: 5000 })
@@ -68,11 +70,18 @@ function settingBtn() {
 }
 // 个人中心
 function myHomeSubmit() {
-  ms.info('正在开发中~本周发布', { duration: 5000 })
+  // ms.info('正在开发中~本周发布', { duration: 5000 })
+  
+  openModel();
 }
 
+function modifyPassword() {
+  tab.value = 'forget'
+  showModal.value = true
+}
 // 登录注册功能
 function showModelEvent() {
+   tab.value = 'forget'
   showModal.value = true
 }
 function handleSubmit() {
@@ -140,10 +149,12 @@ watch(
             role="dialog"
             aria-modal="true"
           >
-            <NInput v-model:value="apiKey" type="text" placeholder="请输入您的apiKey" />
-            <NButton class="mt10" type="primary" ghost @click="settingBtn">
-              确定
-            </NButton>
+            <div class="flex">
+              <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
+              <NButton  type="primary" ghost @click="settingBtn">
+                确定
+              </NButton>
+            </div>
             <hr class="line">
             <div>如何获得key</div>
             <div>最便捷 购买ChatMoss官方key | 自动发货 | <span class="color">支付宝 扫码购买</span></div>
@@ -159,9 +170,10 @@ watch(
         <!-- 登录注册功能 -->
         <NModal v-model:show="showModal" transform-origin="center">
           <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
-            <Login @loginSuccess="() => { handleSubmit() }" />
+            <Login @loginSuccess="() => { handleSubmit() }" :tab="tab"  />
           </NCard>
         </NModal>
+        <PersonCenter @register="registerModal" @modify-password="modifyPassword" ></PersonCenter>
       </main>
       <Footer />
     </div>

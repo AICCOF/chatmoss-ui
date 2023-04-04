@@ -718,6 +718,7 @@ const mossCount = computed(() => {
 	margin-top: 10px;
 }
 
+
 .notice-swipe {
 	height: 40px;
 	line-height: 40px;
