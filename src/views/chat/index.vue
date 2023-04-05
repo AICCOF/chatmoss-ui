@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { NButton, NCard, NInput, NModal, NPopover, useDialog, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NSelect, NModal, NPopover, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -12,6 +12,7 @@ import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { fetchChatAPIProcess, networkSearch } from '@/api'
 import Login from '@/views/login/index.vue'
 import { t } from '@/locales'
+import selectOption from '@/assets/chatmoss'
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -45,7 +46,28 @@ const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() =>
   dataSources.value.filter(item => !item.inversion && !item.error),
 )
-
+const userInputindex = ref<number>(0)
+const userInputList = computed(() => { 
+  const list = dataSources.value.filter(item => { 
+      return !('loading' in item)
+  })
+  currentIndex.value = list.length 
+  return list
+})
+const currentIndex = computed({
+  get: () => { 
+    if (userInputindex.value > userInputList.value.length) {
+      return userInputList.value.length
+    } else if (userInputindex.value < 0) {
+      return 0
+    } else { 
+      return userInputindex.value
+    }
+  },
+  set: (val) => {
+    userInputindex.value = val
+  }
+})
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 
@@ -311,6 +333,16 @@ function handleEnter(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
     handleSubmit()
+  } else if (userInputList.value.length && (!prompt.value || prompt.value[0]!=='/')) {  
+    if (event.key === 'ArrowUp') {
+      currentIndex.value-=1
+      prompt.value = userInputList.value[currentIndex.value].text
+    } else if (event.key === 'ArrowDown') {
+      currentIndex.value+=1
+      prompt.value = userInputList.value[currentIndex.value]?.text
+    } else { 
+      currentIndex.value = userInputList.value.length
+    }
   }
 }
 
@@ -526,13 +558,25 @@ const mossCount = computed(() => {
               <span>是否开启联网</span>
             </NPopover>
           </div>
-          <NInput
+          <NInput v-show="!prompt || prompt[0]!=='/'"
             v-model:value="prompt"
             autofocus
             type="textarea"
             :autosize="{ minRows: 1, maxRows: 2 }"
             :placeholder="placeholder"
-            @keypress="handleEnter"
+            @keydown="handleEnter"
+            clearable
+          />
+          <NSelect v-show="prompt && prompt[0]==='/'"
+            @keydown="handleEnter"
+            v-model:value="prompt"
+            filterable
+            autofocus
+            :autosize="{ minRows: 1, maxRows: 2 }"
+            placeholder="placeholder"
+            :options="selectOption"
+            clearable
+            label-field="key"
           />
           <!-- MOSS字数 -->
           <div class="btn-style">
@@ -545,7 +589,7 @@ const mossCount = computed(() => {
             </NButton>
             <div v-if="getIsApiKey()" class="moss-text">
               下次消耗{{
-                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}` : `${Math.ceil((prompt.length))}`
+                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}` : `${Math.ceil((prompt?.length || 0))}`
               }}字符
             </div>
           </div>
