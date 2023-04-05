@@ -3,26 +3,26 @@ import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NLayoutSider, NModal, useMessage } from 'naive-ui'
 import Tips from '../../tips.vue'
+import { useModel } from '../../components/Modal/hooks/useModal'
 import List from './List.vue'
 import Footer from './Footer.vue'
+import PersonCenter from './../../components/PersonCenter.vue'
 import Login from '@/views/login/index.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import PersonCenter from './../../components/PersonCenter.vue'
-import { useModel } from '../../components/Modal/hooks/useModal'
 import { getToken } from '@/store/modules/auth/helper'
 
-let person = ref(null)
-let [registerModal,{openModel}] = useModel()
+const person = ref(null) as any
+const [registerModal, { openModel }] = useModel()
 const userStore = useUserStore()
 const showModal = ref(false)
 const ms = useMessage()
 const appStore = useAppStore()
 const chatStore = useChatStore()
-const token = ref(getToken());
+const token = ref(getToken())
 
 const { isMobile } = useBasicLayout()
-let tab = ref('login')
+const tab = ref('login')
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
@@ -56,14 +56,14 @@ const mobileSafeArea = computed(() => {
 const showSettingModal = ref(false)
 function handleSettingSubmit() {
   if (!localStorage.getItem('SECRET_TOKEN')) {
-    ms.info('请先登录~', { duration: 5000 })
+    ms.info('请先登录，设置key后不会再有任何限制~', { duration: 5000 })
     return
   }
   showSettingModal.value = true
 }
-const apiKey = ref(localStorage.getItem('apiKey')||'') as any
+const apiKey = ref(localStorage.getItem('apiKey') || '') as any
 function settingBtn() {
-	if (apiKey.value !== '' && apiKey.value.startsWith('sk-')) {
+  if (apiKey.value === '' || apiKey.value.startsWith('sk-')) {
     localStorage.setItem('apiKey', apiKey.value)
     showSettingModal.value = false
     ms.info('设置成功~', { duration: 5000 })
@@ -76,10 +76,9 @@ function settingBtn() {
 function myHomeSubmit() {
   // ms.info('正在开发中~本周发布', { duration: 5000 })
 // let personCenterEle = ref('personCenterEle')
-  
-  openModel();
+
+  openModel()
   person.value.updated()
-  
 }
 
 function modifyPassword() {
@@ -94,7 +93,7 @@ function showModelEvent() {
 function handleSubmit() {
   showModal.value = false
   userStore.residueCountAPI()
-  token.value = getToken();
+  token.value = getToken()
 }
 
 watch(
@@ -133,7 +132,7 @@ watch(
         </div>
         <!-- 拓展功能区域 -->
         <div class="continuation">
-          <div class="setting-main" v-if="token" @click="myHomeSubmit">
+          <div v-if="token" class="setting-main" @click="myHomeSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="">
             <div class="setting-text">
               个人中心
@@ -159,7 +158,7 @@ watch(
           >
             <div class="flex">
               <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
-              <NButton  type="primary" ghost @click="settingBtn">
+              <NButton type="primary" ghost @click="settingBtn">
                 确定
               </NButton>
             </div>
@@ -178,10 +177,10 @@ watch(
         <!-- 登录注册功能 -->
         <NModal v-model:show="showModal" transform-origin="center">
           <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
-            <Login @loginSuccess="() => { handleSubmit() }" :tab="tab"  />
+            <Login :tab="tab" @loginSuccess="() => { handleSubmit() }" />
           </NCard>
         </NModal>
-        <PersonCenter ref="person" @register="registerModal" @modify-password="modifyPassword" ></PersonCenter>
+        <PersonCenter ref="person" @register="registerModal" @modify-password="modifyPassword" />
       </main>
       <Footer />
     </div>
