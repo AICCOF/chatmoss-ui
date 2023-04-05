@@ -70,6 +70,11 @@ export function get<T = any>(
     afterRequest,
   })
 }
+export function deleteRequest<T = any>(
+  { url, data, method = 'DELETE', headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
+): Promise<Response<T>> {
+  return request.delete(url, data)
+}
 
 export function post<T = any>(
   { url, data, method = 'POST', headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
