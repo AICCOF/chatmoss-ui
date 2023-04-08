@@ -112,10 +112,16 @@ const createColumns = (): DataTableColumns<Columns> => {
     {
       title: '字符上限',
       key: 'maxCount',
+      ellipsis: {
+        tooltip: true,
+      },
     },
     {
       title: '已分享字符',
       key: 'totalCount',
+      ellipsis: {
+        tooltip: true,
+      },
       render: (_: Columns) => {
         return `${_.totalCount || '0'}`
       },
@@ -123,6 +129,9 @@ const createColumns = (): DataTableColumns<Columns> => {
     {
       title: '已获得积分',
       key: 'addScore',
+      ellipsis: {
+        tooltip: true,
+      },
       render: (_: Columns) => {
         return `${_.addScore || '0'}`
       },
@@ -130,6 +139,9 @@ const createColumns = (): DataTableColumns<Columns> => {
     {
       title: '操作',
       key: 'actions',
+      ellipsis: {
+        tooltip: true,
+      },
       render(row) {
         return h(
           NButton,
@@ -194,7 +206,7 @@ defineExpose({ updated })
 
 <template>
   <BasicModal transform-origin="center" @register="register">
-    <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
+    <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">
           <span class="mr-4">{{ nickname }}: </span>
@@ -236,7 +248,7 @@ defineExpose({ updated })
       <div class="">
         <div>我的积分:{{ personCenter.score }}</div>
 
-        <div class="flex">
+        <div class="flex flex-wrap">
           <div
             v-for="(item, index) of personCenter.shops"
             :key="index"
@@ -281,8 +293,8 @@ defineExpose({ updated })
 
 <style lang="less">
 .item {
-  width: 8rem;
-  height: 8rem;
-
+  height: 7rem;
+  flex: 1;
+  min-width: 6rem;
 }
 </style>
