@@ -18,13 +18,16 @@ const userStore = useUserStore()
 const showModal = ref(false)
 const appStore = useAppStore()
 
+if (!localStorage.getItem('chatMossPiecesNumber'))
+  localStorage.setItem('chatMossPiecesNumber', '30')
+
 appStore.setTheme('dark')
 
 const isPlus = computed(() => {
   return !userStore.userInfo.user.plusEndTime
 })
 
-const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
+const isCorrelation = ref(true)
 const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
 
 let controller = new AbortController()
@@ -78,6 +81,15 @@ function handleSubmit() {
   onConversation()
 }
 
+// 计算消耗的字符数量
+function addTextNum(num: any) {
+  console.log('num', num)
+  let chatMossTextNum = localStorage.getItem('chatMossTextNum')
+  if (!chatMossTextNum)
+    chatMossTextNum = '0'
+  localStorage.setItem('chatMossTextNum', num + Number(chatMossTextNum))
+}
+
 async function onConversation() {
   const message = prompt.value
 
@@ -122,7 +134,10 @@ async function onConversation() {
   scrollToBottom()
 
   try {
-    let texts = isCorrelation.value ? dataSources.value.map(item => item.text).join('\n') : message
+    const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
+    console.log('chatMossPiecesNumber', chatMossPiecesNumber)
+    // 在这里拼接用户所有的上下文
+    let texts = isCorrelation.value ? dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n') : message
 
     if (getIsApiKey() || isPlus.value) {
       showNetwork.value = false
@@ -140,7 +155,6 @@ async function onConversation() {
       else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
     }
 
-    // 在这里拼接用户所有的上下文
     await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
       options,
@@ -176,6 +190,7 @@ async function onConversation() {
         }
       },
     })
+    addTextNum(texts.length)
     scrollToBottom()
   }
   catch (error: any) {
@@ -288,6 +303,7 @@ async function onRegenerate(index: number) {
         }
       },
     })
+    addTextNum(message.length)
   }
   catch (error: any) {
     console.error(error)
@@ -471,20 +487,20 @@ function correlationEvnet() {
   else
     ms.info('已关闭上下文功能')
 }
-const mossCount = computed(() => {
-  if (!userStore.userInfo.user.plusEndTime)
-    return ''
-  console.log('时间', userStore.userInfo.user.plusEndTime)
-  const timestamp = userStore.userInfo.user.plusEndTime
-  const date = new Date(timestamp)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const dateString = `${year}/${month}/${day} ${hours}:${minutes} 到期`
-  return dateString
-})
+// const mossCount = computed(() => {
+//   if (!userStore.userInfo.user.plusEndTime)
+//     return ''
+//   console.log('时间', userStore.userInfo.user.plusEndTime)
+//   const timestamp = userStore.userInfo.user.plusEndTime
+//   const date = new Date(timestamp)
+//   const year = date.getFullYear()
+//   const month = String(date.getMonth() + 1).padStart(2, '0')
+//   const day = String(date.getDate()).padStart(2, '0')
+//   const hours = String(date.getHours()).padStart(2, '0')
+//   const minutes = String(date.getMinutes()).padStart(2, '0')
+//   const dateString = `${year}/${month}/${day} ${hours}:${minutes} 到期`
+//   return dateString
+// })
 </script>
 
 <template>
@@ -501,9 +517,9 @@ const mossCount = computed(() => {
                   Plus
                 </span>
               </div>
-              <div class="no-data-info-tip">
+              <!-- <div class="no-data-info-tip">
                 {{ mossCount }}
-              </div>
+              </div> -->
               <!-- 功能展示列表 -->
               <div class="no-data-btns-list">
                 <div
@@ -595,7 +611,7 @@ const mossCount = computed(() => {
                 </span>
               </template>
             </NButton>
-            <div v-if="getIsApiKey()" class="moss-text">
+            <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
               下次消耗{{
                 isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}` : `${Math.ceil((prompt?.length || 0))}`
               }}字符
