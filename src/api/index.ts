@@ -84,6 +84,14 @@ export function login<T>(data: {
     data,
   })
 }
+export function toMoss<T>(data: {
+  code: string
+}) {
+  return post<T>({
+    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/redeem/toMoss',
+    data,
+  })
+}
 export function emailCode<T>(data: {
   email: String
   password: String
