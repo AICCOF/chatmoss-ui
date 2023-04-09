@@ -24,7 +24,7 @@ function loginEvent(type: string) {
 const mossCount = computed(() => {
   const residueCount = userStore.userInfo.residueCount * 10
   return (localStorage.getItem('apiKey') !== '' && localStorage.getItem('apiKey') !== null)
-    ? '∞ 字符'
+    ? '正在使用key'
     : `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
 })
 // moss 描述

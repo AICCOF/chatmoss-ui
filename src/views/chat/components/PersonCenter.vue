@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import { NButton, NCard, NDataTable, NDivider, NForm, NFormItem, NInput, NPopover, useDialog, useMessage } from 'naive-ui'
-import type { DataTableColumns, FormInst } from 'naive-ui'
-import { computed, h, onMounted, ref } from 'vue'
-import dayjs from 'dayjs'
+import { NButton, NCard, NDivider, NInput, NPopover, useMessage } from 'naive-ui'
+import { computed, onMounted, ref } from 'vue'
+// import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
 import { useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
-import { deleteKey, getKeyList, getPlusInfo, getSystemNotice, getWithScore, saveKey } from '@/api/personCenter'
+import { getKeyList, getPlusInfo, getSystemNotice } from '@/api/personCenter'
 defineProps(['register'])
 const emits = defineEmits(['modifyPassword'])
-const message = useMessage()
-const dialog = useDialog()
 const userStore = useUserStore()
 
-const plusEndTime = computed(() => {
-  return dayjs(userStore.userInfo.user.plusEndTime).format('YYYY-MM-DD HH:mm:ss')
-})
+const ms = useMessage()
+
+// const plusEndTime = computed(() => {
+//   return dayjs(userStore.userInfo.user.plusEndTime).format('YYYY-MM-DD HH:mm:ss')
+// })
 const nickname = computed(() => {
   return userStore.userInfo.user.nickname
 })
@@ -27,23 +26,43 @@ const personCenter = ref<any>({
   keyList: [],
   shops: [
     {
-      title: '1天plus会员',
-      desc: '10积分换取',
-      count: 1,
+      title: '500万字符包',
+      desc: '1元 = 5万字符',
+      count: 30,
     },
     {
-      title: '3天plus会员',
-      desc: '30积分换取',
-      count: 3,
+      title: '400万字符包',
+      desc: '1元 = 3.7万字符',
+      count: 30,
     },
     {
-      title: '7天plus会员',
-      desc: '70积分换取',
+      title: '300万字符包',
+      desc: '1元 = 3.3万字符',
+      count: 30,
+    },
+    {
+      title: '200万字符包',
+      desc: '1元 = 3万字符',
+      count: 30,
+    },
+    {
+      title: '100万字符包',
+      desc: '1元 = 2.8万字符',
       count: 7,
     },
     {
-      title: '30天plus会员',
-      desc: '300积分换取',
+      title: '50万字符包',
+      desc: '1元 = 2.5万字符',
+      count: 50,
+    },
+    {
+      title: '10万字符包',
+      desc: '1元 = 2万字符',
+      count: 10,
+    },
+    {
+      title: '其他商品',
+      desc: '',
       count: 30,
     },
   ],
@@ -71,137 +90,37 @@ async function getKeyListAPI() {
   personCenter.value.dataList = res.data.rows
 }
 
-async function buyEvent(row: any) {
-  dialog.warning({
-    title: 'ChatMoss Plus兑换',
-    content: `是否消耗${row.count * 10}积分，兑换${row.count}天ChatMoss Plus会员？`,
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: async () => {
-      try {
-        await getWithScore({ count: row.count })
-        await getPlusInfoAPI()
-        message.success('换取成功')
-      }
-      catch (error: any) {
-        // console.log(error)
-        message.error(error.msg)
-      }
-    },
-    onNegativeClick: () => {
-      // message.error('不确定')
-    },
-  })
-}
-interface Columns {
-  key: number
-  maxCount: string
-  totalCount: number
-  addScore: number
-}
-const createColumns = (): DataTableColumns<Columns> => {
-  return [
-    {
-      title: 'key',
-      key: 'key',
-      width: 100,
-      ellipsis: {
-        tooltip: true,
-      },
-    },
-    {
-      title: '字符上限',
-      key: 'maxCount',
-      ellipsis: {
-        tooltip: true,
-      },
-    },
-    {
-      title: '已分享字符',
-      key: 'totalCount',
-      ellipsis: {
-        tooltip: true,
-      },
-      render: (_: Columns) => {
-        return `${_.totalCount || '0'}`
-      },
-    },
-    {
-      title: '已获得积分',
-      key: 'addScore',
-      ellipsis: {
-        tooltip: true,
-      },
-      render: (_: Columns) => {
-        return `${_.addScore || '0'}`
-      },
-    },
-    {
-      title: '操作',
-      key: 'actions',
-      ellipsis: {
-        tooltip: true,
-      },
-      render(row) {
-        return h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            onClick: () => deleteClick(row),
-          },
-          { default: () => '删除' },
-        )
-      },
-    },
-  ]
-}
-
-const columns = createColumns()
-
-const formRef = ref<FormInst | null>(null)
-const formValue = ref({
-  key: '',
-  maxCount: '',
-  mining: 1,
-})
-
-async function handleValidateClick() {
-  try {
-    await saveKey(formValue.value)
-    getKeyListAPI()
-    formValue.value = { key: '', maxCount: '', mining: 1 }
-    message.success('添加成功')
-  }
-  catch (error: any) {
-    message.error(error.msg)
-  }
-}
-
-async function deleteClick(row: any) {
-  dialog.warning({
-    title: '确定删除',
-    content: '确定此操作？',
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: async () => {
-      try {
-        await deleteKey(row.id)
-        getKeyListAPI()
-        message.success('删除成功')
-      }
-      catch (error: any) {
-        message.error(error.msg)
-      }
-    },
-    onNegativeClick: () => {
-      // message.error('不确定')
-    },
-  })
-}
-
 defineExpose({ updated })
+
+const apiKey = ref(localStorage.getItem('apiKey') || '') as any
+function settingBtn() {
+  if (apiKey.value === '' || apiKey.value.startsWith('sk-')) {
+    localStorage.setItem('apiKey', apiKey.value)
+    ms.info('key设置成功~请保证填写正确的key，并且key有额度没有过期~', { duration: 5000 })
+    userStore.residueCountAPI()
+  }
+  else {
+    ms.error('正确的key是以sk-开头的', { duration: 5000 })
+  }
+}
+
+const chatMossPiecesNumber = ref(localStorage.getItem('chatMossPiecesNumber') || '') as any
+function chatMossPiecesNumberEvent() {
+  if (chatMossPiecesNumber.value !== '') {
+    localStorage.setItem('chatMossPiecesNumber', chatMossPiecesNumber.value)
+    ms.info('上下文对话条数设置成功~', { duration: 5000 })
+  }
+  else {
+    ms.error('不能为空', { duration: 5000 })
+  }
+}
+
+function getTextNum() {
+  let chatMossTextNum = localStorage.getItem('chatMossTextNum')
+  if (!chatMossTextNum)
+    chatMossTextNum = '0'
+  return chatMossTextNum
+}
 </script>
 
 <template>
@@ -209,8 +128,8 @@ defineExpose({ updated })
     <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">
-          <span class="mr-4">{{ nickname }}: </span>
-          <span>{{ plusEndTime }}到期</span>
+          <span class="mr-4">用户名称：{{ nickname }}</span>
+          <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
           <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
@@ -242,50 +161,40 @@ defineExpose({ updated })
           </NPopover>
         </div>
       </div>
-
       <NDivider />
-
-      <div class="">
-        <div>我的积分:{{ personCenter.score }}</div>
-
-        <div class="flex flex-wrap">
-          <div
-            v-for="(item, index) of personCenter.shops"
-            :key="index"
-            class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer" @click="buyEvent(item)"
-          >
-            <div>{{ item.title }}</div>
-            <div>{{ item.desc }}</div>
-          </div>
-        </div>
+      <div class="title-h1">
+        ApiKeys设置
       </div>
-
+      <div class="flex">
+        <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
+        <NButton type="primary" ghost @click="settingBtn">
+          确定
+        </NButton>
+      </div>
+      <div class="tip-text-input">
+        小提示：设置成功，并不代表您的key有余额或者正确
+      </div>
+      <div class="tip-text-input">
+        可以使用这个网址进行检查：https://chatkey.imiku.net/?apikey=
+      </div>
       <NDivider />
       <div>
-        <div class="notice pb-2">
-          分享你的Key，获得积分，可设置被使用字符上限(每分享一万字符,获得1积分)
-        </div>
-        <div class="notice pb-2">
-          4月7日0点正式使用大家分享的key，在此之前可以进行设置，但不会被调用
-        </div>
-        <NDataTable :columns="columns" :data="personCenter.dataList" :pagination="false" :bordered="false" border />
+        <span class="title-h2">本机累计使用字符数</span>：{{ getTextNum() }} 字符
       </div>
-
+      <NDivider />
       <div>
-        <NForm ref="formRef" inline :label-width="80" :model="formValue" size="small">
-          <NFormItem label="">
-            <NInput v-model:value="formValue.key" placeholder="请输入key" />
-          </NFormItem>
-          <NFormItem label="">
-            <NInput v-model:value="formValue.maxCount" placeholder="输入字符上上限" />
-          </NFormItem>
-
-          <NFormItem>
-            <NButton attr-type="button" @click="handleValidateClick">
-              新增
-            </NButton>
-          </NFormItem>
-        </NForm>
+        <div class="title-h1">
+          上下文条数设置（建议30条）
+        </div>
+        <div class="flex">
+          <NInput v-model:value="chatMossPiecesNumber" class="mr-2" type="text" placeholder="请设置上下文对话条数（官方建议是30次对话）" />
+          <NButton type="primary" ghost @click="chatMossPiecesNumberEvent">
+            确定
+          </NButton>
+        </div>
+        <div class="tip-text-input">
+          设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
+        </div>
       </div>
     </NCard>
   </BasicModal>
@@ -296,5 +205,18 @@ defineExpose({ updated })
   height: 7rem;
   flex: 1;
   min-width: 6rem;
+}
+.desc {
+  font-size: 12px;
+  margin-top: 8px;
+}
+.tip-text-input {
+  font-size: 12px;
+  margin-top: 20px;
+  margin-bottom: -10px;
+}
+.title-h1 {
+  margin: 10px 0px;
+  color: #FF6666;
 }
 </style>
