@@ -16,8 +16,8 @@ export default {
     unauthorizedTips: '未经授权，请先进行验证。',
   },
   chat: {
-    placeholder: '输入/ 预设角色',
-    placeholderMobile: '输入/ 预设角色',
+    placeholder: '输入/唤起预设角色',
+    placeholderMobile: '输入/唤起预设角色',
     copy: '复制',
     copied: '复制成功',
     copyCode: '复制代码',

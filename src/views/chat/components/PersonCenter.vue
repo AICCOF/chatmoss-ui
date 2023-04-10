@@ -181,6 +181,12 @@ function getTextNum() {
       <div>
         <span class="title-h2">本机累计使用字符数</span>：{{ getTextNum() }} 字符
       </div>
+      <div class="tip-text-input">
+        注意：OpenAI官方限制了5美元key的速度，现在回答需要好几十秒
+      </div>
+      <div class="tip-text-input">
+        使用字符包速度不受限制（因为字符包使用的是120美金的key）
+      </div>
       <NDivider />
       <div>
         <div class="title-h1">

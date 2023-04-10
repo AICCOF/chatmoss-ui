@@ -24,7 +24,9 @@ if (!localStorage.getItem('chatMossPiecesNumber'))
 appStore.setTheme('dark')
 
 const isPlus = computed(() => {
-  return !userStore.userInfo.user.plusEndTime
+  // 暂时关闭plus逻辑，全部人都是plus会员
+  // !!userStore.userInfo.user.plusEndTime
+  return true
 })
 
 const isCorrelation = ref(true)
@@ -139,13 +141,8 @@ async function onConversation() {
     // 在这里拼接用户所有的上下文
     let texts = isCorrelation.value ? dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n') : message
 
-    if (getIsApiKey() || isPlus.value) {
-      showNetwork.value = false
-      localStorage.setItem('showNetwork', 'false')
-    }
-
     // 联网功能接口
-    if (showNetwork.value) {
+    if (showNetwork.value && message.length < 20) {
       const networkData = await networkSearch({
         search: encodeURIComponent(message),
       })
@@ -463,18 +460,14 @@ function noDataInfoEvent(index: any) {
 
 // 是否开启联网功能
 function networkEvnet() {
-  if (getIsApiKey()) {
-    ms.error('需要登录并且上传key才能使用联网功能')
-    return
-  }
-  if (isPlus.value) {
-    ms.error('你还不是Plus用户，不能开启联网功能')
+  if (!localStorage.getItem('SECRET_TOKEN')) {
+    ms.error('需要登录才能使用联网功能')
     return
   }
   showNetwork.value = !showNetwork.value
   localStorage.setItem('showNetwork', `${showNetwork.value}`)
   if (showNetwork.value)
-    ms.info('ChatMoss已接入联网，请谨慎对待联网回答')
+    ms.info('ChatMoss已接入联网，这将大幅度消耗您的字符数；并且超过20个字符的问题不会联网查询~')
   else
     ms.info('ChatMoss已退出联网')
 }
@@ -513,7 +506,7 @@ function correlationEvnet() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span v-if="!isPlus" class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
+                <span v-if="isPlus" class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
                   Plus
                 </span>
               </div>
@@ -583,7 +576,7 @@ function correlationEvnet() {
             v-model:value="prompt"
             autofocus
             type="textarea"
-            :autosize="{ minRows: 1, maxRows: 2 }"
+            :autosize="{ minRows: 1, maxRows: 5 }"
             :placeholder="placeholder"
             clearable
             @keydown="handleEnter"
@@ -595,7 +588,7 @@ function correlationEvnet() {
             :show="true"
             :autofocus="true"
             :show-on-focus="true"
-            :autosize="{ minRows: 1, maxRows: 2 }"
+            :autosize="{ minRows: 1, maxRows: 5 }"
             placeholder="placeholder"
             :options="selectOption"
             clearable

@@ -144,7 +144,7 @@ const personCenter = ref<any>({
     },
     {
       title: '200万字符包',
-      desc: '11元 = 3万字符',
+      desc: '1元 = 3万字符',
       count: 30,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/200.png',
     },
@@ -167,8 +167,8 @@ const personCenter = ref<any>({
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/10.png',
     },
     {
-      title: 'OpenAI账号',
-      desc: '内带5美元',
+      title: '5美元key',
+      desc: '回答速度很慢',
       count: 30,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/zh.png',
     },
@@ -258,6 +258,7 @@ function buyEvent(item: any) {
                 <div
                   v-for="(item, index) of personCenter.shops"
                   :key="index"
+                  :class="{ 'border-div': index === 0 }"
                   class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer" @click="buyEvent(item)"
                 >
                   <div class="title-h2">
