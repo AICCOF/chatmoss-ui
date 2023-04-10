@@ -13,7 +13,7 @@ export function getSystemNotice<T>() {
 
 export function getPlusInfo<T>() {
   return get<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/score',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/score',
     data: {},
   })
 }

@@ -61,7 +61,7 @@ export function register<T>(data: {
   nickname: String
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/register',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/register',
     data,
   })
 }
@@ -80,7 +80,7 @@ export function login<T>(data: {
   nickname?: string
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/login',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/login',
     data,
   })
 }
@@ -88,7 +88,7 @@ export function toMoss<T>(data: {
   code: string
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/redeem/toMoss',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/redeem/toMoss',
     data,
   })
 }
@@ -98,7 +98,7 @@ export function emailCode<T>(data: {
   nickname: String
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/emailCode',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/emailCode',
     data,
   })
 }
@@ -107,7 +107,7 @@ export function forgetPwdEmailCode<T>(data: {
   email: String
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/forgetPwdEmailCode',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/forgetPwdEmailCode',
     data,
   })
 }
@@ -118,14 +118,14 @@ export function resetPwd<T>(data: {
   emailCode: string
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/user/resetPwd',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/resetPwd',
     data,
   })
 }
 
 export function residueCount<T>() {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/luomacode-api/chat/getUserInfo',
+    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/chat/getUserInfo',
     data: {},
   })
 }
