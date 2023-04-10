@@ -16,9 +16,8 @@ interface Emit {
   (e: 'loginSuccess'): void
 }
 
+const props = defineProps(['tab'])
 const emit = defineEmits<Emit>()
-let props = defineProps(['tab'])
-
 function handleClick() {
   emit('loginSuccess')
 }
@@ -190,6 +189,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="loginForm.email"
+            placeholder="请输入邮箱"
             clearable
           />
         </NFormItem>
@@ -198,12 +198,13 @@ async function loginEvent() {
           path="password"
           :rule="{
             required: true,
-            message: '请输入密码',
+            message: '密码由字母、数字或下划线组成！',
             trigger: ['input', 'blur'],
           }"
         >
           <NInput
             v-model:value="loginForm.password"
+            placeholder="密码由字母、数字或下划线组成！"
             type="password"
             show-password-on="mousedown"
           />
@@ -243,6 +244,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="registerForm.email"
+            placeholder="请输入邮箱"
             clearable
           />
         </NFormItem>
@@ -251,12 +253,13 @@ async function loginEvent() {
           path="password"
           :rule="{
             required: true,
-            message: '请输入密码',
+            message: '密码由字母、数字或下划线组成！',
             trigger: ['input', 'blur'],
           }"
         >
           <NInput
             v-model:value="registerForm.password"
+            placeholder="密码由字母、数字或下划线组成！"
             type="password"
             show-password-on="mousedown"
           />
@@ -272,6 +275,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="registerForm.nickname"
+            placeholder="请输入昵称"
             clearable
           />
         </NFormItem>
@@ -286,6 +290,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="registerForm.phone"
+            placeholder="请输入手机号"
             clearable
           />
         </NFormItem>
@@ -301,6 +306,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="registerForm.emailCode"
+            placeholder="请输入验证码"
             clearable
           />
           <NButton
@@ -321,6 +327,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="registerForm.invite"
+            placeholder="请输入邀请人邮箱"
             clearable
           />
         </NFormItem>
@@ -359,6 +366,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="forgetForm.email"
+            placeholder="请输入注册邮箱"
             clearable
           />
         </NFormItem>
@@ -373,6 +381,7 @@ async function loginEvent() {
         >
           <NInput
             v-model:value="forgetForm.emailCode"
+            placeholder="请输入验证码"
             clearable
           />
           <NButton
@@ -387,12 +396,13 @@ async function loginEvent() {
           path="password"
           :rule="{
             required: true,
-            message: '请输入重置密码',
+            message: '请输入新的密码',
             trigger: ['input', 'blur'],
           }"
         >
           <NInput
             v-model:value="forgetForm.password"
+            placeholder="密码由字母、数字或下划线组成！"
             type="password"
             show-password-on="mousedown"
           />
