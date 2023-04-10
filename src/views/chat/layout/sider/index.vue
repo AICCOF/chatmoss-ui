@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NButton, NCard, NInput, NLayoutSider, NModal, useMessage } from 'naive-ui'
+import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, useMessage } from 'naive-ui'
 import Tips from '../../tips.vue'
 import { useModel } from '../../components/Modal/hooks/useModal'
 import List from './List.vue'
@@ -11,6 +11,7 @@ import Login from '@/views/login/index.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { getToken } from '@/store/modules/auth/helper'
+import { toMoss } from '@/api'
 
 const person = ref(null) as any
 const [registerModal, { openModel }] = useModel()
@@ -52,31 +53,41 @@ const mobileSafeArea = computed(() => {
   return {}
 })
 
+// 兑换字符数
+const toMossCode = ref('')
+async function toMossEvent() {
+  if (toMossCode.value === '') {
+    ms.error('请输入字符包兑换码，字符包点击下面继续购买，感谢您的支持', { duration: 5000 })
+    return
+  }
+  try {
+    const data = await toMoss<any>({
+      code: toMossCode.value,
+    }) as any
+    userStore.residueCountAPI()
+    ms.info(`兑换成功，您已经增加${Number(data.msg) * 10}字符数，感谢您的支持！`, { duration: 5000 })
+  }
+  catch (error: any) {
+    ms.error(error.msg, { duration: 5000 })
+  }
+}
+
 // 设置内容
 const showSettingModal = ref(false)
 function handleSettingSubmit() {
   if (!localStorage.getItem('SECRET_TOKEN')) {
-    ms.info('请先登录，设置key后不会再有任何限制~', { duration: 5000 })
+    ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
     return
   }
   showSettingModal.value = true
 }
-const apiKey = ref(localStorage.getItem('apiKey') || '') as any
-function settingBtn() {
-  if (apiKey.value === '' || apiKey.value.startsWith('sk-')) {
-    localStorage.setItem('apiKey', apiKey.value)
-    showSettingModal.value = false
-    ms.info('设置成功~', { duration: 5000 })
-  }
-  else {
-    ms.error('正确的key是以sk-开头的', { duration: 5000 })
-  }
-}
+
 // 个人中心
 function myHomeSubmit() {
-  // ms.info('正在开发中~本周发布', { duration: 5000 })
-// let personCenterEle = ref('personCenterEle')
-
+  if (!localStorage.getItem('SECRET_TOKEN')) {
+    ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
+    return
+  }
   openModel()
   person.value.updated()
 }
@@ -106,6 +117,70 @@ watch(
     flush: 'post',
   },
 )
+
+const personCenter = ref<any>({
+  score: 0,
+  notices: [],
+  dataList: [],
+  keyList: [],
+  shops: [
+    {
+      title: '500万字符包',
+      desc: '1元 = 5万字符',
+      count: 30,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
+    },
+    {
+      title: '400万字符包',
+      desc: '1元 = 3.7万字符',
+      count: 30,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
+    },
+    {
+      title: '300万字符包',
+      desc: '1元 = 3.3万字符',
+      count: 30,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
+    },
+    {
+      title: '200万字符包',
+      desc: '11元 = 3万字符',
+      count: 30,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/200.png',
+    },
+    {
+      title: '100万字符包',
+      desc: '1元 = 2.8万字符',
+      count: 7,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/100.png',
+    },
+    {
+      title: '50万字符包',
+      desc: '1元 = 2.5万字符',
+      count: 50,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/50.png',
+    },
+    {
+      title: '10万字符包',
+      desc: '1元 = 2万字符',
+      count: 10,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/10.png',
+    },
+    {
+      title: 'OpenAI账号',
+      desc: '内带5美元',
+      count: 30,
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/zh.png',
+    },
+  ],
+})
+const shopModal = ref(false)
+const shopData = ref({}) as any
+function buyEvent(item: any) {
+  console.log('item', item)
+  shopModal.value = true
+  shopData.value = item
+}
 </script>
 
 <template>
@@ -132,7 +207,7 @@ watch(
         </div>
         <!-- 拓展功能区域 -->
         <div class="continuation">
-          <div v-if="token" class="setting-main" @click="myHomeSubmit">
+          <div class="setting-main" @click="myHomeSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="">
             <div class="setting-text">
               个人中心
@@ -141,37 +216,79 @@ watch(
           <div class="setting-main" @click="handleSettingSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="">
             <div class="setting-text">
-              设置ApiKey
+              ChatMoss商店
             </div>
           </div>
           <Tips @login="showModelEvent" />
         </div>
-        <!-- 设置key功能 -->
-        <NModal v-model:show="showSettingModal">
+        <NModal
+          v-model:show="showSettingModal"
+          preset="dialog"
+          style="width:80%;max-width: 600px; min-width: 350px;"
+        >
           <NCard
-            style="width: 600px"
-            title="设置ApiKey"
+            title="ChatMoss商店"
             :bordered="false"
             size="huge"
             role="dialog"
             aria-modal="true"
           >
-            <div class="flex">
-              <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
-              <NButton type="primary" ghost @click="settingBtn">
-                确定
-              </NButton>
+            <div>
+              <div class="title-h1">
+                字符包兑换码
+              </div>
+              <div class="flex">
+                <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的字符包兑换码" />
+                <NButton type="primary" ghost @click="toMossEvent">
+                  确定
+                </NButton>
+              </div>
             </div>
-            <hr class="line">
-            <div>如何获得key</div>
-            <div>最便捷 购买ChatMoss官方key | 自动发货 | <span class="color">支付宝 扫码购买</span></div>
-            <img width="150" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v1.3/zfbgm.png" alt="">
-            <div class="tip-text">
-              全网都没新key了，这里存货卖完也不卖了，感谢大家的支持
+
+            <NDivider />
+
+            <div class="">
+              <h1 class="title-h1">
+                字符包商城
+              </h1>
+              <div class="tip-text-input1">
+                小提示：OpenAI限制了5美元key的速度，字符包速度不受影响（字符包用的是120美金的key）
+              </div>
+              <div class="flex flex-wrap">
+                <div
+                  v-for="(item, index) of personCenter.shops"
+                  :key="index"
+                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer" @click="buyEvent(item)"
+                >
+                  <div class="title-h2">
+                    {{ item.title }}
+                  </div>
+                  <div class="desc">
+                    {{ item.desc }}
+                  </div>
+                </div>
+              </div>
             </div>
-            <hr class="line">
-            <div>其他获取key的方式</div>
-            <div>注册OpenAi账号，访问这里即可：https://platform.openai.com/account/billing/overview</div>
+            <NDivider />
+          </NCard>
+        </NModal>
+        <!-- 购买字符数 -->
+        <NModal v-model:show="shopModal">
+          <NCard
+            style="width: 400px"
+            :title="shopData.title"
+            size="huge"
+            role="dialog"
+            aria-modal="true"
+            :mask-closable="true"
+          >
+            <div class="tip-text-input2">
+              支付宝扫码购买（暂不支持微信）
+            </div>
+            <img class="shop-img" :src="shopData.shopImg" alt="">
+            <div class="tip-text-input3">
+              您的支持就是我们的动力，我们会持续迭代本软件，提供更多更方便的功能！
+            </div>
           </NCard>
         </NModal>
         <!-- 登录注册功能 -->
@@ -221,5 +338,39 @@ watch(
 		margin-left: 8px;
 		margin-right: 12px;
   }
+}
+.title-h1 {
+  margin: 10px 0px;
+  color: #FF6666;
+}
+.title-h2 {
+  color: #FF6666;
+}
+.tip-text-input1 {
+  font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.tip-text-input2 {
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  color: #FF6666;
+	text-align: center;
+}
+.tip-text-input3 {
+  font-size: 12px;
+  margin-top: 20px;
+	text-align: center;
+}
+.shop-img {
+	min-width: 260px;
+	min-height: 260px;
+	width: 260px;
+	height: 260px;
+	margin: 0 auto;
+}
+.n-card__content {
+
 }
 </style>
