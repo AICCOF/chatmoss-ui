@@ -1,16 +1,25 @@
-import type { ProxyOptions } from 'vite'
+import type { ConfigEnv, ProxyOptions } from 'vite'
 
-export function createViteProxy(isOpenProxy: boolean, viteEnv: ImportMetaEnv) {
-  if (!isOpenProxy)
-    return
-
+export function createViteProxy(env:ConfigEnv,viteEnv: ImportMetaEnv) {
+  if (env.mode !== 'development') return
+   
   const proxy: Record<string, string | ProxyOptions> = {
-    '/api': {
+    '/luomacode-api': {
       target: viteEnv.VITE_APP_API_BASE_URL,
-      changeOrigin: true,
-      rewrite: path => path.replace('/api/', '/'),
+      changeOrigin: true, // 允许跨域
+      rewrite: path => path.replace('/luomacode-api/', '/luomacode-api/'),
+    },
+    '/api': {
+      target: 'http://chatmoss.aihao123.cn',
+      changeOrigin: true, // 允许跨域
+      rewrite: path => path.replace('api/', 'api/'),
     },
   }
 
   return proxy
 }
+
+
+
+ 
+

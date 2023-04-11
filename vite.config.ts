@@ -1,7 +1,10 @@
 import path from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import {  createViteProxy } from './config'
+import { createBuild } from './config/build'
 export default defineConfig((env) => {
+ 
   const viteEnv = loadEnv(env.mode, process.cwd()) as unknown as ImportMetaEnv
 
   return {
@@ -15,26 +18,8 @@ export default defineConfig((env) => {
       host: '0.0.0.0',
       port: 80,
       open: false,
-      proxy: {
-        '/luomacode-api': {
-          target: viteEnv.VITE_APP_API_BASE_URL,
-          changeOrigin: true, // 允许跨域
-          rewrite: path => path.replace('/luomacode-api/', '/luomacode-api/'),
-        },
-        '/api': {
-          target: 'http://chatmoss.aihao123.cn',
-          changeOrigin: true, // 允许跨域
-          rewrite: path => path.replace('api/', 'api/'),
-        },
-
-      },
+      proxy: createViteProxy(env,viteEnv)
     },
-    build: {
-      reportCompressedSize: false,
-      sourcemap: false,
-      commonjsOptions: {
-        ignoreTryCatch: false,
-      },
-    },
+    build: createBuild(env, viteEnv)
   }
 })
