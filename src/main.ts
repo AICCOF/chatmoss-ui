@@ -6,6 +6,16 @@ import { setupAssets } from './plugins'
 import { setupStore } from './store'
 import { setupRouter } from './router'
 import 'vant/lib/index.css'
+import getDomainAPI from './api/getDomain'
+
+
+getDomainAPI().then(() => {
+  bootstrap()
+}).catch(() => {
+  // console.log(error)
+  bootstrap()
+})
+
 
 async function bootstrap() {
   const app = createApp(App)
@@ -23,4 +33,4 @@ async function bootstrap() {
   app.mount('#app')
 }
 
-bootstrap()
+
