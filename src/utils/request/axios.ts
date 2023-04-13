@@ -1,9 +1,8 @@
 import axios, { type AxiosResponse } from 'axios'
 import { useAuthStoreWithout } from '@/store/modules'
 import { getDomain } from '@/api/getDomain'
-
 const service = axios.create({
-  baseURL: import.meta.env.VITE_GLOB_API_URL,
+  baseURL: '',
 })
 
 service.interceptors.request.use(

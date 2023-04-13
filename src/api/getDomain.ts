@@ -4,8 +4,9 @@ import { ss } from '@/utils/storage'
 
 const DOMAIN = 'DOMAIN'
 
-let remoteURL = 'https://service-l78wcyp6-1306191308.hk.apigw.tencentcs.com/release/'
+let remoteURL = import.meta.env.VITE_APP_API_BASE_URL
 
+console.log(import.meta.env)
 let defaultURL = 'http://chatmoss-v2.aihao123.cn'
 
 export function setDomain(url:string) {
