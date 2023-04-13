@@ -19,7 +19,7 @@ export function createBuild(env: ConfigEnv, viteEnv: ImportMetaEnv) {
   }
   // vscode 打包的目录
   return {
-    outDir: 'vscode',
+    outDir: 'dist',
     rollupOptions,
     ...defaultOption, 
   }
