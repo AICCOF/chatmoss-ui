@@ -1,8 +1,8 @@
 import axios, { type AxiosResponse } from 'axios'
 import { useAuthStoreWithout } from '@/store/modules'
-
+import { getDomain } from '@/api/getDomain'
 const service = axios.create({
-  baseURL: import.meta.env.VITE_GLOB_API_URL,
+  baseURL: '',
 })
 
 service.interceptors.request.use(
@@ -10,6 +10,10 @@ service.interceptors.request.use(
     const token = useAuthStoreWithout().token
     if (token)
       config.headers.token = token
+
+    // 处理 url
+    const doMain  = getDomain();
+    config.url = config.url && config.url.indexOf('http')>-1 ?config.url:doMain + config.url;
     return config
   },
   (error) => {

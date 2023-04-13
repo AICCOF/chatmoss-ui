@@ -29,7 +29,7 @@ export function fetchChatAPIProcess<T = any>(
   },
 ) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:80/api/chat-process?version=v1.5',
+    url: '/api/chat-process?version=v1.5',
     data: {
       prompt: params.prompt,
       options: {},
@@ -50,7 +50,7 @@ export function fetchSession<T>() {
 
 export function fetchVerify<T>(token: string) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:3002/verify',
+    url: '/verify',
     data: { token },
   })
 }
@@ -61,7 +61,7 @@ export function register<T>(data: {
   nickname: String
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/register',
+    url: '/luomacode-api/user/register',
     data,
   })
 }
@@ -80,7 +80,7 @@ export function login<T>(data: {
   nickname?: string
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/login',
+    url: '/luomacode-api/user/login',
     data,
   })
 }
@@ -88,7 +88,7 @@ export function toMoss<T>(data: {
   code: string
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/redeem/toMoss',
+    url: '/luomacode-api/redeem/toMoss',
     data,
   })
 }
@@ -98,7 +98,7 @@ export function emailCode<T>(data: {
   nickname: String
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/emailCode',
+    url: '/luomacode-api/user/emailCode',
     data,
   })
 }
@@ -107,7 +107,7 @@ export function forgetPwdEmailCode<T>(data: {
   email: String
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/forgetPwdEmailCode',
+    url: '/luomacode-api/user/forgetPwdEmailCode',
     data,
   })
 }
@@ -118,14 +118,14 @@ export function resetPwd<T>(data: {
   emailCode: string
 }) {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/user/resetPwd',
+    url: '/luomacode-api/user/resetPwd',
     data,
   })
 }
 
 export function residueCount<T>() {
   return post<T>({
-    url: 'http://chatmoss.aihao123.cn:8080/luomacode-api/chat/getUserInfo',
+    url: '/luomacode-api/chat/getUserInfo',
     data: {},
   })
 }
