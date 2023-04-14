@@ -12,8 +12,16 @@ export function defaultState(): Chat.ChatState {
 }
 
 export function getLocalState(): Chat.ChatState {
-  const localState = window.chatStorage ?? ss.get(LOCAL_NAME)
-  return localState ?? defaultState()
+ let localState
+ try {
+   let value = JSON.parse(window.chatStorage)
+    localState = value
+ } catch (error) {
+    localState =  ss.get(LOCAL_NAME)
+ } finally {
+   return localState ?? defaultState()
+ }
+  
 }
 
 export function setLocalState(state: Chat.ChatState) {
