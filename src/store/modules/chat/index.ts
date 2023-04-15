@@ -29,6 +29,11 @@ export const useChatStore = defineStore('chat-store', {
       this.active = history.uuid
       this.reloadRoute(history.uuid)
     },
+    updateStore(chat:Chat.ChatState){
+      this.history = chat.history
+      this.active = chat.active;
+      this.chat = chat.chat
+    },
 
     updateHistory(uuid: number, edit: Partial<Chat.History>) {
       const index = this.history.findIndex(item => item.uuid === uuid)

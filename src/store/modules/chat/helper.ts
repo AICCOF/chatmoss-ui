@@ -3,8 +3,14 @@ import { ss } from '@/utils/storage'
 const LOCAL_NAME = 'chatStorage'
 let vscode: any = null
 
-if (typeof acquireVsCodeApi !== 'undefined')
+if (typeof acquireVsCodeApi !== 'undefined'){
+
   vscode = acquireVsCodeApi()
+  vscode.postMessage({
+    type: 'pageOver',
+  })
+}
+  
 
 export function defaultState(): Chat.ChatState {
   const uuid = 80
@@ -12,15 +18,7 @@ export function defaultState(): Chat.ChatState {
 }
 
 export function getLocalState(): Chat.ChatState {
-//  let localState
-//  try {
-//    let value = JSON.parse(window.chatStorage)
-//     localState = value
-//  } catch (error) {
-//     localState =  ss.get(LOCAL_NAME)
-//  } finally {
-//    return localState ?? defaultState()
-//  }
+ 
   return ss.get(LOCAL_NAME) ?? defaultState()
   
 }
