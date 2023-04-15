@@ -320,17 +320,17 @@ function buyEvent(item: any) {
   cursor: pointer;
   padding: 6px;
 	border-radius: 6px;
-	background-color: #323232;
+	// background-color: #323232;
 	margin: 0 auto;
 	margin-bottom: 10px;
   &:active {
       transform: scale(.96);
   }
 	&:hover {
-		background-color: #3c4250;
+		// background-color: #3c4250;
 	}
   .setting-text {
-    color: rgba(232, 236, 239, 0.75);
+    // color: rgba(232, 236, 239, 0.75);
     font-size: 10px;
   }
   .setting-btn {
