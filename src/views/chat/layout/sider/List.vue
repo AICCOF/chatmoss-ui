@@ -55,7 +55,7 @@ function isActive(uuid: number) {
         </div>
       </template>
       <template v-else>
-        <div v-for="(item, index) of dataSources" :key="index">
+        <div v-for="(item, index) of dataSources" :key="index" class="group">
           <a
             class="question-list relative flex items-center gap-3 px-3 py-3 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
             :class="isActive(item.uuid) && ['border-[#00CCFF]', 'bg-neutral-100', 'text-[#0099FF]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]', 'pr-14']"
@@ -73,24 +73,28 @@ function isActive(uuid: number) {
               />
               <span v-else>{{ item.title }}</span>
             </div>
-            <div v-if="isActive(item.uuid)" class="absolute z-10 flex visible right-1">
-              <template v-if="item.isEdit">
+            <!-- v-if="isActive(item.uuid)" -->
+            <div class="absolute z-10 flex visible right-1">
+              <template v-if="item.isEdit && isActive(item.uuid)">
                 <button class="p-1" @click="handleEdit(item, false, $event)">
                   <SvgIcon icon="ri:save-line" />
                 </button>
               </template>
-              <template v-else>
-                <button class="p-1">
+              <template v-if="!item.isEdit">
+                <button v-if="isActive(item.uuid)" class="p-1">
                   <SvgIcon icon="ri:edit-line" @click="handleEdit(item, true, $event)" />
                 </button>
-                <NPopconfirm placement="bottom" @positive-click="handleDelete(index, $event)">
-                  <template #trigger>
-                    <button class="p-1">
-                      <SvgIcon icon="ri:delete-bin-line" />
-                    </button>
-                  </template>
-                  {{ $t('chat.deleteHistoryConfirm') }}
-                </NPopconfirm>
+                <!-- group-hover:visible -->
+                <div :class="isActive(item.uuid) ? 'visible' : 'invisible group-hover:visible'">
+                  <NPopconfirm placement="bottom" @positive-click="handleDelete(index, $event)">
+                    <template #trigger>
+                      <button class="p-1" @click.stop>
+                        <SvgIcon icon="ri:delete-bin-line" />
+                      </button>
+                    </template>
+                    {{ $t('chat.deleteHistoryConfirm') }}
+                  </NPopconfirm>
+                </div>
               </template>
             </div>
           </a>
