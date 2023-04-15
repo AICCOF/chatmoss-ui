@@ -70,14 +70,14 @@ onMounted(() => {
   display: flex;
   padding: 6px;
 	border-radius: 6px;
-	background-color: #323232;
+	// background-color: #323232;
 	margin: 0 auto;
   cursor: pointer;
   &:active {
 		transform: scale(.96);
 	}
 	&:hover {
-		background-color: #3c4250;
+		// background-color: #3c4250;
 	}
 }
 .v-login{
@@ -104,7 +104,7 @@ onMounted(() => {
 }
 .tip-text-content {
   font-size: 10px;
-	color: rgba(232, 236, 239, 0.75);
+	// color: rgba(232, 236, 239, 0.75);
   width: 100%;
   display: flex;
   align-items: center;
