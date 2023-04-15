@@ -21,7 +21,7 @@ const appStore = useAppStore()
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
-appStore.setTheme('dark')
+appStore.setTheme('auto')
 
 const isPlus = computed(() => {
   // 暂时关闭plus逻辑，全部人都是plus会员
@@ -625,6 +625,7 @@ function correlationEvnet() {
 .no-data-info {
   margin-top: 5%;
   .no-data-info-title {
+    position: relative;
     font-size: 2.25rem;
     line-height: 2.5rem;
     font-weight: 600;
