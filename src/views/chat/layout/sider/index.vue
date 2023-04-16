@@ -84,23 +84,23 @@ function handleSettingSubmit() {
 }
 
 // 接受vscode的信息
-window.addEventListener("message", (event) => {
-  const message = event.data;
+window.addEventListener('message', (event) => {
+  const message = event.data
   switch (message.type) {
-    case "storeData":
+    case 'storeData':
       if (message.value) {
         chatStore.updateStore(JSON.parse(message.value))
         setLocalState(JSON.parse(message.value))
-      } else {
+      }
+      else {
         ss.remove('chatStorage')
         chatStore.updateStore(defaultState())
       }
-      break;
+      break
     default:
-      break;
+      break
   }
-});
-
+})
 
 // 个人中心
 function myHomeSubmit() {
@@ -149,49 +149,49 @@ const personCenter = ref<any>({
     {
       title: '500万字符包',
       desc: '1元 = 5万字符',
-      count: 30,
+      count: '限时 99.99',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
     },
     {
       title: '400万字符包',
       desc: '1元 = 3.7万字符',
-      count: 30,
+      count: 107.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
     },
     {
       title: '300万字符包',
       desc: '1元 = 3.3万字符',
-      count: 30,
+      count: 89.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
     },
     {
       title: '200万字符包',
       desc: '1元 = 3万字符',
-      count: 30,
+      count: 64.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/200.png',
     },
     {
       title: '100万字符包',
       desc: '1元 = 2.8万字符',
-      count: 7,
+      count: 34.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/100.png',
     },
     {
       title: '50万字符包',
       desc: '1元 = 2.5万字符',
-      count: 50,
+      count: 19.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/50.png',
     },
     {
       title: '10万字符包',
       desc: '1元 = 2万字符',
-      count: 10,
+      count: 4.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/10.png',
     },
     {
       title: '5美元key',
       desc: '回答速度很慢',
-      count: 30,
+      count: 39.90,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/zh.png',
     },
   ],
@@ -205,14 +205,16 @@ function buyEvent(item: any) {
 }
 
 function setLocalState(arg0: any) {
-throw new Error('Function not implemented.')
+  throw new Error('Function not implemented.')
 }
 </script>
 
 <template>
-  <NLayoutSider :collapsed="collapsed" :collapsed-width="0" :width="200" :show-trigger="isMobile ? false : 'arrow-circle'"
+  <NLayoutSider
+    :collapsed="collapsed" :collapsed-width="0" :width="200" :show-trigger="isMobile ? false : 'arrow-circle'"
     collapse-mode="transform" position="absolute" bordered :style="getMobileClass"
-    @update-collapsed="handleUpdateCollapsed">
+    @update-collapsed="handleUpdateCollapsed"
+  >
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
         <div class="p-4">
@@ -263,14 +265,19 @@ throw new Error('Function not implemented.')
                 小提示：OpenAI限制了5美元key的速度，字符包速度不受影响（字符包用的是120美金的key）
               </div>
               <div class="flex flex-wrap">
-                <div v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
+                <div
+                  v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
                   class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-                  @click="buyEvent(item)">
+                  @click="buyEvent(item)"
+                >
                   <div class="title-h2">
                     {{ item.title }}
                   </div>
                   <div class="desc">
                     {{ item.desc }}
+                  </div>
+                  <div class="desc">
+                    ￥ {{ item.count }}
                   </div>
                 </div>
               </div>
@@ -280,8 +287,10 @@ throw new Error('Function not implemented.')
         </NModal>
         <!-- 购买字符数 -->
         <NModal v-model:show="shopModal">
-          <NCard style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
-            :mask-closable="true">
+          <NCard
+            style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
+            :mask-closable="true"
+          >
             <div class="tip-text-input2">
               支付宝扫码购买（暂不支持微信）
             </div>
@@ -293,8 +302,10 @@ throw new Error('Function not implemented.')
         </NModal>
         <!-- 登录注册功能 -->
         <NModal v-model:show="showModal" transform-origin="center">
-          <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog"
-            aria-modal="true">
+          <NCard
+            style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog"
+            aria-modal="true"
+          >
             <Login :tab="tab" @loginSuccess="() => { handleSubmit() }" />
           </NCard>
         </NModal>

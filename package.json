@@ -1,6 +1,6 @@
 {
   "name": "chatmoss-ui",
-  "version": "2.1.2",
+  "version": "2.1.10",
   "private": false,
   "description": "chatmoss-ui",
   "author": "AICCOF",
@@ -26,7 +26,7 @@
     "common:cleanup": "rimraf node_modules && rimraf pnpm-lock.yaml",
     "common:prepare": "husky install",
     "tauri": "tauri",
-    "tauri-debug":"yarn tauri build --target universal-apple-darwin --debug",
+    "tauri-debug": "yarn tauri build --target universal-apple-darwin --debug",
     "tauri-build": "yarn tauri build --target universal-apple-darwin"
   },
   "dependencies": {
