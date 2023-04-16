@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput, NPopover, useMessage } from 'naive-ui'
+import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from 'vue'
 // import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
-import { useUserStore } from '@/store'
+import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
 import { getKeyList, getPlusInfo, getSystemNotice } from '@/api/personCenter'
 defineProps(['register'])
@@ -11,6 +11,7 @@ const emits = defineEmits(['modifyPassword'])
 const userStore = useUserStore()
 
 const ms = useMessage()
+const appStore = useAppStore()
 
 // const plusEndTime = computed(() => {
 //   return dayjs(userStore.userInfo.user.plusEndTime).format('YYYY-MM-DD HH:mm:ss')
@@ -27,42 +28,7 @@ const personCenter = ref<any>({
   shops: [
     {
       title: '500万字符包',
-      desc: '1元 = 5万字符',
-      count: 30,
-    },
-    {
-      title: '400万字符包',
-      desc: '1元 = 3.7万字符',
-      count: 30,
-    },
-    {
-      title: '300万字符包',
-      desc: '1元 = 3.3万字符',
-      count: 30,
-    },
-    {
-      title: '200万字符包',
-      desc: '1元 = 3万字符',
-      count: 30,
-    },
-    {
-      title: '100万字符包',
-      desc: '1元 = 2.8万字符',
-      count: 7,
-    },
-    {
-      title: '50万字符包',
-      desc: '1元 = 2.5万字符',
-      count: 50,
-    },
-    {
-      title: '10万字符包',
-      desc: '1元 = 2万字符',
-      count: 10,
-    },
-    {
-      title: '其他商品',
-      desc: '',
+      desc: '99元 1元 = 5万字符',
       count: 30,
     },
   ],
@@ -120,6 +86,16 @@ function getTextNum() {
   if (!chatMossTextNum)
     chatMossTextNum = '0'
   return chatMossTextNum
+}
+
+function handleUpdateValue(chatmossTheme: string) {
+  ms.info(chatmossTheme === 'dark' ? '深色模式开启' : '浅色模式开启')
+  localStorage.setItem('chatmossTheme', chatmossTheme)
+  appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
+}
+
+function getNSwitchValue(): any {
+  return localStorage.getItem('chatmossTheme')
 }
 </script>
 
@@ -200,6 +176,21 @@ function getTextNum() {
         </div>
         <div class="tip-text-input">
           设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
+        </div>
+      </div>
+      <NDivider />
+      <div>
+        <div class="title-h1">
+          ChatMoss主题设定
+        </div>
+        <div class="flex">
+          <NSwitch
+            :default-value="getNSwitchValue()"
+            checked-value="dark"
+            unchecked-value="light"
+            @update:value="handleUpdateValue"
+          />
+          {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
         </div>
       </div>
     </NCard>
