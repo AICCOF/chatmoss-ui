@@ -12,7 +12,8 @@ import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { getToken } from '@/store/modules/auth/helper'
 import { toMoss } from '@/api'
-
+import { defaultState } from '@/store/modules/chat/helper'
+import { ss } from '@/utils/storage'
 const person = ref(null) as any
 const [registerModal, { openModel }] = useModel()
 const userStore = useUserStore()
@@ -82,8 +83,29 @@ function handleSettingSubmit() {
   showSettingModal.value = true
 }
 
+// 接受vscode的信息
+window.addEventListener('message', (event) => {
+  const message = event.data
+  switch (message.type) {
+    case 'storeData':
+      if (message.value) {
+        chatStore.updateStore(JSON.parse(message.value))
+        setLocalState(JSON.parse(message.value))
+      }
+      else {
+        ss.remove('chatStorage')
+        chatStore.updateStore(defaultState())
+      }
+      break
+    default:
+      break
+  }
+})
+
 // 个人中心
 function myHomeSubmit() {
+  // chatStore.updateStore(JSON.parse())
+  // return ;
   if (!localStorage.getItem('SECRET_TOKEN')) {
     ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
     return
@@ -127,49 +149,49 @@ const personCenter = ref<any>({
     {
       title: '500万字符包',
       desc: '1元 = 5万字符',
-      count: 30,
+      count: '限时 99.99',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
     },
     {
       title: '400万字符包',
       desc: '1元 = 3.7万字符',
-      count: 30,
+      count: 107.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
     },
     {
       title: '300万字符包',
       desc: '1元 = 3.3万字符',
-      count: 30,
+      count: 89.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
     },
     {
       title: '200万字符包',
       desc: '1元 = 3万字符',
-      count: 30,
+      count: 64.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/200.png',
     },
     {
       title: '100万字符包',
       desc: '1元 = 2.8万字符',
-      count: 7,
+      count: 34.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/100.png',
     },
     {
       title: '50万字符包',
       desc: '1元 = 2.5万字符',
-      count: 50,
+      count: 19.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/50.png',
     },
     {
       title: '10万字符包',
       desc: '1元 = 2万字符',
-      count: 10,
+      count: 4.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/10.png',
     },
     {
       title: '5美元key',
       desc: '回答速度很慢',
-      count: 30,
+      count: 39.90,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/zh.png',
     },
   ],
@@ -181,18 +203,16 @@ function buyEvent(item: any) {
   shopModal.value = true
   shopData.value = item
 }
+
+function setLocalState(arg0: any) {
+  throw new Error('Function not implemented.')
+}
 </script>
 
 <template>
   <NLayoutSider
-    :collapsed="collapsed"
-    :collapsed-width="0"
-    :width="200"
-    :show-trigger="isMobile ? false : 'arrow-circle'"
-    collapse-mode="transform"
-    position="absolute"
-    bordered
-    :style="getMobileClass"
+    :collapsed="collapsed" :collapsed-width="0" :width="200" :show-trigger="isMobile ? false : 'arrow-circle'"
+    collapse-mode="transform" position="absolute" bordered :style="getMobileClass"
     @update-collapsed="handleUpdateCollapsed"
   >
     <div class="flex flex-col h-full" :style="mobileSafeArea">
@@ -221,18 +241,8 @@ function buyEvent(item: any) {
           </div>
           <Tips @login="showModelEvent" />
         </div>
-        <NModal
-          v-model:show="showSettingModal"
-          preset="dialog"
-          style="width:80%;max-width: 600px; min-width: 350px;"
-        >
-          <NCard
-            title="ChatMoss商店"
-            :bordered="false"
-            size="huge"
-            role="dialog"
-            aria-modal="true"
-          >
+        <NModal v-model:show="showSettingModal" preset="dialog" style="width:80%;max-width: 600px; min-width: 350px;">
+          <NCard title="ChatMoss商店" :bordered="false" size="huge" role="dialog" aria-modal="true">
             <div>
               <div class="title-h1">
                 字符包兑换码
@@ -256,16 +266,18 @@ function buyEvent(item: any) {
               </div>
               <div class="flex flex-wrap">
                 <div
-                  v-for="(item, index) of personCenter.shops"
-                  :key="index"
-                  :class="{ 'border-div': index === 0 }"
-                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer" @click="buyEvent(item)"
+                  v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
+                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
+                  @click="buyEvent(item)"
                 >
                   <div class="title-h2">
                     {{ item.title }}
                   </div>
                   <div class="desc">
                     {{ item.desc }}
+                  </div>
+                  <div class="desc">
+                    ￥ {{ item.count }}
                   </div>
                 </div>
               </div>
@@ -276,11 +288,7 @@ function buyEvent(item: any) {
         <!-- 购买字符数 -->
         <NModal v-model:show="shopModal">
           <NCard
-            style="width: 400px"
-            :title="shopData.title"
-            size="huge"
-            role="dialog"
-            aria-modal="true"
+            style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
             :mask-closable="true"
           >
             <div class="tip-text-input2">
@@ -294,7 +302,10 @@ function buyEvent(item: any) {
         </NModal>
         <!-- 登录注册功能 -->
         <NModal v-model:show="showModal" transform-origin="center">
-          <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
+          <NCard
+            style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog"
+            aria-modal="true"
+          >
             <Login :tab="tab" @loginSuccess="() => { handleSubmit() }" />
           </NCard>
         </NModal>
@@ -310,68 +321,75 @@ function buyEvent(item: any) {
 
 <style lang="less">
 .continuation {
-	margin-bottom: 20px;
-	margin-top: 5px;
+  margin-bottom: 20px;
+  margin-top: 5px;
 }
+
 .setting-main {
-	width: 90%;
+  width: 90%;
   display: flex;
   align-items: center;
   cursor: pointer;
   padding: 6px;
 	border-radius: 6px;
-	background-color: #323232;
+	// background-color: #323232;
 	margin: 0 auto;
 	margin-bottom: 10px;
   &:active {
-      transform: scale(.96);
+    transform: scale(.96);
   }
 	&:hover {
-		background-color: #3c4250;
+		// background-color: #3c4250;
 	}
   .setting-text {
-    color: rgba(232, 236, 239, 0.75);
+    // color: rgba(232, 236, 239, 0.75);
     font-size: 10px;
   }
+
   .setting-btn {
     width: 20px;
     height: 20px;
-		margin-left: 8px;
-		margin-right: 12px;
+    margin-left: 8px;
+    margin-right: 12px;
   }
 }
+
 .title-h1 {
   margin: 10px 0px;
   color: #FF6666;
 }
+
 .title-h2 {
   color: #FF6666;
 }
+
 .tip-text-input1 {
   font-size: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
 .tip-text-input2 {
   font-size: 14px;
   margin-top: -10px;
   margin-bottom: 10px;
   color: #FF6666;
-	text-align: center;
+  text-align: center;
 }
+
 .tip-text-input3 {
   font-size: 12px;
   margin-top: 20px;
-	text-align: center;
+  text-align: center;
 }
-.shop-img {
-	min-width: 260px;
-	min-height: 260px;
-	width: 260px;
-	height: 260px;
-	margin: 0 auto;
-}
-.n-card__content {
 
+.shop-img {
+  min-width: 260px;
+  min-height: 260px;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto;
 }
+
+.n-card__content {}
 </style>

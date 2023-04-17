@@ -21,7 +21,9 @@ const appStore = useAppStore()
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
-appStore.setTheme('dark')
+if (!localStorage.getItem('chatmossTheme'))
+  localStorage.setItem('chatmossTheme', 'dark')
+appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
 
 const isPlus = computed(() => {
   // 暂时关闭plus逻辑，全部人都是plus会员
@@ -29,7 +31,10 @@ const isPlus = computed(() => {
   return true
 })
 
-const isCorrelation = ref(true)
+if (!localStorage.getItem('isCorrelation'))
+  localStorage.setItem('isCorrelation', 'true')
+
+const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
 const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
 
 let controller = new AbortController()
@@ -625,6 +630,7 @@ function correlationEvnet() {
 .no-data-info {
   margin-top: 5%;
   .no-data-info-title {
+    position: relative;
     font-size: 2.25rem;
     line-height: 2.5rem;
     font-weight: 600;
