@@ -34,8 +34,9 @@ AI共建开源基金会是一个致力于推动人工智能发展的**非营利�
 
 ### 打包命令
 ```
-npm run mac 
-npm run vscode
+npm run mac  // mac 客户单平台
+npm run vscode // vscode平台
+npm run win // win 平台
 ```
 > 由于mac客户端只支持https协议,为了性能,所以做了区别打包. 本质上他们打包的区别是 mac 走https协议, vscode 走http协议.
 
