@@ -3,6 +3,7 @@ import { ss } from '@/utils/storage'
 const LOCAL_NAME = 'userStorage'
 
 export interface UserInfo {
+  isFinishGuide:boolean
   avatar: string
   name: string
   description: string
@@ -23,6 +24,7 @@ export function defaultSetting(): UserState {
       description: '罗码Code出品',
       paymentType: 0,
       residueCount: 0,
+      isFinishGuide:false,
       user: { nickname: '', email: '', plusEndTime: undefined },
     },
 

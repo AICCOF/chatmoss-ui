@@ -552,7 +552,6 @@ function correlationEvnet() {
         </div>
       </div>
     </main>
-    <!-- <Tips @login="showModelEvent" /> -->
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex items-center justify-between space-x-2">

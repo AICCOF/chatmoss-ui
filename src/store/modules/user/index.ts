@@ -38,6 +38,10 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo = { ...defaultSetting().userInfo }
       this.recordState()
     },
+    setGuide(value:boolean){
+      this.userInfo.isFinishGuide = value;
+      this.recordState();
+    },
 
     recordState() {
       setLocalState(this.$state)

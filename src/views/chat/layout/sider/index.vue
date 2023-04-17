@@ -12,8 +12,6 @@ import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { getToken } from '@/store/modules/auth/helper'
 import { toMoss } from '@/api'
-import { defaultState } from '@/store/modules/chat/helper'
-import { ss } from '@/utils/storage'
 const person = ref(null) as any
 const [registerModal, { openModel }] = useModel()
 const userStore = useUserStore()
