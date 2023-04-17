@@ -13,6 +13,9 @@ import { fetchChatAPIProcess, networkSearch } from '@/api'
 import Login from '@/views/login/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
+import vsCodeUtils from '@/utils/vsCodeUtils'
+
+
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -400,36 +403,40 @@ const footerClass = computed(() => {
   return classes
 })
 
+
 onMounted(() => {
-  const selectedText = localStorage.getItem('selectedText')
-  /* eslint no-console: "off" */
-  console.log('selectedText', selectedText)
-  if (selectedText) {
-    setTimeout(() => {
-      const questionListDom = document.querySelector('.question-list') as HTMLDivElement
-      const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-      if (questionListDom === null || questionListDom.innerText !== '新建问题') {
-        questionBtnDom.click()
-        prompt.value = selectedText
-      }
-      else {
-        prompt.value = selectedText
-      }
-      setTimeout(() => {
-        const askQuestionDom = document.querySelector('#ask-question') as HTMLDivElement
-        askQuestionDom.click()
-        localStorage.setItem('selectedText', '')
-        // 防止接口请求太快，导致点击被禁止
+  vsCodeUtils({
+    handleVscodeMessage: function handleVscodeMessage(selectedText: string) {
+      // const selectedText = localStorage.getItem('selectedText')
+      if (selectedText) {
         setTimeout(() => {
-          askQuestionDom.click()
-        }, 1500)
-      }, 300)
-      console.log('建立新的对话，塞入优化空间')
-    }, 300)
-  }
-  scrollToBottom()
-  userStore.residueCountAPI()
+          const questionListDom = document.querySelector('.question-list') as HTMLDivElement
+          const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+          if (questionListDom === null || questionListDom.innerText !== '新建问题') {
+            questionBtnDom.click()
+            prompt.value = selectedText
+          }
+          else {
+            prompt.value = selectedText
+          }
+          setTimeout(() => {
+            const askQuestionDom = document.querySelector('#ask-question') as HTMLDivElement
+            askQuestionDom.click()
+            localStorage.setItem('selectedText', '')
+            // 防止接口请求太快，导致点击被禁止
+            setTimeout(() => {
+              askQuestionDom.click()
+            }, 1500)
+          }, 300)
+          console.log('建立新的对话，塞入优化空间')
+        }, 300)
+      }
+      scrollToBottom()
+      userStore.residueCountAPI()
+    }
+  }); // 初始化与vscode通信
 })
+
 
 onUnmounted(() => {
   if (loading.value)
@@ -485,20 +492,7 @@ function correlationEvnet() {
   else
     ms.info('已关闭上下文功能')
 }
-// const mossCount = computed(() => {
-//   if (!userStore.userInfo.user.plusEndTime)
-//     return ''
-//   console.log('时间', userStore.userInfo.user.plusEndTime)
-//   const timestamp = userStore.userInfo.user.plusEndTime
-//   const date = new Date(timestamp)
-//   const year = date.getFullYear()
-//   const month = String(date.getMonth() + 1).padStart(2, '0')
-//   const day = String(date.getDate()).padStart(2, '0')
-//   const hours = String(date.getHours()).padStart(2, '0')
-//   const minutes = String(date.getMinutes()).padStart(2, '0')
-//   const dateString = `${year}/${month}/${day} ${hours}:${minutes} 到期`
-//   return dateString
-// })
+
 </script>
 
 <template>

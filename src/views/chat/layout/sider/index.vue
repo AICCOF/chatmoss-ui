@@ -83,24 +83,7 @@ function handleSettingSubmit() {
   showSettingModal.value = true
 }
 
-// 接受vscode的信息
-window.addEventListener('message', (event) => {
-  const message = event.data
-  switch (message.type) {
-    case 'storeData':
-      if (message.value) {
-        chatStore.updateStore(JSON.parse(message.value))
-        setLocalState(JSON.parse(message.value))
-      }
-      else {
-        ss.remove('chatStorage')
-        chatStore.updateStore(defaultState())
-      }
-      break
-    default:
-      break
-  }
-})
+
 
 // 个人中心
 function myHomeSubmit() {
