@@ -1,7 +1,7 @@
 
-import {useChatStore, useUserStore } from '@/store'
+import {useChatStore } from '@/store'
 import { setLocalState } from '@/store/modules/chat/helper'
-
+const chatStore = useChatStore()
 export default function vsCodeUtils(record:Record<string,Function>) {
   // 接受vscode的信息
   window.addEventListener('message', (event) => {
