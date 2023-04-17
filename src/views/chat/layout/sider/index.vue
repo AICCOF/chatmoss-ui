@@ -184,10 +184,6 @@ function buyEvent(item: any) {
   shopModal.value = true
   shopData.value = item
 }
-
-function setLocalState(arg0: any) {
-  throw new Error('Function not implemented.')
-}
 </script>
 
 <template>
