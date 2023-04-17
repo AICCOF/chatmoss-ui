@@ -39,4 +39,11 @@ npm run vscode
 ```
 > 由于mac客户端只支持https协议,为了性能,所以做了区别打包. 本质上他们打包的区别是 mac 走https协议, vscode 走http协议.
 
+> 由于不通平台对于接口的请求要求不通,需要分开处理.
+> 
+vscode专用：https://service-l78wcyp6-1306191308.hk.apigw.tencentcs.com/release/
+
+win 客户端专用：https://service-qsq9jrvq-1306191308.hk.apigw.tencentcs.com/release/
+
+mac 客户单专用：https://service-98v7giw8-1306191308.hk.apigw.tencentcs.com/release/
 

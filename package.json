@@ -12,12 +12,14 @@
     "dev": "vite",
     "build": "run-p type-check build-only",
     "mac": "run-p type-check build-mac-only && npm run tauri-build",
-    "vscode": "run-p type-check build-vscode-only && npm run tauri-build",
     "mac-dev": "run-p type-check build-mac-only && npm run tauri-debug",
+    "win": "run-p type-check build-win-only && npm run tauri-build",
+    "win-dev": "run-p type-check build-win-only && npm run tauri-debug",
+    "vscode": "run-p type-check build-vscode-only && npm run tauri-build",   
     "vscode-dev": "run-p type-check build-vscode-only && npm run tauri-debug",
     "preview": "vite preview",
     "build-mac-only": "vite build --mode mac",
-    "build-only": "vite build --mode production",
+    "build-win-only": "vite build --mode win",
     "build-vscode-only": "vite build --mode vscode",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint .",
@@ -26,8 +28,8 @@
     "common:cleanup": "rimraf node_modules && rimraf pnpm-lock.yaml",
     "common:prepare": "husky install",
     "tauri": "tauri",
-    "tauri-debug":"yarn tauri build --target universal-apple-darwin --debug",
-    "tauri-build": "yarn tauri build --target universal-apple-darwin"
+    "tauri-debug":"yarn tauri build --debug",
+    "tauri-build": "yarn tauri build"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.2.0",
