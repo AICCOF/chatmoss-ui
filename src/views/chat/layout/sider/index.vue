@@ -210,15 +210,15 @@ function setLocalState(arg0: any) {
         </div>
         <!-- 拓展功能区域 -->
         <div class="continuation">
-          <div class="setting-main" @click="myHomeSubmit">
+          <div class="setting-main " @click="myHomeSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="">
-            <div class="setting-text">
+            <div class="setting-text step6">
               个人中心
             </div>
           </div>
-          <div class="setting-main" @click="handleSettingSubmit">
+          <div class="setting-main " @click="handleSettingSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="">
-            <div class="setting-text">
+            <div class="setting-text step5">
               ChatMoss商店
             </div>
           </div>

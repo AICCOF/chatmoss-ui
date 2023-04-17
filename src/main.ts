@@ -7,7 +7,8 @@ import { setupStore } from './store'
 import { setupRouter } from './router'
 import 'vant/lib/index.css'
 import getDomainAPI from './api/getDomain'
-
+import VueTour from 'v3-tour'
+import 'v3-tour/dist/vue-tour.css'
 
 getDomainAPI().then(() => {
   bootstrap()
@@ -23,6 +24,7 @@ async function bootstrap() {
   app.use(Swipe)
   app.use(SwipeItem)
   app.use(Switch)
+  app.use(VueTour)
   setupAssets()
 
   await setupRouter(app)

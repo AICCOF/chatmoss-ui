@@ -40,6 +40,9 @@ dependencies:
   terser:
     specifier: ^5.16.6
     version: 5.16.6
+  v3-tour:
+    specifier: ^3.1.2
+    version: 3.1.2
   vant:
     specifier: ^4.1.1
     version: 4.1.1(vue@3.2.47)
@@ -1917,6 +1920,10 @@ packages:
       fastq: 1.15.0
     dev: true
 
+  /@popperjs/core@2.11.7:
+    resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
+    dev: false
+
   /@tauri-apps/api@1.2.0:
     resolution: {integrity: sha512-lsI54KI6HGf7VImuf/T9pnoejfgkNoXveP14pVV7XarrQ46rOejIVJLFqHI9sRReJMGdh2YuCoI3cc/yCWCsrw==}
     engines: {node: '>= 14.6.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
@@ -2337,7 +2344,7 @@ packages:
       '@babel/parser': 7.21.2
       '@vue/shared': 3.2.47
       estree-walker: 2.0.2
-      source-map: r2.cnpmjs.org/source-map@0.6.1
+      source-map: 0.6.1
 
   /@vue/compiler-dom@3.2.47:
     resolution: {integrity: sha512-dBBnEHEPoftUiS03a4ggEig74J2YBZ2UIeyfpcRM2tavgMWo4bsEfgCGsu+uJIL/vax9S+JztH8NmQerUo7shQ==}
@@ -4117,6 +4124,10 @@ packages:
     dependencies:
       function-bind: 1.1.1
 
+  /hash-sum@2.0.0:
+    resolution: {integrity: sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==}
+    dev: false
+
   /he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
@@ -4520,6 +4531,10 @@ packages:
     resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
     engines: {'0': node >= 0.2.0}
     dev: true
+
+  /jump.js@1.0.2:
+    resolution: {integrity: sha512-oUkJJ/Y4ATU5qjkXBntCZSKctbSyS3ewe2jrLaUu/cc9jsQiAn0fnTUxQnZz3mJdDdem1Q279zrD6h3n+Cgxtg==}
+    dev: false
 
   /katex@0.16.4:
     resolution: {integrity: sha512-WudRKUj8yyBeVDI4aYMNxhx5Vhh2PjpzQw1GRu/LVGqL4m1AxwD1GcUp0IMbdJaf5zsjtj8ghP0DOQRYhroNkw==}
@@ -6165,6 +6180,14 @@ packages:
       base64-arraybuffer: 1.0.2
     dev: false
 
+  /v3-tour@3.1.2:
+    resolution: {integrity: sha512-9/iBfrdO68dseQPmYo6T7PK+S7evBetZR5dkwz28kw+RisRMon899eNB+QVBeQpqY4qfF99oXYfxOJHpLR7O5A==}
+    dependencies:
+      '@popperjs/core': 2.11.7
+      hash-sum: 2.0.0
+      jump.js: 1.0.2
+    dev: false
+
   /v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
     dev: true
@@ -6474,9 +6497,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-  r2.cnpmjs.org/source-map@0.6.1:
-    resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==, registry: https://registry.npmmirror.com/, tarball: https://r2.cnpmjs.org/source-map/-/source-map-0.6.1.tgz}
-    name: source-map
-    version: 0.6.1
-    engines: {node: '>=0.10.0'}

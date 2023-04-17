@@ -50,7 +50,7 @@ onMounted(() => {
 
 <template>
   <div class="tip-main">
-    <div class="tip-text-content">
+    <div class="tip-text-content step4">
       <p v-if="token">
         剩余
         <span>{{ mossCount }}</span>

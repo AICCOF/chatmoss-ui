@@ -15,7 +15,7 @@
     "mac-dev": "run-p type-check build-mac-only && npm run tauri-debug",
     "win": "run-p type-check build-win-only && npm run tauri-build",
     "win-dev": "run-p type-check build-win-only && npm run tauri-debug",
-    "vscode": "run-p type-check build-vscode-only && npm run tauri-build",   
+    "vscode": "run-p type-check build-vscode-only && npm run tauri-build",
     "vscode-dev": "run-p type-check build-vscode-only && npm run tauri-debug",
     "preview": "vite preview",
     "build-mac-only": "vite build --mode mac",
@@ -28,7 +28,7 @@
     "common:cleanup": "rimraf node_modules && rimraf pnpm-lock.yaml",
     "common:prepare": "husky install",
     "tauri": "tauri",
-    "tauri-debug":"yarn tauri build --debug",
+    "tauri-debug": "yarn tauri build --debug",
     "tauri-build": "yarn tauri build"
   },
   "dependencies": {
@@ -45,6 +45,7 @@
     "naive-ui": "^2.34.3",
     "pinia": "^2.0.32",
     "terser": "^5.16.6",
+    "v3-tour": "^3.1.2",
     "vant": "^4.1.1",
     "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",

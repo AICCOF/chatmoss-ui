@@ -14,6 +14,7 @@ import Login from '@/views/login/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
+import Guide from "./guide.vue";
 
 
 
@@ -559,18 +560,20 @@ function correlationEvnet() {
           <div class="left-btns">
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn" :class="{ 'network-btn-filter': !isCorrelation }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能" @click="correlationEvnet">
+                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }" 
+                src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能" @click="correlationEvnet">
               </template>
               <span>是否开启上下文</span>
             </NPopover>
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn" :class="{ 'network-btn-filter': !showNetwork }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能" @click="networkEvnet">
+                <img class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能" @click="networkEvnet">
               </template>
               <span>是否开启联网</span>
             </NPopover>
           </div>
           <NInput
+            class="step1"
             v-if="!prompt || prompt[0] !== '/'"
             v-model:value="prompt"
             autofocus
@@ -617,6 +620,7 @@ function correlationEvnet() {
         <Login @loginSuccess="() => { handleSubmit() }" />
       </NCard>
     </NModal>
+   <Guide />
   </div>
 </template>
 
