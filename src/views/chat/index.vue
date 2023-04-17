@@ -409,6 +409,7 @@ onMounted(() => {
   vsCodeUtils({
     handleVscodeMessage: function handleVscodeMessage(selectedText: string) {
       // const selectedText = localStorage.getItem('selectedText')
+      console.log(selectedText)
       if (selectedText) {
         setTimeout(() => {
           const questionListDom = document.querySelector('.question-list') as HTMLDivElement

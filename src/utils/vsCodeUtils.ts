@@ -15,7 +15,9 @@ export default function vsCodeUtils(record:Record<string,Function>) {
         }
         break
       case 'selectedText':
+        // console.log(message)
         if (message.value) {
+          // console.log(record)
           record && record.handleVscodeMessage(message.value)
         }
         break
