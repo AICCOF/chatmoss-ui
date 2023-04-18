@@ -2,8 +2,14 @@ import { ss } from '@/utils/storage'
 
 const LOCAL_NAME = 'userStorage'
 
+export interface Notice{
+  content: string;
+  createTime: string;
+  icon: string
+}
 export interface UserInfo {
-  isFinishGuide:boolean
+  isFinishGuide: boolean
+  notices: Notice[]
   avatar: string
   name: string
   description: string
@@ -24,7 +30,8 @@ export function defaultSetting(): UserState {
       description: '罗码Code出品',
       paymentType: 0,
       residueCount: 0,
-      isFinishGuide:false,
+      isFinishGuide: false,
+      notices:[],
       user: { nickname: '', email: '', plusEndTime: undefined },
     },
 

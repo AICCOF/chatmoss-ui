@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage } from 'naive-ui'
-import { computed, onMounted, ref } from 'vue'
+import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification, NAvatar } from 'naive-ui'
+import { computed, onMounted, ref, h } from 'vue'
 // import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
 import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
 import { getKeyList, getPlusInfo, getSystemNotice } from '@/api/personCenter'
+import { Notice } from '@/store/modules/user/helper'
 defineProps(['register'])
 const emits = defineEmits(['modifyPassword'])
 const userStore = useUserStore()
+const notification = useNotification()
 
 const ms = useMessage()
 const appStore = useAppStore()
@@ -41,14 +43,38 @@ function updated() {
   getPlusInfoAPI()
   getSystemNoticeAPI()
   getKeyListAPI()
+  userStore.residueCountAPI()
 }
+const temNotice = computed(() => userStore.getNotices)
 async function getSystemNoticeAPI() {
-  const res = await getSystemNotice()
+  const res = await getSystemNotice<Notice[]>()
   personCenter.value.notices = res.data || []
+
+  let notice = personCenter.value.notices[personCenter.value.notices.length - 1]
+
+  if(res.data.length > temNotice.value.length){
+    notification.create({
+      content: notice.content,
+      meta: notice.createTime,
+      avatar: () =>
+        h(NAvatar, {
+          size: 'small',
+          round: true,
+          src: notice.icon
+        }),
+      duration: 5000,
+      keepAliveOnHover: true
+    })
+    userStore.setNotices(res.data)
+  }
+
+  
 }
 async function getPlusInfoAPI() {
   const res = await getPlusInfo()
   personCenter.value.score = res.data
+
+
 }
 async function getKeyListAPI() {
   const res = await getKeyList<any>()
@@ -101,7 +127,8 @@ function getNSwitchValue(): any {
 
 <template>
   <BasicModal transform-origin="center" @register="register">
-    <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
+    <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog"
+      aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">
           <span class="mr-4">用户名称：{{ nickname }}</span>
@@ -121,11 +148,8 @@ function getNSwitchValue(): any {
                 </template>
               </NButton>
             </template>
-            <div
-              v-for="(item, index) of personCenter.notices"
-              :key="index"
-              class="notice flex items-center justify-center"
-            >
+            <div v-for="(item, index) of personCenter.notices" :key="index"
+              class="notice flex items-center justify-center">
               <div class="mr-4">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
@@ -184,12 +208,8 @@ function getNSwitchValue(): any {
           ChatMoss主题设定
         </div>
         <div class="flex">
-          <NSwitch
-            :default-value="getNSwitchValue()"
-            checked-value="dark"
-            unchecked-value="light"
-            @update:value="handleUpdateValue"
-          />
+          <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
+            @update:value="handleUpdateValue" />
           {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
         </div>
       </div>
@@ -203,15 +223,18 @@ function getNSwitchValue(): any {
   flex: 1;
   min-width: 6rem;
 }
+
 .desc {
   font-size: 12px;
   margin-top: 8px;
 }
+
 .tip-text-input {
   font-size: 12px;
   margin-top: 20px;
   margin-bottom: -10px;
 }
+
 .title-h1 {
   margin: 10px 0px;
   color: #FF6666;

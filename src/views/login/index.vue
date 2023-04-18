@@ -12,6 +12,7 @@ import {
 import { reactive, ref } from 'vue'
 import { useAuthStoreWithout } from '@/store'
 import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
+import { sendToMsg } from '@/utils/vsCodeUtils';
 interface Emit {
   (e: 'loginSuccess'): void
 }
@@ -151,6 +152,7 @@ async function loginEvent() {
     const authStore = useAuthStoreWithout()
 
     authStore.setToken(res.loginToken)
+    sendToMsg('chatMossToken',res.loginToken)
 
     handleClick()
   }

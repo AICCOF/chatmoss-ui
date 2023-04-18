@@ -1,15 +1,9 @@
 import { ss } from '@/utils/storage'
+import { sendToMsg } from '@/utils/vsCodeUtils'
 
 const LOCAL_NAME = 'chatStorage'
-let vscode: any = null
 
-if (typeof acquireVsCodeApi !== 'undefined'){
 
-  vscode = acquireVsCodeApi()
-  vscode.postMessage({
-    type: 'pageOver',
-  })
-}
   
 
 export function defaultState(): Chat.ChatState {
@@ -24,11 +18,6 @@ export function getLocalState(): Chat.ChatState {
 }
 
 export function setLocalState(state: Chat.ChatState) {
-  if (vscode) {
-    vscode.postMessage({
-      type: 'chatStorage',
-      value: JSON.stringify(state),
-    })
-  }
+  sendToMsg('chatStorage',JSON.stringify(state))
   ss.set(LOCAL_NAME, state)
 }

@@ -15,8 +15,8 @@ import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 import Guide from "./guide.vue";
-
-
+import { useAuthStoreWithout } from '@/store'
+const authStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -435,8 +435,14 @@ onMounted(() => {
       }
       scrollToBottom()
       userStore.residueCountAPI()
+    },
+    handleToken:(value:string)=>{
+       authStore.setToken(value);
+      userStore.residueCountAPI()
+
     }
   }); // 初始化与vscode通信
+  
 })
 
 

@@ -6,6 +6,11 @@ import { residueCount } from '@/api'
 
 export const useUserStore = defineStore('user-store', {
   state: (): UserState => getLocalState(),
+  getters:{
+    getNotices(state){
+      return state.userInfo.notices
+    }
+  },
   actions: {
     async residueCountAPI() {
       // const token = getToken()
@@ -40,6 +45,11 @@ export const useUserStore = defineStore('user-store', {
     },
     setGuide(value:boolean){
       this.userInfo.isFinishGuide = value;
+      this.recordState();
+    },
+
+    setNotices(value: any[]) {
+      this.userInfo.notices = value;
       this.recordState();
     },
 
