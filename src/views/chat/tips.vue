@@ -2,7 +2,11 @@
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
+import { sendToMsg } from '@/utils/vsCodeUtils';
+import { useAuthStoreWithout } from '@/store/modules'
+
 const emit = defineEmits<Emit>()
+let useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const token = ref('')
@@ -15,8 +19,9 @@ function loginEvent(type: string) {
   if (type === 'login')
     emit('login')
   if (type === 'exit') {
-    localStorage.removeItem('SECRET_TOKEN')
-    location.reload()
+    useAuthStore.setToken('')
+    sendToMsg('chatMossToken', '')
+    userStore.residueCountAPI()
   }
 }
 

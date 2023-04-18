@@ -43,7 +43,7 @@ export default function vsCodeUtils(record:Record<string,Function>) {
         // console.log(message)
         if (message.value) {
           // console.log(record)
-          record && record.handleToken(message.value)
+          record && record.handleToken(JSON.parse(message.value))
         }
         break
       default:

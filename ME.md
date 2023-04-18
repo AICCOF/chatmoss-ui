@@ -1,0 +1,1 @@
+cp dist/index.js ../front-chat-moss/media/index.js
