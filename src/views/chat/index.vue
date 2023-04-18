@@ -437,7 +437,8 @@ onMounted(() => {
       userStore.residueCountAPI()
     },
     handleToken:(value:string)=>{
-       authStore.setToken(value);
+      console.log(value)
+      authStore.setToken(value);
       userStore.residueCountAPI()
 
     }

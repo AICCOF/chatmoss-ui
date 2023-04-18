@@ -18,6 +18,6 @@ export function getLocalState(): Chat.ChatState {
 }
 
 export function setLocalState(state: Chat.ChatState) {
-  sendToMsg('chatStorage',JSON.stringify(state))
+  sendToMsg('chatStorage',state)
   ss.set(LOCAL_NAME, state)
 }

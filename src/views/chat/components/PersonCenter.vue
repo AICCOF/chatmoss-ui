@@ -45,7 +45,7 @@ function updated() {
   getKeyListAPI()
   userStore.residueCountAPI()
 }
-const temNotice = computed(() => userStore.getNotices)
+const temNotice = computed(() => userStore.getNotices||[])
 async function getSystemNoticeAPI() {
   const res = await getSystemNotice<Notice[]>()
   personCenter.value.notices = res.data || []

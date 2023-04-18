@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "build": "run-p type-check build-vscode-only",
     "mac": "run-p type-check build-mac-only && npm run tauri-build",
     "mac-dev": "run-p type-check build-mac-only && npm run tauri-debug",
     "win": "run-p type-check build-win-only && npm run tauri-build",
