@@ -23,6 +23,7 @@ export function sendToMsg(type:string,state:any){
 export default function vsCodeUtils(record:Record<string,Function>) {
   const chatStore = useChatStore()
   // 接受vscode的信息
+
   window.addEventListener('message', (event) => {
     const message = event.data
     switch (message.type) {
@@ -33,16 +34,13 @@ export default function vsCodeUtils(record:Record<string,Function>) {
         }
         break
       case 'selectedText':
-        // console.log(message)
         if (message.value) {
-          // console.log(record)
           record && record.handleVscodeMessage(message.value)
+             
         }
         break
       case 'chatMossToken':
-        // console.log(message)
         if (message.value) {
-          // console.log(record)
           record && record.handleToken(JSON.parse(message.value))
         }
         break

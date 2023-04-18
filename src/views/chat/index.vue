@@ -51,7 +51,7 @@ const chatStore = useChatStore()
 useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
-	= useChat()
+  = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 
 const { uuid } = route.params as { uuid: string }
@@ -127,8 +127,8 @@ async function onConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext
-		= conversationList.value[conversationList.value.length - 1]
-		  ?.conversationOptions
+    = conversationList.value[conversationList.value.length - 1]
+      ?.conversationOptions
 
   if (lastContext)
     options = { ...lastContext }
@@ -403,47 +403,31 @@ const footerClass = computed(() => {
     classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
   return classes
 })
-
-
+let i = 0;
 onMounted(() => {
   vsCodeUtils({
-    handleVscodeMessage: function handleVscodeMessage(selectedText: string) {
+    handleVscodeMessage: (selectedText: string) => {
       // const selectedText = localStorage.getItem('selectedText')
-      console.log(selectedText)
+
       if (selectedText) {
+        prompt.value = selectedText
         setTimeout(() => {
-          const questionListDom = document.querySelector('.question-list') as HTMLDivElement
-          const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-          if (questionListDom === null || questionListDom.innerText !== '新建问题') {
-            questionBtnDom.click()
-            prompt.value = selectedText
-          }
-          else {
-            prompt.value = selectedText
-          }
-          setTimeout(() => {
-            const askQuestionDom = document.querySelector('#ask-question') as HTMLDivElement
-            askQuestionDom.click()
-            localStorage.setItem('selectedText', '')
-            // 防止接口请求太快，导致点击被禁止
-            setTimeout(() => {
-              askQuestionDom.click()
-            }, 1500)
-          }, 300)
-          console.log('建立新的对话，塞入优化空间')
-        }, 300)
+          console.log('selectedText', selectedText, i)
+          let dom = document.querySelector('#ask-question') as any;
+          console.log(dom)
+          dom && dom.click()
+        }, 1000);
+
       }
-      scrollToBottom()
-      userStore.residueCountAPI()
+
     },
-    handleToken:(value:string)=>{
-      console.log(value)
+    handleToken: (value: string) => {
+      // console.log(value)
       authStore.setToken(value);
       userStore.residueCountAPI()
-
     }
   }); // 初始化与vscode通信
-  
+
 })
 
 
@@ -514,38 +498,34 @@ function correlationEvnet() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span v-if="isPlus" class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
+                <span v-if="isPlus"
+                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
                   Plus
                 </span>
               </div>
               <!-- <div class="no-data-info-tip">
-                {{ mossCount }}
-              </div> -->
+                      {{ mossCount }}
+                    </div> -->
               <!-- 功能展示列表 -->
               <div class="no-data-btns-list">
-                <div
-                  v-for="(item, index) in noDataInfo"
-                  :key="index"
-                  class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)"
-                >
-                  <img class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt="">
+                <div v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
+                  @click="noDataInfoEvent(index)">
+                  <img class="btns-item-img"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt="">
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
-                  <img class="btns-item-right-icon" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt="">
+                  <img class="btns-item-right-icon"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt="">
                 </div>
               </div>
             </div>
           </template>
           <template v-else>
             <div>
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
-                :inversion="item.inversion" :error="item.error" :loading="item.loading"
-                @regenerate="onRegenerate(index)"
-                @delete="handleDelete(index)"
-              />
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
+                :inversion="item.inversion" :error="item.error" :loading="item.loading" @regenerate="onRegenerate(index)"
+                @delete="handleDelete(index)" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -567,43 +547,26 @@ function correlationEvnet() {
           <div class="left-btns">
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }" 
-                src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能" @click="correlationEvnet">
+                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
+                  src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
+                  @click="correlationEvnet">
               </template>
               <span>是否开启上下文</span>
             </NPopover>
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能" @click="networkEvnet">
+                <img class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }"
+                  src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能"
+                  @click="networkEvnet">
               </template>
               <span>是否开启联网</span>
             </NPopover>
           </div>
-          <NInput
-            class="step1"
-            v-if="!prompt || prompt[0] !== '/'"
-            v-model:value="prompt"
-            autofocus
-            type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }"
-            :placeholder="placeholder"
-            clearable
-            @keydown="handleEnter"
-          />
-          <NSelect
-            v-if="prompt && prompt[0] === '/'"
-            v-model:value="prompt"
-            filterable
-            :show="true"
-            :autofocus="true"
-            :show-on-focus="true"
-            :autosize="{ minRows: 1, maxRows: 5 }"
-            placeholder="placeholder"
-            :options="selectOption"
-            clearable
-            label-field="key"
-            @keydown="handleEnter"
-          />
+          <NInput class="step1" v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" autofocus type="textarea"
+            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter" />
+          <NSelect v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
+            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
+            clearable label-field="key" @keydown="handleEnter" />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
@@ -615,7 +578,8 @@ function correlationEvnet() {
             </NButton>
             <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
               下次消耗{{
-                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}` : `${Math.ceil((prompt?.length || 0))}`
+                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}` :
+                `${Math.ceil((prompt?.length || 0))}`
               }}字符
             </div>
           </div>
@@ -627,13 +591,14 @@ function correlationEvnet() {
         <Login @loginSuccess="() => { handleSubmit() }" />
       </NCard>
     </NModal>
-   <Guide />
+    <Guide />
   </div>
 </template>
 
 <style lang="less">
 .no-data-info {
   margin-top: 5%;
+
   .no-data-info-title {
     position: relative;
     font-size: 2.25rem;
@@ -642,27 +607,31 @@ function correlationEvnet() {
     width: 100%;
     color: #6C7275;
     text-align: center;
+
     span {
       position: absolute;
       margin-left: 10px;
     }
   }
-	.no-data-info-tip {
-		font-size: 12px;
+
+  .no-data-info-tip {
+    font-size: 12px;
     line-height: 12px;
     font-weight: 600;
     width: 100%;
     color: #6C7275;
     text-align: center;
-		margin-top: 14px;
-		margin-bottom: -14px;
-	}
+    margin-top: 14px;
+    margin-bottom: -14px;
+  }
+
   .no-data-btns-list {
     width: 80%;
     max-width: 520px;
     height: auto;
     margin: 0 auto;
     margin-top: 40px;
+
     .no-data-btns-item {
       width: 100%;
       padding: 20px 20px;
@@ -673,20 +642,25 @@ function correlationEvnet() {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      cursor: pointer; /* 显示小手 */
+      cursor: pointer;
+
+      /* 显示小手 */
       &:hover {
         border: 1px solid #3c9af7;
       }
+
       .btns-item-img {
         width: 20px;
         height: 20px;
       }
+
       .btns-item-text {
         width: 400px;
         margin-left: 20px;
         margin-right: 20px;
         color: #c9c9c9;
       }
+
       .btns-item-right-icon {
         width: 20px;
         height: 20px;
@@ -726,166 +700,171 @@ function correlationEvnet() {
 }
 
 .btn-style {
-	width: 80px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .btn-style button {
-	width: 50px;
-	height: 30px;
+  width: 50px;
+  height: 30px;
 }
 
 .moss-text {
-	width: 80px;
-	font-size: 12px;
-	text-align: center;
-	margin-top: 2px;
-	white-space: nowrap;
+  width: 80px;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 .setting {
-	width: 100%;
-	padding: 0px 10px;
-	height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+  width: 100%;
+  padding: 0px 10px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-	.setting-main {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
+  .setting-main {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 
-		.setting-text {
-			color: #FF6666;
-			font-size: 10px;
-		}
+    .setting-text {
+      color: #FF6666;
+      font-size: 10px;
+    }
 
-		.setting-btn {
-			width: 20px;
-			height: 20px;
-			margin-right: 2px;
-		}
-	}
+    .setting-btn {
+      width: 20px;
+      height: 20px;
+      margin-right: 2px;
+    }
+  }
 }
 
 .line {
-	margin-top: 10px;
-	margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .color {
-	color: #f87171;
+  color: #f87171;
 }
 
 .tip-text {
-	font-size: 12px;
-	margin-top: 10px;
-	margin-bottom: 10px;
+  font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .mt10 {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 .notice-swipe {
-	height: 40px;
-	line-height: 40px;
+  height: 40px;
+  line-height: 40px;
 }
 
 .van-notice-bar {
-	background-color: #111114 !important;
-	color: #fff;
-	text-align: center;
+  background-color: #111114 !important;
+  color: #fff;
+  text-align: center;
 
-	.van-notice-bar__wrap {
-		display: flex;
-		justify-content: center;
+  .van-notice-bar__wrap {
+    display: flex;
+    justify-content: center;
 
-		.van-swipe-item {
-			color: #FF6666;
-			font-size: 12px;
-		}
-	}
+    .van-swipe-item {
+      color: #FF6666;
+      font-size: 12px;
+    }
+  }
 }
 
 .relevance-main {
-	display: flex;
-	justify-items: center;
-	color: #FF6666 !important;
-	align-items: center;
-	margin-right: 20px;
-	.relevance-main-text {
-		font-size: 12px;
-		margin-left: 6px;
-	}
+  display: flex;
+  justify-items: center;
+  color: #FF6666 !important;
+  align-items: center;
+  margin-right: 20px;
+
+  .relevance-main-text {
+    font-size: 12px;
+    margin-left: 6px;
+  }
 }
 
 :root:root {
-	--van-switch-size: 15px;
+  --van-switch-size: 15px;
 }
 
 .shake {
-	transform-origin: bottom bottom;
-	animation: animashake 1.5s .2s ease-in-out both infinite;
+  transform-origin: bottom bottom;
+  animation: animashake 1.5s .2s ease-in-out both infinite;
 }
 
 @keyframes animashake {
-	0%,
-	100% {
-			transform: rotate(0deg);
-			transform-origin: 50% 0;
-	}
 
-	5% {
-			transform: rotate(2deg);
-	}
+  0%,
+  100% {
+    transform: rotate(0deg);
+    transform-origin: 50% 0;
+  }
 
-	10%,
-	20%,
-	30% {
-			transform: rotate(-4deg);
-	}
+  5% {
+    transform: rotate(2deg);
+  }
 
-	15%,
-	25%,
-	35% {
-			transform: rotate(4deg);
-	}
+  10%,
+  20%,
+  30% {
+    transform: rotate(-4deg);
+  }
 
-	40% {
-			transform: rotate(-2deg);
-	}
+  15%,
+  25%,
+  35% {
+    transform: rotate(4deg);
+  }
 
-	45% {
-			transform: rotate(2deg);
-	}
+  40% {
+    transform: rotate(-2deg);
+  }
 
-	50% {
-			transform: rotate(0deg);
-	}
+  45% {
+    transform: rotate(2deg);
+  }
+
+  50% {
+    transform: rotate(0deg);
+  }
 }
 
 #scrollRef {
-	display: flex;
+  display: flex;
 }
 
 .left-btns {
-	width: 80px;
+  width: 80px;
   display: flex;
   align-items: center;
-	justify-content: space-around;
+  justify-content: space-around;
+
   .network-btn {
     width: 20px;
     height: 20px;
     cursor: pointer;
     filter: grayscale(0%);
+
     &:active {
-        transform: scale(.96);
+      transform: scale(.96);
     }
   }
+
   .network-btn-filter {
     filter: grayscale(90%);
   }
