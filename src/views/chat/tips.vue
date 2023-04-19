@@ -2,11 +2,11 @@
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
-import { sendToMsg } from '@/utils/vsCodeUtils';
+import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout } from '@/store/modules'
 
 const emit = defineEmits<Emit>()
-let useAuthStore = useAuthStoreWithout()
+const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const token = ref('')
@@ -29,7 +29,7 @@ function loginEvent(type: string) {
 const mossCount = computed(() => {
   const residueCount = userStore.userInfo.residueCount * 10
   return (localStorage.getItem('apiKey') !== '' && localStorage.getItem('apiKey') !== null)
-    ? '正在使用key'
+    ? '正在使用Key'
     : `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
 })
 // moss 描述
@@ -62,8 +62,9 @@ onMounted(() => {
         <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
       </p>
       <p v-else>
+        <span v-if="mossCount === '正在使用Key'">正在使用key</span>
         <span class="v-login" @click="loginEvent('login')">未登录</span>
-        {{ mossNoLogin }}
+        <span v-if="mossCount !== '正在使用Key'">{{ mossNoLogin }}</span>
       </p>
     </div>
   </div>

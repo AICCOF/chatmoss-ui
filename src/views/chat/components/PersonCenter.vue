@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification, NAvatar } from 'naive-ui'
-import { computed, onMounted, ref, h } from 'vue'
+import { NAvatar, NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification } from 'naive-ui'
+import { computed, h, onMounted, ref } from 'vue'
 // import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
 import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
 import { getKeyList, getPlusInfo, getSystemNotice } from '@/api/personCenter'
-import { Notice } from '@/store/modules/user/helper'
+import type { Notice } from '@/store/modules/user/helper'
 defineProps(['register'])
 const emits = defineEmits(['modifyPassword'])
 const userStore = useUserStore()
@@ -45,14 +45,14 @@ function updated() {
   getKeyListAPI()
   userStore.residueCountAPI()
 }
-const temNotice = computed(() => userStore.getNotices||[])
+const temNotice = computed(() => userStore.getNotices || [])
 async function getSystemNoticeAPI() {
   const res = await getSystemNotice<Notice[]>()
   personCenter.value.notices = res.data || []
 
-  let notice = personCenter.value.notices[personCenter.value.notices.length - 1]
+  const notice = personCenter.value.notices[personCenter.value.notices.length - 1]
 
-  if(res.data.length > temNotice.value.length){
+  if (res.data.length > temNotice.value.length) {
     notification.create({
       content: notice.content,
       meta: notice.createTime,
@@ -60,21 +60,17 @@ async function getSystemNoticeAPI() {
         h(NAvatar, {
           size: 'small',
           round: true,
-          src: notice.icon
+          src: notice.icon,
         }),
       duration: 5000,
-      keepAliveOnHover: true
+      keepAliveOnHover: true,
     })
     userStore.setNotices(res.data)
   }
-
-  
 }
 async function getPlusInfoAPI() {
   const res = await getPlusInfo()
   personCenter.value.score = res.data
-
-
 }
 async function getKeyListAPI() {
   const res = await getKeyList<any>()
@@ -114,21 +110,31 @@ function getTextNum() {
   return chatMossTextNum
 }
 
+// 主题
 function handleUpdateValue(chatmossTheme: string) {
   ms.info(chatmossTheme === 'dark' ? '深色模式开启' : '浅色模式开启')
   localStorage.setItem('chatmossTheme', chatmossTheme)
   appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
 }
-
 function getNSwitchValue(): any {
   return localStorage.getItem('chatmossTheme')
+}
+
+// 专业模式
+function handleModeValue(chatmossMode: string) {
+  // 专业模式 speciality
+  // 正常模式 normal
+  ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
+  localStorage.setItem('chatmossMode', chatmossMode)
+}
+function getNSwitchModeValue(): any {
+  return localStorage.getItem('chatmossMode')
 }
 </script>
 
 <template>
-  <BasicModal transform-origin="center" @register="register">
-    <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog"
-      aria-modal="true">
+  <BasicModal style="width:80%; max-width: 800px; min-width: 300px; max-height: 80vh; overflow: scroll;" preset="dialog" transform-origin="center" @register="register">
+    <NCard style="width: 100%;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">
           <span class="mr-4">用户名称：{{ nickname }}</span>
@@ -148,8 +154,10 @@ function getNSwitchValue(): any {
                 </template>
               </NButton>
             </template>
-            <div v-for="(item, index) of personCenter.notices" :key="index"
-              class="notice flex items-center justify-center">
+            <div
+              v-for="(item, index) of personCenter.notices" :key="index"
+              class="notice flex items-center justify-center"
+            >
               <div class="mr-4">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
@@ -175,7 +183,8 @@ function getNSwitchValue(): any {
         小提示：设置成功，并不代表您的key有余额或者正确
       </div>
       <div class="tip-text-input">
-        可以使用这个网址进行检查：https://chatkey.imiku.net/?apikey=
+        可以点击这个网址进行检查：
+        <a style="color: #0099FF;" href="https://open.aihao123.cn/" target="_blank">https://open.aihao123.cn/</a>
       </div>
       <NDivider />
       <div>
@@ -208,9 +217,28 @@ function getNSwitchValue(): any {
           ChatMoss主题设定
         </div>
         <div class="flex">
-          <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
-            @update:value="handleUpdateValue" />
+          <NSwitch
+            :default-value="getNSwitchValue()"
+            checked-value="dark"
+            unchecked-value="light"
+            @update:value="handleUpdateValue"
+          />
           {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
+        </div>
+      </div>
+      <NDivider />
+      <div>
+        <div class="title-h1">
+          回答模式（专业模式下会自动拼接 请详细回答，理论上回答内容更多）
+        </div>
+        <div class="flex">
+          <NSwitch
+            :default-value="getNSwitchModeValue()"
+            checked-value="speciality"
+            unchecked-value="normal"
+            @update:value="handleModeValue"
+          />
+          {{ getNSwitchModeValue() === 'speciality' ? '专业模式' : '正常模式' }}
         </div>
       </div>
     </NCard>

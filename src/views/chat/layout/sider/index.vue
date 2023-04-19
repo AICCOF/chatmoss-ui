@@ -74,23 +74,21 @@ async function toMossEvent() {
 // 设置内容
 const showSettingModal = ref(false)
 function handleSettingSubmit() {
-  if (!localStorage.getItem('SECRET_TOKEN')) {
-    ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
-    return
-  }
+  // if (!localStorage.getItem('SECRET_TOKEN')) {
+  //   ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
+  //   return
+  // }
   showSettingModal.value = true
 }
-
-
 
 // 个人中心
 function myHomeSubmit() {
   // chatStore.updateStore(JSON.parse())
   // return ;
-  if (!localStorage.getItem('SECRET_TOKEN')) {
-    ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
-    return
-  }
+  // if (!localStorage.getItem('SECRET_TOKEN')) {
+  //   ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
+  //   return
+  // }
   openModel()
   person.value.updated()
 }
@@ -171,7 +169,7 @@ const personCenter = ref<any>({
     },
     {
       title: '5美元key',
-      desc: '回答速度很慢',
+      desc: '3天质保',
       count: 39.90,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/zh.png',
     },
