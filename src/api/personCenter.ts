@@ -43,3 +43,10 @@ export function deleteKey<T>(key: string) {
     data: {},
   })
 }
+
+export function sendFeedback<T>(data: any) {
+  return post<T>({
+    url: `/luomacode-api/feedback`,
+    data,
+  })
+}

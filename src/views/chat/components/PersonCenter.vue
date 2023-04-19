@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification, NAvatar } from 'naive-ui'
-import { computed, onMounted, ref, h } from 'vue'
+import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification, NAvatar, NAlert } from 'naive-ui'
+import { computed, onMounted, ref, h, reactive } from 'vue'
 // import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
 import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
-import { getKeyList, getPlusInfo, getSystemNotice } from '@/api/personCenter'
+import { getKeyList, getPlusInfo, getSystemNotice, sendFeedback } from '@/api/personCenter'
 import { Notice } from '@/store/modules/user/helper'
-defineProps(['register'])
-const emits = defineEmits(['modifyPassword'])
+import { useModel } from './Modal/hooks/useModal'
+// let props = defineProps(['register'])
+const emits = defineEmits(['modifyPassword', 'register'])
 const userStore = useUserStore()
 const notification = useNotification()
+
+const [registerModal, { openModel,closeModel }] = useModel()
+
 
 const ms = useMessage()
 const appStore = useAppStore()
 
-// const plusEndTime = computed(() => {
-//   return dayjs(userStore.userInfo.user.plusEndTime).format('YYYY-MM-DD HH:mm:ss')
-// })
 const nickname = computed(() => {
   return userStore.userInfo.user.nickname
 })
-// const notices = ref<any>([])
 const personCenter = ref<any>({
   score: 0,
   notices: [],
@@ -45,14 +45,14 @@ function updated() {
   getKeyListAPI()
   userStore.residueCountAPI()
 }
-const temNotice = computed(() => userStore.getNotices||[])
+const temNotice = computed(() => userStore.getNotices || [])
 async function getSystemNoticeAPI() {
   const res = await getSystemNotice<Notice[]>()
   personCenter.value.notices = res.data || []
 
   let notice = personCenter.value.notices[personCenter.value.notices.length - 1]
 
-  if(res.data.length > temNotice.value.length){
+  if (res.data.length > temNotice.value.length) {
     notification.create({
       content: notice.content,
       meta: notice.createTime,
@@ -68,7 +68,7 @@ async function getSystemNoticeAPI() {
     userStore.setNotices(res.data)
   }
 
-  
+
 }
 async function getPlusInfoAPI() {
   const res = await getPlusInfo()
@@ -123,98 +123,161 @@ function handleUpdateValue(chatmossTheme: string) {
 function getNSwitchValue(): any {
   return localStorage.getItem('chatmossTheme')
 }
+
+const feedBackForm = reactive({
+  title: '',
+  content: '',
+})
+
+async function sendFeedbackEvent() {
+  await sendFeedback(feedBackForm)
+
+  closeModel();
+}
 </script>
 
+
 <template>
-  <BasicModal transform-origin="center" @register="register">
-    <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog"
-      aria-modal="true">
-      <div class="flex items-center justify-between">
-        <div class="flex">
-          <span class="mr-4">用户名称：{{ nickname }}</span>
-          <!-- <span>{{ plusEndTime }}到期</span> -->
-        </div>
-        <div class="flex">
-          <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
-            修改密码
-          </NButton>
-          <NPopover style="max-height: 340px" trigger="click" scrollable>
-            <template #trigger>
-              <NButton quaternary circle size="tiny">
-                <template #icon>
-                  <span class="">
-                    <SvgIcon icon="mdi:message-badge-outline" />
-                  </span>
-                </template>
-              </NButton>
-            </template>
-            <div v-for="(item, index) of personCenter.notices" :key="index"
-              class="notice flex items-center justify-center">
-              <div class="mr-4">
-                <img :src="item.icon" style="width:30px" class="circle" alt="">
+  <div>
+    <BasicModal transform-origin="center" key="2" @register="(...args: any[]) => emits('register', ...args)">
+      <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog"
+        aria-modal="true">
+        <div class="flex items-center justify-between">
+          <div class="flex">
+            <span class="mr-4">用户名称：{{ nickname }}</span>
+            <!-- <span>{{ plusEndTime }}到期</span> -->
+          </div>
+          <div class="flex">
+            <NButton type="primary" size="tiny" quaternary @click="openModel()">
+              用户反馈
+            </NButton>
+            <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
+              修改密码
+            </NButton>
+            <NPopover style="max-height: 340px" trigger="click" scrollable>
+              <template #trigger>
+                <NButton quaternary circle size="tiny">
+                  <template #icon>
+                    <span class="">
+                      <SvgIcon icon="mdi:message-badge-outline" />
+                    </span>
+                  </template>
+                </NButton>
+              </template>
+              <div v-for="(item, index) of personCenter.notices" :key="index"
+                class="notice flex items-center justify-center">
+                <div class="mr-4">
+                  <img :src="item.icon" style="width:30px" class="circle" alt="">
+                </div>
+                <div>
+                  <div> {{ item.content }}</div>
+                  <div>{{ item.createTime }}</div>
+                </div>
               </div>
-              <div>
-                <div> {{ item.content }}</div>
-                <div>{{ item.createTime }}</div>
-              </div>
-            </div>
-          </NPopover>
+            </NPopover>
+          </div>
         </div>
-      </div>
-      <NDivider />
-      <div class="title-h1">
-        ApiKeys设置
-      </div>
-      <div class="flex">
-        <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
-        <NButton type="primary" ghost @click="settingBtn">
-          确定
-        </NButton>
-      </div>
-      <div class="tip-text-input">
-        小提示：设置成功，并不代表您的key有余额或者正确
-      </div>
-      <div class="tip-text-input">
-        可以使用这个网址进行检查：https://chatkey.imiku.net/?apikey=
-      </div>
-      <NDivider />
-      <div>
-        <span class="title-h2">本机累计使用字符数</span>：{{ getTextNum() }} 字符
-      </div>
-      <div class="tip-text-input">
-        注意：OpenAI官方限制了5美元key的速度，现在回答需要好几十秒
-      </div>
-      <div class="tip-text-input">
-        使用字符包速度不受限制（因为字符包使用的是120美金的key）
-      </div>
-      <NDivider />
-      <div>
+        <NDivider />
         <div class="title-h1">
-          上下文条数设置（建议30条）
+          ApiKeys设置
         </div>
         <div class="flex">
-          <NInput v-model:value="chatMossPiecesNumber" class="mr-2" type="text" placeholder="请设置上下文对话条数（官方建议是30次对话）" />
-          <NButton type="primary" ghost @click="chatMossPiecesNumberEvent">
+          <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
+          <NButton type="primary" ghost @click="settingBtn">
             确定
           </NButton>
         </div>
         <div class="tip-text-input">
-          设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
+          小提示：设置成功，并不代表您的key有余额或者正确
         </div>
-      </div>
-      <NDivider />
-      <div>
-        <div class="title-h1">
-          ChatMoss主题设定
+        <div class="tip-text-input">
+          可以使用这个网址进行检查：https://chatkey.imiku.net/?apikey=
         </div>
-        <div class="flex">
-          <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
-            @update:value="handleUpdateValue" />
-          {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
+        <NDivider />
+        <div>
+          <span class="title-h2">本机累计使用字符数</span>：{{ getTextNum() }} 字符
         </div>
-      </div>
-    </NCard>
-  </BasicModal>
+        <div class="tip-text-input">
+          注意：OpenAI官方限制了5美元key的速度，现在回答需要好几十秒
+        </div>
+        <div class="tip-text-input">
+          使用字符包速度不受限制（因为字符包使用的是120美金的key）
+        </div>
+        <NDivider />
+        <div>
+          <div class="title-h1">
+            上下文条数设置（建议30条）
+          </div>
+          <div class="flex">
+            <NInput v-model:value="chatMossPiecesNumber" class="mr-2" type="text" placeholder="请设置上下文对话条数（官方建议是30次对话）" />
+            <NButton type="primary" ghost @click="chatMossPiecesNumberEvent">
+              确定
+            </NButton>
+          </div>
+          <div class="tip-text-input">
+            设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
+          </div>
+        </div>
+        <NDivider />
+        <div>
+          <div class="title-h1">
+            ChatMoss主题设定
+          </div>
+          <div class="flex">
+            <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
+              @update:value="handleUpdateValue" />
+            {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
+          </div>
+        </div>
+      </NCard>
+    </BasicModal>
+    <BasicModal transform-origin="center" key="2" @register="registerModal">
+      <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="用户反馈" :bordered="false" size="huge" role="dialog"
+        aria-modal="true">
+        <NForm ref="formRef" :model="feedBackForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">
+
+          <NFormItem label="标题" path="title" :rule="{
+            required: true,
+            message: '请输入标题',
+            trigger: ['input', 'blur'],
+          }">
+            <NInput v-model:value="feedBackForm.title" placeholder="请输入标题" clearable />
+          </NFormItem>
+          <NFormItem label="内容"  path="content" :rule="{
+            required: true,
+            message: '请输入内容（200字以内）',
+            trigger: ['input', 'blur'],
+          }">
+            <NInput class="mt-4 mb-2" v-model:value="feedBackForm.content" placeholder="请输入内容（2000字以内）" type="textarea"
+            style="border-radius: 0;height: 200px;" />
+
+
+            <div class="mb-4">
+               <n-alert title="提示" type="info">
+                  <div>
+                     1.反馈意见可建issues：https://github.com/AICCOF/chatmoss-ui/
+                  </div>
+                  <div>
+                     2.可使用第三方文档。如：掘金，语雀等。。。
+                  </div>
+                </n-alert>
+             
+            </div>
+
+          </NFormItem>
+
+          <NFormItem >
+            <NSpace >
+              <NButton attr-type="button"   @click="sendFeedbackEvent">
+                提交
+              </NButton>
+            </NSpace>
+          </NFormItem>
+        </NForm>
+      </NCard>
+    </BasicModal>
+
+  </div>
 </template>
 
 <style lang="less">

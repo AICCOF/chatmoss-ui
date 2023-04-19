@@ -3,9 +3,9 @@ import { ModalMethods } from "./types";
 export function useModel() {
   let model: ModalMethods ;
   function register(methods: ModalMethods) {
-
     model = methods;
   }
+ 
 
   return [register,{
 

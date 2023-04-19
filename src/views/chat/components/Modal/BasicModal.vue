@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NModal } from 'naive-ui'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const emits = defineEmits(['register'])
 const showModal = ref(false)
@@ -11,8 +11,9 @@ function openModel() {
 function closeModel() {
   showModal.value = false
 }
-
-emits('register', { openModel, closeModel })
+onMounted(() => {
+  emits('register', { openModel, closeModel })
+})
 </script>
 
 <template>
