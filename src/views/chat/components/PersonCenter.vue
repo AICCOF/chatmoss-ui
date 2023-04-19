@@ -13,7 +13,7 @@ const emits = defineEmits(['modifyPassword', 'register'])
 const userStore = useUserStore()
 const notification = useNotification()
 
-const [registerModal, { openModel,closeModel }] = useModel()
+const [registerModal, { openModel, closeModel }] = useModel()
 
 
 const ms = useMessage()
@@ -50,7 +50,7 @@ async function getSystemNoticeAPI() {
   const res = await getSystemNotice<Notice[]>()
   personCenter.value.notices = res.data || []
 
-  let notice = personCenter.value.notices[personCenter.value.notices.length - 1]
+  const notice = personCenter.value.notices[personCenter.value.notices.length - 1]
 
   if (res.data.length > temNotice.value.length) {
     notification.create({
@@ -60,10 +60,10 @@ async function getSystemNoticeAPI() {
         h(NAvatar, {
           size: 'small',
           round: true,
-          src: notice.icon
+          src: notice.icon,
         }),
       duration: 5000,
-      keepAliveOnHover: true
+      keepAliveOnHover: true,
     })
     userStore.setNotices(res.data)
   }
@@ -73,8 +73,6 @@ async function getSystemNoticeAPI() {
 async function getPlusInfoAPI() {
   const res = await getPlusInfo()
   personCenter.value.score = res.data
-
-
 }
 async function getKeyListAPI() {
   const res = await getKeyList<any>()
@@ -114,12 +112,12 @@ function getTextNum() {
   return chatMossTextNum
 }
 
+// 主题
 function handleUpdateValue(chatmossTheme: string) {
   ms.info(chatmossTheme === 'dark' ? '深色模式开启' : '浅色模式开启')
   localStorage.setItem('chatmossTheme', chatmossTheme)
   appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
 }
-
 function getNSwitchValue(): any {
   return localStorage.getItem('chatmossTheme')
 }
@@ -132,25 +130,34 @@ const feedBackForm = reactive({
 async function sendFeedbackEvent() {
   await sendFeedback(feedBackForm)
 
+  ms.success('感谢你的反馈。');
   closeModel();
+}
+// 专业模式
+function handleModeValue(chatmossMode: string) {
+  // 专业模式 speciality
+  // 正常模式 normal
+  ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
+  localStorage.setItem('chatmossMode', chatmossMode)
+}
+function getNSwitchModeValue(): any {
+  return localStorage.getItem('chatmossMode')
 }
 </script>
 
 
 <template>
-  <div>
-    <BasicModal transform-origin="center" key="2" @register="(...args: any[]) => emits('register', ...args)">
-      <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="" :bordered="false" size="huge" role="dialog"
-        aria-modal="true">
+  <BasicModal transform-origin="center" key="2" @register="(...args: any[]) => emits('register', ...args)">
+   <NCard style="width: 100%;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
         <div class="flex items-center justify-between">
           <div class="flex">
             <span class="mr-4">用户名称：{{ nickname }}</span>
             <!-- <span>{{ plusEndTime }}到期</span> -->
           </div>
           <div class="flex">
-            <NButton type="primary" size="tiny" quaternary @click="openModel()">
-              用户反馈
-            </NButton>
+             <NButton type="primary" size="tiny" quaternary @click="openModel()">
+                用户反馈
+             </NButton>
             <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
               修改密码
             </NButton>
@@ -164,8 +171,10 @@ async function sendFeedbackEvent() {
                   </template>
                 </NButton>
               </template>
-              <div v-for="(item, index) of personCenter.notices" :key="index"
-                class="notice flex items-center justify-center">
+              <div
+                v-for="(item, index) of personCenter.notices" :key="index"
+                class="notice flex items-center justify-center"
+              >
                 <div class="mr-4">
                   <img :src="item.icon" style="width:30px" class="circle" alt="">
                 </div>
@@ -191,7 +200,8 @@ async function sendFeedbackEvent() {
           小提示：设置成功，并不代表您的key有余额或者正确
         </div>
         <div class="tip-text-input">
-          可以使用这个网址进行检查：https://chatkey.imiku.net/?apikey=
+          可以点击这个网址进行检查：
+          <a style="color: #0099FF;" href="https://open.aihao123.cn/" target="_blank">https://open.aihao123.cn/</a>
         </div>
         <NDivider />
         <div>
@@ -224,60 +234,77 @@ async function sendFeedbackEvent() {
             ChatMoss主题设定
           </div>
           <div class="flex">
-            <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
-              @update:value="handleUpdateValue" />
+            <NSwitch
+              :default-value="getNSwitchValue()"
+              checked-value="dark"
+              unchecked-value="light"
+              @update:value="handleUpdateValue"
+            />
             {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
           </div>
         </div>
+        <NDivider />
+        <div>
+          <div class="title-h1">
+            回答模式（专业模式下会自动拼接 请详细回答，理论上回答内容更多）
+          </div>
+          <div class="flex">
+            <NSwitch
+              :default-value="getNSwitchModeValue()"
+              checked-value="speciality"
+              unchecked-value="normal"
+              @update:value="handleModeValue"
+            />
+            {{ getNSwitchModeValue() === 'speciality' ? '专业模式' : '正常模式' }}
+          </div>
+        </div>
       </NCard>
-    </BasicModal>
-    <BasicModal transform-origin="center" key="2" @register="registerModal">
-      <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="用户反馈" :bordered="false" size="huge" role="dialog"
-        aria-modal="true">
-        <NForm ref="formRef" :model="feedBackForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">
+  </BasicModal>
+  <BasicModal transform-origin="center" key="2" @register="registerModal">
+    <NCard style="width:80%;max-width: 600px; min-width: 350px;" title="用户反馈" :bordered="false" size="huge" role="dialog"
+      aria-modal="true">
+      <NForm ref="formRef" :model="feedBackForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">
 
-          <NFormItem label="标题" path="title" :rule="{
-            required: true,
-            message: '请输入标题',
-            trigger: ['input', 'blur'],
-          }">
-            <NInput v-model:value="feedBackForm.title" placeholder="请输入标题" clearable />
-          </NFormItem>
-          <NFormItem label="内容"  path="content" :rule="{
-            required: true,
-            message: '请输入内容（200字以内）',
-            trigger: ['input', 'blur'],
-          }">
-            <NInput class="mt-4 mb-2" v-model:value="feedBackForm.content" placeholder="请输入内容（2000字以内）" type="textarea"
+        <NFormItem label="标题" path="title" :rule="{
+          required: true,
+          message: '请输入标题',
+          trigger: ['input', 'blur'],
+        }">
+          <NInput v-model:value="feedBackForm.title" placeholder="请输入标题" clearable />
+        </NFormItem>
+        <NFormItem label="内容" path="content" :rule="{
+          required: true,
+          message: '请输入内容（200字以内）',
+          trigger: ['input', 'blur'],
+        }">
+          <NInput class="mt-4 mb-2" v-model:value="feedBackForm.content" placeholder="请输入内容（2000字以内）" type="textarea"
             style="border-radius: 0;height: 200px;" />
 
 
-            <div class="mb-4">
-               <n-alert title="提示" type="info">
-                  <div>
-                     1.反馈意见可建issues：https://github.com/AICCOF/chatmoss-ui/
-                  </div>
-                  <div>
-                     2.可使用第三方文档。如：掘金，语雀等。。。
-                  </div>
-                </n-alert>
-             
-            </div>
+          <div class="mb-4">
+            <n-alert title="提示" type="info">
+              <div>
+                1.反馈意见可建issues：https://github.com/AICCOF/chatmoss-ui/
+              </div>
+              <div>
+                2.可使用第三方文档。如：掘金，语雀等。。。
+              </div>
+            </n-alert>
 
-          </NFormItem>
+          </div>
 
-          <NFormItem >
-            <NSpace >
-              <NButton attr-type="button"   @click="sendFeedbackEvent">
-                提交
-              </NButton>
-            </NSpace>
-          </NFormItem>
-        </NForm>
-      </NCard>
-    </BasicModal>
+        </NFormItem>
 
-  </div>
+        <NFormItem>
+          <NSpace>
+            <NButton attr-type="button" @click="sendFeedbackEvent">
+              提交
+            </NButton>
+          </NSpace>
+        </NFormItem>
+      </NForm>
+    </NCard>
+  </BasicModal>
 </template>
 
 <style lang="less">

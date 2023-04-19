@@ -33,7 +33,7 @@ export function fetchChatAPIProcess<T = any>(
     data: {
       prompt: params.prompt,
       options: {},
-      apiKey: localStorage.getItem('SECRET_TOKEN') ? localStorage.getItem('apiKey') : '',
+      apiKey: localStorage.getItem('apiKey') ? localStorage.getItem('apiKey') : '',
     },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
