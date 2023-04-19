@@ -10,8 +10,9 @@ import Guide from './guide.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore } from '@/store'
-import { fetchChatAPIProcess, networkSearch } from '@/api'
+import { auth, fetchChatAPIProcess, networkSearch, paper } from '@/api'
 import Login from '@/views/login/index.vue'
+import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
@@ -19,6 +20,7 @@ const authStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const showModal = ref(false)
+const showPaper = ref(false)
 const appStore = useAppStore()
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
@@ -55,7 +57,7 @@ const chatStore = useChatStore()
 useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
-  = useChat()
+	= useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 
 const { uuid } = route.params as { uuid: string }
@@ -131,8 +133,8 @@ async function onConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext
-    = conversationList.value[conversationList.value.length - 1]
-      ?.conversationOptions
+		= conversationList.value[conversationList.value.length - 1]
+		  ?.conversationOptions
 
   if (lastContext)
     options = { ...lastContext }
@@ -491,6 +493,45 @@ function correlationEvnet() {
   else
     ms.info('已关闭上下文功能')
 }
+
+const paperList = ref<Chat.paper[]>([])
+const nowPaperIndex = ref<number>(0)
+async function startTutorial() {
+  nowPaperIndex.value = 0
+  if (paperList.value.length)
+    return showPaper.value = true
+
+  try {
+    const { data } = await paper<Chat.paper[]>()
+    paperList.value = data
+    showPaper.value = true
+  }
+  catch (error: any) {
+    if (error.code === 204) {
+      // error.msg
+      ms.error('请登录后再开始进行通关认证')
+      // 代表未登录
+      showModal.value = true
+      return
+    }
+    ms.error(error.msg || error.message)
+  }
+}
+
+async function onSuccessAuth() {
+  try {
+    await auth()
+    ms.success('恭喜您完成了ChatMoss的初级认证，200000字符额度已下发到您的账户，愿AI为您的工作带来帮助，感谢您的使用和支持~，3秒后自动关闭弹窗')
+  }
+  catch (error: any) {
+    ms.error(error.msg || error.message)
+  }
+  finally {
+    setTimeout(() => {
+      showPaper.value = false
+    }, 3000)
+  }
+}
 </script>
 
 <template>
@@ -511,8 +552,8 @@ function correlationEvnet() {
                 </span>
               </div>
               <!-- <div class="no-data-info-tip">
-                      {{ mossCount }}
-                    </div> -->
+	                      {{ mossCount }}
+	                    </div> -->
               <!-- 功能展示列表 -->
               <div class="no-data-btns-list">
                 <div
@@ -555,6 +596,10 @@ function correlationEvnet() {
         </div>
       </div>
     </main>
+    {{ userStore.userInfo.user.authed }}
+    <div v-if="!userStore.userInfo.user.authed" class="text-center">
+      <span class="v-auth cursor-pointer" @click="startTutorial">通关ChatMoss使用教程，获得20w字符奖励</span>
+    </div>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex items-center justify-between space-x-2">
@@ -614,282 +659,293 @@ function correlationEvnet() {
         <Login @loginSuccess="() => { handleSubmit() }" />
       </NCard>
     </NModal>
+    <NModal v-model:show="showPaper" transform-origin="center">
+      <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
+        <Paper v-model:sort="nowPaperIndex" :paper-list="paperList" @success="onSuccessAuth" />
+      </NCard>
+    </NModal>
     <Guide />
   </div>
 </template>
 
 <style lang="less">
 .no-data-info {
-  margin-top: 5%;
+	margin-top: 5%;
 
-  .no-data-info-title {
-    position: relative;
-    font-size: 2.25rem;
-    line-height: 2.5rem;
-    font-weight: 600;
-    width: 100%;
-    color: #6C7275;
-    text-align: center;
+	.no-data-info-title {
+		position: relative;
+		font-size: 2.25rem;
+		line-height: 2.5rem;
+		font-weight: 600;
+		width: 100%;
+		color: #6C7275;
+		text-align: center;
 
-    span {
-      position: absolute;
-      margin-left: 10px;
-    }
-  }
+		span {
+			position: absolute;
+			margin-left: 10px;
+		}
+	}
 
-  .no-data-info-tip {
-    font-size: 12px;
-    line-height: 12px;
-    font-weight: 600;
-    width: 100%;
-    color: #6C7275;
-    text-align: center;
-    margin-top: 14px;
-    margin-bottom: -14px;
-  }
+	.no-data-info-tip {
+		font-size: 12px;
+		line-height: 12px;
+		font-weight: 600;
+		width: 100%;
+		color: #6C7275;
+		text-align: center;
+		margin-top: 14px;
+		margin-bottom: -14px;
+	}
 
-  .no-data-btns-list {
-    width: 80%;
-    max-width: 520px;
-    height: auto;
-    margin: 0 auto;
-    margin-top: 40px;
+	.no-data-btns-list {
+		width: 80%;
+		max-width: 520px;
+		height: auto;
+		margin: 0 auto;
+		margin-top: 40px;
 
-    .no-data-btns-item {
-      width: 100%;
-      padding: 20px 20px;
-      height: auto;
-      border: 1px solid #343839;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
+		.no-data-btns-item {
+			width: 100%;
+			padding: 20px 20px;
+			height: auto;
+			border: 1px solid #343839;
+			border-radius: 6px;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
 
-      /* 显示小手 */
-      &:hover {
-        border: 1px solid #3c9af7;
-      }
+			/* 显示小手 */
+			&:hover {
+				border: 1px solid #3c9af7;
+			}
 
-      .btns-item-img {
-        width: 20px;
-        height: 20px;
-      }
+			.btns-item-img {
+				width: 20px;
+				height: 20px;
+			}
 
-      .btns-item-text {
-        width: 400px;
-        margin-left: 20px;
-        margin-right: 20px;
-        color: #c9c9c9;
-      }
+			.btns-item-text {
+				width: 400px;
+				margin-left: 20px;
+				margin-right: 20px;
+				color: #c9c9c9;
+			}
 
-      .btns-item-right-icon {
-        width: 20px;
-        height: 20px;
-      }
-    }
-  }
+			.btns-item-right-icon {
+				width: 20px;
+				height: 20px;
+			}
+		}
+	}
 }
 
 .tip {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 5px;
 }
 
 .sustain {
-  height: 20px;
-  font-size: 0.75rem;
-  letter-spacing: 0.2rem;
-  color: #666;
-  width: auto;
-  text-align: center;
-  margin-right: 20px;
+	height: 20px;
+	font-size: 0.75rem;
+	letter-spacing: 0.2rem;
+	color: #666;
+	width: auto;
+	text-align: center;
+	margin-right: 20px;
 }
 
 .n-input.n-input--textarea {
-  border-radius: 50px;
+	border-radius: 50px;
 }
 
 /* 隐藏滚动进度条 */
 ::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 .moss-btns {
-  position: relative;
+	position: relative;
 }
 
 .btn-style {
-  width: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	width: 80px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .btn-style button {
-  width: 50px;
-  height: 30px;
+	width: 50px;
+	height: 30px;
 }
 
 .moss-text {
-  width: 80px;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2px;
-  white-space: nowrap;
+	width: 80px;
+	font-size: 12px;
+	text-align: center;
+	margin-top: 2px;
+	white-space: nowrap;
 }
 
 .setting {
-  width: 100%;
-  padding: 0px 10px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+	width: 100%;
+	padding: 0px 10px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 
-  .setting-main {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+	.setting-main {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
 
-    .setting-text {
-      color: #FF6666;
-      font-size: 10px;
-    }
+		.setting-text {
+			color: #FF6666;
+			font-size: 10px;
+		}
 
-    .setting-btn {
-      width: 20px;
-      height: 20px;
-      margin-right: 2px;
-    }
-  }
+		.setting-btn {
+			width: 20px;
+			height: 20px;
+			margin-right: 2px;
+		}
+	}
 }
 
 .line {
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .color {
-  color: #f87171;
+	color: #f87171;
 }
 
 .tip-text {
-  font-size: 12px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+	font-size: 12px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .mt10 {
-  margin-top: 10px;
+	margin-top: 10px;
 }
 
 .notice-swipe {
-  height: 40px;
-  line-height: 40px;
+	height: 40px;
+	line-height: 40px;
 }
 
 .van-notice-bar {
-  background-color: #111114 !important;
-  color: #fff;
-  text-align: center;
+	background-color: #111114 !important;
+	color: #fff;
+	text-align: center;
 
-  .van-notice-bar__wrap {
-    display: flex;
-    justify-content: center;
+	.van-notice-bar__wrap {
+		display: flex;
+		justify-content: center;
 
-    .van-swipe-item {
-      color: #FF6666;
-      font-size: 12px;
-    }
-  }
+		.van-swipe-item {
+			color: #FF6666;
+			font-size: 12px;
+		}
+	}
+}
+
+.v-auth {
+	color: #FF6666;
+	text-decoration: underline;
+	font-size: 12px;
 }
 
 .relevance-main {
-  display: flex;
-  justify-items: center;
-  color: #FF6666 !important;
-  align-items: center;
-  margin-right: 20px;
+	display: flex;
+	justify-items: center;
+	color: #FF6666 !important;
+	align-items: center;
+	margin-right: 20px;
 
-  .relevance-main-text {
-    font-size: 12px;
-    margin-left: 6px;
-  }
+	.relevance-main-text {
+		font-size: 12px;
+		margin-left: 6px;
+	}
 }
 
 :root:root {
-  --van-switch-size: 15px;
+	--van-switch-size: 15px;
 }
 
 .shake {
-  transform-origin: bottom bottom;
-  animation: animashake 1.5s .2s ease-in-out both infinite;
+	transform-origin: bottom bottom;
+	animation: animashake 1.5s .2s ease-in-out both infinite;
 }
 
 @keyframes animashake {
 
-  0%,
-  100% {
-    transform: rotate(0deg);
-    transform-origin: 50% 0;
-  }
+	0%,
+	100% {
+		transform: rotate(0deg);
+		transform-origin: 50% 0;
+	}
 
-  5% {
-    transform: rotate(2deg);
-  }
+	5% {
+		transform: rotate(2deg);
+	}
 
-  10%,
-  20%,
-  30% {
-    transform: rotate(-4deg);
-  }
+	10%,
+	20%,
+	30% {
+		transform: rotate(-4deg);
+	}
 
-  15%,
-  25%,
-  35% {
-    transform: rotate(4deg);
-  }
+	15%,
+	25%,
+	35% {
+		transform: rotate(4deg);
+	}
 
-  40% {
-    transform: rotate(-2deg);
-  }
+	40% {
+		transform: rotate(-2deg);
+	}
 
-  45% {
-    transform: rotate(2deg);
-  }
+	45% {
+		transform: rotate(2deg);
+	}
 
-  50% {
-    transform: rotate(0deg);
-  }
+	50% {
+		transform: rotate(0deg);
+	}
 }
 
 #scrollRef {
-  display: flex;
+	display: flex;
 }
 
 .left-btns {
-  width: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+	width: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
 
-  .network-btn {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    filter: grayscale(0%);
+	.network-btn {
+		width: 20px;
+		height: 20px;
+		cursor: pointer;
+		filter: grayscale(0%);
 
-    &:active {
-      transform: scale(.96);
-    }
-  }
+		&:active {
+			transform: scale(.96);
+		}
+	}
 
-  .network-btn-filter {
-    filter: grayscale(90%);
-  }
+	.network-btn-filter {
+		filter: grayscale(90%);
+	}
 }
 </style>

@@ -1,5 +1,5 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
-import { post } from '@/utils/request'
+import { get, post } from '@/utils/request'
 import { getToken } from '@/store/modules/auth/helper'
 
 export function fetchChatAPI<T = any>(
@@ -126,6 +126,20 @@ export function resetPwd<T>(data: {
 export function residueCount<T>() {
   return post<T>({
     url: '/luomacode-api/chat/getUserInfo',
+    data: {},
+  })
+}
+
+export function paper<T>() {
+  return get<T>({
+    url: '/luomacode-api/authed/paper',
+    data: {},
+  })
+}
+
+export function auth<T>() {
+  return post<T>({
+    url: '/luomacode-api/authed',
     data: {},
   })
 }
