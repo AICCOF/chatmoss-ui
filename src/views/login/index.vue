@@ -13,7 +13,7 @@ import { reactive, ref } from 'vue'
 import { useAuthStoreWithout } from '@/store'
 import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
 import { sendToMsg } from '@/utils/vsCodeUtils';
-import dragVerifyImgChip from "@/components/dragVerifyImgChip.vue";
+import dragVerifyImgChip from "../../components/dragVerifyImgChip.vue";
 import { staticData } from '@/store/static';
 
 interface Emit {
