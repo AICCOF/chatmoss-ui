@@ -216,11 +216,11 @@ function buyEvent(item: any) {
           </div>
           <Tips @login="showModelEvent" />
         </div>
-        <NModal v-model:show="showSettingModal" preset="dialog" style="width:80%;max-width: 600px; min-width: 350px;">
+        <NModal v-model:show="showSettingModal" preset="dialog" style="height: 80vh; overflow: scroll; width: 80%;">
           <NCard title="ChatMoss商店" :bordered="false" size="huge" role="dialog" aria-modal="true">
             <div>
               <div class="title-h1">
-                字符包兑换码
+                字符包兑换码（登录后才能兑换哦~）
               </div>
               <div class="flex">
                 <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的字符包兑换码" />

@@ -45,7 +45,8 @@ if (!localStorage.getItem('isCorrelation'))
   localStorage.setItem('isCorrelation', 'true')
 
 const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
-const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
+// const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
+const showNetwork = ref(false)
 
 let controller = new AbortController()
 
@@ -98,6 +99,18 @@ function handleSubmit() {
   onConversation()
 }
 
+// 检测是否输出英文
+const engList = [
+  'Hello! How can I assist you today?',
+  'Hello! how can I assist you today?',
+  'Hello! How may I assist you today?',
+  'Hello! I\'m happy to help. How can I assist you today?',
+  'Hello! I\'m happy to help. What can I assist you with today?',
+  'Hello! I\'m ready to help. What\'s your question?',
+  'Sure, I\'m here to help. How can I assist you today?',
+  'How can I help you today?',
+]
+
 // 计算消耗的字符数量
 function addTextNum(num: any) {
   console.log('num', num)
@@ -105,6 +118,20 @@ function addTextNum(num: any) {
   if (!chatMossTextNum)
     chatMossTextNum = '0'
   localStorage.setItem('chatMossTextNum', num + Number(chatMossTextNum))
+}
+
+function compressCode(codeString: any) {
+  // 删除多余空格、制表符、回车符和注释等内容
+  const compressedCode = codeString
+    .replace(/\/\*[\s\S]*?\*\//g, '') // 删除多行注释
+    .replace(/\/\/.*/g, '') // 删除单行注释
+    .replace(/\n/g, '') // 删除换行符
+    .replace(/\r/g, '') // 删除回车符
+    .replace(/\t/g, '') // 删除制表符
+
+  // 转换为单行格式
+  const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
+  return oneLineCode
 }
 
 async function onConversation() {
@@ -170,13 +197,14 @@ async function onConversation() {
     if (localStorage.getItem('chatmossMode') === 'speciality')
       texts = `${texts} 请详细回答`
 
-    await fetchChatAPIProcess<Chat.ConversationResponse>({
+    texts = compressCode(texts)
+
+    const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
       options,
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
-
         const { responseText } = xhr
         // Always process the final line
         const lastIndex = responseText.lastIndexOf('\n')
@@ -205,6 +233,12 @@ async function onConversation() {
         }
       },
     })
+
+    // 超出token提示
+    const tip1 = data.split('}\n')
+    if (engList.includes(JSON.parse(tip1[tip1.length - 1]).text))
+      ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
+
     addTextNum(texts.length)
     scrollToBottom()
   }
@@ -288,7 +322,10 @@ async function onRegenerate(index: number) {
   try {
     if (localStorage.getItem('chatmossMode') === 'speciality')
       message = `${message} 请详细回答`
-    await fetchChatAPIProcess<Chat.ConversationResponse>({
+
+    message = compressCode(message)
+
+    const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: message,
       options,
       signal: controller.signal,
@@ -320,6 +357,12 @@ async function onRegenerate(index: number) {
         }
       },
     })
+
+    // 超出token提示
+    const tip1 = data.split('}\n')
+    if (engList.includes(JSON.parse(tip1[tip1.length - 1]).text))
+      ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
+
     addTextNum(message.length)
   }
   catch (error: any) {
@@ -449,41 +492,42 @@ function getIsApiKey() {
 
 const noDataInfo = [
   {
-    text: '回答内容是英文，新建问题解决',
+    text: '免费使用：个人中心不用登录就可以设置Key呦~',
+  },
+  {
+    text: '回答内容是英文，可以通过新建问题解决',
   },
   {
     text: '字符消耗太多可以关闭上下文',
   },
   {
-    text: '个人中心不用登录就可以设置Key呦',
+    text: '新问题一定要新建，防止上下文过长',
   },
   {
-    text: '小屏模式点击左上角唤起拓展模块',
-  },
-  {
-    text: '文件内右键可以唤起大屏模式',
+    text: '如果遇到问题，在个人中心-问题反馈，还可获得10万字符奖励哦~',
   },
 ]
 function noDataInfoEvent(index: any) {
   // prompt.value = ''
   // prompt.value = noDataInfo[index].text
   // handleSubmit()
-  ms.info('更多问题解答和反馈，请加QQ群')
+  // ms.info('更多问题解答和反馈，请加QQ群')
 }
 
 // 是否开启联网功能
-function networkEvnet() {
-  if (!localStorage.getItem('SECRET_TOKEN')) {
-    ms.error('需要登录才能使用联网功能')
-    return
-  }
-  showNetwork.value = !showNetwork.value
-  localStorage.setItem('showNetwork', `${showNetwork.value}`)
-  if (showNetwork.value)
-    ms.info('ChatMoss已接入联网，这将大幅度消耗您的字符数；并且超过20个字符的问题不会联网查询~')
-  else
-    ms.info('ChatMoss已退出联网')
-}
+// function networkEvnet() {
+//   if (!localStorage.getItem('SECRET_TOKEN')) {
+//     ms.error('需要登录才能使用联网功能')
+//     return
+//   }
+//   showNetwork.value = !showNetwork.value
+//   localStorage.setItem('showNetwork', `${showNetwork.value}`)
+//   if (showNetwork.value)
+//     ms.info('ChatMoss已接入联网，这将大幅度消耗您的字符数；并且超过20个字符的问题不会联网查询~')
+//   else
+//     ms.info('ChatMoss已退出联网')
+// }
+
 // 是否开启上下文功能
 function correlationEvnet() {
   isCorrelation.value = !isCorrelation.value
@@ -562,15 +606,15 @@ async function onSuccessAuth() {
                 >
                   <img
                     class="btns-item-img"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt=""
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png" alt=""
                   >
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
-                  <img
+                  <!-- <img
                     class="btns-item-right-icon"
                     src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt=""
-                  >
+                  > -->
                 </div>
               </div>
             </div>
@@ -596,9 +640,9 @@ async function onSuccessAuth() {
         </div>
       </div>
     </main>
-    {{ userStore.userInfo.user.authed }}
     <div v-if="!userStore.userInfo.user.authed" class="text-center">
-      <span class="v-auth cursor-pointer" @click="startTutorial">通关ChatMoss使用教程，获得20w字符奖励</span>
+      <!-- 通关ChatMoss使用教程，获得20w字符奖励 -->
+      <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
@@ -615,7 +659,7 @@ async function onSuccessAuth() {
               </template>
               <span>是否开启上下文</span>
             </NPopover>
-            <NPopover trigger="hover">
+            <!-- <NPopover trigger="hover">
               <template #trigger>
                 <img
                   class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }"
@@ -624,7 +668,7 @@ async function onSuccessAuth() {
                 >
               </template>
               <span>是否开启联网</span>
-            </NPopover>
+            </NPopover> -->
           </div>
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
@@ -715,12 +759,6 @@ async function onSuccessAuth() {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			cursor: pointer;
-
-			/* 显示小手 */
-			&:hover {
-				border: 1px solid #3c9af7;
-			}
 
 			.btns-item-img {
 				width: 20px;
@@ -773,14 +811,14 @@ async function onSuccessAuth() {
 }
 
 .btn-style {
-	width: 80px;
+	width: 40px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
 
 .btn-style button {
-	width: 50px;
+	width: 40px;
 	height: 30px;
 }
 
@@ -928,7 +966,7 @@ async function onSuccessAuth() {
 }
 
 .left-btns {
-	width: 80px;
+	width: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: space-around;
