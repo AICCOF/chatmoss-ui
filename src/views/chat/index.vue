@@ -17,9 +17,14 @@ import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 const authStore = useAuthStoreWithout()
 
+
 const userStore = useUserStore()
 const showModal = ref(false)
 const appStore = useAppStore()
+
+const prompt = ref<string>('')
+const loading = ref<boolean>(false)
+
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
@@ -87,8 +92,6 @@ const currentIndex = computed({
     userInputindex.value = val
   },
 })
-const prompt = ref<string>('')
-const loading = ref<boolean>(false)
 
 function handleSubmit() {
   showModal.value = false
@@ -412,28 +415,47 @@ const footerClass = computed(() => {
     classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
   return classes
 })
-const i = 0
-onMounted(() => {
-  vsCodeUtils({
-    handleVscodeMessage: (selectedText: string) => {
-      // const selectedText = localStorage.getItem('selectedText')
 
-      if (selectedText) {
-        prompt.value = selectedText
-        setTimeout(() => {
-          console.log('selectedText', selectedText, i)
-          const dom = document.querySelector('#ask-question') as any
-          console.log(dom)
-          dom && dom.click()
-        }, 1000)
-      }
-    },
-    handleToken: (value: string) => {
-      // console.log(value)
-      authStore.setToken(value)
-      userStore.residueCountAPI()
-    },
-  }) // 初始化与vscode通信
+// 初始化与vscode通信
+vsCodeUtils({
+  handleVscodeMessage: function (selectedText: string) {
+    // const selectedText = localStorage.getItem('selectedText')
+    const questionListDom = document.querySelector('.question-list') as HTMLDivElement
+    const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+    if (questionListDom === null || questionListDom.innerText !== '新建问题') {
+      questionBtnDom.click()
+      console.log('新建问题')
+    } else {
+      prompt.value = selectedText;
+      console.log('回答问题')
+      clickMessage();
+
+    }
+  },
+  handleToken: (value: string) => {
+    // console.log(value)
+    authStore.setToken(value)
+    userStore.residueCountAPI()
+  },
+})
+function clickMessage() {
+  setTimeout(() => {
+    const dom = document.querySelector('#ask-question') as any
+    // console.log(dom)
+    dom && dom.click()
+    localStorage.setItem('selectedText', '')
+  }, 500);
+
+}
+
+onMounted(() => {
+ 
+  const selectedText = localStorage.getItem('selectedText')
+  console.log('??', selectedText)
+  if (selectedText) {
+    prompt.value = selectedText;
+    clickMessage();
+  }
 })
 
 onUnmounted(() => {
@@ -503,44 +525,34 @@ function correlationEvnet() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span
-                  v-if="isPlus"
-                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
-                >
+                <span v-if="isPlus"
+                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
                   Plus
                 </span>
               </div>
               <!-- <div class="no-data-info-tip">
-                      {{ mossCount }}
-                    </div> -->
+                              {{ mossCount }}
+                            </div> -->
               <!-- 功能展示列表 -->
               <div class="no-data-btns-list">
-                <div
-                  v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)"
-                >
-                  <img
-                    class="btns-item-img"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt=""
-                  >
+                <div v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
+                  @click="noDataInfoEvent(index)">
+                  <img class="btns-item-img"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt="">
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
-                  <img
-                    class="btns-item-right-icon"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt=""
-                  >
+                  <img class="btns-item-right-icon"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt="">
                 </div>
               </div>
             </div>
           </template>
           <template v-else>
             <div>
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
                 :inversion="item.inversion" :error="item.error" :loading="item.loading" @regenerate="onRegenerate(index)"
-                @delete="handleDelete(index)"
-              />
+                @delete="handleDelete(index)" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -562,34 +574,26 @@ function correlationEvnet() {
           <div class="left-btns">
             <NPopover trigger="hover">
               <template #trigger>
-                <img
-                  class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
+                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
-                  @click="correlationEvnet"
-                >
+                  @click="correlationEvnet">
               </template>
               <span>是否开启上下文</span>
             </NPopover>
             <NPopover trigger="hover">
               <template #trigger>
-                <img
-                  class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }"
+                <img class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能"
-                  @click="networkEvnet"
-                >
+                  @click="networkEvnet">
               </template>
               <span>是否开启联网</span>
             </NPopover>
           </div>
-          <NInput
-            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter"
-          />
-          <NSelect
-            v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
+          <NInput v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter" />
+          <NSelect v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
             :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
-            clearable label-field="key" @keydown="handleEnter"
-          />
+            clearable label-field="key" @keydown="handleEnter" />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
