@@ -42,4 +42,10 @@ declare namespace Chat {
 		role: string
 		text: string
 	}
+
+	interface paper {
+		answerIndex: number
+		options: string[]
+		title: string
+	}
 }

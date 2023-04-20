@@ -2,9 +2,9 @@ import { ss } from '@/utils/storage'
 
 const LOCAL_NAME = 'userStorage'
 
-export interface Notice{
-  content: string;
-  createTime: string;
+export interface Notice {
+  content: string
+  createTime: string
   icon: string
 }
 export interface UserInfo {
@@ -15,7 +15,7 @@ export interface UserInfo {
   description: string
   paymentType: number
   residueCount: number
-  user: { nickname: string; email: string; plusEndTime: undefined }
+  user: { nickname: string; email: string; plusEndTime: undefined; authed: boolean }
 }
 
 export interface UserState {
@@ -31,7 +31,7 @@ export function defaultSetting(): UserState {
       paymentType: 0,
       residueCount: 0,
       isFinishGuide: false,
-      notices:[],
+      notices: [],
       user: { nickname: '', email: '', plusEndTime: undefined },
     },
 

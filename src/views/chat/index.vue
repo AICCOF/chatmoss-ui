@@ -6,28 +6,34 @@ import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
+import Guide from './guide.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useAppStore, useChatStore, useUserStore } from '@/store'
-import { fetchChatAPIProcess, networkSearch } from '@/api'
+import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore } from '@/store'
+import { auth, fetchChatAPIProcess, networkSearch, paper } from '@/api'
 import Login from '@/views/login/index.vue'
+import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
-import Guide from "./guide.vue";
-import { useAuthStoreWithout } from '@/store'
 const authStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const showModal = ref(false)
+const showPaper = ref(false)
 const appStore = useAppStore()
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
+// 主题
 if (!localStorage.getItem('chatmossTheme'))
   localStorage.setItem('chatmossTheme', 'dark')
 appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
+
+// 专业模式初始化
+if (!localStorage.getItem('chatmossMode'))
+  localStorage.setItem('chatmossMode', 'speciality')
 
 const isPlus = computed(() => {
   // 暂时关闭plus逻辑，全部人都是plus会员
@@ -51,7 +57,7 @@ const chatStore = useChatStore()
 useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
-  = useChat()
+	= useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 
 const { uuid } = route.params as { uuid: string }
@@ -127,8 +133,8 @@ async function onConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext
-    = conversationList.value[conversationList.value.length - 1]
-      ?.conversationOptions
+		= conversationList.value[conversationList.value.length - 1]
+		  ?.conversationOptions
 
   if (lastContext)
     options = { ...lastContext }
@@ -160,6 +166,9 @@ async function onConversation() {
         texts = `下面的问题我将给你辅助的网络信息，你从里面提炼出内容返回给用户，优先使用网络信息中的内容，并将参考的网址以[title](href)的形式输出到最后 \n 这是问题：${message} \n 这是网络信息: ${JSON.stringify(networkData.data)} \n 这是你前面的对话信息：${texts}`
       else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
     }
+
+    if (localStorage.getItem('chatmossMode') === 'speciality')
+      texts = `${texts} 请详细回答`
 
     await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
@@ -257,7 +266,7 @@ async function onRegenerate(index: number) {
 
   const { requestOptions } = dataSources.value[index]
 
-  const message = requestOptions?.prompt ?? ''
+  let message = requestOptions?.prompt ?? ''
 
   let options: Chat.ConversationRequest = {}
 
@@ -277,6 +286,8 @@ async function onRegenerate(index: number) {
   })
 
   try {
+    if (localStorage.getItem('chatmossMode') === 'speciality')
+      message = `${message} 请详细回答`
     await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: message,
       options,
@@ -403,7 +414,7 @@ const footerClass = computed(() => {
     classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
   return classes
 })
-let i = 0;
+const i = 0
 onMounted(() => {
   vsCodeUtils({
     handleVscodeMessage: (selectedText: string) => {
@@ -413,23 +424,19 @@ onMounted(() => {
         prompt.value = selectedText
         setTimeout(() => {
           console.log('selectedText', selectedText, i)
-          let dom = document.querySelector('#ask-question') as any;
+          const dom = document.querySelector('#ask-question') as any
           console.log(dom)
           dom && dom.click()
-        }, 1000);
-
+        }, 1000)
       }
-
     },
     handleToken: (value: string) => {
       // console.log(value)
-      authStore.setToken(value);
+      authStore.setToken(value)
       userStore.residueCountAPI()
-    }
-  }); // 初始化与vscode通信
-
+    },
+  }) // 初始化与vscode通信
 })
-
 
 onUnmounted(() => {
   if (loading.value)
@@ -437,30 +444,31 @@ onUnmounted(() => {
 })
 
 function getIsApiKey() {
-  return !localStorage.getItem('apiKey') || !localStorage.getItem('SECRET_TOKEN')
+  return !localStorage.getItem('apiKey')
 }
 
 const noDataInfo = [
   {
-    text: '出一道算法题',
+    text: '回答内容是英文，新建问题解决',
   },
   {
-    text: '出一道脑筋急转弯',
+    text: '字符消耗太多可以关闭上下文',
   },
   {
-    text: '给我讲一个冷笑话',
+    text: '个人中心不用登录就可以设置Key呦',
   },
   {
-    text: '用Python写一个猜数字的游戏',
+    text: '小屏模式点击左上角唤起拓展模块',
   },
   {
-    text: '推荐一下每日健康饮食规划',
+    text: '文件内右键可以唤起大屏模式',
   },
 ]
 function noDataInfoEvent(index: any) {
-  prompt.value = ''
-  prompt.value = noDataInfo[index].text
-  handleSubmit()
+  // prompt.value = ''
+  // prompt.value = noDataInfo[index].text
+  // handleSubmit()
+  ms.info('更多问题解答和反馈，请加QQ群')
 }
 
 // 是否开启联网功能
@@ -486,6 +494,44 @@ function correlationEvnet() {
     ms.info('已关闭上下文功能')
 }
 
+const paperList = ref<Chat.paper[]>([])
+const nowPaperIndex = ref<number>(0)
+async function startTutorial() {
+  nowPaperIndex.value = 0
+  if (paperList.value.length)
+    return showPaper.value = true
+
+  try {
+    const { data } = await paper<Chat.paper[]>()
+    paperList.value = data
+    showPaper.value = true
+  }
+  catch (error: any) {
+    if (error.code === 204) {
+      // error.msg
+      ms.error('请登录后再开始进行通关认证')
+      // 代表未登录
+      showModal.value = true
+      return
+    }
+    ms.error(error.msg || error.message)
+  }
+}
+
+async function onSuccessAuth() {
+  try {
+    await auth()
+    ms.success('恭喜您完成了ChatMoss的初级认证，200000字符额度已下发到您的账户，愿AI为您的工作带来帮助，感谢您的使用和支持~，3秒后自动关闭弹窗')
+  }
+  catch (error: any) {
+    ms.error(error.msg || error.message)
+  }
+  finally {
+    setTimeout(() => {
+      showPaper.value = false
+    }, 3000)
+  }
+}
 </script>
 
 <template>
@@ -498,34 +544,44 @@ function correlationEvnet() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span v-if="isPlus"
-                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
+                <span
+                  v-if="isPlus"
+                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
+                >
                   Plus
                 </span>
               </div>
               <!-- <div class="no-data-info-tip">
-                      {{ mossCount }}
-                    </div> -->
+	                      {{ mossCount }}
+	                    </div> -->
               <!-- 功能展示列表 -->
               <div class="no-data-btns-list">
-                <div v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)">
-                  <img class="btns-item-img"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt="">
+                <div
+                  v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
+                  @click="noDataInfoEvent(index)"
+                >
+                  <img
+                    class="btns-item-img"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss-plus/icon1.png" alt=""
+                  >
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
-                  <img class="btns-item-right-icon"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt="">
+                  <img
+                    class="btns-item-right-icon"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt=""
+                  >
                 </div>
               </div>
             </div>
           </template>
           <template v-else>
             <div>
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
                 :inversion="item.inversion" :error="item.error" :loading="item.loading" @regenerate="onRegenerate(index)"
-                @delete="handleDelete(index)" />
+                @delete="handleDelete(index)"
+              />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -540,6 +596,10 @@ function correlationEvnet() {
         </div>
       </div>
     </main>
+    {{ userStore.userInfo.user.authed }}
+    <div v-if="!userStore.userInfo.user.authed" class="text-center">
+      <span class="v-auth cursor-pointer" @click="startTutorial">通关ChatMoss使用教程，获得20w字符奖励</span>
+    </div>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex items-center justify-between space-x-2">
@@ -547,26 +607,34 @@ function correlationEvnet() {
           <div class="left-btns">
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
+                <img
+                  class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
-                  @click="correlationEvnet">
+                  @click="correlationEvnet"
+                >
               </template>
               <span>是否开启上下文</span>
             </NPopover>
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }"
+                <img
+                  class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能"
-                  @click="networkEvnet">
+                  @click="networkEvnet"
+                >
               </template>
               <span>是否开启联网</span>
             </NPopover>
           </div>
-          <NInput class="step1" v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter" />
-          <NSelect v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
+          <NInput
+            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+          />
+          <NSelect
+            v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
             :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
-            clearable label-field="key" @keydown="handleEnter" />
+            clearable label-field="key" @keydown="handleEnter"
+          />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
@@ -578,8 +646,8 @@ function correlationEvnet() {
             </NButton>
             <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
               下次消耗{{
-                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}` :
-                `${Math.ceil((prompt?.length || 0))}`
+                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}`
+                : `${Math.ceil((prompt?.length || 0))}`
               }}字符
             </div>
           </div>
@@ -591,282 +659,293 @@ function correlationEvnet() {
         <Login @loginSuccess="() => { handleSubmit() }" />
       </NCard>
     </NModal>
+    <NModal v-model:show="showPaper" transform-origin="center">
+      <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
+        <Paper v-model:sort="nowPaperIndex" :paper-list="paperList" @success="onSuccessAuth" />
+      </NCard>
+    </NModal>
     <Guide />
   </div>
 </template>
 
 <style lang="less">
 .no-data-info {
-  margin-top: 5%;
+	margin-top: 5%;
 
-  .no-data-info-title {
-    position: relative;
-    font-size: 2.25rem;
-    line-height: 2.5rem;
-    font-weight: 600;
-    width: 100%;
-    color: #6C7275;
-    text-align: center;
+	.no-data-info-title {
+		position: relative;
+		font-size: 2.25rem;
+		line-height: 2.5rem;
+		font-weight: 600;
+		width: 100%;
+		color: #6C7275;
+		text-align: center;
 
-    span {
-      position: absolute;
-      margin-left: 10px;
-    }
-  }
+		span {
+			position: absolute;
+			margin-left: 10px;
+		}
+	}
 
-  .no-data-info-tip {
-    font-size: 12px;
-    line-height: 12px;
-    font-weight: 600;
-    width: 100%;
-    color: #6C7275;
-    text-align: center;
-    margin-top: 14px;
-    margin-bottom: -14px;
-  }
+	.no-data-info-tip {
+		font-size: 12px;
+		line-height: 12px;
+		font-weight: 600;
+		width: 100%;
+		color: #6C7275;
+		text-align: center;
+		margin-top: 14px;
+		margin-bottom: -14px;
+	}
 
-  .no-data-btns-list {
-    width: 80%;
-    max-width: 520px;
-    height: auto;
-    margin: 0 auto;
-    margin-top: 40px;
+	.no-data-btns-list {
+		width: 80%;
+		max-width: 520px;
+		height: auto;
+		margin: 0 auto;
+		margin-top: 40px;
 
-    .no-data-btns-item {
-      width: 100%;
-      padding: 20px 20px;
-      height: auto;
-      border: 1px solid #343839;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
+		.no-data-btns-item {
+			width: 100%;
+			padding: 20px 20px;
+			height: auto;
+			border: 1px solid #343839;
+			border-radius: 6px;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
 
-      /* 显示小手 */
-      &:hover {
-        border: 1px solid #3c9af7;
-      }
+			/* 显示小手 */
+			&:hover {
+				border: 1px solid #3c9af7;
+			}
 
-      .btns-item-img {
-        width: 20px;
-        height: 20px;
-      }
+			.btns-item-img {
+				width: 20px;
+				height: 20px;
+			}
 
-      .btns-item-text {
-        width: 400px;
-        margin-left: 20px;
-        margin-right: 20px;
-        color: #c9c9c9;
-      }
+			.btns-item-text {
+				width: 400px;
+				margin-left: 20px;
+				margin-right: 20px;
+				color: #c9c9c9;
+			}
 
-      .btns-item-right-icon {
-        width: 20px;
-        height: 20px;
-      }
-    }
-  }
+			.btns-item-right-icon {
+				width: 20px;
+				height: 20px;
+			}
+		}
+	}
 }
 
 .tip {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 5px;
 }
 
 .sustain {
-  height: 20px;
-  font-size: 0.75rem;
-  letter-spacing: 0.2rem;
-  color: #666;
-  width: auto;
-  text-align: center;
-  margin-right: 20px;
+	height: 20px;
+	font-size: 0.75rem;
+	letter-spacing: 0.2rem;
+	color: #666;
+	width: auto;
+	text-align: center;
+	margin-right: 20px;
 }
 
 .n-input.n-input--textarea {
-  border-radius: 50px;
+	border-radius: 50px;
 }
 
 /* 隐藏滚动进度条 */
 ::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 .moss-btns {
-  position: relative;
+	position: relative;
 }
 
 .btn-style {
-  width: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	width: 80px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .btn-style button {
-  width: 50px;
-  height: 30px;
+	width: 50px;
+	height: 30px;
 }
 
 .moss-text {
-  width: 80px;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2px;
-  white-space: nowrap;
+	width: 80px;
+	font-size: 12px;
+	text-align: center;
+	margin-top: 2px;
+	white-space: nowrap;
 }
 
 .setting {
-  width: 100%;
-  padding: 0px 10px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+	width: 100%;
+	padding: 0px 10px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 
-  .setting-main {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+	.setting-main {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
 
-    .setting-text {
-      color: #FF6666;
-      font-size: 10px;
-    }
+		.setting-text {
+			color: #FF6666;
+			font-size: 10px;
+		}
 
-    .setting-btn {
-      width: 20px;
-      height: 20px;
-      margin-right: 2px;
-    }
-  }
+		.setting-btn {
+			width: 20px;
+			height: 20px;
+			margin-right: 2px;
+		}
+	}
 }
 
 .line {
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .color {
-  color: #f87171;
+	color: #f87171;
 }
 
 .tip-text {
-  font-size: 12px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+	font-size: 12px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .mt10 {
-  margin-top: 10px;
+	margin-top: 10px;
 }
 
 .notice-swipe {
-  height: 40px;
-  line-height: 40px;
+	height: 40px;
+	line-height: 40px;
 }
 
 .van-notice-bar {
-  background-color: #111114 !important;
-  color: #fff;
-  text-align: center;
+	background-color: #111114 !important;
+	color: #fff;
+	text-align: center;
 
-  .van-notice-bar__wrap {
-    display: flex;
-    justify-content: center;
+	.van-notice-bar__wrap {
+		display: flex;
+		justify-content: center;
 
-    .van-swipe-item {
-      color: #FF6666;
-      font-size: 12px;
-    }
-  }
+		.van-swipe-item {
+			color: #FF6666;
+			font-size: 12px;
+		}
+	}
+}
+
+.v-auth {
+	color: #FF6666;
+	text-decoration: underline;
+	font-size: 12px;
 }
 
 .relevance-main {
-  display: flex;
-  justify-items: center;
-  color: #FF6666 !important;
-  align-items: center;
-  margin-right: 20px;
+	display: flex;
+	justify-items: center;
+	color: #FF6666 !important;
+	align-items: center;
+	margin-right: 20px;
 
-  .relevance-main-text {
-    font-size: 12px;
-    margin-left: 6px;
-  }
+	.relevance-main-text {
+		font-size: 12px;
+		margin-left: 6px;
+	}
 }
 
 :root:root {
-  --van-switch-size: 15px;
+	--van-switch-size: 15px;
 }
 
 .shake {
-  transform-origin: bottom bottom;
-  animation: animashake 1.5s .2s ease-in-out both infinite;
+	transform-origin: bottom bottom;
+	animation: animashake 1.5s .2s ease-in-out both infinite;
 }
 
 @keyframes animashake {
 
-  0%,
-  100% {
-    transform: rotate(0deg);
-    transform-origin: 50% 0;
-  }
+	0%,
+	100% {
+		transform: rotate(0deg);
+		transform-origin: 50% 0;
+	}
 
-  5% {
-    transform: rotate(2deg);
-  }
+	5% {
+		transform: rotate(2deg);
+	}
 
-  10%,
-  20%,
-  30% {
-    transform: rotate(-4deg);
-  }
+	10%,
+	20%,
+	30% {
+		transform: rotate(-4deg);
+	}
 
-  15%,
-  25%,
-  35% {
-    transform: rotate(4deg);
-  }
+	15%,
+	25%,
+	35% {
+		transform: rotate(4deg);
+	}
 
-  40% {
-    transform: rotate(-2deg);
-  }
+	40% {
+		transform: rotate(-2deg);
+	}
 
-  45% {
-    transform: rotate(2deg);
-  }
+	45% {
+		transform: rotate(2deg);
+	}
 
-  50% {
-    transform: rotate(0deg);
-  }
+	50% {
+		transform: rotate(0deg);
+	}
 }
 
 #scrollRef {
-  display: flex;
+	display: flex;
 }
 
 .left-btns {
-  width: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+	width: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
 
-  .network-btn {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    filter: grayscale(0%);
+	.network-btn {
+		width: 20px;
+		height: 20px;
+		cursor: pointer;
+		filter: grayscale(0%);
 
-    &:active {
-      transform: scale(.96);
-    }
-  }
+		&:active {
+			transform: scale(.96);
+		}
+	}
 
-  .network-btn-filter {
-    filter: grayscale(90%);
-  }
+	.network-btn-filter {
+		filter: grayscale(90%);
+	}
 }
 </style>
