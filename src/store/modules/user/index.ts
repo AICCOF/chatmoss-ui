@@ -6,10 +6,10 @@ import { residueCount } from '@/api'
 
 export const useUserStore = defineStore('user-store', {
   state: (): UserState => getLocalState(),
-  getters:{
-    getNotices(state){
+  getters: {
+    getNotices(state) {
       return state.userInfo.notices
-    }
+    },
   },
   actions: {
     async residueCountAPI() {
@@ -20,11 +20,21 @@ export const useUserStore = defineStore('user-store', {
         const res = await residueCount<{
           residueCount: number
           paymentType: number
+          user?: {
+            nickname: string
+            email: string
+            plusEndTime: undefined
+            authed: boolean
+          }
         }>()
-        // console.log(res)
+
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
+
+        if (!res.data.user)
+          this.userInfo.user.authed = false
+
         return Promise.resolve(res)
       }
       catch (error: any) {
@@ -43,14 +53,14 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo = { ...defaultSetting().userInfo }
       this.recordState()
     },
-    setGuide(value:boolean){
-      this.userInfo.isFinishGuide = value;
-      this.recordState();
+    setGuide(value: boolean) {
+      this.userInfo.isFinishGuide = value
+      this.recordState()
     },
 
     setNotices(value: any[]) {
-      this.userInfo.notices = value;
-      this.recordState();
+      this.userInfo.notices = value
+      this.recordState()
     },
 
     recordState() {
