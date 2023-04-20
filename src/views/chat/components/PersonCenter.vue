@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { NAlert, NAvatar, NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification } from 'naive-ui'
-import { computed, h, onMounted, reactive, ref } from 'vue'
+import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification, NAvatar, NAlert, NForm, NSpace, NFormItem } from 'naive-ui'
+import { computed, onMounted, ref, h, reactive } from 'vue'
 // import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
 import { useModel } from './Modal/hooks/useModal'
@@ -281,28 +281,28 @@ function getNSwitchModeValue(): any {
             v-model:value="feedBackForm.content" class="mt-4 mb-2" placeholder="请详细描述您遇到的问题（2000字以内）" type="textarea"
             style="border-radius: 0;height: 200px;"
           />
-
-          <div class="mb-4">
-            <NAlert title="提示" type="info">
-              <div>
-                1.反馈意见可建issues：https://github.com/AICCOF/chatmoss-ui/
-              </div>
-              <div>
-                2.可使用第三方文档。如：掘金，语雀等。。。
-              </div>
-              <div>
-                3.我们确定问题之后，会为您下发10万字符奖励，感谢您的反馈。
-              </div>
-            </NAlert>
-          </div>
         </NFormItem>
-
-        <NFormItem>
-          <NSpace>
-            <NButton attr-type="button" @click="sendFeedbackEvent">
-              提交
-            </NButton>
-          </NSpace>
+        <NFormItem label="提示">
+          <div style="width: 100%;">
+            <div>
+             <NAlert title="" type="info">
+                <div>
+                  1.反馈意见可建issues：https://github.com/AICCOF/chatmoss-ui/
+                </div>
+                <div>
+                  2.可使用第三方文档。如：掘金，语雀等。。。
+                </div>
+                <div>
+                  3.我们确定问题之后，会为您下发10万字符奖励，感谢您的反馈。
+                </div>
+              </NAlert>
+            </div>
+            <NSpace class="mt-4">
+              <NButton  attr-type="button" @click="sendFeedbackEvent">
+                提交
+              </NButton>
+            </NSpace>
+          </div>
         </NFormItem>
       </NForm>
     </NCard>
