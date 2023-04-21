@@ -36,69 +36,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      {
-  "build": {
-    "beforeDevCommand": "",
-    "beforeBuildCommand": "",
-    "devPath": "http://192.168.0.104:80/",
-    "distDir": "../dist",
-    "withGlobalTauri": false
-  },
-  "package": {
-    "productName": "CHATMOSS",
-    "version": "0.0.4"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": true,
-      "app": {
-        "all": true,
-        "show": true,
-        "hide": true
-      },
-      "http": {
-        "all": true,
-        "request": true,
-        "scope": [
-          "http://**",
-          "https://**"
-        ]
-      }
-    },
-    "bundle": {
-      "active": true,
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
       "identifier": "com.tauri.build",
-      "targets": "all",
-      "windows": {
-        "wix": {
-          "language": "zh-CN"
-        }
-      }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "resizable": true,
-        "title": "CHATMOSS",
-        "width": 1000,
-        "height": 800
-      }
-    ]
-  }
-}
       "targets": "all",
       "windows": {
         "wix": {
