@@ -5,7 +5,9 @@ on:
     # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   create-release:
     runs-on: ubuntu-latest
@@ -29,9 +31,6 @@ jobs:
           tag_name: '${{ steps.get_version.outputs.VERSION }}'
           release_name: 'OhMyBox ${{ steps.get_version.outputs.VERSION }}'
           body: 'See the assets to download this version and install.'
-  permissions:
-    contents: write
-    pull-requests: write
   build-tauri:
     needs: create-release
     strategy:
