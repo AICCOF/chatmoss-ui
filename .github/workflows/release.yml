@@ -88,8 +88,9 @@ jobs:
       - name: Install app dependencies and build it win
         if: matrix.platform == 'windows-latest'
         run: yarn && yarn build-win-only 
-      - uses: tauri-apps/tauri-action@dev
+      - uses: tauri-apps/tauri-action@v0
         env:
+          args: --verbose
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
