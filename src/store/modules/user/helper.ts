@@ -15,7 +15,7 @@ export interface UserInfo {
   description: string
   paymentType: number
   residueCount: number
-  user: { nickname: string; email: string; plusEndTime: undefined; authed: boolean }
+  user: { nickname: string; email: string; plusEndTime: undefined; authed?: boolean }
 }
 
 export interface UserState {
