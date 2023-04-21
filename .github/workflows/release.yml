@@ -29,7 +29,9 @@ jobs:
           tag_name: '${{ steps.get_version.outputs.VERSION }}'
           release_name: 'OhMyBox ${{ steps.get_version.outputs.VERSION }}'
           body: 'See the assets to download this version and install.'
-
+  permissions:
+    contents: write
+    pull-requests: write
   build-tauri:
     needs: create-release
     strategy:
