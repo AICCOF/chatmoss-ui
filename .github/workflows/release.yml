@@ -82,7 +82,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install app dependencies and build it
-        run: yarn && yarn build
+        run: yarn && build-vscode-only
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -90,3 +90,4 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
           releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
+
