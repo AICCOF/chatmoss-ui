@@ -82,12 +82,12 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install app dependencies and build it
-        {% if matrix.platform == 'macos-latest' %}
+      - name: Install app dependencies and build it mac
+        if: matrix.platform == 'macos-latest'
         run: yarn && build-mac-only
-        {% else %}
-        run: yarn && build-mac-only
-        {% endif %}
+      - name: Install app dependencies and build it win
+        if: matrix.platform == 'windows-latest'
+        run: yarn && build-win-only 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
