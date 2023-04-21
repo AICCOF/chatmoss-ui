@@ -37,7 +37,12 @@
         "icons/icon.ico"
       ],
       "identifier": "07",
-      "targets": "all"
+      "targets": "all",
+      "windows": {
+        "wix": {
+          "language": "zh-CN"
+        }
+      }
     },
     "security": {
       "csp": null

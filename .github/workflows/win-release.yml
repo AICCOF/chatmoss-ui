@@ -1,4 +1,4 @@
-name: chatMoss CI
+name: ChatMoss CI
 
 on:
   push:
@@ -29,14 +29,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: '${{ steps.get_version.outputs.VERSION }}'
-          release_name: 'chatMoss ${{ steps.get_version.outputs.VERSION }}'
+          release_name: 'ChatMoss ${{ steps.get_version.outputs.VERSION }}'
           body: 'See the assets to download this version and install.'
+
   build-tauri:
     needs: create-release
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest]
+        platform: [macos-latest, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -82,7 +83,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install app dependencies and build it
-        run: yarn && yarn build-win-only
+        ${{ if eq(matrix.platform, 'macos-latest') }}:
+          run: yarn && yarn build-mac-only
+        ${{ else }}:
+          run: yarn && yarn build-win-only
+       
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -91,3 +96,20 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
 
+  updater:
+    runs-on: ubuntu-latest
+    needs: [create-release, build-tauri]
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn
+      - run: yarn updater
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy install.json
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./updater
+          force_orphan: true
