@@ -90,11 +90,11 @@ jobs:
         run: yarn && yarn build-win-only 
       - uses: tauri-apps/tauri-action@v0
         env:
-          args: --verbose
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
+          args: --verbose
           releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
           
 
