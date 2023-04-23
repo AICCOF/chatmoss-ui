@@ -12,6 +12,7 @@ import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { getToken } from '@/store/modules/auth/helper'
 import { toMoss } from '@/api'
+import { localStorage } from "@/utils/storage/localStorage";
 const person = ref(null) as any
 const [registerModal, { openModel }] = useModel()
 const userStore = useUserStore()
@@ -26,7 +27,7 @@ const tab = ref('login')
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
-  chatStore.addHistory({ title: '新建问题', uuid: Date.now(), isEdit: false })
+  chatStore.addHistory()
 }
 
 function handleUpdateCollapsed() {

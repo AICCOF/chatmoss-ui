@@ -30,7 +30,7 @@ function http<T = any>(
     if (typeof res.data == 'string'){
       return Promise.resolve(res.data)
     }
-    if (res.data.code === 0){
+    if (res.data.code === 0 || res.data.code === 200){
       return Promise.resolve(res.data)
     }
     if (res.data.status === 'Unauthorized') {
@@ -91,4 +91,9 @@ export function post<T = any>(
   })
 }
 
+export function put<T = any>(
+  { url, data, method = 'PUT', headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
+): Promise<Response<T>> {
+  return request.put(url, data)
+}
 export default post

@@ -4,11 +4,8 @@ import { sendToMsg } from '@/utils/vsCodeUtils'
 const LOCAL_NAME = 'chatStorage'
 
 
-  
-
 export function defaultState(): Chat.ChatState {
-  const uuid = 80
-  return { active: uuid, history: [{ uuid, title: '新建问题', isEdit: false }], chat: [{ uuid, data: [] }] }
+  return { active: 0, history: [], chat: [] }
 }
 
 export function getLocalState(): Chat.ChatState {

@@ -4,7 +4,7 @@ import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout } from '@/store/modules'
-
+import { localStorage } from "@/utils/storage/localStorage";
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 

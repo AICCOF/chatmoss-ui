@@ -10,6 +10,7 @@ import { getKeyList, getPlusInfo, getSystemNotice, sendFeedback } from '@/api/pe
 import type { Notice } from '@/store/modules/user/helper'
 // let props = defineProps(['register'])
 const emits = defineEmits(['modifyPassword', 'register'])
+import { localStorage } from "@/utils/storage/localStorage";
 const userStore = useUserStore()
 const notification = useNotification()
 

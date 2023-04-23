@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type { UserInfo, UserState } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { residueCount } from '@/api'
-
+import { localStorage } from "@/utils/storage/localStorage";
 export const useUserStore = defineStore('user-store', {
   state: (): UserState => getLocalState(),
   getters: {
