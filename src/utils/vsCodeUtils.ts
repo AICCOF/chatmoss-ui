@@ -1,6 +1,4 @@
 
-import {useChatStore } from '@/store'
-import { setLocalState } from '@/store/modules/chat/helper'
 import { localStorage } from "@/utils/storage/localStorage";
 let vscode: any = null
 

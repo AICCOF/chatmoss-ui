@@ -28,7 +28,7 @@ export const useChatStore = defineStore('chat-store', {
   },
 
   actions: {
-    async addHistory(title:string) {
+    async addHistory(title?: string) {
       let res = await addConversation({ title: title || '新建问题' })
       this.active = res.msg as number;
       this.chat.unshift(res.list[0]);
@@ -40,7 +40,7 @@ export const useChatStore = defineStore('chat-store', {
       let res = await getConversationList()
       this.chat = res.list;
       this.getConversationDetail();
-    
+
     },
     async getConversationDetail() {
 
@@ -55,11 +55,11 @@ export const useChatStore = defineStore('chat-store', {
             inversion: !!row.content.startsWith('0:'),
             text: row.content.slice(2)
           }
-        }))   
+        }))
       }
-     
+
     },
-    
+
     async updateHistory(id: number, edit: Partial<Chat.ChatInfo>) {
       const index = this.chat.findIndex(item => item.id === id)
       if (index !== -1) {
@@ -67,7 +67,7 @@ export const useChatStore = defineStore('chat-store', {
         if (edit.isEdit) {
           this.chat[index].title = this.chat[index].tem as string
         } else {
-         
+
           if (this.chat[index].tem !== undefined && this.chat[index].title !== this.chat[index].tem) {
             await editConversation({ title: this.chat[index].tem, conversationId: this.chat[index].id })
           }
@@ -152,7 +152,7 @@ export const useChatStore = defineStore('chat-store', {
         this.recordState()
       }
     },
-  
+
     async reloadRoute() {
       this.recordState()
     },

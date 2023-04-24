@@ -8,9 +8,10 @@ import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
 import { getKeyList, getPlusInfo, getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
+import { localStorage } from "@/utils/storage/localStorage";
 // let props = defineProps(['register'])
 const emits = defineEmits(['modifyPassword', 'register'])
-import { localStorage } from "@/utils/storage/localStorage";
+
 const userStore = useUserStore()
 const notification = useNotification()
 
