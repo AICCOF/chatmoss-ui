@@ -23,14 +23,7 @@ export function sendToMsg(type:string,state:any){
 let record: Record<string, Function> = {};
 window.addEventListener('message', (event) => {
   const message = event.data
-  const chatStore = useChatStore()
   switch (message.type) {
-    case 'storeData':
-      if (message.value) {
-        chatStore.updateStore(JSON.parse(message.value))
-        setLocalState(JSON.parse(message.value))
-      }
-      break
     case 'selectedText':
       if (message.value) {
         localStorage.setItem('selectedText', message.value)

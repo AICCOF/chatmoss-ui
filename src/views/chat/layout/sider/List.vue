@@ -12,21 +12,21 @@ const chatStore = useChatStore()
 
 chatStore.historyList();
 // console.log(chatStore.$state)
-const dataSources = computed(() => chatStore.history)
+const dataSources = computed(() => chatStore.chat)
 
-async function handleSelect({ id }: Chat.History) {
+async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
     return
-
-  if (chatStore.active)
-    chatStore.updateHistory(chatStore.active, { isEdit: false })
   await chatStore.setActive(id)
+  if (chatStore.active)
+    chatStore.updateHistory(id, { isEdit: false })
+
 
   if (isMobile.value)
     appStore.setSiderCollapsed(true)
 }
 
-function handleEdit({ id }: Chat.History, isEdit: boolean, event?: MouseEvent) {
+function handleEdit({ id }: Chat.ChatInfo, isEdit: boolean, event?: MouseEvent) {
   event?.stopPropagation()
   chatStore.updateHistory(id, { isEdit })
 }
@@ -36,7 +36,7 @@ function handleDelete(index: number, event?: MouseEvent | TouchEvent) {
   chatStore.deleteHistory(index)
 }
 
-function handleEnter({ id }: Chat.History, isEdit: boolean, event: KeyboardEvent) {
+function handleEnter({ id }: Chat.ChatInfo, isEdit: boolean, event: KeyboardEvent) {
   event?.stopPropagation()
   if (event.key === 'Enter')
     chatStore.updateHistory(id, { isEdit })

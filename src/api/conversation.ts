@@ -18,7 +18,6 @@ export function addConversation<T>(params: any) {
 }
 
 export function deleteConversation<T>(params:any) {
-  console.log(params)
   return deleteRequest<T>({
     url: `/luomacode-api/conversation`,
     data: {

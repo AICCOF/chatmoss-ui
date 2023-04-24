@@ -16,14 +16,13 @@ interface Props {
   loading?: boolean
 }
 
-interface Emit {
-  (ev: 'regenerate'): void
-  (ev: 'delete'): void
-}
-
+// interface Emit {
+//   (ev: 'delete'): void
+// }
+// const emit = defineEmits<Emit>()
 const props = defineProps<Props>()
 
-const emit = defineEmits<Emit>()
+
 const Message = useMessage()
 
 const { iconRender } = useIconRender()
@@ -36,11 +35,6 @@ const options = [
     key: 'copyText',
     icon: iconRender({ icon: 'ri:file-copy-2-line' }),
   },
-  {
-    label: t('common.delete'),
-    key: 'delete',
-    icon: iconRender({ icon: 'ri:delete-bin-line' }),
-  },
 ]
 
 function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
@@ -49,14 +43,10 @@ function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
       copyText({ text: props.text ?? '' })
       Message.success('已复制到剪切板')
       return
-    case 'delete':
-      emit('delete')
   }
 }
 
-function handleRegenerate() {
-  emit('regenerate')
-}
+
 </script>
 
 <template>
@@ -84,13 +74,7 @@ function handleRegenerate() {
           @copy="() => handleSelect('copyText')"
         />
         <div class="flex flex-col">
-          <button
-            v-if="!inversion"
-            class="mb-2 transition text-neutral-300 hover:text-neutral-800 dark:hover:text-neutral-300"
-            @click="handleRegenerate"
-          >
-            <SvgIcon icon="ri:restart-line" />
-          </button>
+          
           <NDropdown :placement="!inversion ? 'right' : 'left'" :options="options" @select="handleSelect">
             <button class="transition text-neutral-300 hover:text-neutral-800 dark:hover:text-neutral-200">
               <SvgIcon icon="ri:more-2-fill" />

@@ -1,7 +1,6 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { NButton, NCard, NInput, NModal, NPopover, NSelect, useDialog, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NModal, NPopover, NSelect, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -56,8 +55,6 @@ const showNetwork = ref(false)
 
 let controller = new AbortController()
 
-const route = useRoute()
-const dialog = useDialog()
 const ms = useMessage()
 
 const chatStore = useChatStore()
@@ -67,7 +64,6 @@ const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 
-const { uuid } = route.params as { uuid: string }
 
 
 const dataSources = computed(() => chatStore.getChatByUuid())
@@ -152,8 +148,7 @@ async function onConversation() {
   controller = new AbortController()
 
 
-  addChat(chatStore.getUuid, {
-    dateTime: new Date().toLocaleString(),
+  await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
     createTime: new Date().toLocaleString(),
     text: message,
@@ -175,8 +170,8 @@ async function onConversation() {
   if (lastContext)
     options = { ...lastContext }
 
-  addChat(chatStore.getUuid, {
-    dateTime: new Date().toLocaleString(),
+
+  await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
     createTime: new Date().toLocaleString(),
     text: '',
@@ -211,7 +206,7 @@ async function onConversation() {
     texts = compressCode(texts)
 
 
-    await fetchChatAPIProcess<Chat.ConversationResponse>({
+   let data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
       options: {
         ...options,
@@ -226,7 +221,6 @@ async function onConversation() {
         try {
           // const data = JSON.parse(chunk)
           updateChat(chatStore.getUuid, dataSources.value.length - 1, {
-            dateTime: new Date().toLocaleString(),
             timestamp: new Date().getTime(),
             createTime: new Date().toLocaleString(),
             text: chunk ?? '',
@@ -247,15 +241,14 @@ async function onConversation() {
     })
 
     // 超出token提示
-    // const tip1 = data.split('}\n')
-    // if (engList.includes(JSON.parse(tip1[tip1.length - 1]).text))
-    //   ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
+    const tip1 = data as any as string;
+    if (engList.includes(tip1))
+      ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
 
     addTextNum(texts.length)
     scrollToBottom()
   }
   catch (error: any) {
-    console.error(error)
     ms.error(error.msg || error.message)
     if (error.code === 204) {
       // error.msg
@@ -288,7 +281,6 @@ async function onConversation() {
     }
 
     updateChat(chatStore.getUuid, dataSources.value.length - 1, {
-      dateTime: new Date().toLocaleString(),
       timestamp: new Date().getTime(),
       createTime: new Date().toLocaleString(),
       text: errorMessage,
@@ -306,122 +298,6 @@ async function onConversation() {
   }
 }
 
-async function onRegenerate(index: number) {
-  if (loading.value)
-    return
-
-  controller = new AbortController()
-
-  const { requestOptions } = dataSources.value[index]
-
-  let message = requestOptions?.prompt ?? ''
-
-  let options: Chat.ConversationRequest = {}
-
-  if (requestOptions.options)
-    options = { ...requestOptions.options }
-
-  loading.value = true
-
-  updateChat(chatStore.getUuid, index, {
-    dateTime: new Date().toLocaleString(),
-    text: '',
-    timestamp: new Date().getTime(),
-    createTime: new Date().toLocaleString(),
-    inversion: false,
-    error: false,
-    loading: true,
-    conversationOptions: null,
-    requestOptions: { prompt: message, ...options },
-  })
-
-  try {
-    if (localStorage.getItem('chatmossMode') === 'speciality')
-      message = `${message} 请详细回答`
-
-    message = compressCode(message)
-
-    const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
-      prompt: message,
-      options,
-      signal: controller.signal,
-      onDownloadProgress: ({ event }) => {
-        const xhr = event.target
-        const { responseText } = xhr
-        // Always process the final line
-        const lastIndex = responseText.lastIndexOf('\n')
-        let chunk = responseText
-        if (lastIndex !== -1)
-          chunk = responseText.substring(lastIndex)
-        try {
-          const data = JSON.parse(chunk)
-          updateChat(chatStore.getUuid, index, {
-            dateTime: new Date().toLocaleString(),
-            text: data.text ?? '',
-            inversion: false,
-            error: false,
-            loading: false,
-            conversationOptions: {
-              conversationId: chatStore.getUuid
-            },
-            requestOptions: { prompt: message, ...options },
-          })
-        }
-        catch (error) {
-          //
-        }
-      },
-    })
-
-    // 超出token提示
-    const tip1 = data.split('}\n')
-    if (engList.includes(JSON.parse(tip1[tip1.length - 1]).text))
-      ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
-
-    addTextNum(message.length)
-  }
-  catch (error: any) {
-    console.error(error)
-    if (error.message === 'canceled') {
-      updateChatSome(chatStore.getUuid, index, {
-        loading: false,
-      })
-      return
-    }
-
-    const errorMessage = error?.message ?? t('common.wrong')
-
-    updateChat(chatStore.getUuid, index, {
-      dateTime: new Date().toLocaleString(),
-      timestamp: new Date().getTime(),
-      createTime: new Date().toLocaleString(),
-      text: errorMessage,
-      inversion: false,
-      error: true,
-      loading: false,
-      conversationOptions: null,
-      requestOptions: { prompt: message, ...options },
-    })
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-function handleDelete(index: number) {
-  if (loading.value)
-    return
-
-  dialog.warning({
-    title: t('chat.deleteMessage'),
-    content: t('chat.deleteMessageConfirm'),
-    positiveText: t('common.yes'),
-    negativeText: t('common.no'),
-    onPositiveClick: () => {
-      chatStore.deleteChatByUuid(+uuid, index)
-    },
-  })
-}
 
 function handleEnter(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.shiftKey) {
@@ -630,8 +506,7 @@ async function onSuccessAuth() {
           <template v-else>
             <div>
               <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :inversion="item.inversion" :error="item.error" :loading="item.loading" @regenerate="onRegenerate(index)"
-                @delete="handleDelete(index)" />
+                :inversion="item.inversion" :error="item.error" :loading="item.loading"  />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
