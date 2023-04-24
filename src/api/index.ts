@@ -29,7 +29,7 @@ export function fetchChatAPIProcess<T = any>(
   },
 ) {
   return post<T>({
-    url: 'http://43.154.120.186:8060/ask?version=v1.5',
+    url: '/ask/',
     data: {
       prompt: params.prompt,
       options: params.options,
