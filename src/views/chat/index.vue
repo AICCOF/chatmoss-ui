@@ -18,15 +18,14 @@ import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 const authStore = useAuthStoreWithout()
 
-
 const userStore = useUserStore()
 const showModal = ref(false)
 const showPaper = ref(false)
 const appStore = useAppStore()
 
 const prompt = ref<string>('')
+const NSelectRef = ref<HTMLInputElement | null>(null)
 const loading = ref<boolean>(false)
-
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
@@ -410,16 +409,23 @@ function handleDelete(index: number) {
 }
 
 function handleEnter(event: KeyboardEvent) {
+  // 输入 prompt / 重新获取焦点 第一次 / prompt.value 时空字符
+  // nextTick 无效果
+  if (event.key === '/' && !prompt.value) {
+    setTimeout(() => {
+      NSelectRef.value && NSelectRef.value.focus()
+    }, 200)
+  }
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
     handleSubmit()
   }
   else if (userInputList.value.length && (!prompt.value || prompt.value[0] !== '/')) {
-    if (event.key === 'ArrowUp') {
+    if (event.key === 'ArrowUp' && event.ctrlKey) {
       currentIndex.value -= 1
       prompt.value = userInputList.value[currentIndex.value].text
     }
-    else if (event.key === 'ArrowDown') {
+    else if (event.key === 'ArrowDown' && event.ctrlKey) {
       currentIndex.value += 1
       prompt.value = userInputList.value[currentIndex.value]?.text
     }
@@ -463,18 +469,18 @@ const footerClass = computed(() => {
 
 // 初始化与vscode通信
 vsCodeUtils({
-  handleVscodeMessage: function (selectedText: string) {
+  handleVscodeMessage(selectedText: string) {
     // const selectedText = localStorage.getItem('selectedText')
     const questionListDom = document.querySelector('.question-list') as HTMLDivElement
     const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
     if (questionListDom === null || questionListDom.innerText !== '新建问题') {
       questionBtnDom.click()
       console.log('新建问题')
-    } else {
-      prompt.value = selectedText;
+    }
+    else {
+      prompt.value = selectedText
       console.log('回答问题')
-      clickMessage();
-
+      clickMessage()
     }
   },
   handleToken: (value: string) => {
@@ -489,17 +495,15 @@ function clickMessage() {
     // console.log(dom)
     dom && dom.click()
     localStorage.setItem('selectedText', '')
-  }, 500);
-
+  }, 500)
 }
 
 onMounted(() => {
- 
   const selectedText = localStorage.getItem('selectedText')
   console.log('??', selectedText)
   if (selectedText) {
-    prompt.value = selectedText;
-    clickMessage();
+    prompt.value = selectedText
+    clickMessage()
   }
 })
 
@@ -610,8 +614,10 @@ async function onSuccessAuth() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span v-if="isPlus"
-                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
+                <span
+                  v-if="isPlus"
+                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
+                >
                   Plus
                 </span>
               </div>
@@ -641,9 +647,11 @@ async function onSuccessAuth() {
           </template>
           <template v-else>
             <div>
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
                 :inversion="item.inversion" :error="item.error" :loading="item.loading" @regenerate="onRegenerate(index)"
-                @delete="handleDelete(index)" />
+                @delete="handleDelete(index)"
+              />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -669,9 +677,11 @@ async function onSuccessAuth() {
           <div class="left-btns">
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
+                <img
+                  class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
-                  @click="correlationEvnet">
+                  @click="correlationEvnet"
+                >
               </template>
               <span>是否开启上下文</span>
             </NPopover>
@@ -684,11 +694,16 @@ async function onSuccessAuth() {
               <span>是否开启联网</span>
             </NPopover> -->
           </div>
-          <NInput v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter" />
-          <NSelect v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
-            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
-            clearable label-field="key" @keydown="handleEnter" />
+          <NInput
+            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+          />
+          <NSelect
+            v-if="prompt && prompt[0] === '/'"
+            ref="NSelectRef" v-model:value="prompt" filterable :show="true" :autofocus="true"
+            :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
+            clearable label-field="key" @keydown="handleEnter"
+          />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
