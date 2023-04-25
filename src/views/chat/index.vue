@@ -14,7 +14,7 @@ import { auth, fetchChatAPIProcess, networkSearch, paper } from '@/api'
 import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
-import selectOption from '@/assets/chatmoss.json'
+import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 const authStore = useAuthStoreWithout()
 
