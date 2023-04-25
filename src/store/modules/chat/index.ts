@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
 
-
 export const useChatStore = defineStore('chat-store', {
   state: (): Chat.ChatState => {
     return {
@@ -29,35 +28,33 @@ export const useChatStore = defineStore('chat-store', {
 
   actions: {
     async addHistory(title?: string) {
-      let res = await addConversation({ title: title || '新建问题' })
-      this.active = res.msg as number;
-      this.chat.unshift(res.list[0]);
+      const res = await addConversation({ title: title || '新建问题' })
+      this.active = res.msg as number
+      this.chat.unshift(res.list[0])
       this.reloadRoute()
-
     },
     async historyList() {
-      if (!this.active) return;
-      let res = await getConversationList()
-      this.chat = res.list;
-      this.getConversationDetail();
-
+      // if (!this.active)
+      //   return
+      const res = await getConversationList()
+      this.chat = res.list
+      this.getConversationDetail()
     },
     async getConversationDetail() {
-
-      if (!this.active) return;
-      let result = this.chat.find(item => item.id === this.active)
+      if (!this.active)
+        return
+      const result = this.chat.find(item => item.id === this.active)
       if (result && !result.data) {
-        result.data = [];
-        let res = await getConversationDetail({ conversationId: this.active, pageSize: 100 })
+        result.data = []
+        const res = await getConversationDetail({ conversationId: this.active, pageSize: 100 })
         result.data.push(...res.rows.map((row: any) => {
           return {
             ...row,
             inversion: !!row.content.startsWith('0:'),
-            text: row.content.slice(2)
+            text: row.content.slice(2),
           }
         }))
       }
-
     },
 
     async updateHistory(id: number, edit: Partial<Chat.ChatInfo>) {
@@ -66,11 +63,11 @@ export const useChatStore = defineStore('chat-store', {
         this.chat[index] = { ...this.chat[index], ...edit }
         if (edit.isEdit) {
           this.chat[index].title = this.chat[index].tem as string
-        } else {
-
-          if (this.chat[index].tem !== undefined && this.chat[index].title !== this.chat[index].tem) {
+        }
+        else {
+          if (this.chat[index].tem !== undefined && this.chat[index].title !== this.chat[index].tem)
             await editConversation({ title: this.chat[index].tem, conversationId: this.chat[index].id })
-          }
+
           await this.getConversationDetail()
         }
         this.recordState()
@@ -78,16 +75,16 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async deleteHistory(index: number) {
-
-      await deleteConversation({ "conversationId": this.chat[index].id })
+      await deleteConversation({ conversationId: this.chat[index].id })
       await this.historyList()
 
-      const chat = this.chat[this.chat.length - 1];
-      if (!history) {
+      const chat = this.chat[this.chat.length - 1]
+      if (!history)
         this.active = null
-      } else {
+
+      else
         this.active = chat.id
-      }
+
       this.reloadRoute()
     },
 
@@ -109,13 +106,13 @@ export const useChatStore = defineStore('chat-store', {
 
     async addChatByUuid(id: number, chat: Chat.Chat) {
       if (!id || id === 0) {
-        if (this.chat.length === 0) {
-          await this.addHistory(chat.text);
-        }
+        if (this.chat.length === 0)
+          await this.addHistory(chat.text)
       }
-      let result = this.chat.find(item => item.id === id)
+      const result = this.chat.find(item => item.id === id)
       if (result) {
-        if (!result.data) result.data = [];
+        if (!result.data)
+          result.data = []
         result.data.push(chat)
         this.recordState()
       }

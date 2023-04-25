@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification, NAvatar, NAlert, NForm, NSpace, NFormItem } from 'naive-ui'
-import { computed, onMounted, ref, h, reactive } from 'vue'
+import { NAlert, NAvatar, NButton, NCard, NDivider, NForm, NFormItem, NInput, NPopover, NSpace, NSwitch, useMessage, useNotification } from 'naive-ui'
+import { computed, h, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
 import { useModel } from './Modal/hooks/useModal'
@@ -8,7 +8,7 @@ import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
 import { getKeyList, getPlusInfo, getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
-import { localStorage } from "@/utils/storage/localStorage";
+import { localStorage } from '@/utils/storage/localStorage'
 // let props = defineProps(['register'])
 const emits = defineEmits(['modifyPassword', 'register'])
 
@@ -287,7 +287,7 @@ function getNSwitchModeValue(): any {
         <NFormItem label="提示">
           <div style="width: 100%;">
             <div>
-             <NAlert title="" type="info">
+              <NAlert title="" type="info">
                 <div>
                   1.反馈意见可建issues：https://github.com/AICCOF/chatmoss-ui/
                 </div>
@@ -300,7 +300,7 @@ function getNSwitchModeValue(): any {
               </NAlert>
             </div>
             <NSpace class="mt-4">
-              <NButton  attr-type="button" @click="sendFeedbackEvent">
+              <NButton attr-type="button" @click="sendFeedbackEvent">
                 提交
               </NButton>
             </NSpace>

@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { NButton, NCard, NInput, NModal, NPopover, NSelect, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NModal, NSelect, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -15,9 +15,8 @@ import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
-import { localStorage } from "@/utils/storage/localStorage";
+import { localStorage } from '@/utils/storage/localStorage'
 const authStore = useAuthStoreWithout()
-
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -26,7 +25,6 @@ const appStore = useAppStore()
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
-
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
@@ -63,8 +61,6 @@ const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
-
-
 
 const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
@@ -130,10 +126,10 @@ function compressCode(codeString: any) {
     .replace(/\n/g, '') // 删除换行符
     .replace(/\r/g, '') // 删除回车符
     .replace(/\t/g, '') // 删除制表符
-
   // 转换为单行格式
   const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
   return oneLineCode
+  // return codeString
 }
 
 async function onConversation() {
@@ -146,7 +142,6 @@ async function onConversation() {
     return
 
   controller = new AbortController()
-
 
   await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
@@ -170,7 +165,6 @@ async function onConversation() {
   if (lastContext)
     options = { ...lastContext }
 
-
   await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
     createTime: new Date().toLocaleString(),
@@ -187,7 +181,8 @@ async function onConversation() {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
     console.log('chatMossPiecesNumber', chatMossPiecesNumber)
     // 在这里拼接用户所有的上下文
-    let texts = isCorrelation.value ? dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n') : message
+    // let texts = isCorrelation.value ? dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n') : message
+    let texts = message
 
     // 联网功能接口
     if (showNetwork.value && message.length < 20) {
@@ -205,18 +200,17 @@ async function onConversation() {
 
     texts = compressCode(texts)
 
-
-   let data = await fetchChatAPIProcess<Chat.ConversationResponse>({
+    const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
       options: {
         ...options,
-        conversationId: chatStore.getUuid
+        conversationId: chatStore.getUuid,
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
         const { responseText } = xhr
-        let chunk = responseText
+        const chunk = responseText
         // console.log(chunk)
         try {
           // const data = JSON.parse(chunk)
@@ -232,7 +226,7 @@ async function onConversation() {
             },
             requestOptions: { prompt: message, options: { ...options } },
           })
-          scrollToBottom()
+          // scrollToBottom()
         }
         catch (error) {
           //
@@ -241,7 +235,7 @@ async function onConversation() {
     })
 
     // 超出token提示
-    const tip1 = data as any as string;
+    const tip1 = data as any as string
     if (engList.includes(tip1))
       ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
 
@@ -298,7 +292,6 @@ async function onConversation() {
   }
 }
 
-
 function handleEnter(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
@@ -353,17 +346,17 @@ const footerClass = computed(() => {
 
 // 初始化与vscode通信
 vsCodeUtils({
-  handleVscodeMessage: function (selectedText: string) {
+  handleVscodeMessage(selectedText: string) {
     const questionListDom = document.querySelector('.question-list') as HTMLDivElement
     const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
     if (questionListDom === null || questionListDom.innerText !== '新建问题') {
       questionBtnDom.click()
       console.log('新建问题')
-    } else {
-      prompt.value = selectedText;
+    }
+    else {
+      prompt.value = selectedText
       console.log('回答问题')
-      clickMessage();
-
+      clickMessage()
     }
   },
   handleToken: (value: string) => {
@@ -378,17 +371,15 @@ function clickMessage() {
     // console.log(dom)
     dom && dom.click()
     localStorage.setItem('selectedText', '')
-  }, 500);
-
+  }, 500)
 }
 
 onMounted(() => {
-
   const selectedText = localStorage.getItem('selectedText')
   console.log('??', selectedText)
   if (selectedText) {
-    prompt.value = selectedText;
-    clickMessage();
+    prompt.value = selectedText
+    clickMessage()
   }
 })
 
@@ -425,16 +416,15 @@ function noDataInfoEvent(index: any) {
   // ms.info('更多问题解答和反馈，请加QQ群')
 }
 
-
 // 是否开启上下文功能
-function correlationEvnet() {
-  isCorrelation.value = !isCorrelation.value
-  localStorage.setItem('isCorrelation', `${isCorrelation.value}`)
-  if (isCorrelation.value)
-    ms.info('已开启上下文功能')
-  else
-    ms.info('已关闭上下文功能')
-}
+// function correlationEvnet() {
+//   isCorrelation.value = !isCorrelation.value
+//   localStorage.setItem('isCorrelation', `${isCorrelation.value}`)
+//   if (isCorrelation.value)
+//     ms.info('已开启上下文功能')
+//   else
+//     ms.info('已关闭上下文功能')
+// }
 
 const paperList = ref<Chat.paper[]>([])
 const nowPaperIndex = ref<number>(0)
@@ -486,16 +476,22 @@ async function onSuccessAuth() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span v-if="isPlus"
-                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
+                <span
+                  v-if="isPlus"
+                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
+                >
                   Plus
                 </span>
               </div>
               <div class="no-data-btns-list">
-                <div v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)">
-                  <img class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
-                    alt="">
+                <div
+                  v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
+                  @click="noDataInfoEvent(index)"
+                >
+                  <img
+                    class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
+                    alt=""
+                  >
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
@@ -505,8 +501,10 @@ async function onSuccessAuth() {
           </template>
           <template v-else>
             <div>
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :inversion="item.inversion" :error="item.error" :loading="item.loading"  />
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                :inversion="item.inversion" :error="item.error" :loading="item.loading"
+              />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -529,21 +527,27 @@ async function onSuccessAuth() {
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex items-center justify-between space-x-2">
           <!-- 左侧拓展区域 -->
-          <div class="left-btns">
+          <!-- <div class="left-btns">
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
+                <img
+                  class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
-                  @click="correlationEvnet">
+                  @click="correlationEvnet"
+                >
               </template>
               <span>是否开启上下文</span>
             </NPopover>
-          </div>
-          <NInput v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter" />
-          <NSelect v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
+          </div> -->
+          <NInput
+            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+          />
+          <NSelect
+            v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
             :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
-            clearable label-field="key" @keydown="handleEnter" />
+            clearable label-field="key" @keydown="handleEnter"
+          />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
