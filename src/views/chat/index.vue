@@ -93,6 +93,7 @@ const currentIndex = computed({
 
 function handleSubmit() {
   showModal.value = false
+
   userStore.residueCountAPI()
   onConversation()
 }
@@ -381,6 +382,8 @@ onMounted(() => {
     prompt.value = selectedText
     clickMessage()
   }
+
+  chatStore.chatList();
 })
 
 onUnmounted(() => {

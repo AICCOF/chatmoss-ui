@@ -43,7 +43,7 @@ onMounted(() => {
 function updated() {
   getPlusInfoAPI()
   getSystemNoticeAPI()
-  getKeyListAPI()
+  // getKeyListAPI()
   userStore.residueCountAPI()
 }
 const temNotice = computed(() => userStore.getNotices || [])
@@ -148,7 +148,7 @@ function getNSwitchModeValue(): any {
     <NCard title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">
-          <span class="mr-4">用户名称：{{ nickname }}</span>
+          <span class="mr-4">用户名称：{{ nickname||'未登录' }}</span>
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
@@ -158,7 +158,7 @@ function getNSwitchModeValue(): any {
           <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
             修改密码
           </NButton>
-          <NPopover style="max-height: 340px" trigger="click" scrollable>
+          <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
             <template #trigger>
               <NButton quaternary circle size="tiny">
                 <template #icon>

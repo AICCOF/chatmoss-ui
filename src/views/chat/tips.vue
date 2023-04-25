@@ -3,12 +3,13 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
-import { useAuthStoreWithout } from '@/store/modules'
+import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { localStorage } from "@/utils/storage/localStorage";
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
+const chatStore = useChatStore()
 const token = ref('')
 
 interface Emit {
@@ -21,6 +22,7 @@ function loginEvent(type: string) {
   if (type === 'exit') {
     useAuthStore.setToken('')
     sendToMsg('chatMossToken', '')
+    chatStore.clearList();
     userStore.residueCountAPI()
   }
 }

@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
-
+import { createDiscreteApi } from 'naive-ui'
+const { message } = createDiscreteApi(
+  ['message', 'dialog', 'notification', 'loadingBar'],
+  {}
+)
 export const useChatStore = defineStore('chat-store', {
   state: (): Chat.ChatState => {
     return {
       ...getLocalState(),
+      chat:[]
     }
   },
   getters: {
@@ -28,17 +33,26 @@ export const useChatStore = defineStore('chat-store', {
 
   actions: {
     async addHistory(title?: string) {
-      const res = await addConversation({ title: title || '新建问题' })
-      this.active = res.msg as number
-      this.chat.unshift(res.list[0])
-      this.reloadRoute()
+      try {
+        const res = await addConversation({ title: title || '新建问题' })
+        this.active = res.msg as number
+        this.chat.unshift(res.list[0])
+        this.reloadRoute()
+      } catch (error:any) {
+        message.error(error.msg)
+      }
+    
     },
-    async historyList() {
+    async chatList() {
       // if (!this.active)
       //   return
       const res = await getConversationList()
       this.chat = res.list
       this.getConversationDetail()
+    },
+    clearList(){
+      this.chat = []
+      this.active = null;
     },
     async getConversationDetail() {
       if (!this.active)
@@ -67,6 +81,7 @@ export const useChatStore = defineStore('chat-store', {
         else {
           if (this.chat[index].tem !== undefined && this.chat[index].title !== this.chat[index].tem)
             await editConversation({ title: this.chat[index].tem, conversationId: this.chat[index].id })
+          this.chat[index].title = this.chat[index].tem as string
 
           await this.getConversationDetail()
         }
@@ -76,14 +91,16 @@ export const useChatStore = defineStore('chat-store', {
 
     async deleteHistory(index: number) {
       await deleteConversation({ conversationId: this.chat[index].id })
-      await this.historyList()
+      await this.chatList()
 
       const chat = this.chat[this.chat.length - 1]
-      if (!history)
+      if (!chat){
         this.active = null
-
-      else
+      }else{
         this.active = chat.id
+      }
+      console.log(this.active)
+        
 
       this.reloadRoute()
     },
@@ -109,10 +126,14 @@ export const useChatStore = defineStore('chat-store', {
         if (this.chat.length === 0)
           await this.addHistory(chat.text)
       }
-      const result = this.chat.find(item => item.id === id)
+      const result = this.chat.find(item => item.id === this.active)
       if (result) {
-        if (!result.data)
+        if (!result.data){
+          // 如果问的是第一个问题，编辑问题的标题
+          await editConversation({ title: chat.text, conversationId: this.active })
+          result.title = chat.text;
           result.data = []
+        }  
         result.data.push(chat)
         this.recordState()
       }

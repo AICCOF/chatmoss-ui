@@ -10,7 +10,7 @@ const { isMobile } = useBasicLayout()
 const appStore = useAppStore()
 const chatStore = useChatStore()
 
-chatStore.historyList();
+
 // console.log(chatStore.$state)
 const dataSources = computed(() => chatStore.chat)
 
