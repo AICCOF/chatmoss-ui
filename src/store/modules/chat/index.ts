@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia'
+import { createDiscreteApi } from 'naive-ui'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
-import { createDiscreteApi } from 'naive-ui'
 const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
-  {}
+  {},
 )
 export const useChatStore = defineStore('chat-store', {
   state: (): Chat.ChatState => {
     return {
       ...getLocalState(),
-      chat:[]
+      chat: [],
     }
   },
   getters: {
@@ -38,21 +38,29 @@ export const useChatStore = defineStore('chat-store', {
         this.active = res.msg as number
         this.chat.unshift(res.list[0])
         this.reloadRoute()
-      } catch (error:any) {
+      }
+      catch (error: any) {
         message.error(error.msg)
       }
-    
     },
     async chatList() {
-      // if (!this.active)
-      //   return
       const res = await getConversationList()
       this.chat = res.list
       this.getConversationDetail()
+      // 没有选中某一项的处理逻辑
+      setTimeout(() => {
+        const questionListDom = document.querySelector('.question-list') as HTMLDivElement
+        const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+        if (!localStorage.getItem('chatStorage')) {
+          questionListDom
+            ? questionListDom.click() // 如果有数据，但是没有选中，就先操作dom节点选中第一个
+            : questionBtnDom.click() // 如果没有数据，就先操作dom节点，新建一个问题
+        }
+      }, 500)
     },
-    clearList(){
+    clearList() {
       this.chat = []
-      this.active = null;
+      this.active = null
     },
     async getConversationDetail() {
       if (!this.active)
@@ -94,13 +102,13 @@ export const useChatStore = defineStore('chat-store', {
       await this.chatList()
 
       const chat = this.chat[this.chat.length - 1]
-      if (!chat){
+      if (!chat)
         this.active = null
-      }else{
+
+      else
         this.active = chat.id
-      }
+
       console.log(this.active)
-        
 
       this.reloadRoute()
     },
@@ -128,12 +136,12 @@ export const useChatStore = defineStore('chat-store', {
       }
       const result = this.chat.find(item => item.id === this.active)
       if (result) {
-        if (!result.data){
+        if (!result.data) {
           // 如果问的是第一个问题，编辑问题的标题
           await editConversation({ title: chat.text, conversationId: this.active })
-          result.title = chat.text;
+          result.title = chat.text
           result.data = []
-        }  
+        }
         result.data.push(chat)
         this.recordState()
       }

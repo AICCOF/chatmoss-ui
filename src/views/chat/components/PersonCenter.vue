@@ -6,7 +6,7 @@ import BasicModal from './Modal/BasicModal.vue'
 import { useModel } from './Modal/hooks/useModal'
 import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
-import { getKeyList, getPlusInfo, getSystemNotice, sendFeedback } from '@/api/personCenter'
+import { getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
 import { localStorage } from '@/utils/storage/localStorage'
 // let props = defineProps(['register'])
@@ -70,14 +70,14 @@ async function getSystemNoticeAPI() {
   }
 }
 async function getPlusInfoAPI() {
-  const res = await getPlusInfo()
-  personCenter.value.score = res.data
+  // const res = await getPlusInfo()
+  // personCenter.value.score = res.data
 }
-async function getKeyListAPI() {
-  const res = await getKeyList<any>()
-  // console.log(res.data.rows)
-  personCenter.value.dataList = res.data.rows
-}
+// async function getKeyListAPI() {
+//   const res = await getKeyList<any>()
+//   // console.log(res.data.rows)
+//   personCenter.value.dataList = res.data.rows
+// }
 
 defineExpose({ updated })
 
@@ -93,23 +93,23 @@ function settingBtn() {
   }
 }
 
-const chatMossPiecesNumber = ref(localStorage.getItem('chatMossPiecesNumber') || '') as any
-function chatMossPiecesNumberEvent() {
-  if (chatMossPiecesNumber.value !== '') {
-    localStorage.setItem('chatMossPiecesNumber', chatMossPiecesNumber.value)
-    ms.info('上下文对话条数设置成功~', { duration: 5000 })
-  }
-  else {
-    ms.error('不能为空', { duration: 5000 })
-  }
-}
+// const chatMossPiecesNumber = ref(localStorage.getItem('chatMossPiecesNumber') || '') as any
+// function chatMossPiecesNumberEvent() {
+//   if (chatMossPiecesNumber.value !== '') {
+//     localStorage.setItem('chatMossPiecesNumber', chatMossPiecesNumber.value)
+//     ms.info('上下文对话条数设置成功~', { duration: 5000 })
+//   }
+//   else {
+//     ms.error('不能为空', { duration: 5000 })
+//   }
+// }
 
-function getTextNum() {
-  let chatMossTextNum = localStorage.getItem('chatMossTextNum')
-  if (!chatMossTextNum)
-    chatMossTextNum = '0'
-  return chatMossTextNum
-}
+// function getTextNum() {
+//   let chatMossTextNum = localStorage.getItem('chatMossTextNum')
+//   if (!chatMossTextNum)
+//     chatMossTextNum = '0'
+//   return chatMossTextNum
+// }
 
 // 主题
 function handleUpdateValue(chatmossTheme: string) {
@@ -148,7 +148,7 @@ function getNSwitchModeValue(): any {
     <NCard title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">
-          <span class="mr-4">用户名称：{{ nickname||'未登录' }}</span>
+          <span class="mr-4">用户名称：{{ nickname || '未登录' }}</span>
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
@@ -202,15 +202,12 @@ function getNSwitchModeValue(): any {
       </div>
       <NDivider />
       <div>
-        <span class="title-h2">本机累计使用字符数</span>：{{ getTextNum() }} 字符
+        <span class="title-h2">本机累计使用字符数</span>：未知
       </div>
       <div class="tip-text-input">
-        注意：OpenAI官方限制了5美元key的速度，现在回答需要好几十秒
+        小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
       </div>
-      <div class="tip-text-input">
-        使用字符包速度不受限制（因为字符包使用的是120美金的key）
-      </div>
-      <NDivider />
+      <!-- <NDivider />
       <div>
         <div class="title-h1">
           上下文条数设置（建议30条）
@@ -224,7 +221,7 @@ function getNSwitchModeValue(): any {
         <div class="tip-text-input">
           设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
         </div>
-      </div>
+      </div> -->
       <NDivider />
       <div>
         <div class="title-h1">

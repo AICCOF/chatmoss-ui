@@ -47,7 +47,7 @@ const isPlus = computed(() => {
 if (!localStorage.getItem('isCorrelation'))
   localStorage.setItem('isCorrelation', 'true')
 
-const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
+// const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
 // const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
 const showNetwork = ref(false)
 
@@ -383,7 +383,7 @@ onMounted(() => {
     clickMessage()
   }
 
-  chatStore.chatList();
+  chatStore.chatList()
 })
 
 onUnmounted(() => {
@@ -391,9 +391,9 @@ onUnmounted(() => {
     controller.abort()
 })
 
-function getIsApiKey() {
-  return !localStorage.getItem('apiKey')
-}
+// function getIsApiKey() {
+//   return !localStorage.getItem('apiKey')
+// }
 
 const noDataInfo = [
   {
@@ -560,12 +560,12 @@ async function onSuccessAuth() {
                 </span>
               </template>
             </NButton>
-            <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
+            <!-- <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
               下次消耗{{
                 isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}`
                 : `${Math.ceil((prompt?.length || 0))}`
               }}字符
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

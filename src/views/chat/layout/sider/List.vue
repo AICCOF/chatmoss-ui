@@ -10,7 +10,6 @@ const { isMobile } = useBasicLayout()
 const appStore = useAppStore()
 const chatStore = useChatStore()
 
-
 // console.log(chatStore.$state)
 const dataSources = computed(() => chatStore.chat)
 
@@ -20,7 +19,6 @@ async function handleSelect({ id }: Chat.ChatInfo) {
   await chatStore.setActive(id)
   if (chatStore.active)
     chatStore.updateHistory(id, { isEdit: false })
-
 
   if (isMobile.value)
     appStore.setSiderCollapsed(true)
@@ -73,7 +71,7 @@ function isActive(id: number) {
                 size="tiny"
                 @keypress="handleEnter(item, false, $event)"
               />
-              <span v-else>{{ item.title|| '新建问题' }}</span>
+              <span v-else>{{ item.title || '新建问题' }}</span>
             </div>
             <!-- v-if="isActive(item.uuid)" -->
             <div class="absolute z-10 flex visible right-1">
