@@ -152,7 +152,7 @@ function getNSwitchModeValue(): any {
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <NButton v-if="userStore.userInfo.user.email" type="primary" size="tiny" quaternary @click="openModel()">
+          <NButton v-if="userStore.userInfo.user.email" id="question-push" type="primary" size="tiny" quaternary @click="openModel()">
             问题反馈
           </NButton>
           <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
@@ -256,7 +256,7 @@ function getNSwitchModeValue(): any {
   </BasicModal>
   <BasicModal key="2" transform-origin="center" @register="registerModal">
     <NCard
-      style="width:80%;max-width: 600px; min-width: 350px;" title="问题反馈" :bordered="false" size="huge" role="dialog"
+      style="height: 60vh; overflow: scroll; width:80%;max-width: 600px; min-width: 350px;" title="问题反馈" :bordered="false" size="huge" role="dialog"
       aria-modal="true"
     >
       <NForm ref="formRef" :model="feedBackForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">

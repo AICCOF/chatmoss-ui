@@ -333,15 +333,14 @@ const buttonDisabled = computed(() => {
 })
 
 const wrapClass = computed(() => {
-  if (isMobile.value)
-    return ['pt-14']
+  // if (isMobile.value)
+  //   return ['pt-14']
   return []
 })
 
 const footerClass = computed(() => {
-  let classes = ['p-4', 'pt-0']
-  if (isMobile.value)
-    classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
+  // let classes = ['p-4', 'pt-0']
+  const classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
   return classes
 })
 
@@ -472,9 +471,9 @@ async function onSuccessAuth() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex-1 overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
+      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
-          <template v-if="!dataSources.length">
+          <template v-if="dataSources.length">
             <div class="no-data-info">
               <!-- 标题 -->
               <div class="no-data-info-title">
@@ -670,7 +669,7 @@ async function onSuccessAuth() {
 }
 
 .n-input.n-input--textarea {
-  border-radius: 50px;
+  border-radius: 8px;
 }
 
 /* 隐藏滚动进度条 */
@@ -857,5 +856,10 @@ async function onSuccessAuth() {
   .network-btn-filter {
     filter: grayscale(90%);
   }
+}
+
+.chat-main {
+	height: calc(100% - 120px);
+	margin-top: 55px;
 }
 </style>

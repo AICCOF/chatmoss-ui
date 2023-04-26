@@ -4,7 +4,7 @@ import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
-import { localStorage } from "@/utils/storage/localStorage";
+import { localStorage } from '@/utils/storage/localStorage'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
@@ -22,7 +22,7 @@ function loginEvent(type: string) {
   if (type === 'exit') {
     useAuthStore.setToken('')
     sendToMsg('chatMossToken', '')
-    chatStore.clearList();
+    chatStore.clearList()
     userStore.residueCountAPI()
   }
 }
@@ -112,11 +112,7 @@ onMounted(() => {
 }
 .tip-text-content {
   font-size: 10px;
-	// color: rgba(232, 236, 239, 0.75);
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .van-notice-bar {
   width: 60%;
