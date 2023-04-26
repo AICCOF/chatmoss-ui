@@ -11,7 +11,7 @@ const appStore = useAppStore()
 const chatStore = useChatStore()
 
 // console.log(chatStore.$state)
-const dataSources = computed(() => chatStore.chat)
+const dataSources = computed(() => chatStore.chatsCollect)
 
 async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
@@ -40,7 +40,7 @@ function handleEnter({ id }: Chat.ChatInfo, isEdit: boolean, event: KeyboardEven
     chatStore.updateHistory(id, { isEdit })
 }
 
-function isActive(id: number) {
+function isActive(id: any) {
   return chatStore.active === id
 }
 </script>

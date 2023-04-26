@@ -4,7 +4,7 @@ const LOCAL_NAME = 'chatStorage'
 
 
 export function defaultState(): Chat.ChatState {
-  return { active: null, chat: [] }
+  return { active: null, chat: [], localChat:[] }
 }
 
 export function getLocalState(): Chat.ChatState {

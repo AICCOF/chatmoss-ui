@@ -7,12 +7,17 @@ const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
   {},
 )
+
+let flag = 'MOSS_';
+
+function verify(id:any) {
+  return `${id}`.indexOf(flag) > - 1
+}
 export const useChatStore = defineStore('chat-store', {
   state: (): Chat.ChatState => {
     return {
       ...getLocalState(),
       chat: [],
-      localChat: [],
     }
   },
   getters: {
@@ -25,10 +30,22 @@ export const useChatStore = defineStore('chat-store', {
     getUuid(state: Chat.ChatState) {
       return state.active as any
     },
+    chatsCollect() {
+      let chat: Chat.ChatInfo[] = this.chat;
+      let localChat: Chat.ChatInfo[] = this.localChat;
+      return [...chat, ...localChat]
+    },
 
     getChatByUuid(state: Chat.ChatState) {
       return () => {
-        return [(state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => a.timestamp - b.timestamp), ...this.localChat]
+        let active = state.active as any;
+
+        if (!active) return []
+        if (verify(state.active)) {
+          return (state.localChat.find(item => item.id === state.active)?.data ?? [])
+        } else {
+          return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => a.timestamp - b.timestamp)
+        }
       }
     },
   },
@@ -55,13 +72,14 @@ export const useChatStore = defineStore('chat-store', {
     },
     async createLocalChat(title?: string) {
       // this.active = []
-      let timestamp =  new Date().getTime()
+      let timestamp = new Date().getTime()
       let id = "MOSS_" + timestamp;
       this.localChat.unshift({
         timestamp,
         id,
         "title": title || "新闻问题",
         isEdit: false,
+        data: []
       })
       this.active = id
       this.reloadRoute()
@@ -83,7 +101,7 @@ export const useChatStore = defineStore('chat-store', {
     },
     clearList() {
       this.chat = []
-      this.localChat = [];
+      // this.localChat = [];
       this.active = null
     },
     async getConversationDetail() {
@@ -103,9 +121,10 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    async updateHistory(id: number, edit: Partial<Chat.ChatInfo>) {
+    async updateHistory(id: any, edit: Partial<Chat.ChatInfo>) {
+   
       let token = getToken()
-      if (token) {
+      if (token && !verify(id)) {
         await this.updateOriginHistory(id, edit);
       } else {
         await this.updateLocalHistory(id, edit);
@@ -136,7 +155,7 @@ export const useChatStore = defineStore('chat-store', {
         }
         else {
           if (this.localChat[index].tem !== undefined && this.localChat[index].title !== this.localChat[index].tem)
-          this.localChat[index].title = this.localChat[index].tem as string
+            this.localChat[index].title = this.localChat[index].tem as string
         }
         this.recordState()
       }
@@ -144,7 +163,7 @@ export const useChatStore = defineStore('chat-store', {
 
     async deleteHistory(index: number) {
       let token = getToken()
-      if (token) {
+      if (token && !verify(this.active)) {
         await this.deleteOriginHistory(index);
       } else {
         await this.deleteLocalHistory(index);
@@ -163,19 +182,17 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute()
     },
     async deleteLocalHistory(index: number) {
-  
-      this.localChat.splice(index,1)
+
+      this.localChat.splice(index, 1)
       const chat = this.localChat[this.localChat.length - 1]
       if (!chat)
         this.active = null
-
       else
         this.active = chat.id
       this.reloadRoute()
     },
 
-
-    async setActive(id: number) {
+    async setActive(id: any) {
       this.active = id
       return await this.reloadRoute()
     },
@@ -193,7 +210,7 @@ export const useChatStore = defineStore('chat-store', {
 
     async addChatByUuid(id: number, chat: Chat.Chat) {
       let token = getToken()
-      if (token) {
+      if (token && !verify(this.active)) {
         await this.addOriginChat(id, chat);
       } else {
         await this.addLocalChat(id, chat);
@@ -206,7 +223,7 @@ export const useChatStore = defineStore('chat-store', {
       }
       const result = this.localChat.find(item => item.id === this.active)
       if (result) {
-        if (!result.data) {
+        if (result.data && result.data.length == 0) {
           // 如果问的是第一个问题，编辑问题的标题
           result.title = chat.text
           result.data = []
@@ -233,7 +250,15 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    updateChatByUuid(id: number, index: number, chat: Chat.Chat) {
+    async updateChatByUuid(id: number, index: number, chat: Chat.Chat) {
+      let token = getToken()
+      if (token && !verify(this.active)) {
+        await this.updateOriginChatByUuid(id, index, chat);
+      } else {
+        await this.updateLocalChatByUuid(id, index, chat);
+      }
+    },
+    updateOriginChatByUuid(id: number, index: number, chat: Chat.Chat) {
       if (!id || id === 0) {
         if (this.chat.length) {
           this.chat[0].data[index] = chat
@@ -241,10 +266,23 @@ export const useChatStore = defineStore('chat-store', {
         }
         return
       }
-
       const chatIndex = this.chat.findIndex(item => item.id === id)
       if (chatIndex !== -1) {
         this.chat[chatIndex].data[index] = chat
+        this.recordState()
+      }
+    },
+    updateLocalChatByUuid(id: number, index: number, chat: Chat.Chat) {
+      if (!id || id === 0) {
+        if (this.localChat.length) {
+          this.localChat[0].data[index] = chat
+          this.recordState()
+        }
+        return
+      }
+      const chatIndex = this.localChat.findIndex(item => item.id === id)
+      if (chatIndex !== -1) {
+        this.localChat[chatIndex].data[index] = chat
         this.recordState()
       }
     },
