@@ -44,7 +44,7 @@ function toggleButtonEvent() {
         <div class="header-right-item">
           <NPopover trigger="hover">
             <template #trigger>
-              <img src="./img/img12.png" alt="" @click="questionPushEvent">
+              <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt="" @click="questionPushEvent">
             </template>
             <span>问题反馈</span>
           </NPopover>

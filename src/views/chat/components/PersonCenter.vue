@@ -144,7 +144,7 @@ function getNSwitchModeValue(): any {
 </script>
 
 <template>
-  <BasicModal key="2" style="width: 80%; height: 80vh; overflow: scroll;" transform-origin="center" @register="(...args: any[]) => emits('register', ...args)">
+  <BasicModal key="2" style="min-width: 300px; width: 80%; height: 80vh; overflow: scroll;" transform-origin="center" @register="(...args: any[]) => emits('register', ...args)">
     <NCard title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">

@@ -86,15 +86,15 @@ function shopEvent() {
       <div class="header-right-item">
         <NPopover trigger="hover">
           <template #trigger>
-            <img src="./img/img10.png" alt="" @click="settingMainEvent">
+            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="" @click="settingMainEvent">
           </template>
-          <span>ChatMoss系统设置</span>
+          <span>ChatMoss个人中心</span>
         </NPopover>
       </div>
       <div class="header-right-item">
         <NPopover trigger="hover">
           <template #trigger>
-            <img src="./img/img8.png" alt="" @click="shopEvent">
+            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="" @click="shopEvent">
           </template>
           <span>ChatMoss商店</span>
         </NPopover>
@@ -133,14 +133,15 @@ function shopEvent() {
 	background-color: rgba(60, 128, 253, 0.3);
 	z-index: 20;
 	.header-left {
-		width: 50%;
+		width: 70%;
+		text-align: right;
 	}
 	.header-right {
-		width: 50%;
+		width: 30%;
 		display: flex;
 		justify-content: flex-start;
 		.header-right-item {
-			margin-right: 20px;
+			margin-right: 16px;
 			cursor: pointer;
 			display: flex;
 			align-items: center;

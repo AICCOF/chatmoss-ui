@@ -214,7 +214,7 @@ function buyEvent(item: any) {
           </div>
           <Tips @login="showModelEvent" />
         </div>
-        <NModal v-model:show="showSettingModal" preset="dialog" style="height: 80vh; overflow: scroll; width: 80%;">
+        <NModal v-model:show="showSettingModal" preset="dialog" style="min-width: 300px; height: 80vh; overflow: scroll; width: 80%;">
           <NCard title="ChatMoss商店" :bordered="false" size="huge" role="dialog" aria-modal="true">
             <div>
               <div class="title-h1">

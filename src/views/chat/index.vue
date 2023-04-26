@@ -473,7 +473,7 @@ async function onSuccessAuth() {
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
-          <template v-if="dataSources.length">
+          <template v-if="!dataSources.length">
             <div class="no-data-info">
               <!-- 标题 -->
               <div class="no-data-info-title">
