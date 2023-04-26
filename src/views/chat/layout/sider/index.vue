@@ -9,7 +9,6 @@ import Footer from './Footer.vue'
 import PersonCenter from './../../components/PersonCenter.vue'
 import Login from '@/views/login/index.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
-import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { getToken } from '@/store/modules/auth/helper'
 import { toMoss } from '@/api'
 const person = ref(null) as any
@@ -21,8 +20,9 @@ const appStore = useAppStore()
 const chatStore = useChatStore()
 const token = ref(getToken())
 
-const { isMobile } = useBasicLayout()
+// const { isMobile } = useBasicLayout()
 const tab = ref('login')
+const isMobile = ref(true)
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
@@ -34,22 +34,16 @@ function handleUpdateCollapsed() {
 }
 
 const getMobileClass = computed<CSSProperties>(() => {
-  if (isMobile.value) {
-    return {
-      position: 'fixed',
-      zIndex: 50,
-    }
+  return {
+    position: 'fixed',
+    zIndex: 50,
   }
-  return {}
 })
 
 const mobileSafeArea = computed(() => {
-  if (isMobile.value) {
-    return {
-      paddingBottom: 'env(safe-area-inset-bottom)',
-    }
+  return {
+    paddingBottom: 'env(safe-area-inset-bottom)',
   }
-  return {}
 })
 
 // 兑换字符数
@@ -178,7 +172,6 @@ const personCenter = ref<any>({
 const shopModal = ref(false)
 const shopData = ref({}) as any
 function buyEvent(item: any) {
-  console.log('item', item)
   shopModal.value = true
   shopData.value = item
 }
@@ -186,29 +179,34 @@ function buyEvent(item: any) {
 
 <template>
   <NLayoutSider
-    :collapsed="collapsed" :collapsed-width="0" :width="200" :show-trigger="isMobile ? false : 'arrow-circle'"
-    collapse-mode="transform" position="absolute" bordered :style="getMobileClass"
+    :collapsed="collapsed"
+    :collapsed-width="0" :width="200"
+    show-trigger="arrow-circle"
+    collapse-mode="transform"
+    position="absolute"
+    bordered
+    :style="getMobileClass"
     @update-collapsed="handleUpdateCollapsed"
   >
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
-        <div class="p-4">
+        <div v-show="false" class="p-4">
           <NButton id="question-btn" dashed block @click="handleAdd">
             新建问题
           </NButton>
         </div>
-        <div class="flex-1 min-h-0 pb-4 overflow-hidden">
+        <div class="flex-1 min-h-0 pt-12 pb-12 overflow-hidden">
           <List />
         </div>
         <!-- 拓展功能区域 -->
-        <div class="continuation">
-          <div class="setting-main " @click="myHomeSubmit">
+        <div v-show="false" class="continuation">
+          <div class="setting-main setting-main1" @click="myHomeSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="">
             <div class="setting-text step6">
               个人中心
             </div>
           </div>
-          <div class="setting-main " @click="handleSettingSubmit">
+          <div class="setting-main setting-main2" @click="handleSettingSubmit">
             <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="">
             <div class="setting-text step5">
               ChatMoss商店
