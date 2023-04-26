@@ -11,16 +11,17 @@ declare namespace Chat {
 		requestOptions: { prompt: string; options?: ConversationRequest | null }
 	}
 	interface ChatInfo{
-		data: Chat[],
-		id: number,
+		data?: Chat[],
+		id: number|string,
+		timestamp:number;
 		tem?: string
-		id: number;
 		title: string
 		isEdit: boolean
 	}
 	interface ChatState {
-		active: number | null
-		chat: ChatInfo[]
+		active: number | string | null
+		chat: ChatInfo[],
+		localChat: ChatInfo[],
 	}
 
 	interface ConversationRequest {

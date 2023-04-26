@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { createDiscreteApi } from 'naive-ui'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
+import { getToken } from '../auth/helper'
 const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
   {},
@@ -11,6 +12,7 @@ export const useChatStore = defineStore('chat-store', {
     return {
       ...getLocalState(),
       chat: [],
+      localChat: [],
     }
   },
   getters: {
@@ -26,13 +28,21 @@ export const useChatStore = defineStore('chat-store', {
 
     getChatByUuid(state: Chat.ChatState) {
       return () => {
-        return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => a.timestamp - b.timestamp)
+        return [(state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => a.timestamp - b.timestamp), ...this.localChat]
       }
     },
   },
 
   actions: {
-    async addHistory(title?: string) {
+    async createChat(title?: string) {
+      let token = getToken()
+      if (token) {
+        await this.createOriginChat(title);
+      } else {
+        await this.createLocalChat(title);
+      }
+    },
+    async createOriginChat(title?: string) {
       try {
         const res = await addConversation({ title: title || '新建问题' })
         this.active = res.msg as number
@@ -43,23 +53,37 @@ export const useChatStore = defineStore('chat-store', {
         message.error(error.msg)
       }
     },
+    async createLocalChat(title?: string) {
+      // this.active = []
+      let timestamp =  new Date().getTime()
+      let id = "MOSS_" + timestamp;
+      this.localChat.unshift({
+        timestamp,
+        id,
+        "title": title || "新闻问题",
+        isEdit: false,
+      })
+      this.active = id
+      this.reloadRoute()
+    },
     async chatList() {
       const res = await getConversationList()
       this.chat = res.list
       this.getConversationDetail()
       // 没有选中某一项的处理逻辑
-      setTimeout(() => {
-        const questionListDom = document.querySelector('.question-list') as HTMLDivElement
-        const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-        if (!localStorage.getItem('chatStorage')) {
-          questionListDom
-            ? questionListDom.click() // 如果有数据，但是没有选中，就先操作dom节点选中第一个
-            : questionBtnDom.click() // 如果没有数据，就先操作dom节点，新建一个问题
-        }
-      }, 500)
+      // setTimeout(() => {
+      //   const questionListDom = document.querySelector('.question-list') as HTMLDivElement
+      //   const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+      //   if (!localStorage.getItem('chatStorage')) {
+      //     questionListDom
+      //       ? questionListDom.click() // 如果有数据，但是没有选中，就先操作dom节点选中第一个
+      //       : questionBtnDom.click() // 如果没有数据，就先操作dom节点，新建一个问题
+      //   }
+      // }, 500)
     },
     clearList() {
       this.chat = []
+      this.localChat = [];
       this.active = null
     },
     async getConversationDetail() {
@@ -80,6 +104,14 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async updateHistory(id: number, edit: Partial<Chat.ChatInfo>) {
+      let token = getToken()
+      if (token) {
+        await this.updateOriginHistory(id, edit);
+      } else {
+        await this.updateLocalHistory(id, edit);
+      }
+    },
+    async updateOriginHistory(id: number, edit: Partial<Chat.ChatInfo>) {
       const index = this.chat.findIndex(item => item.id === id)
       if (index !== -1) {
         this.chat[index] = { ...this.chat[index], ...edit }
@@ -93,11 +125,32 @@ export const useChatStore = defineStore('chat-store', {
 
           await this.getConversationDetail()
         }
+      }
+    },
+    async updateLocalHistory(id: number, edit: Partial<Chat.ChatInfo>) {
+      const index = this.localChat.findIndex(item => item.id === id)
+      if (index !== -1) {
+        this.localChat[index] = { ...this.localChat[index], ...edit }
+        if (edit.isEdit) {
+          this.localChat[index].title = this.localChat[index].tem as string
+        }
+        else {
+          if (this.localChat[index].tem !== undefined && this.localChat[index].title !== this.localChat[index].tem)
+          this.localChat[index].title = this.localChat[index].tem as string
+        }
         this.recordState()
       }
     },
 
     async deleteHistory(index: number) {
+      let token = getToken()
+      if (token) {
+        await this.deleteOriginHistory(index);
+      } else {
+        await this.deleteLocalHistory(index);
+      }
+    },
+    async deleteOriginHistory(index: number) {
       await deleteConversation({ conversationId: this.chat[index].id })
       await this.chatList()
 
@@ -107,11 +160,20 @@ export const useChatStore = defineStore('chat-store', {
 
       else
         this.active = chat.id
-
-      console.log(this.active)
-
       this.reloadRoute()
     },
+    async deleteLocalHistory(index: number) {
+  
+      this.localChat.splice(index,1)
+      const chat = this.localChat[this.localChat.length - 1]
+      if (!chat)
+        this.active = null
+
+      else
+        this.active = chat.id
+      this.reloadRoute()
+    },
+
 
     async setActive(id: number) {
       this.active = id
@@ -130,9 +192,33 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async addChatByUuid(id: number, chat: Chat.Chat) {
+      let token = getToken()
+      if (token) {
+        await this.addOriginChat(id, chat);
+      } else {
+        await this.addLocalChat(id, chat);
+      }
+    },
+    async addLocalChat(id: number, chat: Chat.Chat) {
+      if (!id || id === 0) {
+        if (this.localChat.length === 0)
+          await this.createLocalChat(chat.text)
+      }
+      const result = this.localChat.find(item => item.id === this.active)
+      if (result) {
+        if (!result.data) {
+          // 如果问的是第一个问题，编辑问题的标题
+          result.title = chat.text
+          result.data = []
+        }
+        result.data.push(chat)
+        this.recordState()
+      }
+    },
+    async addOriginChat(id: number, chat: Chat.Chat) {
       if (!id || id === 0) {
         if (this.chat.length === 0)
-          await this.addHistory(chat.text)
+          await this.createOriginChat(chat.text)
       }
       const result = this.chat.find(item => item.id === this.active)
       if (result) {

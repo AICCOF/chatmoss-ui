@@ -26,7 +26,7 @@ const tab = ref('login')
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
-  chatStore.addHistory()
+  chatStore.createChat()
 }
 
 function handleUpdateCollapsed() {
