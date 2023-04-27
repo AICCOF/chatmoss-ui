@@ -77,7 +77,7 @@ export const useChatStore = defineStore('chat-store', {
       this.localChat.unshift({
         timestamp,
         id,
-        "title": title || "新闻问题",
+        "title": title || "新建问题",
         isEdit: false,
         data: []
       })
@@ -122,7 +122,7 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async updateHistory(id: any, edit: Partial<Chat.ChatInfo>) {
-   
+
       let token = getToken()
       if (token && !verify(id)) {
         await this.updateOriginHistory(id, edit);

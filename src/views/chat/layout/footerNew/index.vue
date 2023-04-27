@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NPopover, useMessage } from 'naive-ui'
+import { useMessage } from 'naive-ui'
 const ms = useMessage()
 
 // 新建对话
@@ -9,14 +9,14 @@ function createQuestion() {
   ms.success('新建会话成功，请提问~')
 }
 // 问题反馈
-function questionPushEvent() {
-  const questionBtnDom = document.querySelector('.setting-main1') as HTMLDivElement
-  questionBtnDom.click()
-  setTimeout(() => {
-    const questionBtnDom = document.querySelector('#question-push') as HTMLDivElement
-    questionBtnDom.click()
-  }, 100)
-}
+// function questionPushEvent() {
+//   const questionBtnDom = document.querySelector('.setting-main1') as HTMLDivElement
+//   questionBtnDom.click()
+//   setTimeout(() => {
+//     const questionBtnDom = document.querySelector('#question-push') as HTMLDivElement
+//     questionBtnDom.click()
+//   }, 100)
+// }
 // 历史记录
 function toggleButtonEvent() {
   const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
@@ -42,12 +42,12 @@ function toggleButtonEvent() {
     <div class="footer-right">
       <div class="footer-item">
         <div class="header-right-item">
-          <NPopover trigger="hover">
+          <!-- <NPopover trigger="hover">
             <template #trigger>
               <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt="" @click="questionPushEvent">
             </template>
             <span>问题反馈</span>
-          </NPopover>
+          </NPopover> -->
         </div>
       </div>
     </div>
@@ -62,14 +62,15 @@ function toggleButtonEvent() {
 	position: fixed;
 	display: flex;
 	align-items: center;
-	height: 50px;
-	min-height: 50px;
-	max-height: 50px;
-	padding: 0 16px;
+	height: 40px;
+	min-height: 40px;
+	max-height: 40px;
+	padding: 0 10px;
 	user-select: none;
-	background-color: rgba(60, 128, 253, 0.3);
+	backdrop-filter: blur(20px);
+	// background-color: rgba(60, 128, 253, 0.05);
 	z-index: 20;
-	bottom: 50px;
+	bottom: 46px;
 	left: 0px;
 	.footer-left {
 		width: 80%;

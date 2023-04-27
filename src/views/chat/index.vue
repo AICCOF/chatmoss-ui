@@ -9,7 +9,7 @@ import Guide from './guide.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
-import { auth, fetchChatAPIProcess, networkSearch, paper } from '@/api'
+import { auth, fetchChatAPIProcess, paper } from '@/api'
 import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
@@ -50,7 +50,7 @@ if (!localStorage.getItem('isCorrelation'))
 
 // const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
 // const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
-const showNetwork = ref(false)
+// const showNetwork = ref(false)
 
 let controller = new AbortController()
 
@@ -183,13 +183,10 @@ async function onConversation() {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
     console.log('chatMossPiecesNumber', chatMossPiecesNumber)
     // 在这里拼接用户所有的上下文
-    let texts = message;
-    let token = getToken()
-    if(!token && verify(chatStore.getUuid)){
+    let texts = message
+    const token = getToken()
+    if (!token && verify(chatStore.getUuid))
       texts = dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n')
-    }
-  
-
 
     // 联网功能接口
     // if (showNetwork.value && message.length < 20) {
@@ -233,7 +230,7 @@ async function onConversation() {
             },
             requestOptions: { prompt: message, options: { ...options } },
           })
-          // scrollToBottom()
+          scrollToBottom()
         }
         catch (error) {
           //
@@ -549,11 +546,11 @@ async function onSuccessAuth() {
           </div> -->
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+            :autosize="{ minRows: 1, maxRows: 3 }" :placeholder="placeholder" clearable @keydown="handleEnter"
           />
           <NSelect
             v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
-            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
+            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
             clearable label-field="key" @keydown="handleEnter"
           />
           <!-- MOSS字数 -->
@@ -865,7 +862,7 @@ async function onSuccessAuth() {
 }
 
 .chat-main {
-	height: calc(100% - 120px);
-	margin-top: 55px;
+	height: calc(100% - 50px);
+	padding-top: 50px;
 }
 </style>

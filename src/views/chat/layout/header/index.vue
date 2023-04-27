@@ -84,34 +84,48 @@ function shopEvent() {
 				</NPopover>
 			</div> -->
       <div class="header-right-item">
+        <!-- 个人中心 -->
         <NPopover trigger="hover">
           <template #trigger>
-            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="" @click="settingMainEvent">
+            <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="" @click="settingMainEvent"> -->
+            <img src="./img/img4.png" alt="" @click="settingMainEvent">
           </template>
           <span>ChatMoss个人中心</span>
         </NPopover>
       </div>
       <div class="header-right-item">
+        <!-- 商店 -->
         <NPopover trigger="hover">
           <template #trigger>
-            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="" @click="shopEvent">
+            <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="" @click="shopEvent"> -->
+            <img src="./img/img6.png" alt="" @click="shopEvent">
           </template>
           <span>ChatMoss商店</span>
         </NPopover>
       </div>
     </div>
     <div class="header-left">
-      <div class="tip-text-content step4">
+      <div class="tip-text-content">
         <p v-if="token">
           <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
-          剩余
-          <span>{{ mossCount }}</span>
         </p>
         <p v-else>
-          <span v-if="mossCount === '正在使用Key'">正在使用key</span>
           <span class="v-login" @click="loginEvent('login')">未登录</span>
-          <span v-if="mossCount !== '正在使用Key'">{{ mossNoLogin }}</span>
         </p>
+      </div>
+      <div class="header-right-item header-item-btn text-test">
+        <NPopover trigger="hover">
+          <template #trigger>
+            余额
+          </template>
+          <p v-if="token">
+            剩余<span>{{ mossCount }}</span>
+          </p>
+          <p v-else>
+            <span v-if="mossCount === '正在使用Key'">正在使用key</span>
+            <span v-if="mossCount !== '正在使用Key'">{{ mossNoLogin }}</span>
+          </p>
+        </NPopover>
       </div>
     </div>
   </header>
@@ -125,19 +139,22 @@ function shopEvent() {
 	position: fixed;
 	display: flex;
 	align-items: center;
-	height: 50px;
-	min-height: 50px;
-	max-height: 50px;
+	height: 40px;
+	min-height: 40px;
+	max-height: 40px;
 	padding: 0 16px;
 	user-select: none;
-	background-color: rgba(60, 128, 253, 0.3);
+	backdrop-filter: blur(20px);
+	background-color: rgba(60, 128, 253, 0.1);
 	z-index: 20;
 	.header-left {
-		width: 70%;
-		text-align: right;
+		width: 50%;
+		display: flex;
+    align-items: center;
+    justify-content: flex-end;
 	}
 	.header-right {
-		width: 30%;
+		width: 50%;
 		display: flex;
 		justify-content: flex-start;
 		.header-right-item {
@@ -155,6 +172,36 @@ function shopEvent() {
 			}
 		}
 	}
+}
+
+.header-item-btn {
+		display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    height: 26px;
+    padding: 0 6px;
+    border-radius: 4px;
+		margin-right: 8px;
+		background-color: #3872e0;
+}
+
+.text-test {
+	width: 50px;
+	height: 20px;
+	background-color: #ceeaca;
+  color: #4fa444;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 12px;
+  text-transform: capitalize;
+  font-weight: 500;
+  border-radius: 40px;
+  gap: 2px;
+	margin-right: 0px;
 }
 
 .tip-main {
@@ -196,7 +243,8 @@ function shopEvent() {
 }
 .tip-text-content {
   font-size: 10px;
-  width: 100%;
+  width: auto;
+	margin-right: 16px;
 }
 .van-notice-bar {
   width: 60%;
