@@ -272,7 +272,7 @@ function getNSwitchModeValue(): any {
         <NFormItem
           label="内容" path="content" :rule="{
             required: true,
-            message: '请输入问题标题，尽量简短（50字以内）',
+            message: '请详细描述您遇到的问题（2000字以内）',
             trigger: ['input', 'blur'],
           }"
         >

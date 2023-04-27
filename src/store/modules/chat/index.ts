@@ -10,7 +10,7 @@ const { message } = createDiscreteApi(
 
 let flag = 'MOSS_';
 
-function verify(id:any) {
+export function verify(id:any) {
   return `${id}`.indexOf(flag) > - 1
 }
 export const useChatStore = defineStore('chat-store', {

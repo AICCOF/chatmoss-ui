@@ -8,7 +8,7 @@ import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore } from '@/store'
+import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
 import { auth, fetchChatAPIProcess, networkSearch, paper } from '@/api'
 import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
@@ -16,6 +16,7 @@ import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
+import { getToken } from '@/store/modules/auth/helper'
 const authStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
@@ -182,19 +183,24 @@ async function onConversation() {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
     console.log('chatMossPiecesNumber', chatMossPiecesNumber)
     // 在这里拼接用户所有的上下文
-    // let texts = isCorrelation.value ? dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n') : message
-    let texts = message
+    let texts = message;
+    let token = getToken()
+    if(!token && verify(chatStore.getUuid)){
+      texts = dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n')
+    }
+  
+
 
     // 联网功能接口
-    if (showNetwork.value && message.length < 20) {
-      const networkData = await networkSearch({
-        search: encodeURIComponent(message),
-      })
-      console.log('联网功能', networkData)
-      if (networkData.data.length > 0)
-        texts = `下面的问题我将给你辅助的网络信息，你从里面提炼出内容返回给用户，优先使用网络信息中的内容，并将参考的网址以[title](href)的形式输出到最后 \n 这是问题：${message} \n 这是网络信息: ${JSON.stringify(networkData.data)} \n 这是你前面的对话信息：${texts}`
-      else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
-    }
+    // if (showNetwork.value && message.length < 20) {
+    //   const networkData = await networkSearch({
+    //     search: encodeURIComponent(message),
+    //   })
+    //   console.log('联网功能', networkData)
+    //   if (networkData.data.length > 0)
+    //     texts = `下面的问题我将给你辅助的网络信息，你从里面提炼出内容返回给用户，优先使用网络信息中的内容，并将参考的网址以[title](href)的形式输出到最后 \n 这是问题：${message} \n 这是网络信息: ${JSON.stringify(networkData.data)} \n 这是你前面的对话信息：${texts}`
+    //   else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
+    // }
 
     if (localStorage.getItem('chatmossMode') === 'speciality')
       texts = `${texts} 请详细回答`
