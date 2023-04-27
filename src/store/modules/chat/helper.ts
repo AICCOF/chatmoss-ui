@@ -9,7 +9,15 @@ export function defaultState(): Chat.ChatState {
 
 export function getLocalState(): Chat.ChatState {
 
-  return ss.get(LOCAL_NAME) ?? defaultState()
+  if (ss.get(LOCAL_NAME)){
+    return {
+      localChat:[],
+      ...ss.get(LOCAL_NAME) 
+    }
+  }else{
+    return  defaultState()
+  }
+  
 
 }
 
