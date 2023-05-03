@@ -230,7 +230,12 @@ export const useChatStore = defineStore('chat-store', {
         }
         result.data.push(chat)
         this.recordState()
+      } else {
+        //  兼容没有找到会话id的情况
+        this.addLocalChat(0, chat);
+
       }
+
     },
     async addOriginChat(id: number, chat: Chat.Chat) {
       if (!id || id === 0) {
@@ -247,6 +252,8 @@ export const useChatStore = defineStore('chat-store', {
         }
         result.data.push(chat)
         this.recordState()
+      } else {
+        this.addLocalChat(0, chat);
       }
     },
 
