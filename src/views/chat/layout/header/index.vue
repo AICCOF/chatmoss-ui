@@ -6,8 +6,10 @@ import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { localStorage } from '@/utils/storage/localStorage'
+import { staticData } from '@/store/static'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
+
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
@@ -87,8 +89,7 @@ function shopEvent() {
         <!-- 个人中心 -->
         <NPopover trigger="hover">
           <template #trigger>
-            <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="" @click="settingMainEvent"> -->
-            <img src="./img/img4.png" alt="" @click="settingMainEvent">
+            <img :src="staticData.img4" alt="" @click="settingMainEvent">
           </template>
           <span>ChatMoss个人中心</span>
         </NPopover>
@@ -97,8 +98,7 @@ function shopEvent() {
         <!-- 商店 -->
         <NPopover trigger="hover">
           <template #trigger>
-            <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="" @click="shopEvent"> -->
-            <img src="./img/img6.png" alt="" @click="shopEvent">
+            <img :src="staticData.img6" alt="" @click="shopEvent">
           </template>
           <span>ChatMoss商店</span>
         </NPopover>
