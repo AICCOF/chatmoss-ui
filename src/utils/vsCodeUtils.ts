@@ -30,7 +30,7 @@ window.addEventListener('message', (event) => {
       break
     case 'chatMossToken':
       if (message.value) {
-        record && record.handleToken(JSON.parse(message.value))
+        record && record.handleToke && record.handleToken(JSON.parse(message.value))
       }
       break
     default:
