@@ -25,12 +25,12 @@ window.addEventListener('message', (event) => {
     case 'selectedText':
       if (message.value) {
         localStorage.setItem('selectedText', message.value)
-        record && record.handleVscodeMessage(message.value)
+        record.handleVscodeMessage && record.handleVscodeMessage(message.value)
       }
       break
     case 'chatMossToken':
       if (message.value) {
-        record && record.handleToke && record.handleToken(JSON.parse(message.value))
+        record.handleToke && record.handleToken(JSON.parse(message.value))
       }
       break
     default:
