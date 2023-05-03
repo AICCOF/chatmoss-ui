@@ -133,6 +133,7 @@ function shopEvent() {
 
 <style lang="less">
 .header-main {
+	max-width: 1280px;
 	width: 100%;
 	min-width: 350px;
 	overflow: scroll;
@@ -147,6 +148,9 @@ function shopEvent() {
 	backdrop-filter: blur(20px);
 	background-color: rgba(60, 128, 253, 0.1);
 	z-index: 20;
+	position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 	.header-left {
 		width: 50%;
 		display: flex;
@@ -163,6 +167,7 @@ function shopEvent() {
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			cursor: pointer;
 			&:active {
 				transform: scale(.96);
 			}
@@ -184,6 +189,7 @@ function shopEvent() {
     border-radius: 4px;
 		margin-right: 8px;
 		background-color: #3872e0;
+		cursor: pointer;
 }
 
 .text-test {
@@ -202,6 +208,7 @@ function shopEvent() {
   border-radius: 40px;
   gap: 2px;
 	margin-right: 0px;
+	cursor: pointer;
 }
 
 .tip-main {
