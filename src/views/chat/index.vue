@@ -374,7 +374,7 @@ function clickMessage() {
     // console.log(dom)
     dom && dom.click()
     localStorage.setItem('selectedText', '')
-  }, 500)
+  }, 1500)
 }
 
 onMounted(() => {
