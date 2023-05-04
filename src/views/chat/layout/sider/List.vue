@@ -17,6 +17,7 @@ async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
     return
   await chatStore.setActive(id)
+
   if (chatStore.active)
     chatStore.updateHistory(id, { isEdit: false })
 
