@@ -1,7 +1,6 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { NButton, NCard, NInput, NModal, NPopover, NSelect, useDialog, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NModal, NSelect, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -9,15 +8,16 @@ import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore } from '@/store'
-import { auth, fetchChatAPIProcess, networkSearch, paper } from '@/api'
+import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
+import { auth, fetchChatAPIProcess, paper } from '@/api'
 import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmoss.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
+import { localStorage } from '@/utils/storage/localStorage'
+import { getToken } from '@/store/modules/auth/helper'
 const authStore = useAuthStoreWithout()
-
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -26,7 +26,6 @@ const appStore = useAppStore()
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
-
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
@@ -49,29 +48,26 @@ const isPlus = computed(() => {
 if (!localStorage.getItem('isCorrelation'))
   localStorage.setItem('isCorrelation', 'true')
 
-const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
+// const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
 // const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
-const showNetwork = ref(false)
+// const showNetwork = ref(false)
 
 let controller = new AbortController()
 
-const route = useRoute()
-const dialog = useDialog()
 const ms = useMessage()
 
 const chatStore = useChatStore()
 useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
-	= useChat()
+  = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 
-const { uuid } = route.params as { uuid: string }
-
-const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
+const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
   dataSources.value.filter(item => !item.inversion && !item.error),
 )
+
 const userInputindex = ref<number>(0)
 const userInputList = computed(() => {
   const list = dataSources.value.filter((item) => {
@@ -98,6 +94,7 @@ const currentIndex = computed({
 
 function handleSubmit() {
   showModal.value = false
+
   userStore.residueCountAPI()
   onConversation()
 }
@@ -116,26 +113,26 @@ const engList = [
 
 // 计算消耗的字符数量
 function addTextNum(num: any) {
-  console.log('num', num)
+  // console.log('num', num)
   let chatMossTextNum = localStorage.getItem('chatMossTextNum')
   if (!chatMossTextNum)
     chatMossTextNum = '0'
   localStorage.setItem('chatMossTextNum', num + Number(chatMossTextNum))
 }
 
-function compressCode(codeString: any) {
-  // 删除多余空格、制表符、回车符和注释等内容
-  const compressedCode = codeString
-    .replace(/\/\*[\s\S]*?\*\//g, '') // 删除多行注释
-    .replace(/\/\/.*/g, '') // 删除单行注释
-    .replace(/\n/g, '') // 删除换行符
-    .replace(/\r/g, '') // 删除回车符
-    .replace(/\t/g, '') // 删除制表符
-
-  // 转换为单行格式
-  const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
-  return oneLineCode
-}
+// function compressCode(codeString: any) {
+//   // 删除多余空格、制表符、回车符和注释等内容
+//   const compressedCode = codeString
+//     .replace(/\/\*[\s\S]*?\*\//g, '') // 删除多行注释
+//     .replace(/\/\/.*/g, '') // 删除单行注释
+//     .replace(/\n/g, '') // 删除换行符
+//     .replace(/\r/g, '') // 删除回车符
+//     .replace(/\t/g, '') // 删除制表符
+//   // 转换为单行格式
+//   const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
+//   return oneLineCode
+//   // return codeString
+// }
 
 async function onConversation() {
   const message = prompt.value
@@ -148,8 +145,9 @@ async function onConversation() {
 
   controller = new AbortController()
 
-  addChat(+uuid, {
-    dateTime: new Date().toLocaleString(),
+  await addChat(chatStore.getUuid, {
+    timestamp: new Date().getTime(),
+    createTime: new Date().toLocaleString(),
     text: message,
     inversion: true,
     error: false,
@@ -163,19 +161,20 @@ async function onConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext
-		= conversationList.value[conversationList.value.length - 1]
-		  ?.conversationOptions
+    = conversationList.value[conversationList.value.length - 1]
+      ?.conversationOptions
 
   if (lastContext)
     options = { ...lastContext }
 
-  addChat(+uuid, {
-    dateTime: new Date().toLocaleString(),
+  await addChat(chatStore.getUuid, {
+    timestamp: new Date().getTime(),
+    createTime: new Date().toLocaleString(),
     text: '',
     loading: true,
     inversion: false,
     error: false,
-    conversationOptions: null,
+    conversationOptions: { conversationId: chatStore.getUuid },
     requestOptions: { prompt: message, options: { ...options } },
   })
   scrollToBottom()
@@ -184,48 +183,50 @@ async function onConversation() {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
     console.log('chatMossPiecesNumber', chatMossPiecesNumber)
     // 在这里拼接用户所有的上下文
-    let texts = isCorrelation.value ? dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n') : message
+    let texts = message
+    const token = getToken()
+    if (!token && verify(chatStore.getUuid))
+      texts = dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n')
 
     // 联网功能接口
-    if (showNetwork.value && message.length < 20) {
-      const networkData = await networkSearch({
-        search: encodeURIComponent(message),
-      })
-      console.log('联网功能', networkData)
-      if (networkData.data.length > 0)
-        texts = `下面的问题我将给你辅助的网络信息，你从里面提炼出内容返回给用户，优先使用网络信息中的内容，并将参考的网址以[title](href)的形式输出到最后 \n 这是问题：${message} \n 这是网络信息: ${JSON.stringify(networkData.data)} \n 这是你前面的对话信息：${texts}`
-      else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
-    }
+    // if (showNetwork.value && message.length < 20) {
+    //   const networkData = await networkSearch({
+    //     search: encodeURIComponent(message),
+    //   })
+    //   console.log('联网功能', networkData)
+    //   if (networkData.data.length > 0)
+    //     texts = `下面的问题我将给你辅助的网络信息，你从里面提炼出内容返回给用户，优先使用网络信息中的内容，并将参考的网址以[title](href)的形式输出到最后 \n 这是问题：${message} \n 这是网络信息: ${JSON.stringify(networkData.data)} \n 这是你前面的对话信息：${texts}`
+    //   else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
+    // }
 
-    if (localStorage.getItem('chatmossMode') === 'speciality')
-      texts = `${texts} 请详细回答`
+    // if (localStorage.getItem('chatmossMode') === 'speciality')
+    //   texts = `${texts} 请详细回答`
 
-    texts = compressCode(texts)
+    // texts = compressCode(texts)
 
     const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
-      options,
+      options: {
+        ...options,
+        conversationId: chatStore.getUuid,
+      },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
         const { responseText } = xhr
-        // Always process the final line
-        const lastIndex = responseText.lastIndexOf('\n')
-        let chunk = responseText
-
-        if (lastIndex !== -1)
-          chunk = responseText.substring(lastIndex)
+        const chunk = responseText
+        // console.log(chunk)
         try {
-          const data = JSON.parse(chunk)
-          updateChat(+uuid, dataSources.value.length - 1, {
-            dateTime: new Date().toLocaleString(),
-            text: data.text ?? '',
+          // const data = JSON.parse(chunk)
+          updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+            timestamp: new Date().getTime(),
+            createTime: new Date().toLocaleString(),
+            text: chunk ?? '',
             inversion: false,
             error: false,
             loading: false,
             conversationOptions: {
-              conversationId: data.conversationId,
-              parentMessageId: data.id,
+              conversationId: chatStore.getUuid,
             },
             requestOptions: { prompt: message, options: { ...options } },
           })
@@ -238,15 +239,14 @@ async function onConversation() {
     })
 
     // 超出token提示
-    const tip1 = data.split('}\n')
-    if (engList.includes(JSON.parse(tip1[tip1.length - 1]).text))
+    const tip1 = data as any as string
+    if (engList.includes(tip1))
       ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
 
     addTextNum(texts.length)
     scrollToBottom()
   }
   catch (error: any) {
-    console.error(error)
     ms.error(error.msg || error.message)
     if (error.code === 204) {
       // error.msg
@@ -257,7 +257,7 @@ async function onConversation() {
     // 答应其他信息
     const errorMessage = error.msg
     if (error.message === 'canceled') {
-      updateChatSome(+uuid, dataSources.value.length - 1, {
+      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
         loading: false,
       })
       scrollToBottom()
@@ -265,12 +265,12 @@ async function onConversation() {
     }
 
     const currentChat = getChatByUuidAndIndex(
-      +uuid,
+      chatStore.getUuid,
       dataSources.value.length - 1,
     )
 
     if (currentChat?.text && currentChat.text !== '') {
-      updateChatSome(+uuid, dataSources.value.length - 1, {
+      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
         text: `${currentChat.text}\n[${errorMessage}]`,
         error: false,
         loading: false,
@@ -278,8 +278,9 @@ async function onConversation() {
       return
     }
 
-    updateChat(+uuid, dataSources.value.length - 1, {
-      dateTime: new Date().toLocaleString(),
+    updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+      timestamp: new Date().getTime(),
+      createTime: new Date().toLocaleString(),
       text: errorMessage,
       inversion: false,
       error: true,
@@ -293,120 +294,6 @@ async function onConversation() {
     loading.value = false
     userStore.residueCountAPI()
   }
-}
-
-async function onRegenerate(index: number) {
-  if (loading.value)
-    return
-
-  controller = new AbortController()
-
-  const { requestOptions } = dataSources.value[index]
-
-  let message = requestOptions?.prompt ?? ''
-
-  let options: Chat.ConversationRequest = {}
-
-  if (requestOptions.options)
-    options = { ...requestOptions.options }
-
-  loading.value = true
-
-  updateChat(+uuid, index, {
-    dateTime: new Date().toLocaleString(),
-    text: '',
-    inversion: false,
-    error: false,
-    loading: true,
-    conversationOptions: null,
-    requestOptions: { prompt: message, ...options },
-  })
-
-  try {
-    if (localStorage.getItem('chatmossMode') === 'speciality')
-      message = `${message} 请详细回答`
-
-    message = compressCode(message)
-
-    const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
-      prompt: message,
-      options,
-      signal: controller.signal,
-      onDownloadProgress: ({ event }) => {
-        const xhr = event.target
-        const { responseText } = xhr
-        // Always process the final line
-        const lastIndex = responseText.lastIndexOf('\n')
-        let chunk = responseText
-        if (lastIndex !== -1)
-          chunk = responseText.substring(lastIndex)
-        try {
-          const data = JSON.parse(chunk)
-          updateChat(+uuid, index, {
-            dateTime: new Date().toLocaleString(),
-            text: data.text ?? '',
-            inversion: false,
-            error: false,
-            loading: false,
-            conversationOptions: {
-              conversationId: data.conversationId,
-              parentMessageId: data.id,
-            },
-            requestOptions: { prompt: message, ...options },
-          })
-        }
-        catch (error) {
-          //
-        }
-      },
-    })
-
-    // 超出token提示
-    const tip1 = data.split('}\n')
-    if (engList.includes(JSON.parse(tip1[tip1.length - 1]).text))
-      ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
-
-    addTextNum(message.length)
-  }
-  catch (error: any) {
-    console.error(error)
-    if (error.message === 'canceled') {
-      updateChatSome(+uuid, index, {
-        loading: false,
-      })
-      return
-    }
-
-    const errorMessage = error?.message ?? t('common.wrong')
-
-    updateChat(+uuid, index, {
-      dateTime: new Date().toLocaleString(),
-      text: errorMessage,
-      inversion: false,
-      error: true,
-      loading: false,
-      conversationOptions: null,
-      requestOptions: { prompt: message, ...options },
-    })
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-function handleDelete(index: number) {
-  if (loading.value)
-    return
-
-  dialog.warning({
-    title: t('chat.deleteMessage'),
-    content: t('chat.deleteMessageConfirm'),
-    positiveText: t('common.yes'),
-    negativeText: t('common.no'),
-    onPositiveClick: () => {
-      chatStore.deleteChatByUuid(+uuid, index)
-    },
-  })
 }
 
 function handleEnter(event: KeyboardEvent) {
@@ -449,32 +336,30 @@ const buttonDisabled = computed(() => {
 })
 
 const wrapClass = computed(() => {
-  if (isMobile.value)
-    return ['pt-14']
+  // if (isMobile.value)
+  //   return ['pt-14']
   return []
 })
 
 const footerClass = computed(() => {
-  let classes = ['p-4', 'pt-0']
-  if (isMobile.value)
-    classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
+  // let classes = ['p-4', 'pt-0']
+  const classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
   return classes
 })
 
 // 初始化与vscode通信
 vsCodeUtils({
-  handleVscodeMessage: function (selectedText: string) {
-    // const selectedText = localStorage.getItem('selectedText')
+  handleVscodeMessage(selectedText: string) {
     const questionListDom = document.querySelector('.question-list') as HTMLDivElement
     const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
     if (questionListDom === null || questionListDom.innerText !== '新建问题') {
       questionBtnDom.click()
       console.log('新建问题')
-    } else {
-      prompt.value = selectedText;
+    }
+    else {
+      prompt.value = selectedText
       console.log('回答问题')
-      clickMessage();
-
+      clickMessage()
     }
   },
   handleToken: (value: string) => {
@@ -489,18 +374,18 @@ function clickMessage() {
     // console.log(dom)
     dom && dom.click()
     localStorage.setItem('selectedText', '')
-  }, 500);
-
+  }, 1500)
 }
 
 onMounted(() => {
- 
   const selectedText = localStorage.getItem('selectedText')
   console.log('??', selectedText)
   if (selectedText) {
-    prompt.value = selectedText;
-    clickMessage();
+    prompt.value = selectedText
+    clickMessage()
   }
+
+  chatStore.chatList()
 })
 
 onUnmounted(() => {
@@ -508,25 +393,25 @@ onUnmounted(() => {
     controller.abort()
 })
 
-function getIsApiKey() {
-  return !localStorage.getItem('apiKey')
-}
+// function getIsApiKey() {
+//   return !localStorage.getItem('apiKey')
+// }
 
 const noDataInfo = [
   {
-    text: '免费使用：个人中心不用登录就可以设置Key呦~',
+    text: '免费使用：不用登录就可以在设置中心设置Key呦~',
   },
   {
-    text: '回答内容是英文，可以通过新建问题解决',
+    text: '一个问题连续对话越长，消耗越多',
   },
   {
-    text: '字符消耗太多可以关闭上下文',
+    text: '新问题新建会话可以避免浪费字符',
   },
   {
-    text: '新问题一定要新建，防止上下文过长',
+    text: '可以点击余额查看自己的剩余字符数',
   },
   {
-    text: '如果遇到问题，在个人中心-问题反馈，还可获得10万字符奖励哦~',
+    text: '一个字符对应OpenAI一个token（中文更费token）',
   },
 ]
 function noDataInfoEvent(index: any) {
@@ -536,29 +421,15 @@ function noDataInfoEvent(index: any) {
   // ms.info('更多问题解答和反馈，请加QQ群')
 }
 
-// 是否开启联网功能
-// function networkEvnet() {
-//   if (!localStorage.getItem('SECRET_TOKEN')) {
-//     ms.error('需要登录才能使用联网功能')
-//     return
-//   }
-//   showNetwork.value = !showNetwork.value
-//   localStorage.setItem('showNetwork', `${showNetwork.value}`)
-//   if (showNetwork.value)
-//     ms.info('ChatMoss已接入联网，这将大幅度消耗您的字符数；并且超过20个字符的问题不会联网查询~')
-//   else
-//     ms.info('ChatMoss已退出联网')
-// }
-
 // 是否开启上下文功能
-function correlationEvnet() {
-  isCorrelation.value = !isCorrelation.value
-  localStorage.setItem('isCorrelation', `${isCorrelation.value}`)
-  if (isCorrelation.value)
-    ms.info('已开启上下文功能')
-  else
-    ms.info('已关闭上下文功能')
-}
+// function correlationEvnet() {
+//   isCorrelation.value = !isCorrelation.value
+//   localStorage.setItem('isCorrelation', `${isCorrelation.value}`)
+//   if (isCorrelation.value)
+//     ms.info('已开启上下文功能')
+//   else
+//     ms.info('已关闭上下文功能')
+// }
 
 const paperList = ref<Chat.paper[]>([])
 const nowPaperIndex = ref<number>(0)
@@ -603,47 +474,42 @@ async function onSuccessAuth() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex-1 overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
+      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
           <template v-if="!dataSources.length">
             <div class="no-data-info">
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span v-if="isPlus"
-                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase">
+                <span
+                  v-if="isPlus"
+                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
+                >
                   Plus
                 </span>
               </div>
-              <!-- <div class="no-data-info-tip">
-	                      {{ mossCount }}
-	                    </div> -->
-              <!-- 功能展示列表 -->
               <div class="no-data-btns-list">
                 <div
                   v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
                   @click="noDataInfoEvent(index)"
                 >
                   <img
-                    class="btns-item-img"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png" alt=""
+                    class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
+                    alt=""
                   >
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
-                  <!-- <img
-                    class="btns-item-right-icon"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/right-icon.png" alt=""
-                  > -->
                 </div>
               </div>
             </div>
           </template>
           <template v-else>
             <div>
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :text="item.text"
-                :inversion="item.inversion" :error="item.error" :loading="item.loading" @regenerate="onRegenerate(index)"
-                @delete="handleDelete(index)" />
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                :inversion="item.inversion" :error="item.error" :loading="item.loading"
+              />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -666,29 +532,27 @@ async function onSuccessAuth() {
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex items-center justify-between space-x-2">
           <!-- 左侧拓展区域 -->
-          <div class="left-btns">
+          <!-- <div class="left-btns">
             <NPopover trigger="hover">
               <template #trigger>
-                <img class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
+                <img
+                  class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
-                  @click="correlationEvnet">
+                  @click="correlationEvnet"
+                >
               </template>
               <span>是否开启上下文</span>
             </NPopover>
-            <!-- <NPopover trigger="hover">
-              <template #trigger>
-                <img class="network-btn step3" :class="{ 'network-btn-filter': !showNetwork }"
-                  src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/network-btn.png" alt="联网功能"
-                  @click="networkEvnet">
-              </template>
-              <span>是否开启联网</span>
-            </NPopover> -->
-          </div>
-          <NInput v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }" :placeholder="placeholder" clearable @keydown="handleEnter" />
-          <NSelect v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
-            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 5 }" placeholder="placeholder" :options="selectOption"
-            clearable label-field="key" @keydown="handleEnter" />
+          </div> -->
+          <NInput
+            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            :autosize="{ minRows: 2, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+          />
+          <NSelect
+            v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
+            :show-on-focus="true" :autosize="{ minRows: 2, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
+            clearable label-field="key" @keydown="handleEnter"
+          />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
@@ -698,12 +562,12 @@ async function onSuccessAuth() {
                 </span>
               </template>
             </NButton>
-            <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
+            <!-- <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
               下次消耗{{
                 isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}`
                 : `${Math.ceil((prompt?.length || 0))}`
               }}字符
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -724,276 +588,281 @@ async function onSuccessAuth() {
 
 <style lang="less">
 .no-data-info {
-	margin-top: 5%;
+  margin-top: 5%;
 
-	.no-data-info-title {
-		position: relative;
-		font-size: 2.25rem;
-		line-height: 2.5rem;
-		font-weight: 600;
-		width: 100%;
-		color: #6C7275;
-		text-align: center;
+  .no-data-info-title {
+    position: relative;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 600;
+    width: 100%;
+    color: #6C7275;
+    text-align: center;
 
-		span {
-			position: absolute;
-			margin-left: 10px;
-		}
-	}
+    span {
+      position: absolute;
+      margin-left: 10px;
+    }
+  }
 
-	.no-data-info-tip {
-		font-size: 12px;
-		line-height: 12px;
-		font-weight: 600;
-		width: 100%;
-		color: #6C7275;
-		text-align: center;
-		margin-top: 14px;
-		margin-bottom: -14px;
-	}
+  .no-data-info-tip {
+    font-size: 12px;
+    line-height: 12px;
+    font-weight: 600;
+    width: 100%;
+    color: #6C7275;
+    text-align: center;
+    margin-top: 14px;
+    margin-bottom: -14px;
+  }
 
-	.no-data-btns-list {
-		width: 80%;
-		max-width: 520px;
-		height: auto;
-		margin: 0 auto;
-		margin-top: 40px;
+  .no-data-btns-list {
+    width: 80%;
+    max-width: 520px;
+    height: auto;
+    margin: 0 auto;
+    margin-top: 40px;
 
-		.no-data-btns-item {
-			width: 100%;
-			padding: 20px 20px;
-			height: auto;
-			border: 1px solid #343839;
-			border-radius: 6px;
-			margin-bottom: 20px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
+    .no-data-btns-item {
+      width: 100%;
+      padding: 20px 20px;
+      height: auto;
+      border: 1px solid #343839;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-			.btns-item-img {
-				width: 20px;
-				height: 20px;
-			}
+      .btns-item-img {
+        width: 20px;
+        height: 20px;
+      }
 
-			.btns-item-text {
-				width: 400px;
-				margin-left: 20px;
-				margin-right: 20px;
-				color: #c9c9c9;
-			}
+      .btns-item-text {
+        width: 400px;
+        margin-left: 20px;
+        margin-right: 20px;
+        color: #c9c9c9;
+      }
 
-			.btns-item-right-icon {
-				width: 20px;
-				height: 20px;
-			}
-		}
-	}
+      .btns-item-right-icon {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
 }
 
 .tip {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
 .sustain {
-	height: 20px;
-	font-size: 0.75rem;
-	letter-spacing: 0.2rem;
-	color: #666;
-	width: auto;
-	text-align: center;
-	margin-right: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  letter-spacing: 0.2rem;
+  color: #666;
+  width: auto;
+  text-align: center;
+  margin-right: 20px;
 }
 
 .n-input.n-input--textarea {
-	border-radius: 50px;
+  border-radius: 8px;
 }
 
 /* 隐藏滚动进度条 */
 ::-webkit-scrollbar {
-	display: none;
+  display: none;
 }
 
 .moss-btns {
-	position: relative;
+  position: relative;
 }
 
 .btn-style {
-	width: 40px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .btn-style button {
-	width: 40px;
-	height: 30px;
+  width: 40px;
+  height: 54px;
 }
 
 .moss-text {
-	width: 80px;
-	font-size: 12px;
-	text-align: center;
-	margin-top: 2px;
-	white-space: nowrap;
+  width: 80px;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 .setting {
-	width: 100%;
-	padding: 0px 10px;
-	height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+  width: 100%;
+  padding: 0px 10px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-	.setting-main {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
+  .setting-main {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 
-		.setting-text {
-			color: #FF6666;
-			font-size: 10px;
-		}
+    .setting-text {
+      color: #FF6666;
+      font-size: 10px;
+    }
 
-		.setting-btn {
-			width: 20px;
-			height: 20px;
-			margin-right: 2px;
-		}
-	}
+    .setting-btn {
+      width: 20px;
+      height: 20px;
+      margin-right: 2px;
+    }
+  }
 }
 
 .line {
-	margin-top: 10px;
-	margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .color {
-	color: #f87171;
+  color: #f87171;
 }
 
 .tip-text {
-	font-size: 12px;
-	margin-top: 10px;
-	margin-bottom: 10px;
+  font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .mt10 {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 .notice-swipe {
-	height: 40px;
-	line-height: 40px;
+  height: 40px;
+  line-height: 40px;
 }
 
 .van-notice-bar {
-	background-color: #111114 !important;
-	color: #fff;
-	text-align: center;
+  background-color: #111114 !important;
+  color: #fff;
+  text-align: center;
 
-	.van-notice-bar__wrap {
-		display: flex;
-		justify-content: center;
+  .van-notice-bar__wrap {
+    display: flex;
+    justify-content: center;
 
-		.van-swipe-item {
-			color: #FF6666;
-			font-size: 12px;
-		}
-	}
+    .van-swipe-item {
+      color: #FF6666;
+      font-size: 12px;
+    }
+  }
 }
 
 .v-auth {
-	color: #FF6666;
-	text-decoration: underline;
-	font-size: 12px;
+  color: #FF6666;
+  text-decoration: underline;
+  font-size: 12px;
 }
 
 .relevance-main {
-	display: flex;
-	justify-items: center;
-	color: #FF6666 !important;
-	align-items: center;
-	margin-right: 20px;
+  display: flex;
+  justify-items: center;
+  color: #FF6666 !important;
+  align-items: center;
+  margin-right: 20px;
 
-	.relevance-main-text {
-		font-size: 12px;
-		margin-left: 6px;
-	}
+  .relevance-main-text {
+    font-size: 12px;
+    margin-left: 6px;
+  }
 }
 
 :root:root {
-	--van-switch-size: 15px;
+  --van-switch-size: 15px;
 }
 
 .shake {
-	transform-origin: bottom bottom;
-	animation: animashake 1.5s .2s ease-in-out both infinite;
+  transform-origin: bottom bottom;
+  animation: animashake 1.5s .2s ease-in-out both infinite;
 }
 
 @keyframes animashake {
 
-	0%,
-	100% {
-		transform: rotate(0deg);
-		transform-origin: 50% 0;
-	}
+  0%,
+  100% {
+    transform: rotate(0deg);
+    transform-origin: 50% 0;
+  }
 
-	5% {
-		transform: rotate(2deg);
-	}
+  5% {
+    transform: rotate(2deg);
+  }
 
-	10%,
-	20%,
-	30% {
-		transform: rotate(-4deg);
-	}
+  10%,
+  20%,
+  30% {
+    transform: rotate(-4deg);
+  }
 
-	15%,
-	25%,
-	35% {
-		transform: rotate(4deg);
-	}
+  15%,
+  25%,
+  35% {
+    transform: rotate(4deg);
+  }
 
-	40% {
-		transform: rotate(-2deg);
-	}
+  40% {
+    transform: rotate(-2deg);
+  }
 
-	45% {
-		transform: rotate(2deg);
-	}
+  45% {
+    transform: rotate(2deg);
+  }
 
-	50% {
-		transform: rotate(0deg);
-	}
+  50% {
+    transform: rotate(0deg);
+  }
 }
 
 #scrollRef {
-	display: flex;
+  display: flex;
 }
 
 .left-btns {
-	width: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 
-	.network-btn {
-		width: 20px;
-		height: 20px;
-		cursor: pointer;
-		filter: grayscale(0%);
+  .network-btn {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    filter: grayscale(0%);
 
-		&:active {
-			transform: scale(.96);
-		}
-	}
+    &:active {
+      transform: scale(.96);
+    }
+  }
 
-	.network-btn-filter {
-		filter: grayscale(90%);
-	}
+  .network-btn-filter {
+    filter: grayscale(90%);
+  }
+}
+
+.chat-main {
+	height: calc(100% - 50px);
+	padding-top: 50px;
 }
 </style>

@@ -1,6 +1,5 @@
 
-import {useChatStore } from '@/store'
-import { setLocalState } from '@/store/modules/chat/helper'
+import { localStorage } from "@/utils/storage/localStorage";
 let vscode: any = null
 
 if (typeof acquireVsCodeApi !== 'undefined') {
@@ -22,23 +21,16 @@ export function sendToMsg(type:string,state:any){
 let record: Record<string, Function> = {};
 window.addEventListener('message', (event) => {
   const message = event.data
-  const chatStore = useChatStore()
   switch (message.type) {
-    case 'storeData':
-      if (message.value) {
-        chatStore.updateStore(JSON.parse(message.value))
-        setLocalState(JSON.parse(message.value))
-      }
-      break
     case 'selectedText':
       if (message.value) {
         localStorage.setItem('selectedText', message.value)
-        record && record.handleVscodeMessage(message.value)
+        record.handleVscodeMessage && record.handleVscodeMessage(message.value)
       }
       break
     case 'chatMossToken':
       if (message.value) {
-        record && record.handleToken(JSON.parse(message.value))
+        record.handleToke && record.handleToken(JSON.parse(message.value))
       }
       break
     default:

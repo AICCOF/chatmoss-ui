@@ -3,12 +3,13 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
-import { useAuthStoreWithout } from '@/store/modules'
-
+import { useAuthStoreWithout, useChatStore } from '@/store/modules'
+import { localStorage } from '@/utils/storage/localStorage'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
+const chatStore = useChatStore()
 const token = ref('')
 
 interface Emit {
@@ -21,6 +22,7 @@ function loginEvent(type: string) {
   if (type === 'exit') {
     useAuthStore.setToken('')
     sendToMsg('chatMossToken', '')
+    chatStore.clearList()
     userStore.residueCountAPI()
   }
 }
@@ -63,7 +65,7 @@ onMounted(() => {
       </p>
       <p v-else>
         <span v-if="mossCount === '正在使用Key'">正在使用key</span>
-        <span class="v-login" @click="loginEvent('login')">未登录</span>
+        <span class="v-login" @click="loginEvent('login')">登录&注册</span>
         <span v-if="mossCount !== '正在使用Key'">{{ mossNoLogin }}</span>
       </p>
     </div>
@@ -91,6 +93,7 @@ onMounted(() => {
   text-decoration: underline;
   cursor: grab;
   font-size:12px;
+	white-space: nowrap;
 }
 .v-exit{
   color: #FF6666;
@@ -98,6 +101,7 @@ onMounted(() => {
   cursor: grab;
   font-size:12px;
 	margin-left: 10px;
+	white-space: nowrap;
 }
 .number{
   color: #FF6666;
@@ -110,11 +114,7 @@ onMounted(() => {
 }
 .tip-text-content {
   font-size: 10px;
-	// color: rgba(232, 236, 239, 0.75);
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .van-notice-bar {
   width: 60%;

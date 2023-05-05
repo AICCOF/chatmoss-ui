@@ -7,7 +7,7 @@ import { useAppStore, useUserStore } from '@/store'
 import type { UserInfo } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
 import { t } from '@/locales'
-
+import { localStorage } from "@/utils/storage/localStorage";
 const appStore = useAppStore()
 const userStore = useUserStore()
 appStore.setTheme('dark')

@@ -10,12 +10,12 @@ import {
   useMessage,
 } from 'naive-ui'
 import { reactive, ref } from 'vue'
-import { useAuthStoreWithout } from '@/store'
+import { useAuthStoreWithout, useChatStore } from '@/store'
 import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import dragVerifyImgChip from '@/components/dragVerifyImgChip.vue'
 import { staticData } from '@/store/static'
-
+const chatStore = useChatStore()
 interface Emit {
   (e: 'loginSuccess'): void
 }
@@ -23,6 +23,7 @@ const props = defineProps(['tab'])
 const emit = defineEmits<Emit>()
 const imgsrc = ref<string>(staticData.verifyImg)
 function handleClick() {
+
   emit('loginSuccess')
 }
 
@@ -177,6 +178,7 @@ async function loginEvent() {
     const authStore = useAuthStoreWithout()
 
     authStore.setToken(res.loginToken)
+    chatStore.chatList();
     sendToMsg('chatMossToken', res.loginToken)
 
     handleClick()

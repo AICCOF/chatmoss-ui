@@ -1,7 +1,8 @@
 declare namespace Chat {
 
 	interface Chat {
-		dateTime: string
+		timestamp: number;
+		createTime: string
 		text: string
 		inversion?: boolean
 		error?: boolean
@@ -9,17 +10,18 @@ declare namespace Chat {
 		conversationOptions?: ConversationRequest | null
 		requestOptions: { prompt: string; options?: ConversationRequest | null }
 	}
-
-	interface History {
+	interface ChatInfo{
+		data: Chat[],
+		id: number|string,
+		timestamp:number;
+		tem?: string
 		title: string
 		isEdit: boolean
-		uuid: number
 	}
-
 	interface ChatState {
-		active: number | null
-		history: History[]
-		chat: { uuid: number; data: Chat[] }[]
+		active: number | string | null
+		chat: ChatInfo[],
+		localChat: ChatInfo[],
 	}
 
 	interface ConversationRequest {

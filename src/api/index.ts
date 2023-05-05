@@ -1,7 +1,7 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
 import { get, post } from '@/utils/request'
 import { getToken } from '@/store/modules/auth/helper'
-
+import { localStorage } from "@/utils/storage/localStorage";
 export function fetchChatAPI<T = any>(
   prompt: string,
   options?: { conversationId?: string; parentMessageId?: string },
@@ -29,10 +29,10 @@ export function fetchChatAPIProcess<T = any>(
   },
 ) {
   return post<T>({
-    url: '/api/chat-process?version=v1.5',
+    url: '/ask/',
     data: {
       prompt: params.prompt,
-      options: {},
+      options: params.options,
       apiKey: localStorage.getItem('apiKey') ? localStorage.getItem('apiKey') : '',
     },
     signal: params.signal,

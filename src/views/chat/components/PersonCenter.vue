@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput, NPopover, NSwitch, useMessage, useNotification, NAvatar, NAlert, NForm, NSpace, NFormItem } from 'naive-ui'
-import { computed, onMounted, ref, h, reactive } from 'vue'
+import { NAlert, NAvatar, NButton, NCard, NDivider, NForm, NFormItem, NInput, NPopover, NSelect, NSpace, NSwitch, useMessage, useNotification } from 'naive-ui'
+import { computed, h, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import BasicModal from './Modal/BasicModal.vue'
 import { useModel } from './Modal/hooks/useModal'
 import { useAppStore, useUserStore } from '@/store'
 import { SvgIcon } from '@/components/common'
-import { getKeyList, getPlusInfo, getSystemNotice, sendFeedback } from '@/api/personCenter'
+import { getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
+import { localStorage } from '@/utils/storage/localStorage'
 // let props = defineProps(['register'])
 const emits = defineEmits(['modifyPassword', 'register'])
+
 const userStore = useUserStore()
 const notification = useNotification()
 
@@ -41,7 +43,7 @@ onMounted(() => {
 function updated() {
   getPlusInfoAPI()
   getSystemNoticeAPI()
-  getKeyListAPI()
+  // getKeyListAPI()
   userStore.residueCountAPI()
 }
 const temNotice = computed(() => userStore.getNotices || [])
@@ -68,14 +70,14 @@ async function getSystemNoticeAPI() {
   }
 }
 async function getPlusInfoAPI() {
-  const res = await getPlusInfo()
-  personCenter.value.score = res.data
+  // const res = await getPlusInfo()
+  // personCenter.value.score = res.data
 }
-async function getKeyListAPI() {
-  const res = await getKeyList<any>()
-  // console.log(res.data.rows)
-  personCenter.value.dataList = res.data.rows
-}
+// async function getKeyListAPI() {
+//   const res = await getKeyList<any>()
+//   // console.log(res.data.rows)
+//   personCenter.value.dataList = res.data.rows
+// }
 
 defineExpose({ updated })
 
@@ -91,23 +93,23 @@ function settingBtn() {
   }
 }
 
-const chatMossPiecesNumber = ref(localStorage.getItem('chatMossPiecesNumber') || '') as any
-function chatMossPiecesNumberEvent() {
-  if (chatMossPiecesNumber.value !== '') {
-    localStorage.setItem('chatMossPiecesNumber', chatMossPiecesNumber.value)
-    ms.info('上下文对话条数设置成功~', { duration: 5000 })
-  }
-  else {
-    ms.error('不能为空', { duration: 5000 })
-  }
-}
+// const chatMossPiecesNumber = ref(localStorage.getItem('chatMossPiecesNumber') || '') as any
+// function chatMossPiecesNumberEvent() {
+//   if (chatMossPiecesNumber.value !== '') {
+//     localStorage.setItem('chatMossPiecesNumber', chatMossPiecesNumber.value)
+//     ms.info('上下文对话条数设置成功~', { duration: 5000 })
+//   }
+//   else {
+//     ms.error('不能为空', { duration: 5000 })
+//   }
+// }
 
-function getTextNum() {
-  let chatMossTextNum = localStorage.getItem('chatMossTextNum')
-  if (!chatMossTextNum)
-    chatMossTextNum = '0'
-  return chatMossTextNum
-}
+// function getTextNum() {
+//   let chatMossTextNum = localStorage.getItem('chatMossTextNum')
+//   if (!chatMossTextNum)
+//     chatMossTextNum = '0'
+//   return chatMossTextNum
+// }
 
 // 主题
 function handleUpdateValue(chatmossTheme: string) {
@@ -129,34 +131,50 @@ async function sendFeedbackEvent() {
   ms.success('我们确定问题之后，会为您下发10万字符奖励，感谢您的反馈。')
   closeModel()
 }
+
+// 模型选择
+const modelValue = ref('3.5')
+const modelOptions = ref([
+  {
+    label: 'ChatGPT3.5',
+    value: '3.5',
+    disabled: true,
+  },
+  {
+    label: 'ChatGPT4.0',
+    value: '4.0',
+    disabled: true,
+  },
+])
+
 // 专业模式
-function handleModeValue(chatmossMode: string) {
-  // 专业模式 speciality
-  // 正常模式 normal
-  ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
-  localStorage.setItem('chatmossMode', chatmossMode)
-}
-function getNSwitchModeValue(): any {
-  return localStorage.getItem('chatmossMode')
-}
+// function handleModeValue(chatmossMode: string) {
+//   // 专业模式 speciality
+//   // 正常模式 normal
+//   ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
+//   localStorage.setItem('chatmossMode', chatmossMode)
+// }
+// function getNSwitchModeValue(): any {
+//   return localStorage.getItem('chatmossMode')
+// }
 </script>
 
 <template>
-  <BasicModal key="2" style="width: 80%; height: 80vh; overflow: scroll;" transform-origin="center" @register="(...args: any[]) => emits('register', ...args)">
+  <BasicModal key="2" style="min-width: 300px; width: 80%; height: 85vh; overflow: scroll;" transform-origin="center" @register="(...args: any[]) => emits('register', ...args)">
     <NCard title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
       <div class="flex items-center justify-between">
         <div class="flex">
-          <span class="mr-4">用户名称：{{ nickname }}</span>
+          <!-- <span class="mr-4">用户名称：{{ nickname || '未登录' }}</span> -->
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <NButton v-if="userStore.userInfo.user.email" type="primary" size="tiny" quaternary @click="openModel()">
+          <NButton v-if="userStore.userInfo.user.email" id="question-push" type="primary" size="tiny" quaternary @click="openModel()">
             问题反馈
           </NButton>
           <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
             修改密码
           </NButton>
-          <NPopover style="max-height: 340px" trigger="click" scrollable>
+          <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
             <template #trigger>
               <NButton quaternary circle size="tiny">
                 <template #icon>
@@ -200,15 +218,12 @@ function getNSwitchModeValue(): any {
       </div>
       <NDivider />
       <div>
-        <span class="title-h2">本机累计使用字符数</span>：{{ getTextNum() }} 字符
+        <span class="title-h2">本机累计使用字符数</span>：未知
       </div>
       <div class="tip-text-input">
-        注意：OpenAI官方限制了5美元key的速度，现在回答需要好几十秒
+        小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
       </div>
-      <div class="tip-text-input">
-        使用字符包速度不受限制（因为字符包使用的是120美金的key）
-      </div>
-      <NDivider />
+      <!-- <NDivider />
       <div>
         <div class="title-h1">
           上下文条数设置（建议30条）
@@ -222,7 +237,7 @@ function getNSwitchModeValue(): any {
         <div class="tip-text-input">
           设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
         </div>
-      </div>
+      </div> -->
       <NDivider />
       <div>
         <div class="title-h1">
@@ -238,7 +253,7 @@ function getNSwitchModeValue(): any {
           {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
         </div>
       </div>
-      <NDivider />
+      <!-- <NDivider />
       <div>
         <div class="title-h1">
           回答模式（专业模式下会自动拼接 请详细回答，理论上回答内容更多）
@@ -252,12 +267,24 @@ function getNSwitchModeValue(): any {
           />
           {{ getNSwitchModeValue() === 'speciality' ? '专业模式' : '正常模式' }}
         </div>
+      </div> -->
+      <NDivider />
+      <div>
+        <div class="title-h1">
+          OpenAI模型选择（调试中暂未开放）
+        </div>
+        <div class="flex">
+          <NSelect v-model:value="modelValue" :options="modelOptions" />
+        </div>
+        <div class="tip-text-input">
+          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多125倍，但是回答的更加专业
+        </div>
       </div>
     </NCard>
   </BasicModal>
   <BasicModal key="2" transform-origin="center" @register="registerModal">
     <NCard
-      style="width:80%;max-width: 600px; min-width: 350px;" title="问题反馈" :bordered="false" size="huge" role="dialog"
+      style="height: 60vh; overflow: scroll; width:80%;max-width: 600px; min-width: 350px;" title="问题反馈" :bordered="false" size="huge" role="dialog"
       aria-modal="true"
     >
       <NForm ref="formRef" :model="feedBackForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">
@@ -273,7 +300,7 @@ function getNSwitchModeValue(): any {
         <NFormItem
           label="内容" path="content" :rule="{
             required: true,
-            message: '请输入问题标题，尽量简短（50字以内）',
+            message: '请详细描述您遇到的问题（2000字以内）',
             trigger: ['input', 'blur'],
           }"
         >
@@ -285,7 +312,7 @@ function getNSwitchModeValue(): any {
         <NFormItem label="提示">
           <div style="width: 100%;">
             <div>
-             <NAlert title="" type="info">
+              <NAlert title="" type="info">
                 <div>
                   1.反馈意见可建issues：https://github.com/AICCOF/chatmoss-ui/
                 </div>
@@ -298,7 +325,7 @@ function getNSwitchModeValue(): any {
               </NAlert>
             </div>
             <NSpace class="mt-4">
-              <NButton  attr-type="button" @click="sendFeedbackEvent">
+              <NButton attr-type="button" @click="sendFeedbackEvent">
                 提交
               </NButton>
             </NSpace>

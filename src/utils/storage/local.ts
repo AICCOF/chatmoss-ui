@@ -1,5 +1,5 @@
 import { deCrypto, enCrypto } from '../crypto'
-
+import { localStorage } from "@/utils/storage/localStorage";
 interface StorageData<T = any> {
   data: T
   expire: number | null
@@ -23,11 +23,11 @@ export function createLocalStorage(options?: { expire?: number | null; crypto?: 
     }
 
     const json = crypto ? enCrypto(storageData) : JSON.stringify(storageData)
-    window.localStorage.setItem(key, json)
+    localStorage.setItem(key, json)
   }
 
   function get(key: string) {
-    const json = window.localStorage.getItem(key)
+    const json = localStorage.getItem(key)
     if (json) {
       let storageData: StorageData | null = null
 
@@ -50,11 +50,11 @@ export function createLocalStorage(options?: { expire?: number | null; crypto?: 
   }
 
   function remove(key: string) {
-    window.localStorage.removeItem(key)
+    localStorage.removeItem(key)
   }
 
   function clear() {
-    window.localStorage.clear()
+    localStorage.clear()
   }
 
   return {

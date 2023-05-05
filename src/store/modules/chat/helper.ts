@@ -1,23 +1,26 @@
 import { ss } from '@/utils/storage'
-import { sendToMsg } from '@/utils/vsCodeUtils'
 
 const LOCAL_NAME = 'chatStorage'
 
 
-  
-
 export function defaultState(): Chat.ChatState {
-  const uuid = 80
-  return { active: uuid, history: [{ uuid, title: '新建问题', isEdit: false }], chat: [{ uuid, data: [] }] }
+  return { active: null, chat: [], localChat:[] }
 }
 
 export function getLocalState(): Chat.ChatState {
- 
-  return ss.get(LOCAL_NAME) ?? defaultState()
+
+  if (ss.get(LOCAL_NAME)){
+    return {
+      localChat:[],
+      ...ss.get(LOCAL_NAME) 
+    }
+  }else{
+    return  defaultState()
+  }
   
+
 }
 
 export function setLocalState(state: Chat.ChatState) {
-  sendToMsg('chatStorage',state)
   ss.set(LOCAL_NAME, state)
 }
