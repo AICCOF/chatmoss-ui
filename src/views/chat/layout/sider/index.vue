@@ -155,12 +155,12 @@ const personCenter = ref<any>({
       count: 19.99,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/50.png',
     },
-    {
-      title: '10万字符包',
-      desc: '1元 = 2万字符',
-      count: 4.99,
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/10.png',
-    },
+    // {
+    //   title: '10万字符包',
+    //   desc: '1元 = 2万字符',
+    //   count: 4.99,
+    //   shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/10.png',
+    // },
     {
       title: '5美元key',
       desc: '3天质保',
@@ -214,7 +214,7 @@ function buyEvent(item: any) {
           </div>
           <Tips @login="showModelEvent" />
         </div>
-        <NModal v-model:show="showSettingModal" preset="dialog" style="min-width: 300px; height: 80vh; overflow: scroll; width: 80%;">
+        <NModal v-model:show="showSettingModal" preset="dialog" style="min-width: 300px; height: 85vh; overflow: scroll; width: 80%;">
           <NCard title="ChatMoss商店" :bordered="false" size="huge" role="dialog" aria-modal="true">
             <div>
               <div class="title-h1">

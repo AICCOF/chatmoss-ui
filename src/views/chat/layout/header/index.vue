@@ -10,7 +10,6 @@ import { staticData } from '@/store/static'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
-
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const token = ref('')
@@ -91,7 +90,7 @@ function shopEvent() {
           <template #trigger>
             <img :src="staticData.img4" alt="" @click="settingMainEvent">
           </template>
-          <span>ChatMoss个人中心</span>
+          <span>设置中心</span>
         </NPopover>
       </div>
       <div class="header-right-item">
@@ -110,7 +109,7 @@ function shopEvent() {
           <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
         </p>
         <p v-else>
-          <span class="v-login" @click="loginEvent('login')">未登录</span>
+          <span class="v-login" @click="loginEvent('login')">登录&注册</span>
         </p>
       </div>
       <div class="header-right-item header-item-btn text-test">
@@ -135,7 +134,7 @@ function shopEvent() {
 .header-main {
 	max-width: 1280px;
 	width: 100%;
-	min-width: 350px;
+	min-width: 250px;
 	overflow: scroll;
 	position: fixed;
 	display: flex;
@@ -193,6 +192,7 @@ function shopEvent() {
 }
 
 .text-test {
+	white-space: nowrap;
 	width: 50px;
 	height: 20px;
 	background-color: #ceeaca;
@@ -231,6 +231,7 @@ function shopEvent() {
   text-decoration: underline;
   cursor: grab;
   font-size:12px;
+	white-space: nowrap;
 }
 .v-exit{
   color: #FF6666;
@@ -238,6 +239,7 @@ function shopEvent() {
   cursor: grab;
   font-size:12px;
 	margin-left: 10px;
+	white-space: nowrap;
 }
 .number{
   color: #FF6666;

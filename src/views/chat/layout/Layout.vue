@@ -43,9 +43,9 @@ const getContainerClass = computed(() => {
         <NLayoutContent class="h-full">
           <RouterView v-slot="{ Component, route }">
             <component :is="Component" :key="route.fullPath" />
+            <Footer />
           </RouterView>
         </NLayoutContent>
-        <Footer />
       </NLayout>
     </div>
     <Permission :visible="needPermission" />

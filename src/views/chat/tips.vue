@@ -65,7 +65,7 @@ onMounted(() => {
       </p>
       <p v-else>
         <span v-if="mossCount === '正在使用Key'">正在使用key</span>
-        <span class="v-login" @click="loginEvent('login')">未登录</span>
+        <span class="v-login" @click="loginEvent('login')">登录&注册</span>
         <span v-if="mossCount !== '正在使用Key'">{{ mossNoLogin }}</span>
       </p>
     </div>
@@ -93,6 +93,7 @@ onMounted(() => {
   text-decoration: underline;
   cursor: grab;
   font-size:12px;
+	white-space: nowrap;
 }
 .v-exit{
   color: #FF6666;
@@ -100,6 +101,7 @@ onMounted(() => {
   cursor: grab;
   font-size:12px;
 	margin-left: 10px;
+	white-space: nowrap;
 }
 .number{
   color: #FF6666;

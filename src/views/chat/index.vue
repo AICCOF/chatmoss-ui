@@ -113,26 +113,26 @@ const engList = [
 
 // 计算消耗的字符数量
 function addTextNum(num: any) {
-  console.log('num', num)
+  // console.log('num', num)
   let chatMossTextNum = localStorage.getItem('chatMossTextNum')
   if (!chatMossTextNum)
     chatMossTextNum = '0'
   localStorage.setItem('chatMossTextNum', num + Number(chatMossTextNum))
 }
 
-function compressCode(codeString: any) {
-  // 删除多余空格、制表符、回车符和注释等内容
-  const compressedCode = codeString
-    .replace(/\/\*[\s\S]*?\*\//g, '') // 删除多行注释
-    .replace(/\/\/.*/g, '') // 删除单行注释
-    .replace(/\n/g, '') // 删除换行符
-    .replace(/\r/g, '') // 删除回车符
-    .replace(/\t/g, '') // 删除制表符
-  // 转换为单行格式
-  const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
-  return oneLineCode
-  // return codeString
-}
+// function compressCode(codeString: any) {
+//   // 删除多余空格、制表符、回车符和注释等内容
+//   const compressedCode = codeString
+//     .replace(/\/\*[\s\S]*?\*\//g, '') // 删除多行注释
+//     .replace(/\/\/.*/g, '') // 删除单行注释
+//     .replace(/\n/g, '') // 删除换行符
+//     .replace(/\r/g, '') // 删除回车符
+//     .replace(/\t/g, '') // 删除制表符
+//   // 转换为单行格式
+//   const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
+//   return oneLineCode
+//   // return codeString
+// }
 
 async function onConversation() {
   const message = prompt.value
@@ -199,10 +199,10 @@ async function onConversation() {
     //   else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
     // }
 
-    if (localStorage.getItem('chatmossMode') === 'speciality')
-      texts = `${texts} 请详细回答`
+    // if (localStorage.getItem('chatmossMode') === 'speciality')
+    //   texts = `${texts} 请详细回答`
 
-    texts = compressCode(texts)
+    // texts = compressCode(texts)
 
     const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
@@ -399,19 +399,19 @@ onUnmounted(() => {
 
 const noDataInfo = [
   {
-    text: '免费使用：个人中心不用登录就可以设置Key呦~',
+    text: '免费使用：不用登录就可以在设置中心设置Key呦~',
   },
   {
-    text: '回答内容是英文，可以通过新建问题解决',
+    text: '一个问题连续对话越长，消耗越多',
   },
   {
-    text: '字符消耗太多可以关闭上下文',
+    text: '新问题新建会话可以避免浪费字符',
   },
   {
-    text: '新问题一定要新建，防止上下文过长',
+    text: '可以点击余额查看自己的剩余字符数',
   },
   {
-    text: '如果遇到问题，在个人中心-问题反馈，还可获得10万字符奖励哦~',
+    text: '一个字符对应OpenAI一个token（中文更费token）',
   },
 ]
 function noDataInfoEvent(index: any) {
@@ -546,11 +546,11 @@ async function onSuccessAuth() {
           </div> -->
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 3 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+            :autosize="{ minRows: 2, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
           />
           <NSelect
             v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
-            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
+            :show-on-focus="true" :autosize="{ minRows: 2, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
             clearable label-field="key" @keydown="handleEnter"
           />
           <!-- MOSS字数 -->
@@ -693,7 +693,7 @@ async function onSuccessAuth() {
 
 .btn-style button {
   width: 40px;
-  height: 30px;
+  height: 54px;
 }
 
 .moss-text {

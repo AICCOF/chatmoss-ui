@@ -58,7 +58,7 @@ function toggleButtonEvent() {
 .footer-main {
 	max-width: 1280px;
 	width: 100%;
-	min-width: 350px;
+	min-width: 250px;
 	overflow: scroll;
 	position: fixed;
 	display: flex;
@@ -72,7 +72,7 @@ function toggleButtonEvent() {
 	backdrop-filter: blur(20px);
 	// background-color: rgba(60, 128, 253, 0.05);
 	z-index: 20;
-	bottom: 46px;
+	bottom: 68px;
 	position: absolute;
   left: 50%;
   transform: translateX(-50%);

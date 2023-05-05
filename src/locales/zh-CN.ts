@@ -16,8 +16,8 @@ export default {
     unauthorizedTips: '未经授权，请先进行验证。',
   },
   chat: {
-    placeholder: '问我任何问题...',
-    placeholderMobile: '问我任何问题...',
+    placeholder: '问我任何问题（Shift + Enter = 换行，"/" 触发提示词）',
+    placeholderMobile: '问我任何问题（Shift + Enter = 换行，"/" 触发提示词）',
     copy: '复制',
     copied: '复制成功',
     copyCode: '复制代码',
