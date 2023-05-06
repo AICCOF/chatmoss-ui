@@ -302,11 +302,11 @@ function handleEnter(event: KeyboardEvent) {
     handleSubmit()
   }
   else if (userInputList.value.length && (!prompt.value || prompt.value[0] !== '/')) {
-    if (event.key === 'ArrowUp') {
+    if (event.key === 'ArrowUp' && event.ctrlKey) {
       currentIndex.value -= 1
       prompt.value = userInputList.value[currentIndex.value].text
     }
-    else if (event.key === 'ArrowDown') {
+    else if (event.key === 'ArrowDown' && event.ctrlKey) {
       currentIndex.value += 1
       prompt.value = userInputList.value[currentIndex.value]?.text
     }
