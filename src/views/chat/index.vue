@@ -38,7 +38,16 @@ appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
 
 // 专业模式初始化
 if (!localStorage.getItem('chatmossMode'))
-  localStorage.setItem('chatmossMode', 'speciality')
+  localStorage.setItem('chatmossMode', 'normal')
+
+// 专业模式初始化
+if (!localStorage.getItem('fontSizeNum')) {
+  localStorage.setItem('fontSizeNum', '100%')
+}
+else {
+  const htmlDom = document.querySelector('html') as any
+  htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
+}
 
 const isPlus = computed(() => {
   // 暂时关闭plus逻辑，全部人都是plus会员
@@ -200,8 +209,8 @@ async function onConversation() {
     //   else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
     // }
 
-    // if (localStorage.getItem('chatmossMode') === 'speciality')
-    //   texts = `${texts} 请详细回答`
+    if (localStorage.getItem('chatmossMode') === 'speciality')
+      texts = `${texts} 请详细回答`
 
     // texts = compressCode(texts)
 
@@ -523,7 +532,7 @@ async function onSuccessAuth() {
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
                   </template>
-                  Stop Responding
+                  停止响应
                 </NButton>
               </div>
             </div>
@@ -553,12 +562,12 @@ async function onSuccessAuth() {
           </div> -->
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
           />
           <NSelect
             v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
-            :autofocus="true" :autosize="{ minRows: 1, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
-            clearable label-field="key" @keydown="handleEnter"
+            :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
+            label-field="key" @keydown="handleEnter"
           />
           <!-- MOSS字数 -->
           <div class="btn-style">
@@ -693,9 +702,13 @@ async function onSuccessAuth() {
 
 .btn-style {
   width: 40px;
+	height: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 }
 
 .btn-style button {

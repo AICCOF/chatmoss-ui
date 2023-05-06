@@ -72,7 +72,7 @@ function toggleButtonEvent() {
 	backdrop-filter: blur(20px);
 	// background-color: rgba(60, 128, 253, 0.05);
 	z-index: 20;
-	bottom: 68px;
+	bottom: 94px;
 	position: absolute;
   left: 50%;
   transform: translateX(-50%);
