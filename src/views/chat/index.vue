@@ -26,6 +26,7 @@ const appStore = useAppStore()
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
+const NSelectRef = ref<HTMLInputElement | null>(null)
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
@@ -297,6 +298,12 @@ async function onConversation() {
 }
 
 function handleEnter(event: KeyboardEvent) {
+  // 输入 prompt / 重新获取焦点 第一次 / prompt.value时空字符
+  if (event.key === '/' && !prompt.value) {
+    setTimeout(() => {
+      NSelectRef.value?.focus()
+    }, 200)
+  }
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
     handleSubmit()
@@ -549,8 +556,8 @@ async function onSuccessAuth() {
             :autosize="{ minRows: 1, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
           />
           <NSelect
-            v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
-            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
+            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+            :autofocus="true" :autosize="{ minRows: 1, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
             clearable label-field="key" @keydown="handleEnter"
           />
           <!-- MOSS字数 -->
