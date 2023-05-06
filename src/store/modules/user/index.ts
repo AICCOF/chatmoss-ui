@@ -19,6 +19,7 @@ export const useUserStore = defineStore('user-store', {
     residueCount(state){
       return state.userInfo.residueCount * 10
     },
+		// state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
     options(state){
       
       return [
@@ -30,7 +31,7 @@ export const useUserStore = defineStore('user-store', {
         {
           label: 'ChatGPT4.0',
           value: '4.0',
-          disabled: state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey'),
+          disabled: false
         },
       ]
     }
