@@ -131,7 +131,7 @@ function addTextNum(num: any) {
 }
 
 const dialog = useDialog()
-async function ComfirmNotice(msg){
+async function ConfirmNotice(msg:string){
   return new Promise((resole,reject)=>{
     dialog.warning({
       title: '警告',
@@ -163,7 +163,7 @@ async function onConversation() {
   if(chatStore.isLimit){
     // console.log(chatStore.textLength)
     //  ms.error('当前问题字符数过高，请斟酌是否继续使用4.0');
-   let res =  await ComfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
+   let res =  await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
    if(!res) return ;
   }
 
