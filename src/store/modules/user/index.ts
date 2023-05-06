@@ -30,7 +30,7 @@ export const useUserStore = defineStore('user-store', {
         {
           label: 'ChatGPT4.0',
           value: '4.0',
-          disabled: state.userInfo.fourSwitch !== 'ON' || localStorage.getItem('apiKey'),
+          disabled: state.userInfo.fourSwitch !== 'ON' || !localStorage.getItem('apiKey'),
         },
       ]
     }
