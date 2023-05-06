@@ -20,9 +20,9 @@ const [registerModal, { openModel, closeModel }] = useModel()
 const ms = useMessage()
 const appStore = useAppStore()
 
-const nickname = computed(() => {
-  return userStore.userInfo.user.nickname
-})
+// const nickname = computed(() => {
+//   return userStore.userInfo.user.nickname
+// })
 const personCenter = ref<any>({
   score: 0,
   notices: [],
