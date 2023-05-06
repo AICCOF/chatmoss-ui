@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { NButton, NCard, NInput, NModal, NSelect, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -130,21 +130,45 @@ function addTextNum(num: any) {
   localStorage.setItem('chatMossTextNum', num + Number(chatMossTextNum))
 }
 
-// function compressCode(codeString: any) {
-//   // 删除多余空格、制表符、回车符和注释等内容
-//   const compressedCode = codeString
-//     .replace(/\/\*[\s\S]*?\*\//g, '') // 删除多行注释
-//     .replace(/\/\/.*/g, '') // 删除单行注释
-//     .replace(/\n/g, '') // 删除换行符
-//     .replace(/\r/g, '') // 删除回车符
-//     .replace(/\t/g, '') // 删除制表符
-//   // 转换为单行格式
-//   const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
-//   return oneLineCode
-//   // return codeString
-// }
+const dialog = useDialog()
+async function ComfirmNotice(msg){
+  return new Promise((resole,reject)=>{
+    dialog.warning({
+      title: '警告',
+      content: msg,
+      positiveText: '确定',
+      negativeText: '取消',
+      onPositiveClick: () => {   
+        resole(true)
+      },
+      onNegativeClick: () => {
+        reject(false)
+      }
+    })
+  })
+}
 
 async function onConversation() {
+
+  //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
+  if(userStore.residueCount < 500000 && userStore.isHighVersion){
+    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型');
+    return 
+  }
+  if(localStorage.getItem('apiKey') &&  userStore.isHighVersion){
+    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换');
+    return
+  }
+
+  if(chatStore.isLimit){
+    // console.log(chatStore.textLength)
+    //  ms.error('当前问题字符数过高，请斟酌是否继续使用4.0');
+   let res =  await ComfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
+   if(!res) return ;
+  }
+
+
+
   const message = prompt.value
 
   if (loading.value)
@@ -219,6 +243,7 @@ async function onConversation() {
       options: {
         ...options,
         conversationId: chatStore.getUuid,
+        openaiVersion: userStore.getOpenaiVersion
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -547,19 +572,6 @@ async function onSuccessAuth() {
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex justify-between space-x-2">
-          <!-- 左侧拓展区域 -->
-          <!-- <div class="left-btns">
-            <NPopover trigger="hover">
-              <template #trigger>
-                <img
-                  class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
-                  src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
-                  @click="correlationEvnet"
-                >
-              </template>
-              <span>是否开启上下文</span>
-            </NPopover>
-          </div> -->
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"

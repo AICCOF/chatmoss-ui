@@ -23,7 +23,10 @@ const appStore = useAppStore()
 // const nickname = computed(() => {
 //   return userStore.userInfo.user.nickname
 // })
-const personCenter = ref<any>({
+const personCenter = ref<{
+  notices:any[],
+  [K: string]:any
+}>({
   score: 0,
   notices: [],
   dataList: [],
@@ -140,19 +143,13 @@ async function sendFeedbackEvent() {
 }
 
 // 模型选择
-const modelValue = ref('3.5')
-const modelOptions = ref([
-  {
-    label: 'ChatGPT3.5',
-    value: '3.5',
-    disabled: true,
-  },
-  {
-    label: 'ChatGPT4.0',
-    value: '4.0',
-    disabled: true,
-  },
-])
+// console.log(userStore.getOpenaiVersion)
+if (userStore.userInfo.fourSwitch !== 'ON') {
+  userStore.saveOpenaiVersion('3.5')
+}
+const modelValue = ref(userStore.getOpenaiVersion)
+
+const options =ref<any[]>(userStore.options)
 
 // 专业模式
 function handleModeValue(chatmossMode: string) {
@@ -277,13 +274,15 @@ function getNSwitchModeValue(): any {
       <NDivider />
       <div>
         <div class="title-h1">
-          OpenAI模型选择（调试中暂未开放）
+          OpenAI模型选择
         </div>
         <div class="flex">
-          <NSelect v-model:value="modelValue" :options="modelOptions" />
+          <NSelect v-model:value="modelValue" :options="options" @change="(value)=>{ userStore.saveOpenaiVersion(value)}" />
         </div>
         <div class="tip-text-input">
-          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多125倍，但是回答的更加专业
+          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
+          <span class='font-bold' style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
+          倍，但是回答的更加专业
         </div>
       </div>
       <NDivider />

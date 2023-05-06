@@ -21,6 +21,16 @@ export const useChatStore = defineStore('chat-store', {
     }
   },
   getters: {
+    textLength() {
+      let dataSources = this.getChatByUuid() as any[];
+      // console.log(dataSources, 'textLength')
+      return Math.ceil(dataSources.map(item => item.text).join('\n').length)
+    },
+    isLimit(){
+      console.log(this.textLength,'textLength')
+      let leg = this.textLength as number;
+      return leg > 2500;
+    },
     getChatHistoryByCurrentActive(state: Chat.ChatState) {
       const index = state.chat.findIndex(item => item.id === state.active)
       if (index !== -1)
