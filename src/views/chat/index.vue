@@ -530,7 +530,7 @@ async function onSuccessAuth() {
     </div>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
-        <div class="moss-btns flex items-center justify-between space-x-2">
+        <div class="moss-btns flex justify-between space-x-2">
           <!-- 左侧拓展区域 -->
           <!-- <div class="left-btns">
             <NPopover trigger="hover">
@@ -546,11 +546,11 @@ async function onSuccessAuth() {
           </div> -->
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 2, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+            :autosize="{ minRows: 1, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
           />
           <NSelect
             v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
-            :show-on-focus="true" :autosize="{ minRows: 2, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
+            :show-on-focus="true" :autosize="{ minRows: 1, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
             clearable label-field="key" @keydown="handleEnter"
           />
           <!-- MOSS字数 -->
@@ -693,7 +693,8 @@ async function onSuccessAuth() {
 
 .btn-style button {
   width: 40px;
-  height: 54px;
+  // max-height: 54px;
+  height: 100%;
 }
 
 .moss-text {
