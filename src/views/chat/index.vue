@@ -13,7 +13,7 @@ import { auth, fetchChatAPIProcess, paper } from '@/api'
 import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
-import selectOption from '@/assets/chatmoss.json'
+import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
@@ -26,6 +26,7 @@ const appStore = useAppStore()
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
+const NSelectRef = ref<HTMLInputElement | null>(null)
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
@@ -297,16 +298,22 @@ async function onConversation() {
 }
 
 function handleEnter(event: KeyboardEvent) {
+  // 输入 prompt / 重新获取焦点 第一次 / prompt.value时空字符
+  if (event.key === '/' && !prompt.value) {
+    setTimeout(() => {
+      NSelectRef.value?.focus()
+    }, 200)
+  }
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
     handleSubmit()
   }
   else if (userInputList.value.length && (!prompt.value || prompt.value[0] !== '/')) {
-    if (event.key === 'ArrowUp') {
+    if (event.key === 'ArrowUp' && event.ctrlKey) {
       currentIndex.value -= 1
       prompt.value = userInputList.value[currentIndex.value].text
     }
-    else if (event.key === 'ArrowDown') {
+    else if (event.key === 'ArrowDown' && event.ctrlKey) {
       currentIndex.value += 1
       prompt.value = userInputList.value[currentIndex.value]?.text
     }
@@ -530,7 +537,7 @@ async function onSuccessAuth() {
     </div>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
-        <div class="moss-btns flex items-center justify-between space-x-2">
+        <div class="moss-btns flex justify-between space-x-2">
           <!-- 左侧拓展区域 -->
           <!-- <div class="left-btns">
             <NPopover trigger="hover">
@@ -546,11 +553,11 @@ async function onSuccessAuth() {
           </div> -->
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 2, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+            :autosize="{ minRows: 1, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
           />
           <NSelect
-            v-if="prompt && prompt[0] === '/'" v-model:value="prompt" filterable :show="true" :autofocus="true"
-            :show-on-focus="true" :autosize="{ minRows: 2, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
+            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+            :autofocus="true" :autosize="{ minRows: 1, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
             clearable label-field="key" @keydown="handleEnter"
           />
           <!-- MOSS字数 -->
@@ -693,7 +700,8 @@ async function onSuccessAuth() {
 
 .btn-style button {
   width: 40px;
-  height: 54px;
+  // max-height: 54px;
+  height: 100%;
 }
 
 .moss-text {
