@@ -160,7 +160,7 @@ async function onConversation() {
     return
   }
 
-  if(chatStore.isLimit){
+  if(chatStore.isLimit && userStore.isHighVersion){
     // console.log(chatStore.textLength)
     //  ms.error('当前问题字符数过高，请斟酌是否继续使用4.0');
    let res =  await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
