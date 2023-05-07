@@ -10,12 +10,34 @@ export const useUserStore = defineStore('user-store', {
     getNotices(state) {
       return state.userInfo.notices
     },
+    getOpenaiVersion(state){
+      return state.userInfo.openaiVersion
+    },
+    isHighVersion(state){
+      return state.userInfo.openaiVersion =='4.0'
+    },
+    residueCount(state){
+      return state.userInfo.residueCount * 10
+    },
+		// state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
+    options(state){
+      
+      return [
+        {
+          label: 'ChatGPT3.5',
+          value: '3.5',
+          disabled: false,
+        },
+        {
+          label: 'ChatGPT4.0',
+          value: '4.0',
+          disabled: false
+        },
+      ]
+    }
   },
   actions: {
     async residueCountAPI() {
-      // const token = getToken()
-      // if (!token)
-      //   return
       try {
         const res = await residueCount<{
           residueCount: number
@@ -48,7 +70,10 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo = { ...this.userInfo, ...userInfo }
       this.recordState()
     },
-
+    saveOpenaiVersion(value:string){
+      this.userInfo.openaiVersion = value;
+      this.recordState()
+    },
     resetUserInfo() {
       this.userInfo = { ...defaultSetting().userInfo }
       this.recordState()

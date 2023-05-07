@@ -14,6 +14,9 @@ export interface UserInfo {
   name: string
   description: string
   paymentType: number
+  fourRate: number
+  fourSwitch: string
+  openaiVersion: string
   residueCount: number
   user: { nickname: string; email: string; plusEndTime: undefined; authed?: boolean }
 }
@@ -30,6 +33,9 @@ export function defaultSetting(): UserState {
       description: '罗码Code出品',
       paymentType: 0,
       residueCount: 0,
+      fourRate:125,
+      fourSwitch:"",
+      openaiVersion:"3.5",
       isFinishGuide: false,
       notices: [],
       user: { nickname: '', email: '', plusEndTime: undefined },
@@ -38,8 +44,12 @@ export function defaultSetting(): UserState {
   }
 }
 export function getLocalState(): UserState {
-  const localSetting: UserState | undefined = ss.get(LOCAL_NAME)
-  return { ...defaultSetting(), ...localSetting }
+  const localSetting: UserState = ss.get(LOCAL_NAME) ||{}
+  let userInfo ={
+    ...defaultSetting().userInfo,
+    ...localSetting.userInfo
+  }
+  return { userInfo }
 }
 
 export function setLocalState(setting: UserState): void {

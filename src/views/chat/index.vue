@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { NButton, NCard, NInput, NModal, NSelect, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -38,7 +38,16 @@ appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
 
 // 专业模式初始化
 if (!localStorage.getItem('chatmossMode'))
-  localStorage.setItem('chatmossMode', 'speciality')
+  localStorage.setItem('chatmossMode', 'normal')
+
+// 专业模式初始化
+if (!localStorage.getItem('fontSizeNum')) {
+  localStorage.setItem('fontSizeNum', '100%')
+}
+else {
+  const htmlDom = document.querySelector('html') as any
+  htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
+}
 
 const isPlus = computed(() => {
   // 暂时关闭plus逻辑，全部人都是plus会员
@@ -121,21 +130,49 @@ function addTextNum(num: any) {
   localStorage.setItem('chatMossTextNum', num + Number(chatMossTextNum))
 }
 
-// function compressCode(codeString: any) {
-//   // 删除多余空格、制表符、回车符和注释等内容
-//   const compressedCode = codeString
-//     .replace(/\/\*[\s\S]*?\*\//g, '') // 删除多行注释
-//     .replace(/\/\/.*/g, '') // 删除单行注释
-//     .replace(/\n/g, '') // 删除换行符
-//     .replace(/\r/g, '') // 删除回车符
-//     .replace(/\t/g, '') // 删除制表符
-//   // 转换为单行格式
-//   const oneLineCode = compressedCode.replace(/;/g, '; ').replace(/{/g, '{ ').replace(/}/g, ' }')
-//   return oneLineCode
-//   // return codeString
-// }
+const dialog = useDialog()
+async function ConfirmNotice(msg:string){
+  return new Promise((resole,reject)=>{
+    dialog.warning({
+      title: '警告',
+      content: msg,
+      positiveText: '确定',
+      negativeText: '取消',
+      onPositiveClick: () => {   
+        resole(true)
+      },
+      onNegativeClick: () => {
+        reject(false)
+      }
+    })
+  })
+}
 
 async function onConversation() {
+  if (userStore.userInfo.fourSwitch === 'ON') {
+    ms.error('4.0模型维护中，暂停使用，请等待开启~')
+    return
+  }
+
+  //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
+  if(userStore.residueCount < 500000 && userStore.isHighVersion){
+    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型');
+    return 
+  }
+  if(localStorage.getItem('apiKey') &&  userStore.isHighVersion){
+    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换');
+    return
+  }
+
+  if(chatStore.isLimit){
+    // console.log(chatStore.textLength)
+    //  ms.error('当前问题字符数过高，请斟酌是否继续使用4.0');
+   let res =  await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
+   if(!res) return ;
+  }
+
+
+
   const message = prompt.value
 
   if (loading.value)
@@ -200,8 +237,8 @@ async function onConversation() {
     //   else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
     // }
 
-    // if (localStorage.getItem('chatmossMode') === 'speciality')
-    //   texts = `${texts} 请详细回答`
+    if (localStorage.getItem('chatmossMode') === 'speciality')
+      texts = `${texts} 请详细回答`
 
     // texts = compressCode(texts)
 
@@ -210,6 +247,7 @@ async function onConversation() {
       options: {
         ...options,
         conversationId: chatStore.getUuid,
+        openaiVersion: userStore.getOpenaiVersion
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -523,7 +561,7 @@ async function onSuccessAuth() {
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
                   </template>
-                  Stop Responding
+                  停止响应
                 </NButton>
               </div>
             </div>
@@ -538,27 +576,14 @@ async function onSuccessAuth() {
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex justify-between space-x-2">
-          <!-- 左侧拓展区域 -->
-          <!-- <div class="left-btns">
-            <NPopover trigger="hover">
-              <template #trigger>
-                <img
-                  class="network-btn step2" :class="{ 'network-btn-filter': !isCorrelation }"
-                  src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/context-btn.png" alt="上下文功能"
-                  @click="correlationEvnet"
-                >
-              </template>
-              <span>是否开启上下文</span>
-            </NPopover>
-          </div> -->
           <NInput
             v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 1, maxRows: 2 }" :placeholder="placeholder" clearable @keydown="handleEnter"
+            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
           />
           <NSelect
             v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
-            :autofocus="true" :autosize="{ minRows: 1, maxRows: 2 }" placeholder="placeholder" :options="selectOption"
-            clearable label-field="key" @keydown="handleEnter"
+            :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
+            label-field="key" @keydown="handleEnter"
           />
           <!-- MOSS字数 -->
           <div class="btn-style">
@@ -693,9 +718,13 @@ async function onSuccessAuth() {
 
 .btn-style {
   width: 40px;
+	height: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 }
 
 .btn-style button {

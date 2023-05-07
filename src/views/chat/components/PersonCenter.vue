@@ -20,10 +20,13 @@ const [registerModal, { openModel, closeModel }] = useModel()
 const ms = useMessage()
 const appStore = useAppStore()
 
-const nickname = computed(() => {
-  return userStore.userInfo.user.nickname
-})
-const personCenter = ref<any>({
+// const nickname = computed(() => {
+//   return userStore.userInfo.user.nickname
+// })
+const personCenter = ref<{
+  notices:any[],
+  [K: string]:any
+}>({
   score: 0,
   notices: [],
   dataList: [],
@@ -93,6 +96,13 @@ function settingBtn() {
   }
 }
 
+const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '100%') as any
+function fontSizeNumBtn() {
+  localStorage.setItem('fontSizeNum', fontSizeNum.value)
+  const htmlDom = document.querySelector('html') as any
+  htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
+}
+
 // const chatMossPiecesNumber = ref(localStorage.getItem('chatMossPiecesNumber') || '') as any
 // function chatMossPiecesNumberEvent() {
 //   if (chatMossPiecesNumber.value !== '') {
@@ -133,30 +143,23 @@ async function sendFeedbackEvent() {
 }
 
 // 模型选择
-const modelValue = ref('3.5')
-const modelOptions = ref([
-  {
-    label: 'ChatGPT3.5',
-    value: '3.5',
-    disabled: true,
-  },
-  {
-    label: 'ChatGPT4.0',
-    value: '4.0',
-    disabled: true,
-  },
-])
+// console.log(userStore.getOpenaiVersion)
+if (userStore.userInfo.fourSwitch !== 'ON') {
+  userStore.saveOpenaiVersion('3.5')
+}
+const modelValue = ref(userStore.getOpenaiVersion)
+
+const options =ref<any[]>(userStore.options)
 
 // 专业模式
-// function handleModeValue(chatmossMode: string) {
-//   // 专业模式 speciality
-//   // 正常模式 normal
-//   ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
-//   localStorage.setItem('chatmossMode', chatmossMode)
-// }
-// function getNSwitchModeValue(): any {
-//   return localStorage.getItem('chatmossMode')
-// }
+function handleModeValue(chatmossMode: string) {
+  // 专业模式 speciality | 正常模式 normal
+  ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
+  localStorage.setItem('chatmossMode', chatmossMode)
+}
+function getNSwitchModeValue(): any {
+  return localStorage.getItem('chatmossMode')
+}
 </script>
 
 <template>
@@ -253,10 +256,10 @@ const modelOptions = ref([
           {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
         </div>
       </div>
-      <!-- <NDivider />
+      <NDivider />
       <div>
         <div class="title-h1">
-          回答模式（专业模式下会自动拼接 请详细回答，理论上回答内容更多）
+          回答模式（专业模式下会自动再每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
         </div>
         <div class="flex">
           <NSwitch
@@ -267,18 +270,30 @@ const modelOptions = ref([
           />
           {{ getNSwitchModeValue() === 'speciality' ? '专业模式' : '正常模式' }}
         </div>
-      </div> -->
+      </div>
       <NDivider />
       <div>
         <div class="title-h1">
-          OpenAI模型选择（调试中暂未开放）
+          OpenAI模型选择
         </div>
         <div class="flex">
-          <NSelect v-model:value="modelValue" :options="modelOptions" />
+          <NSelect v-model:value="modelValue" :options="options" @change="(value)=>{ userStore.saveOpenaiVersion(value)}" />
         </div>
         <div class="tip-text-input">
-          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多125倍，但是回答的更加专业
+          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
+          <span class='font-bold' style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
+          倍，但是回答的更加专业
         </div>
+      </div>
+      <NDivider />
+      <div class="title-h1">
+        字体大小设置
+      </div>
+      <div class="flex">
+        <NInput v-model:value="fontSizeNum" class="mr-2" type="text" placeholder="请输入字体设置比例" />
+        <NButton type="primary" ghost @click="fontSizeNumBtn">
+          确定
+        </NButton>
       </div>
     </NCard>
   </BasicModal>
