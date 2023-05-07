@@ -149,10 +149,6 @@ async function ConfirmNotice(msg:string){
 }
 
 async function onConversation() {
-  if (userStore.userInfo.fourSwitch === 'ON') {
-    ms.error('4.0模型维护中，暂停使用，请等待开启~')
-    return
-  }
 
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
   if(userStore.residueCount < 500000 && userStore.isHighVersion){
@@ -164,7 +160,7 @@ async function onConversation() {
     return
   }
 
-  if(chatStore.isLimit){
+  if(chatStore.isLimit && userStore.isHighVersion){
     // console.log(chatStore.textLength)
     //  ms.error('当前问题字符数过高，请斟酌是否继续使用4.0');
    let res =  await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
