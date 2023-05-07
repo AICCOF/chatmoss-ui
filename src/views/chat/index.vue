@@ -149,10 +149,6 @@ async function ConfirmNotice(msg:string){
 }
 
 async function onConversation() {
-  if (userStore.userInfo.fourSwitch === 'ON') {
-    ms.error('4.0模型维护中，暂停使用，请等待开启~')
-    return
-  }
 
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
   if(userStore.residueCount < 500000 && userStore.isHighVersion){
