@@ -50,3 +50,10 @@ export function sendFeedback<T>(data: any) {
     data,
   })
 }
+
+export function exchange<T>(data: Record<string,String>) {
+  return get<T>({
+    url: `/luomacode-api/exchange`,
+    data,
+  })
+}
