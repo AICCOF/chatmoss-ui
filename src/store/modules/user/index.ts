@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type { UserInfo, UserState } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { residueCount } from '@/api'
-import { localStorage } from "@/utils/storage/localStorage";
+import { localStorage } from '@/utils/storage/localStorage'
 export const useUserStore = defineStore('user-store', {
   state: (): UserState => getLocalState(),
   getters: {
@@ -21,7 +21,6 @@ export const useUserStore = defineStore('user-store', {
     },
     // state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
     options(state) {
-
       return [
         {
           label: 'ChatGPT3.5',
@@ -31,42 +30,41 @@ export const useUserStore = defineStore('user-store', {
         {
           label: 'ChatGPT4.0',
           value: '4.0',
-          disabled: false
+          disabled: false,
         },
       ]
     },
-    isHighVersionMsg(state){
-      if (!state.userInfo.timesInfo){
-        return true;
-      }
-      return state.userInfo.timesInfo['timesResidue']['4.0'] === 0;
+    isHighVersionMsg(state) {
+      if (!state.userInfo.timesInfo)
+        return true
+
+      return state.userInfo.timesInfo.timesResidue['4.0'] === 0
     },
     packageList(state) {
-      if (!state.userInfo.timesInfo) {
+      if (!state.userInfo.timesInfo)
         return []
-      }
 
       return [
         {
           title: '3.5套餐',
-          timesResidue: state.userInfo.timesInfo['timesResidue']['3.5'],
+          timesResidue: state.userInfo.timesInfo.timesResidue['3.5'],
           list: [
-            { title: '套餐一', day: state.userInfo.timesInfo['dayResidue']['3.5']['1001'] },
-            { title: '套餐二', day: state.userInfo.timesInfo['dayResidue']['3.5']['1002'] },
-            { title: '套餐三', day: state.userInfo.timesInfo['dayResidue']['3.5']['1003'] }
-          ]
+            { title: '基础套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1001'] },
+            { title: '高级套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1002'] },
+            { title: '顶级套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1003'] },
+          ],
         },
         {
           title: '4.0套餐',
-          timesResidue: state.userInfo.timesInfo['timesResidue']['4.0'],
+          timesResidue: state.userInfo.timesInfo.timesResidue['4.0'],
           list: [
-            { title: '套餐一', day: state.userInfo.timesInfo['dayResidue']['4.0']['1004'] },
-            { title: '套餐二', day: state.userInfo.timesInfo['dayResidue']['4.0']['1005'] },
-            { title: '套餐三', day: state.userInfo.timesInfo['dayResidue']['4.0']['1006'] }
-          ]
-        }
+            { title: '基础套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1004'] },
+            { title: '高级套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1005'] },
+            { title: '顶级套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1006'] },
+          ],
+        },
       ]
-    }
+    },
 
   },
   actions: {
@@ -104,7 +102,7 @@ export const useUserStore = defineStore('user-store', {
       this.recordState()
     },
     saveOpenaiVersion(value: string) {
-      this.userInfo.openaiVersion = value;
+      this.userInfo.openaiVersion = value
       this.recordState()
     },
     resetUserInfo() {

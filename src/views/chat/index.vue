@@ -131,41 +131,39 @@ function addTextNum(num: any) {
 }
 
 const dialog = useDialog()
-async function ConfirmNotice(msg:string){
-  return new Promise((resole,reject)=>{
+async function ConfirmNotice(msg: string) {
+  return new Promise((resole, reject) => {
     dialog.warning({
       title: '警告',
       content: msg,
       positiveText: '确定',
       negativeText: '取消',
-      onPositiveClick: () => {   
+      onPositiveClick: () => {
         resole(true)
       },
       onNegativeClick: () => {
         reject(false)
-      }
+      },
     })
   })
 }
 
 async function onConversation() {
-
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
-  if(userStore.residueCount < 500000 && userStore.isHighVersion){
-    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型');
-    return 
+  if (userStore.residueCount < 500000 && userStore.isHighVersion) {
+    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
+    return
   }
-  if(localStorage.getItem('apiKey') &&  userStore.isHighVersion){
-    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换');
+  if (localStorage.getItem('apiKey') && userStore.isHighVersion) {
+    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换')
     return
   }
 
-  if(chatStore.isLimit && userStore.isHighVersion &&  userStore.isHighVersionMsg){
-   let res =  await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
-   if(!res) return ;
+  if (chatStore.isLimit && userStore.isHighVersion && userStore.isHighVersionMsg) {
+    const res = await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0')
+    if (!res)
+      return
   }
-
-
 
   const message = prompt.value
 
@@ -220,7 +218,6 @@ async function onConversation() {
     if (!token && verify(chatStore.getUuid))
       texts = dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n')
 
-
     if (localStorage.getItem('chatmossMode') === 'speciality')
       texts = `${texts} 请详细回答`
 
@@ -231,7 +228,7 @@ async function onConversation() {
       options: {
         ...options,
         conversationId: chatStore.getUuid,
-        openaiVersion: userStore.getOpenaiVersion
+        openaiVersion: userStore.getOpenaiVersion,
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -427,13 +424,13 @@ const noDataInfo = [
     text: '免费使用：不用登录就可以在设置中心设置Key呦~',
   },
   {
-    text: '一个问题连续对话越长，消耗越多',
+    text: '问题和回答都会扣字符数',
   },
   {
-    text: '新问题新建会话可以避免浪费字符',
+    text: '上下文越长，消耗越多',
   },
   {
-    text: '可以点击余额查看自己的剩余字符数',
+    text: '可以点击余额查看自己的剩余字符&次数',
   },
   {
     text: '一个字符对应OpenAI一个token（中文更费token）',
@@ -445,7 +442,6 @@ function noDataInfoEvent(index: any) {
   // handleSubmit()
   // ms.info('更多问题解答和反馈，请加QQ群')
 }
-
 
 const paperList = ref<Chat.paper[]>([])
 const nowPaperIndex = ref<number>(0)

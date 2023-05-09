@@ -24,8 +24,8 @@ const appStore = useAppStore()
 //   return userStore.userInfo.user.nickname
 // })
 const personCenter = ref<{
-  notices:any[],
-  [K: string]:any
+  notices: any[]
+  [K: string]: any
 }>({
   score: 0,
   notices: [],
@@ -98,7 +98,7 @@ function settingBtn() {
 
 const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '100%') as any
 function fontSizeNumBtn() {
-  localStorage.setItem('fontSizeNum', fontSizeNum.value)
+  localStorage.setItem('fontSizeNum', fontSizeNum.value.endsWith('%') ? fontSizeNum.value : `${fontSizeNum.value < 50 ? 50 : fontSizeNum.value}%`)
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
@@ -144,12 +144,12 @@ async function sendFeedbackEvent() {
 
 // 模型选择
 // console.log(userStore.getOpenaiVersion)
-if (userStore.userInfo.fourSwitch !== 'ON') {
+if (userStore.userInfo.fourSwitch !== 'ON')
   userStore.saveOpenaiVersion('3.5')
-}
+
 const modelValue = ref(userStore.getOpenaiVersion)
 
-const options =ref<any[]>(userStore.options)
+const options = ref<any[]>(userStore.options)
 
 // 专业模式
 function handleModeValue(chatmossMode: string) {
@@ -277,11 +277,11 @@ function getNSwitchModeValue(): any {
           OpenAI模型选择
         </div>
         <div class="flex">
-          <NSelect v-model:value="modelValue" :options="options" @change="(value)=>{ userStore.saveOpenaiVersion(value)}" />
+          <NSelect v-model:value="modelValue" :options="options" @change="(value) => { userStore.saveOpenaiVersion(value) }" />
         </div>
         <div class="tip-text-input">
           小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
-          <span class='font-bold' style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
+          <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
           倍，但是回答的更加专业
         </div>
       </div>

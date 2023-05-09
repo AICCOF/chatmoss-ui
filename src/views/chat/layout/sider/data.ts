@@ -56,74 +56,72 @@ export const ShopInfo = {
   shopsV3: [
     {
       title: '基础套餐',
-      desc: '600次/月(20次/天)',
+      desc: '900次/月(30次/天)',
       count: '29.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_1.png',
     },
     {
       title: '高级套餐',
       desc: '1500次/月(50次/天)',
-      count: '49.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
+      count: '39.9元/30天',
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_2.png',
     },
     {
       title: '顶级套餐',
-      desc: '3900次/月(130次/天)',
-      count: '99.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
+      desc: '3000次/月(100次/天)',
+      count: '59.9元/30天',
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_3.png',
     },
 
   ],
   shopsV4: [
     {
       title: '基础套餐',
-      desc: '600次/月(20次/天)',
+      desc: '900次/月(30次/天)',
       count: '59.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_1.png',
     },
     {
       title: '高级套餐',
-      desc: '1200次/月(40次/天)',
-      count: '99.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
+      desc: '1500次/月(50次/天)',
+      count: '89.9元/30天',
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_2.png',
     },
     {
       title: '顶级套餐',
-      desc: '1800次/月(60次/天)',
-      count: '119.9/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
+      desc: '3000次/月(100次/天)',
+      count: '139.9/30天',
+      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_3.png',
     },
-
   ],
 }
 
 export const exchangeOptions = [
   {
-    label: "3.5基础套餐，每天20次（70万字符）",
+    label: '3.5基础套餐，每天提问30次（150万字符）',
     value: '1001',
   },
   {
-    label: "3.5高级套餐，每天50次（120万字符）",
+    label: '3.5高级套餐，每天提问50次（200万字符）',
     value: '1002',
 
   },
   {
-    label: "3.5顶级套餐，每天130次（450万字符）- 3.5",
+    label: '3.5顶级套餐，每天提问100次（300万字符）',
     value: '1003',
-
   },
   {
-    label: "4.0基础套餐，每天20次（150万字符）",
+    label: '4.0基础套餐，每天提问30次（300万字符）',
     value: '1004',
 
   },
   {
-    label: "4.0高级套餐，每天40次（450万字符）",
+    label: '4.0高级套餐，每天提问50次（500万字符）',
     value: '1005',
 
   },
   {
-    label: "4.0顶级套餐，每天60次（600万字符",
+    label: '4.0顶级套餐，每天提问100次（700万字符）',
     value: '1006',
   },
 ]

@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { NPopover, NTag, NButton, NIcon } from 'naive-ui'
+import { NButton, NPopover, NTag } from 'naive-ui'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
-import { SvgIcon } from '@/components/common'
 import { staticData } from '@/store/static'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
@@ -34,8 +33,7 @@ function loginEvent(type: string) {
   }
 }
 
-
-//moss数量
+// moss数量
 const mossCount = computed(() => {
   const residueCount = userStore.userInfo.residueCount * 10
   return `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
@@ -43,7 +41,7 @@ const mossCount = computed(() => {
 // // 未登录状态下描述
 // const mossNoLogin = computed(() => `还可试用${userStore.userInfo.residueCount * 10}字符`)
 function handleClose(row: any) {
-  shopEvent();
+  shopEvent()
 }
 
 // 重置token
@@ -71,7 +69,6 @@ function shopEvent() {
   const questionBtnDom = document.querySelector('.setting-main2') as HTMLDivElement
   questionBtnDom.click()
 }
-
 </script>
 
 <template>
@@ -110,47 +107,38 @@ function shopEvent() {
           <template #trigger>
             余额
           </template>
-          <p>
-
-          <div class="rounded-lg box-border px-2 py-1 bg-gray-500/80 mt-2 " v-for="(row, i) of userStore.packageList"
-            :key="i">
-            <div >
+          <div
+            v-for="(row, i) of userStore.packageList" :key="i"
+            class="rounded-lg box-border px-2 py-1 bg-gray-500/80 mt-2 "
+          >
+            <div>
               <div style="width:200px" class="flex justify-between">
                 <span class="mr-4">{{ row.title }}</span>
                 <span> 当日可用次数：{{ row.timesResidue }}</span>
               </div>
-
             </div>
             <div class="mt-2 ">
               <div v-for="(item, i) of row.list" :key="i" class="">
                 <div class="mt-1 flex justify-between">
                   <span class="mr-1">{{ item.title }}</span>
-                  <n-tag class="cursor-pointer" type="success" size="small" round @click="handleClose(row)">
+                  <NTag class="cursor-pointer pointer" type="success" size="small" round @click="handleClose(row)">
                     {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
-                  </n-tag>
+                  </NTag>
                 </div>
               </div>
-
-
             </div>
           </div>
 
           <div class="flex rounded-full box-border px-2 py-1 bg-gray-500/80 mt-2">
-
             <div style="width:200px">
               <span class="mr-4">字符数：{{ mossCount }}</span>
             </div>
-
           </div>
           <div class="flex  px-2 py-1  mt-2">
-            <n-button text color="#ff69b4" @click="handleClose">
+            <NButton text color="#ff69b4" @click="handleClose">
               +更多
-            </n-button>
+            </NButton>
           </div>
-
-          </p>
-
-
         </NPopover>
       </div>
     </div>
@@ -310,5 +298,14 @@ function shopEvent() {
       font-size: 10px;
     }
   }
+}
+.pointer {
+	cursor: pointer;
+}
+.t-input1 {
+  font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+	margin-left: 10px;
 }
 </style>
