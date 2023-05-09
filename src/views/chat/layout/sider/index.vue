@@ -1,16 +1,18 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, useMessage } from 'naive-ui'
+import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import Tips from '../../tips.vue'
 import { useModel } from '../../components/Modal/hooks/useModal'
 import List from './List.vue'
+import { ShopInfo, exchangeOptions } from './data'
 import Footer from './Footer.vue'
 import PersonCenter from './../../components/PersonCenter.vue'
 import Login from '@/views/login/index.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { toMoss } from '@/api'
+import { exchange } from '@/api/personCenter'
 const person = ref(null) as any
 const [registerModal, { openModel }] = useModel()
 const userStore = useUserStore()
@@ -54,11 +56,11 @@ async function toMossEvent() {
     return
   }
   try {
-    const data = await toMoss<any>({
+    await toMoss<any>({
       code: toMossCode.value,
     }) as any
     userStore.residueCountAPI()
-    ms.info(`兑换成功，您已经增加${Number(data.msg) * 10}字符数，感谢您的支持！`, { duration: 5000 })
+    ms.info('兑换成功，感谢您的支持！', { duration: 5000 })
   }
   catch (error: any) {
     ms.error(error.msg, { duration: 5000 })
@@ -67,22 +69,16 @@ async function toMossEvent() {
 
 // 设置内容
 const showSettingModal = ref(false)
+
+const exchangeMossCode = ref('')
 function handleSettingSubmit() {
-  // if (!localStorage.getItem('SECRET_TOKEN')) {
-  //   ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
-  //   return
-  // }
   showSettingModal.value = true
+  exchangeMossCode.value = ''
+  toMossCode.value = ''
 }
 
 // 个人中心
 function myHomeSubmit() {
-  // chatStore.updateStore(JSON.parse())
-  // return ;
-  // if (!localStorage.getItem('SECRET_TOKEN')) {
-  //   ms.info('请先登录~登录后每日有10000字符使用额度~', { duration: 5000 })
-  //   return
-  // }
   openModel()
   person.value.updated()
 }
@@ -113,79 +109,48 @@ watch(
   },
 )
 
-const personCenter = ref<any>({
-  score: 0,
-  notices: [],
-  dataList: [],
-  keyList: [],
-  shops: [
-    {
-      title: '500万字符包',
-      desc: '1元 = 5万字符',
-      count: '限时 99.99',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
-    },
-    {
-      title: '400万字符包',
-      desc: '1元 = 3.7万字符',
-      count: 107.99,
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
-    },
-    {
-      title: '300万字符包',
-      desc: '1元 = 3.3万字符',
-      count: 89.99,
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
-    },
-    {
-      title: '200万字符包',
-      desc: '1元 = 3万字符',
-      count: 64.99,
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/200.png',
-    },
-    {
-      title: '100万字符包',
-      desc: '1元 = 2.8万字符',
-      count: 34.99,
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/100.png',
-    },
-    {
-      title: '50万字符包',
-      desc: '1元 = 2.5万字符',
-      count: 19.99,
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/50.png',
-    },
-    // {
-    //   title: '10万字符包',
-    //   desc: '1元 = 2万字符',
-    //   count: 4.99,
-    //   shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/10.png',
-    // },
-    {
-      title: '5美元key',
-      desc: '3天质保',
-      count: 39.90,
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/zh.png',
-    },
-  ],
-})
+const personCenter = ref(ShopInfo)
 const shopModal = ref(false)
-const shopData = ref({}) as any
+const shopData = ref({
+  title: '',
+  shopImg: '',
+})
 function buyEvent(item: any) {
   shopModal.value = true
   shopData.value = item
+}
+
+const dialog = useDialog()
+async function exchangeMossEvent() {
+  if (!exchangeMossCode.value)
+    return
+
+  dialog.info({
+    title: '兑换',
+    content: '是否确定兑换此套餐？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      try {
+        await exchange({ itemId: exchangeMossCode.value })
+        userStore.residueCountAPI()
+        ms.success('兑换成功', { duration: 5000 })
+      }
+      catch (error: any) {
+        ms.error(error.msg, { duration: 5000 })
+      }
+    },
+    onNegativeClick: () => {
+
+    },
+  })
 }
 </script>
 
 <template>
   <NLayoutSider
-    :collapsed="collapsed"
-    :collapsed-width="0" :width="200"
-    show-trigger="arrow-circle"
-    collapse-mode="transform"
-    position="absolute"
-    bordered
-    :style="getMobileClass"
+    :collapsed="collapsed" :collapsed-width="0" :width="200" show-trigger="arrow-circle"
+    collapse-mode="transform" position="absolute" bordered :style="getMobileClass"
     @update-collapsed="handleUpdateCollapsed"
   >
     <div class="flex flex-col h-full" :style="mobileSafeArea">
@@ -201,42 +166,113 @@ function buyEvent(item: any) {
         <!-- 拓展功能区域 -->
         <div v-show="false" class="continuation">
           <div class="setting-main setting-main1" @click="myHomeSubmit">
-            <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="">
+            <!-- <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt=""> -->
             <div class="setting-text step6">
               个人中心
             </div>
           </div>
           <div class="setting-main setting-main2" @click="handleSettingSubmit">
-            <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="">
+            <!-- <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt=""> -->
             <div class="setting-text step5">
               ChatMoss商店
             </div>
           </div>
           <Tips @login="showModelEvent" />
         </div>
-        <NModal v-model:show="showSettingModal" preset="dialog" style="min-width: 300px; height: 85vh; overflow: scroll; width: 80%;">
+        <NModal
+          v-model:show="showSettingModal" preset="card"
+          style="min-width: 300px; height: 85vh; overflow: scroll; width: 80%;"
+        >
           <NCard title="ChatMoss商店" :bordered="false" size="huge" role="dialog" aria-modal="true">
             <div>
               <div class="title-h1">
-                字符包兑换码（登录后才能兑换哦~）
+                兑换码（登录后才能兑换哦~）
               </div>
               <div class="flex">
-                <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的字符包兑换码" />
+                <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的兑换码" />
                 <NButton type="primary" ghost @click="toMossEvent">
                   确定
                 </NButton>
               </div>
             </div>
-
             <NDivider />
 
+            <div>
+              <div class="title-h1">
+                字符兑换包月模式
+              </div>
+              <div class="flex">
+                <NSelect
+                  v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2"
+                  placeholder="请输入您的兑换码"
+                />
+                <NButton type="primary" ghost @click="exchangeMossEvent">
+                  确定
+                </NButton>
+              </div>
+            </div>
+            <NDivider />
+            <div class="">
+              <h1 class="title-h1">
+                chatMoss4.0包月商城
+              </h1>
+              <div class="tip-text-input1">
+                小提示：不同的套餐次数可以累加
+              </div>
+              <div class="tip-text-input1" />
+              <div class="flex flex-wrap">
+                <div
+                  v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
+                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
+                  @click="buyEvent(item)"
+                >
+                  <div class="title-h2">
+                    {{ item.title }}
+                  </div>
+                  <div class="desc">
+                    {{ item.desc }}
+                  </div>
+                  <div class="desc">
+                    ￥ {{ item.count }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <NDivider />
+            <div class="">
+              <h1 class="title-h1">
+                chatMoss3.5包月商城
+              </h1>
+              <div class="tip-text-input1">
+                小提示：不同的套餐次数可以累加
+              </div>
+              <div class="tip-text-input1" />
+              <div class="flex flex-wrap">
+                <div
+                  v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
+                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
+                  @click="buyEvent(item)"
+                >
+                  <div class="title-h2">
+                    {{ item.title }}
+                  </div>
+                  <div class="desc">
+                    {{ item.desc }}
+                  </div>
+                  <div class="desc">
+                    ￥ {{ item.count }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <NDivider />
             <div class="">
               <h1 class="title-h1">
                 字符包商城
               </h1>
-              <div class="tip-text-input1">
+              <!-- <div class="tip-text-input1">
                 小提示：OpenAI限制了5美元key的速度，字符包速度不受影响（字符包用的是120美金的key）
-              </div>
+              </div> -->
               <div class="flex flex-wrap">
                 <div
                   v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
@@ -304,16 +340,19 @@ function buyEvent(item: any) {
   align-items: center;
   cursor: pointer;
   padding: 6px;
-	border-radius: 6px;
-	// background-color: #323232;
-	margin: 0 auto;
-	margin-bottom: 10px;
+  border-radius: 6px;
+  // background-color: #323232;
+  margin: 0 auto;
+  margin-bottom: 10px;
+
   &:active {
     transform: scale(.96);
   }
-	&:hover {
-		// background-color: #3c4250;
-	}
+
+  &:hover {
+    // background-color: #3c4250;
+  }
+
   .setting-text {
     // color: rgba(232, 236, 239, 0.75);
     font-size: 10px;

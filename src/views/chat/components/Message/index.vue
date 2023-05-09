@@ -22,7 +22,6 @@ interface Props {
 // const emit = defineEmits<Emit>()
 const props = defineProps<Props>()
 
-
 const Message = useMessage()
 
 const { iconRender } = useIconRender()
@@ -42,17 +41,13 @@ function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
     case 'copyText':
       copyText({ text: props.text ?? '' })
       Message.success('已复制到剪切板')
-      return
   }
 }
-
-
 </script>
 
 <template>
   <div class="flex w-full mb-6 overflow-hidden" :class="[{ 'flex-row-reverse': inversion }]">
     <div
-      class="flex items-center justify-center flex-shrink-0 h-8 overflow-hidden rounded-full basis-8"
       :class="[inversion ? 'ml-2' : 'mr-2']"
     >
       <!-- <AvatarComponent :image="inversion" /> -->
@@ -74,7 +69,6 @@ function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
           @copy="() => handleSelect('copyText')"
         />
         <div class="flex flex-col">
-          
           <NDropdown :placement="!inversion ? 'right' : 'left'" :options="options" @select="handleSelect">
             <button class="transition text-neutral-300 hover:text-neutral-800 dark:hover:text-neutral-200">
               <SvgIcon icon="ri:more-2-fill" />

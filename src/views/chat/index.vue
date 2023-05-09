@@ -131,43 +131,39 @@ function addTextNum(num: any) {
 }
 
 const dialog = useDialog()
-async function ConfirmNotice(msg:string){
-  return new Promise((resole,reject)=>{
+async function ConfirmNotice(msg: string) {
+  return new Promise((resole, reject) => {
     dialog.warning({
       title: '警告',
       content: msg,
       positiveText: '确定',
       negativeText: '取消',
-      onPositiveClick: () => {   
+      onPositiveClick: () => {
         resole(true)
       },
       onNegativeClick: () => {
         reject(false)
-      }
+      },
     })
   })
 }
 
 async function onConversation() {
-
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
-  if(userStore.residueCount < 500000 && userStore.isHighVersion){
-    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型');
-    return 
+  if (userStore.residueCount < 500000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
+    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
+    return
   }
-  if(localStorage.getItem('apiKey') &&  userStore.isHighVersion){
-    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换');
+  if (localStorage.getItem('apiKey') && userStore.isHighVersion) {
+    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换')
     return
   }
 
-  if(chatStore.isLimit && userStore.isHighVersion){
-    // console.log(chatStore.textLength)
-    //  ms.error('当前问题字符数过高，请斟酌是否继续使用4.0');
-   let res =  await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0') 
-   if(!res) return ;
+  if (chatStore.isLimit && userStore.isHighVersion && userStore.isHighVersionMsg) {
+    const res = await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0')
+    if (!res)
+      return
   }
-
-
 
   const message = prompt.value
 
@@ -222,17 +218,6 @@ async function onConversation() {
     if (!token && verify(chatStore.getUuid))
       texts = dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n')
 
-    // 联网功能接口
-    // if (showNetwork.value && message.length < 20) {
-    //   const networkData = await networkSearch({
-    //     search: encodeURIComponent(message),
-    //   })
-    //   console.log('联网功能', networkData)
-    //   if (networkData.data.length > 0)
-    //     texts = `下面的问题我将给你辅助的网络信息，你从里面提炼出内容返回给用户，优先使用网络信息中的内容，并将参考的网址以[title](href)的形式输出到最后 \n 这是问题：${message} \n 这是网络信息: ${JSON.stringify(networkData.data)} \n 这是你前面的对话信息：${texts}`
-    //   else ms.info('联网查询结果为空，本次回答未能参考网络信息，请换个描述再次尝试~', { duration: 5000 })
-    // }
-
     if (localStorage.getItem('chatmossMode') === 'speciality')
       texts = `${texts} 请详细回答`
 
@@ -243,7 +228,7 @@ async function onConversation() {
       options: {
         ...options,
         conversationId: chatStore.getUuid,
-        openaiVersion: userStore.getOpenaiVersion
+        openaiVersion: userStore.getOpenaiVersion,
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -434,22 +419,18 @@ onUnmounted(() => {
     controller.abort()
 })
 
-// function getIsApiKey() {
-//   return !localStorage.getItem('apiKey')
-// }
-
 const noDataInfo = [
   {
     text: '免费使用：不用登录就可以在设置中心设置Key呦~',
   },
   {
-    text: '一个问题连续对话越长，消耗越多',
+    text: '问题和回答都会扣字符数',
   },
   {
-    text: '新问题新建会话可以避免浪费字符',
+    text: '上下文越长，消耗越多',
   },
   {
-    text: '可以点击余额查看自己的剩余字符数',
+    text: '可以点击余额查看自己的剩余字符&次数',
   },
   {
     text: '一个字符对应OpenAI一个token（中文更费token）',
@@ -461,16 +442,6 @@ function noDataInfoEvent(index: any) {
   // handleSubmit()
   // ms.info('更多问题解答和反馈，请加QQ群')
 }
-
-// 是否开启上下文功能
-// function correlationEvnet() {
-//   isCorrelation.value = !isCorrelation.value
-//   localStorage.setItem('isCorrelation', `${isCorrelation.value}`)
-//   if (isCorrelation.value)
-//     ms.info('已开启上下文功能')
-//   else
-//     ms.info('已关闭上下文功能')
-// }
 
 const paperList = ref<Chat.paper[]>([])
 const nowPaperIndex = ref<number>(0)

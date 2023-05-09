@@ -3,25 +3,24 @@ import { defineStore } from 'pinia'
 import type { UserInfo, UserState } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { residueCount } from '@/api'
-import { localStorage } from "@/utils/storage/localStorage";
+import { localStorage } from '@/utils/storage/localStorage'
 export const useUserStore = defineStore('user-store', {
   state: (): UserState => getLocalState(),
   getters: {
     getNotices(state) {
       return state.userInfo.notices
     },
-    getOpenaiVersion(state){
+    getOpenaiVersion(state) {
       return state.userInfo.openaiVersion
     },
-    isHighVersion(state){
-      return state.userInfo.openaiVersion =='4.0'
+    isHighVersion(state) {
+      return state.userInfo.openaiVersion == '4.0'
     },
-    residueCount(state){
+    residueCount(state) {
       return state.userInfo.residueCount * 10
     },
-		// state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
-    options(state){
-      
+    // state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
+    options(state) {
       return [
         {
           label: 'ChatGPT3.5',
@@ -31,10 +30,42 @@ export const useUserStore = defineStore('user-store', {
         {
           label: 'ChatGPT4.0',
           value: '4.0',
-          disabled: false
+          disabled: false,
         },
       ]
-    }
+    },
+    isHighVersionMsg(state) {
+      if (!state.userInfo.timesInfo)
+        return true
+
+      return state.userInfo.timesInfo.timesResidue['4.0'] === 0
+    },
+    packageList(state) {
+      if (!state.userInfo.timesInfo)
+        return []
+
+      return [
+        {
+          title: '3.5套餐',
+          timesResidue: state.userInfo.timesInfo.timesResidue['3.5'],
+          list: [
+            { title: '基础套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1001'] },
+            { title: '高级套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1002'] },
+            { title: '顶级套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1003'] },
+          ],
+        },
+        {
+          title: '4.0套餐',
+          timesResidue: state.userInfo.timesInfo.timesResidue['4.0'],
+          list: [
+            { title: '基础套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1004'] },
+            { title: '高级套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1005'] },
+            { title: '顶级套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1006'] },
+          ],
+        },
+      ]
+    },
+
   },
   actions: {
     async residueCountAPI() {
@@ -70,8 +101,8 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo = { ...this.userInfo, ...userInfo }
       this.recordState()
     },
-    saveOpenaiVersion(value:string){
-      this.userInfo.openaiVersion = value;
+    saveOpenaiVersion(value: string) {
+      this.userInfo.openaiVersion = value
       this.recordState()
     },
     resetUserInfo() {

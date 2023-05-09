@@ -1,6 +1,13 @@
 <script lang="ts" setup>
 import { useMessage } from 'naive-ui'
+// import { computed } from 'vue'
+// import { useChatStore, useUserStore } from '@/store'
+
 const ms = useMessage()
+
+// const userStore = useUserStore()
+// const chatStore = useChatStore()
+// const dataSources = computed(() => chatStore.getChatByUuid())
 
 // 新建对话
 function createQuestion() {
@@ -40,6 +47,9 @@ function toggleButtonEvent() {
       </div> -->
     </div>
     <div class="footer-right">
+      <!-- <div v-if="userStore.packageList[0]?.timesResidue === 0 && userStore.packageList[1]?.timesResidue === 0" class="consumption-text">
+        下次预计消耗：{{ dataSources.map(item => item.text).join('\n').length }}
+      </div> -->
       <div class="footer-item">
         <div class="header-right-item">
           <!-- <NPopover trigger="hover">
@@ -55,6 +65,15 @@ function toggleButtonEvent() {
 </template>
 
 <style lang="less">
+.consumption-text {
+	white-space: nowrap;
+	width: 200px;
+	font-size: .75rem;
+  line-height: 1rem;
+	color: rgb(209 213 219);
+	text-align: right;
+	font-style: italic;
+}
 .footer-main {
 	max-width: 1280px;
 	width: 100%;
@@ -72,16 +91,16 @@ function toggleButtonEvent() {
 	backdrop-filter: blur(20px);
 	// background-color: rgba(60, 128, 253, 0.05);
 	z-index: 20;
-	bottom: 94px;
+	bottom: 88px;
 	position: absolute;
   left: 50%;
   transform: translateX(-50%);
 	.footer-left {
-		width: 80%;
+		width: 60%;
 		display: flex;
 	}
 	.footer-right {
-		width: 20%;
+		width: 40%;
 		display: flex;
 		justify-content: flex-end;
 	}
