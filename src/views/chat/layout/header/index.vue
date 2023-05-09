@@ -103,7 +103,7 @@ function shopEvent() {
         </p>
       </div>
       <div class="header-right-item header-item-btn text-test">
-        <NPopover trigger="hover" :duration="500" @update:show="()=> userStore.residueCountAPI()">
+        <NPopover trigger="click" :duration="500" @update:show="()=> userStore.residueCountAPI()">
           <template #trigger>
             余额
           </template>
