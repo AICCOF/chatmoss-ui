@@ -2,6 +2,7 @@
 import { NAlert, NAvatar, NButton, NCard, NDivider, NForm, NFormItem, NInput, NPopover, NSelect, NSpace, NSwitch, useMessage, useNotification } from 'naive-ui'
 import { computed, h, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
+import uni from '@dcloudio/uni-webview-js'
 import BasicModal from './Modal/BasicModal.vue'
 import { useModel } from './Modal/hooks/useModal'
 import { useAppStore, useUserStore } from '@/store'
@@ -9,6 +10,7 @@ import { SvgIcon } from '@/components/common'
 import { getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
 import { localStorage } from '@/utils/storage/localStorage'
+
 // let props = defineProps(['register'])
 const emits = defineEmits(['modifyPassword', 'register'])
 
@@ -126,6 +128,11 @@ function handleUpdateValue(chatmossTheme: string) {
   ms.info(chatmossTheme === 'dark' ? '深色模式开启' : '浅色模式开启')
   localStorage.setItem('chatmossTheme', chatmossTheme)
   appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
+  uni.postMessage({
+    data: {
+      theme: chatmossTheme,
+    },
+  })
 }
 function getNSwitchValue(): any {
   return localStorage.getItem('chatmossTheme')

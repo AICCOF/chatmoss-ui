@@ -7,4 +7,6 @@ interface Window {
 
 }
 
+declare module '@dcloudio/uni-webview-js';
+
 declare let acquireVsCodeApi: () => void;

@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@dcloudio/uni-webview-js':
+    specifier: ^0.0.3
+    version: 0.0.3
   '@tauri-apps/api':
     specifier: ^1.2.0
     version: 1.2.0
@@ -122,7 +125,7 @@ devDependencies:
     version: 4.3.0
   tailwindcss:
     specifier: ^3.2.7
-    version: 3.2.7(postcss@8.4.21)(ts-node@10.9.1)
+    version: 3.2.7(postcss@8.4.21)
   typescript:
     specifier: ~4.9.5
     version: 4.9.5
@@ -1568,6 +1571,10 @@ packages:
       vue: ^3.0.11
     dependencies:
       vue: 3.2.47
+    dev: false
+
+  /@dcloudio/uni-webview-js@0.0.3:
+    resolution: {integrity: sha512-3XDnLXg22QKC/aTLtGim6zbOK+euiDYoRf98BjGDE0lqMm1U4SLFHAvOlAHa0qck91phaceKwo73ScQQgSojQg==}
     dev: false
 
   /@emotion/hash@0.8.0:
@@ -5337,7 +5344,7 @@ packages:
       postcss: 8.4.21
     dev: true
 
-  /postcss-load-config@3.1.4(postcss@8.4.21)(ts-node@10.9.1):
+  /postcss-load-config@3.1.4(postcss@8.4.21):
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
     engines: {node: '>= 10'}
     peerDependencies:
@@ -5351,7 +5358,6 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.21
-      ts-node: 10.9.1(@types/node@18.14.6)(typescript@4.9.5)
       yaml: 1.10.2
     dev: true
 
@@ -5903,7 +5909,7 @@ packages:
     resolution: {integrity: sha512-OMf+kFCYG9fLQerUyw/QVIPfZ+lo579R+usrDzSrZAkvMl6B0tHtc4rUP7DFaPCr7Sy6p5DYD4V9OCF1Sp6+vA==}
     dev: false
 
-  /tailwindcss@3.2.7(postcss@8.4.21)(ts-node@10.9.1):
+  /tailwindcss@3.2.7(postcss@8.4.21):
     resolution: {integrity: sha512-B6DLqJzc21x7wntlH/GsZwEXTBttVSl1FtCzC8WP4oBc/NKef7kaax5jeihkkCEWc831/5NDJ9gRNDK6NEioQQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
@@ -5927,7 +5933,7 @@ packages:
       postcss: 8.4.21
       postcss-import: 14.1.0(postcss@8.4.21)
       postcss-js: 4.0.1(postcss@8.4.21)
-      postcss-load-config: 3.1.4(postcss@8.4.21)(ts-node@10.9.1)
+      postcss-load-config: 3.1.4(postcss@8.4.21)
       postcss-nested: 6.0.0(postcss@8.4.21)
       postcss-selector-parser: 6.0.11
       postcss-value-parser: 4.2.0

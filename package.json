@@ -32,6 +32,7 @@
     "tauri-build": "yarn tauri build"
   },
   "dependencies": {
+    "@dcloudio/uni-webview-js": "^0.0.3",
     "@tauri-apps/api": "^1.2.0",
     "@traptitech/markdown-it-katex": "^3.6.0",
     "@vitejs/plugin-legacy": "^4.0.1",
