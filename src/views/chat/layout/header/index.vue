@@ -121,7 +121,7 @@ function shopEvent() {
           </template>
           <p>
 
-          <div class=" rounded-lg box-border px-2 py-1 bg-gray-500/80 mt-2 "
+          <div class="rounded-lg box-border px-2 py-1 bg-gray-500/80 mt-2 "
             v-for="(row, i) of userStore.packageList" :key="i">
            <div class="flex">
              <div style="width:200px">
@@ -130,10 +130,10 @@ function shopEvent() {
               </div>
              
            </div>
-           <div class="flex mt-2 justify-between">
-             <div v-for="(item, i) of row.list"  :key="i">
-              <div class="mr-4">
-                <span class="mr-1">{{ item.title }}:</span>
+           <div class="mt-2 ">
+             <div v-for="(item, i) of row.list"  :key="i" class="">
+              <div class="mt-1 flex justify-between">
+                <span class="mr-1">{{ item.title }}</span>
                  <n-tag type="success" size="small" round @click="handleClose(row)">
                     {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
                  </n-tag>
