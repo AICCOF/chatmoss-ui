@@ -103,7 +103,7 @@ function shopEvent() {
         </p>
       </div>
       <div class="header-right-item header-item-btn text-test">
-        <NPopover trigger="hover" :duration="1500">
+        <NPopover trigger="hover" :duration="500" @update:show="()=> userStore.residueCountAPI()">
           <template #trigger>
             余额
           </template>
@@ -121,9 +121,12 @@ function shopEvent() {
               <div v-for="(item, i) of row.list" :key="i" class="">
                 <div class="mt-1 flex justify-between">
                   <span class="mr-1">{{ item.title }}</span>
-                  <NTag class="cursor-pointer pointer" type="success" size="small" round @click="handleClose(row)">
-                    {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
-                  </NTag>
+                 
+                  <NTag style="cursor: pointer;"  type="success" size="small" round @click="handleClose(row)">
+                      {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
+                 </NTag>
+                 
+                 
                 </div>
               </div>
             </div>

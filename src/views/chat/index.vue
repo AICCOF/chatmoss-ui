@@ -150,7 +150,7 @@ async function ConfirmNotice(msg: string) {
 
 async function onConversation() {
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
-  if (userStore.residueCount < 500000 && userStore.isHighVersion) {
+  if (userStore.residueCount < 500000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
     ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
     return
   }
