@@ -52,8 +52,8 @@ export function sendFeedback<T>(data: any) {
 }
 
 export function exchange<T>(data: Record<string,String>) {
-  return get<T>({
-    url: `/luomacode-api/exchange`,
+  return post<T>({
+    url: `/luomacode-api/redeem/toTimes`,
     data,
   })
 }

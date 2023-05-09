@@ -129,7 +129,12 @@ async function exchangeMossEvent(){
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: async () => {
-     await exchange({id: exchangeMossCode.value})
+     try {
+      await exchange({ itemId: exchangeMossCode.value })
+        userStore.residueCountAPI()
+     } catch (error:any) {
+       ms.error(error.msg, { duration: 5000 })
+     }
     },
     onNegativeClick: () => {
       

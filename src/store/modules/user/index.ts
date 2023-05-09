@@ -10,18 +10,18 @@ export const useUserStore = defineStore('user-store', {
     getNotices(state) {
       return state.userInfo.notices
     },
-    getOpenaiVersion(state){
+    getOpenaiVersion(state) {
       return state.userInfo.openaiVersion
     },
-    isHighVersion(state){
-      return state.userInfo.openaiVersion =='4.0'
+    isHighVersion(state) {
+      return state.userInfo.openaiVersion == '4.0'
     },
-    residueCount(state){
+    residueCount(state) {
       return state.userInfo.residueCount * 10
     },
-		// state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
-    options(state){
-      
+    // state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
+    options(state) {
+
       return [
         {
           label: 'ChatGPT3.5',
@@ -34,7 +34,34 @@ export const useUserStore = defineStore('user-store', {
           disabled: false
         },
       ]
+    },
+    packageList(state) {
+      if (!state.userInfo.timesInfo) {
+        return []
+      }
+
+      return [
+        {
+          title: '套餐3.5',
+          timesResidue: state.userInfo.timesInfo['timesResidue']['3.5'],
+          list: [
+            { title: '套餐一', day: state.userInfo.timesInfo['dayResidue']['3.5']['1001'] },
+            { title: '套餐二', day: state.userInfo.timesInfo['dayResidue']['3.5']['1002'] },
+            { title: '套餐三', day: state.userInfo.timesInfo['dayResidue']['3.5']['1003'] }
+          ]
+        },
+        {
+          title: '套餐4.0',
+          timesResidue: state.userInfo.timesInfo['timesResidue']['4.0'],
+          list: [
+            { title: '套餐一', day: state.userInfo.timesInfo['dayResidue']['4.0']['1004'] },
+            { title: '套餐二', day: state.userInfo.timesInfo['dayResidue']['4.0']['1005'] },
+            { title: '套餐三', day: state.userInfo.timesInfo['dayResidue']['4.0']['1006'] }
+          ]
+        }
+      ]
     }
+
   },
   actions: {
     async residueCountAPI() {
@@ -70,7 +97,7 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo = { ...this.userInfo, ...userInfo }
       this.recordState()
     },
-    saveOpenaiVersion(value:string){
+    saveOpenaiVersion(value: string) {
       this.userInfo.openaiVersion = value;
       this.recordState()
     },

@@ -34,13 +34,13 @@ function loginEvent(type: string) {
   }
 }
 
-let showInfo = ref({
+// let showInfo = ref({
 
-  list: [
-    { title: "3.5次数", allCount: 20, used: 10, day: 30 },
-    { title: "4次数", allCount: 20, used: 10, day: 0 },
-  ]
-})
+//   list: [
+//     { title: "3.5次数", allCount: 20, used: 10, day: 30 },
+//     { title: "4次数", allCount: 20, used: 10, day: 0 },
+//   ]
+// })
 
 //moss数量
 const mossCount = computed(() => {
@@ -115,19 +115,33 @@ function shopEvent() {
         </p>
       </div>
       <div class="header-right-item header-item-btn text-test">
-        <NPopover trigger="hover" :duration="150000">
+        <NPopover trigger="hover" :duration="1500">
           <template #trigger>
             余额
           </template>
           <p>
 
-          <div class="flex rounded-full box-border px-2 py-1 bg-gray-500/80 mt-2 justify-between"
-            v-for="(row, i) of showInfo.list" :key="i">
-            <div style="width:200px"><span class="mr-4">{{ row.title }}</span><span>{{ row.used }}/{{ row.allCount
-            }}</span></div>
-            <n-tag type="success" size="small" round @click="handleClose(row)">
-              {{ row.day === 0 ? "去购买" : `剩余${row.day}天` }}
-            </n-tag>
+          <div class=" rounded-lg box-border px-2 py-1 bg-gray-500/80 mt-2 "
+            v-for="(row, i) of userStore.packageList" :key="i">
+           <div class="flex">
+             <div style="width:200px">
+              <span class="mr-4">{{ row.title }}</span>
+              <span> 当日可用次数：{{ row.timesResidue }}</span>
+              </div>
+             
+           </div>
+           <div class="flex mt-2 justify-between">
+             <div v-for="(item, i) of row.list"  :key="i">
+              <div class="mr-4">
+                <span class="mr-1">{{ item.title }}:</span>
+                 <n-tag type="success" size="small" round @click="handleClose(row)">
+                    {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
+                 </n-tag>
+              </div>
+           </div>
+          
+            
+           </div>
           </div>
 
           <div class="flex rounded-full box-border px-2 py-1 bg-gray-500/80 mt-2">
@@ -138,7 +152,7 @@ function shopEvent() {
 
           </div>
           <div class="flex  px-2 py-1  mt-2">
-            <n-button text color="#ff69b4">
+            <n-button text color="#ff69b4" @click="handleClose">
               +更多
             </n-button>
           </div>

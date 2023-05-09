@@ -100,31 +100,31 @@ export const ShopInfo = {
 export const exchangeOptions = [
   {
     label: "套餐一 ，每天20次（70万字符）- 3.5",
-    value: '1',
+    value: '1001 ',
   },
   {
     label: "套餐二 ，每天50次（120万字符）- 3.5",
-    value: '2',
+    value: '1002',
 
   },
   {
     label: "套餐三，每天130次（450万字符）- 3.5",
-    value: '3',
+    value: '1003',
 
   },
   {
     label: "套餐一，每天20次（150万字符）-4.0",
-    value: '4',
+    value: '1004',
 
   },
   {
     label: "套餐二，每天40次（450万字符）-4.0",
-    value: '5',
+    value: '1005',
 
   },
   {
     label: "套餐三，每天60次（600万字符）-4.0",
-    value: '6',
+    value: '1006',
 
   },
 ]
