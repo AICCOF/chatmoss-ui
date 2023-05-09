@@ -35,6 +35,12 @@ export const useUserStore = defineStore('user-store', {
         },
       ]
     },
+    isHighVersionMsg(state){
+      if (!state.userInfo.timesInfo){
+        return true;
+      }
+      return state.userInfo.timesInfo['timesResidue']['4.0'] === 0;
+    },
     packageList(state) {
       if (!state.userInfo.timesInfo) {
         return []
@@ -42,7 +48,7 @@ export const useUserStore = defineStore('user-store', {
 
       return [
         {
-          title: '套餐3.5',
+          title: '3.5套餐',
           timesResidue: state.userInfo.timesInfo['timesResidue']['3.5'],
           list: [
             { title: '套餐一', day: state.userInfo.timesInfo['dayResidue']['3.5']['1001'] },
@@ -51,7 +57,7 @@ export const useUserStore = defineStore('user-store', {
           ]
         },
         {
-          title: '套餐4.0',
+          title: '4.0套餐',
           timesResidue: state.userInfo.timesInfo['timesResidue']['4.0'],
           list: [
             { title: '套餐一', day: state.userInfo.timesInfo['dayResidue']['4.0']['1004'] },

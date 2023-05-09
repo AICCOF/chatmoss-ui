@@ -34,13 +34,6 @@ function loginEvent(type: string) {
   }
 }
 
-// let showInfo = ref({
-
-//   list: [
-//     { title: "3.5次数", allCount: 20, used: 10, day: 30 },
-//     { title: "4次数", allCount: 20, used: 10, day: 0 },
-//   ]
-// })
 
 //moss数量
 const mossCount = computed(() => {
@@ -50,8 +43,6 @@ const mossCount = computed(() => {
 // // 未登录状态下描述
 // const mossNoLogin = computed(() => `还可试用${userStore.userInfo.residueCount * 10}字符`)
 function handleClose(row: any) {
-  // console.log(1)
-
   shopEvent();
 }
 
@@ -121,27 +112,27 @@ function shopEvent() {
           </template>
           <p>
 
-          <div class="rounded-lg box-border px-2 py-1 bg-gray-500/80 mt-2 "
-            v-for="(row, i) of userStore.packageList" :key="i">
-           <div class="flex">
-             <div style="width:200px">
-              <span class="mr-4">{{ row.title }}</span>
-              <span> 当日可用次数：{{ row.timesResidue }}</span>
+          <div class="rounded-lg box-border px-2 py-1 bg-gray-500/80 mt-2 " v-for="(row, i) of userStore.packageList"
+            :key="i">
+            <div >
+              <div style="width:200px" class="flex justify-between">
+                <span class="mr-4">{{ row.title }}</span>
+                <span> 当日可用次数：{{ row.timesResidue }}</span>
               </div>
-             
-           </div>
-           <div class="mt-2 ">
-             <div v-for="(item, i) of row.list"  :key="i" class="">
-              <div class="mt-1 flex justify-between">
-                <span class="mr-1">{{ item.title }}</span>
-                 <n-tag type="success" size="small" round @click="handleClose(row)">
+
+            </div>
+            <div class="mt-2 ">
+              <div v-for="(item, i) of row.list" :key="i" class="">
+                <div class="mt-1 flex justify-between">
+                  <span class="mr-1">{{ item.title }}</span>
+                  <n-tag class="cursor-pointer" type="success" size="small" round @click="handleClose(row)">
                     {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
-                 </n-tag>
+                  </n-tag>
+                </div>
               </div>
-           </div>
-          
-            
-           </div>
+
+
+            </div>
           </div>
 
           <div class="flex rounded-full box-border px-2 py-1 bg-gray-500/80 mt-2">

@@ -55,19 +55,19 @@ export const ShopInfo = {
   ],
   shopsV3: [
     {
-      title: '套餐一',
+      title: '基础套餐',
       desc: '600次/月(20次/天)',
       count: '29.9元/30天',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
     },
     {
-      title: '套餐二',
+      title: '高级套餐',
       desc: '1500次/月(50次/天)',
       count: '49.9元/30天',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
     },
     {
-      title: '套餐三',
+      title: '顶级套餐',
       desc: '3900次/月(130次/天)',
       count: '99.9元/30天',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
@@ -76,19 +76,19 @@ export const ShopInfo = {
   ],
   shopsV4: [
     {
-      title: '套餐一',
+      title: '基础套餐',
       desc: '600次/月(20次/天)',
       count: '59.9元/30天',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/500.png',
     },
     {
-      title: '套餐二',
+      title: '高级套餐',
       desc: '1200次/月(40次/天)',
       count: '99.9元/30天',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/400.png',
     },
     {
-      title: '套餐三',
+      title: '顶级套餐',
       desc: '1800次/月(60次/天)',
       count: '119.9/30天',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/300.png',
@@ -99,32 +99,31 @@ export const ShopInfo = {
 
 export const exchangeOptions = [
   {
-    label: "套餐一 ，每天20次（70万字符）- 3.5",
-    value: '1001 ',
+    label: "3.5基础套餐，每天20次（70万字符）",
+    value: '1001',
   },
   {
-    label: "套餐二 ，每天50次（120万字符）- 3.5",
+    label: "3.5高级套餐，每天50次（120万字符）",
     value: '1002',
 
   },
   {
-    label: "套餐三，每天130次（450万字符）- 3.5",
+    label: "3.5顶级套餐，每天130次（450万字符）- 3.5",
     value: '1003',
 
   },
   {
-    label: "套餐一，每天20次（150万字符）-4.0",
+    label: "4.0基础套餐，每天20次（150万字符）",
     value: '1004',
 
   },
   {
-    label: "套餐二，每天40次（450万字符）-4.0",
+    label: "4.0高级套餐，每天40次（450万字符）",
     value: '1005',
 
   },
   {
-    label: "套餐三，每天60次（600万字符）-4.0",
+    label: "4.0顶级套餐，每天60次（600万字符",
     value: '1006',
-
   },
 ]

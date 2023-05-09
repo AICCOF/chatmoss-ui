@@ -5,7 +5,7 @@ import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, useMessage, NSe
 import Tips from '../../tips.vue'
 import { useModel } from '../../components/Modal/hooks/useModal'
 import List from './List.vue'
-import { ShopInfo , exchangeOptions } from './data'
+import { ShopInfo, exchangeOptions } from './data'
 import Footer from './Footer.vue'
 import PersonCenter from './../../components/PersonCenter.vue'
 import Login from '@/views/login/index.vue'
@@ -69,8 +69,12 @@ async function toMossEvent() {
 
 // 设置内容
 const showSettingModal = ref(false)
+
+let exchangeMossCode = ref('')
 function handleSettingSubmit() {
   showSettingModal.value = true
+  exchangeMossCode.value = ''
+  toMossCode.value = ''
 }
 
 // 个人中心
@@ -108,19 +112,18 @@ watch(
 const personCenter = ref(ShopInfo)
 const shopModal = ref(false)
 const shopData = ref({
-  title:'',
-  shopImg:''
+  title: '',
+  shopImg: ''
 })
 function buyEvent(item: any) {
   shopModal.value = true
   shopData.value = item
 }
 
-let exchangeMossCode = ref('')
 const dialog = useDialog()
-async function exchangeMossEvent(){
-  if(!exchangeMossCode.value){
-    return ;
+async function exchangeMossEvent() {
+  if (!exchangeMossCode.value) {
+    return;
   }
 
   dialog.info({
@@ -129,18 +132,22 @@ async function exchangeMossEvent(){
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: async () => {
-     try {
-      await exchange({ itemId: exchangeMossCode.value })
+      try {
+        await exchange({ itemId: exchangeMossCode.value })
         userStore.residueCountAPI()
-     } catch (error:any) {
-       ms.error(error.msg, { duration: 5000 })
-     }
+        ms.success(`兑换成功`, { duration: 5000 })
+      } catch (error: any) {
+        ms.error(error.msg, { duration: 5000 })
+      }
     },
     onNegativeClick: () => {
-      
+
     }
   })
 }
+
+
+
 </script>
 
 <template>
@@ -160,13 +167,13 @@ async function exchangeMossEvent(){
         <!-- 拓展功能区域 -->
         <div v-show="false" class="continuation">
           <div class="setting-main setting-main1" @click="myHomeSubmit">
-            <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt="">
+            <!-- <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt=""> -->
             <div class="setting-text step6">
               个人中心
             </div>
           </div>
           <div class="setting-main setting-main2" @click="handleSettingSubmit">
-            <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt="">
+            <!-- <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt=""> -->
             <div class="setting-text step5">
               ChatMoss商店
             </div>
@@ -189,18 +196,19 @@ async function exchangeMossEvent(){
             </div>
             <NDivider />
 
-              <div>
-                <div class="title-h1">
-                  字符兑换包月模式
-                </div>
-                <div class="flex">
-                    <n-select v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2" placeholder="请输入您的兑换码" />
-                  <NButton type="primary" ghost @click="exchangeMossEvent">
-                    确定
-                  </NButton>
-                </div>
+            <div>
+              <div class="title-h1">
+                字符兑换包月模式
               </div>
-              <NDivider />
+              <div class="flex">
+                <n-select v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2"
+                  placeholder="请输入您的兑换码" />
+                <NButton type="primary" ghost @click="exchangeMossEvent">
+                  确定
+                </NButton>
+              </div>
+            </div>
+            <NDivider />
             <div class="">
               <h1 class="title-h1">
                 chatMoss4.0兑换商城
