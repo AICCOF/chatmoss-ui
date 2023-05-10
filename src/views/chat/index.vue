@@ -267,6 +267,7 @@ async function onConversation() {
     scrollToBottom()
   }
   catch (error: any) {
+
     ms.error(error.msg || error.message)
     if (error.code === 204) {
       // error.msg

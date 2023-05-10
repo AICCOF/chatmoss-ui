@@ -27,7 +27,7 @@ function http<T = any>(
   const successHandler = (res: AxiosResponse<Response<T>>) => {
     const authStore = useAuthStore()
     // 代表是二进制，文本
-    if (typeof res.data == 'string'){
+    if (typeof res.data !== 'object' ){
       return Promise.resolve(res.data)
     }
     if (res.data.code === 0 || res.data.code === 200){

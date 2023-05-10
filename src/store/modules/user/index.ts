@@ -81,6 +81,8 @@ export const useUserStore = defineStore('user-store', {
           }
         }>()
 
+        this.userInfo.timesInfo = undefined;
+
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
