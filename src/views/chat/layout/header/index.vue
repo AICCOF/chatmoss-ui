@@ -6,6 +6,7 @@ import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { staticData } from '@/store/static'
+// import html2canvas from 'html2canvas'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
@@ -68,6 +69,10 @@ function settingMainEvent() {
 function shopEvent() {
   const questionBtnDom = document.querySelector('.setting-main2') as HTMLDivElement
   questionBtnDom.click()
+  
+  // html2canvas(document.querySelector("#image-wrapper")).then(function (canvas) {
+  //   document.body.appendChild(canvas);
+  // });
 }
 </script>
 

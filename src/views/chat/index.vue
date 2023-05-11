@@ -52,7 +52,7 @@ else {
 const isPlus = computed(() => {
   // 暂时关闭plus逻辑，全部人都是plus会员
   // !!userStore.userInfo.user.plusEndTime
-  return true
+  return userStore.getOpenaiVersion
 })
 
 if (!localStorage.getItem('isCorrelation'))
@@ -500,10 +500,10 @@ async function onSuccessAuth() {
               <div class="no-data-info-title">
                 ChatMoss
                 <span
-                  v-if="isPlus"
+                  v-if="!!isPlus"
                   class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
                 >
-                  Plus
+                  {{ isPlus }}
                 </span>
               </div>
               <div class="no-data-btns-list">
