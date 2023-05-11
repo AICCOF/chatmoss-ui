@@ -164,6 +164,11 @@ async function onConversation() {
     if (!res)
       return
   }
+  if(!userStore.isAsk){
+    ms.error('当前字数已用尽，请等待明日免费字符，或者在商店内购买字符使用，或者上传key使用')
+    return
+  }
+//  userStore.userInfo.residueCount <= 0
 
   const message = prompt.value
 
@@ -359,7 +364,7 @@ const placeholder = computed(() => {
 const buttonDisabled = computed(() => {
   if (localStorage.getItem('apiKey'))
     return false
-  return loading.value || !prompt.value || prompt.value.trim() === '' || userStore.userInfo.residueCount <= 0
+  return loading.value || !prompt.value || prompt.value.trim() === ''
 })
 
 const wrapClass = computed(() => {
