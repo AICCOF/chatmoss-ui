@@ -29,7 +29,7 @@ export interface UserInfo {
         '1004': number
         '1005': number
         '1006': number
-      },
+      }
     }
     timesResidue: {
       '3.5': number
@@ -52,8 +52,8 @@ export function defaultSetting(): UserState {
       paymentType: 0,
       residueCount: 0,
       fourRate: 125,
-      fourSwitch: "",
-      openaiVersion: "3.5",
+      fourSwitch: '',
+      openaiVersion: '3.5',
       isFinishGuide: false,
       notices: [],
       user: { nickname: '', email: '', plusEndTime: undefined },
@@ -63,9 +63,9 @@ export function defaultSetting(): UserState {
 }
 export function getLocalState(): UserState {
   const localSetting: UserState = ss.get(LOCAL_NAME) || {}
-  let userInfo = {
+  const userInfo = {
     ...defaultSetting().userInfo,
-    ...localSetting.userInfo
+    ...localSetting.userInfo,
   }
   return { userInfo }
 }

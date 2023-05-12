@@ -44,19 +44,18 @@ export const useUserStore = defineStore('user-store', {
       // 未包月的情况
       if (!state.userInfo.timesInfo) {
         // 字符数小于0
-        if (this.residueCount <= 0) {
+        if (this.residueCount <= 0)
           return false
-        }
-        return true;
+
+        return true
       }
       // 包月的情况，3.5 4.0次数哟用完
       if (state.userInfo.timesInfo.timesResidue['3.5'] == 0 && state.userInfo.timesInfo.timesResidue['4.0'] == 0) {
         // 字符数小于0
-        if (this.residueCount <= 0) {
+        if (this.residueCount <= 0)
           return false
-        }
       }
-      return true;
+      return true
     },
     packageList(state) {
       if (!state.userInfo.timesInfo)
@@ -99,7 +98,7 @@ export const useUserStore = defineStore('user-store', {
           }
         }>()
 
-        this.userInfo.timesInfo = undefined;
+        this.userInfo.timesInfo = undefined
 
         this.userInfo = {
           ...this.userInfo, ...res.data,
