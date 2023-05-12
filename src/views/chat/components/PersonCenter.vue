@@ -224,30 +224,22 @@ function getNSwitchModeValue(): any {
       </div>
       <div class="tip-text-input">
         可以点击这个网址进行检查：
-        <a style="color: #0099FF;" href="https://open.aihao123.cn/" target="_blank">https://open.aihao123.cn/</a>
+        <a style="color: #0099FF;" href="http://open.aihao123.cn/" target="_blank">http://open.aihao123.cn/</a>
       </div>
       <NDivider />
       <div>
-        <span class="title-h2">本机累计使用字符数</span>：未知
-      </div>
-      <div class="tip-text-input">
-        小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
-      </div>
-      <!-- <NDivider />
-      <div>
         <div class="title-h1">
-          上下文条数设置（建议30条）
+          OpenAI模型选择
         </div>
         <div class="flex">
-          <NInput v-model:value="chatMossPiecesNumber" class="mr-2" type="text" placeholder="请设置上下文对话条数（官方建议是30次对话）" />
-          <NButton type="primary" ghost @click="chatMossPiecesNumberEvent">
-            确定
-          </NButton>
+          <NSelect v-model:value="modelValue" :options="options" @change="(value) => { userStore.saveOpenaiVersion(value) }" />
         </div>
         <div class="tip-text-input">
-          设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
+          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
+          <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
+          倍，但是回答的更加专业
         </div>
-      </div> -->
+      </div>
       <NDivider />
       <div>
         <div class="title-h1">
@@ -279,20 +271,6 @@ function getNSwitchModeValue(): any {
         </div>
       </div>
       <NDivider />
-      <div>
-        <div class="title-h1">
-          OpenAI模型选择
-        </div>
-        <div class="flex">
-          <NSelect v-model:value="modelValue" :options="options" @change="(value) => { userStore.saveOpenaiVersion(value) }" />
-        </div>
-        <div class="tip-text-input">
-          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
-          <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
-          倍，但是回答的更加专业
-        </div>
-      </div>
-      <NDivider />
       <div class="title-h1">
         字体大小设置
       </div>
@@ -302,6 +280,28 @@ function getNSwitchModeValue(): any {
           确定
         </NButton>
       </div>
+      <NDivider />
+      <div>
+        <span class="title-h2">本机累计使用字符数</span>：未知
+      </div>
+      <div class="tip-text-input">
+        小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
+      </div>
+      <!-- <NDivider />
+      <div>
+        <div class="title-h1">
+          上下文条数设置（建议30条）
+        </div>
+        <div class="flex">
+          <NInput v-model:value="chatMossPiecesNumber" class="mr-2" type="text" placeholder="请设置上下文对话条数（官方建议是30次对话）" />
+          <NButton type="primary" ghost @click="chatMossPiecesNumberEvent">
+            确定
+          </NButton>
+        </div>
+        <div class="tip-text-input">
+          设置的太长会被截断，原因是ChatGPT3.5模型token字符数量有限，新问题一定要新建问题
+        </div>
+      </div> -->
     </NCard>
   </BasicModal>
   <BasicModal key="2" transform-origin="center" @register="registerModal">

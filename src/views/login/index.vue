@@ -15,15 +15,14 @@ import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import dragVerifyImgChip from '@/components/dragVerifyImgChip.vue'
 import { staticData } from '@/store/static'
+const props = defineProps(['tab'])
+const emit = defineEmits<Emit>()
 const chatStore = useChatStore()
 interface Emit {
   (e: 'loginSuccess'): void
 }
-const props = defineProps(['tab'])
-const emit = defineEmits<Emit>()
 const imgsrc = ref<string>(staticData.verifyImg)
 function handleClick() {
-
   emit('loginSuccess')
 }
 
@@ -178,7 +177,7 @@ async function loginEvent() {
     const authStore = useAuthStoreWithout()
 
     authStore.setToken(res.loginToken)
-    chatStore.chatList();
+    chatStore.chatList()
     sendToMsg('chatMossToken', res.loginToken)
 
     handleClick()
@@ -294,7 +293,7 @@ async function loginEvent() {
           />
         </NFormItem>
         <NFormItem
-          label="邀请人邮箱（双方都可获得50000字符额度）" path="email" :rule="{
+          label="邀请人邮箱（双方都可获得10w字符额度）" path="email" :rule="{
             required: false,
             message: '',
             trigger: ['input', 'blur'],

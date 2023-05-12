@@ -164,11 +164,11 @@ async function onConversation() {
     if (!res)
       return
   }
-  if(!userStore.isAsk){
-    ms.error('当前字数已用尽，请等待明日免费字符，或者在商店内购买字符使用，或者上传key使用')
-    return
-  }
-//  userStore.userInfo.residueCount <= 0
+  // if (!userStore.isAsk) {
+  //   ms.error('当前字数已用尽，请等待明日免费字符，或者在商店内购买字符使用，或者上传key使用')
+  //   return
+  // }
+  //  userStore.userInfo.residueCount <= 0
 
   const message = prompt.value
 
@@ -272,7 +272,6 @@ async function onConversation() {
     scrollToBottom()
   }
   catch (error: any) {
-
     ms.error(error.msg || error.message)
     if (error.code === 204) {
       // error.msg
@@ -430,16 +429,16 @@ const noDataInfo = [
     text: '免费使用：不用登录就可以在设置中心设置Key呦~',
   },
   {
-    text: '问题和回答都会扣字符数',
-  },
-  {
-    text: '上下文越长，消耗越多',
-  },
-  {
     text: '可以点击余额查看自己的剩余字符&次数',
   },
   {
-    text: '一个字符对应OpenAI一个token（中文更费token）',
+    text: '问题和回答都会扣字符数',
+  },
+  {
+    text: '在ChatMoss商店内可以购买字符和次数',
+  },
+  {
+    text: '上下文越长，字符消耗越多',
   },
 ]
 function noDataInfoEvent(index: any) {
@@ -473,6 +472,11 @@ async function startTutorial() {
   }
 }
 
+function setOpenaiVersion() {
+  userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
+  ms.success('模型切换成功')
+}
+
 async function onSuccessAuth() {
   try {
     await auth()
@@ -501,9 +505,11 @@ async function onSuccessAuth() {
                 ChatMoss
                 <span
                   v-if="!!isPlus"
+                  :class="{ is3_5: isPlus === '3.5' }"
                   class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
+                  @click="setOpenaiVersion"
                 >
-                  {{ isPlus }}
+                  {{ isPlus }} 模型
                 </span>
               </div>
               <div class="no-data-btns-list">
@@ -874,5 +880,12 @@ async function onSuccessAuth() {
 .chat-main {
 	height: calc(100% - 50px);
 	padding-top: 50px;
+}
+.uppercase {
+	cursor: pointer;
+}
+.is3_5 {
+	background-color: #ceeaca;
+    color: #4fa444;
 }
 </style>
