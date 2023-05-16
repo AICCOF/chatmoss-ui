@@ -148,7 +148,19 @@ async function ConfirmNotice(msg: string) {
   })
 }
 
-async function onConversation() {
+let chatOptions: Record<string, any> = {
+  conversationId: chatStore.getUuid,
+  openaiVersion: userStore.getOpenaiVersion,
+}
+function askFn(askMsg: string) {
+  onConversation(askMsg, 2)
+}
+function onlineFn(askMsg: string) {
+  // console.log(askMsg, 1)
+
+  onConversation(askMsg, 1)
+}
+async function onConversation(askMsg?: string, type?: number) {
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
   if (userStore.residueCount < 500000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
     ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
@@ -169,8 +181,20 @@ async function onConversation() {
   //   return
   // }
   //  userStore.userInfo.residueCount <= 0
+  if (type === 1) {
+    chatOptions = {
+      conversationId: chatStore.getUuid,
+      openaiVersion: userStore.getOpenaiVersion,
+      online: 1
+    }
+  } else {
+    chatOptions = {
+      conversationId: chatStore.getUuid,
+      openaiVersion: userStore.getOpenaiVersion,
+    }
+  }
 
-  const message = prompt.value
+  const message = prompt.value || askMsg
 
   if (loading.value)
     return
@@ -186,6 +210,7 @@ async function onConversation() {
     text: message,
     inversion: true,
     error: false,
+    ast: '',
     conversationOptions: null,
     requestOptions: { prompt: message, options: null },
   })
@@ -209,6 +234,7 @@ async function onConversation() {
     loading: true,
     inversion: false,
     error: false,
+    ast: message,
     conversationOptions: { conversationId: chatStore.getUuid },
     requestOptions: { prompt: message, options: { ...options } },
   })
@@ -232,8 +258,7 @@ async function onConversation() {
       prompt: texts,
       options: {
         ...options,
-        conversationId: chatStore.getUuid,
-        openaiVersion: userStore.getOpenaiVersion,
+        ...chatOptions
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -248,6 +273,7 @@ async function onConversation() {
             createTime: new Date().toLocaleString(),
             text: chunk ?? '',
             inversion: false,
+            ast: message,
             error: false,
             loading: false,
             conversationOptions: {
@@ -308,6 +334,7 @@ async function onConversation() {
       createTime: new Date().toLocaleString(),
       text: errorMessage,
       inversion: false,
+      ast: message,
       error: true,
       loading: false,
       conversationOptions: null,
@@ -320,6 +347,8 @@ async function onConversation() {
     userStore.residueCountAPI()
   }
 }
+
+
 
 function handleEnter(event: KeyboardEvent) {
   // 输入 prompt / 重新获取焦点 第一次 / prompt.value时空字符
@@ -503,24 +532,17 @@ async function onSuccessAuth() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span
-                  v-if="!!isPlus"
-                  :class="{ is3_5: isPlus === '3.5' }"
+                <span v-if="!!isPlus" :class="{ is3_5: isPlus === '3.5' }"
                   class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
-                  @click="setOpenaiVersion"
-                >
+                  @click="setOpenaiVersion">
                   {{ isPlus }} 模型
                 </span>
               </div>
               <div class="no-data-btns-list">
-                <div
-                  v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)"
-                >
-                  <img
-                    class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
-                    alt=""
-                  >
+                <div v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
+                  @click="noDataInfoEvent(index)">
+                  <img class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
+                    alt="">
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
@@ -530,17 +552,16 @@ async function onSuccessAuth() {
           </template>
           <template v-else>
             <div>
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :inversion="item.inversion" :error="item.error" :loading="item.loading"
-              />
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                :is-show="dataSources.length - 1 == index" :askMsg="item.ast" :inversion="item.inversion"
+                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
-                <NButton v-if="loading" type="warning" @click="handleStop">
+                <NButton v-if="loading" type="warning" @click="handleStop" disabled>
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
                   </template>
-                  停止响应
+                  正在响应
                 </NButton>
               </div>
             </div>
@@ -555,15 +576,11 @@ async function onSuccessAuth() {
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex justify-between space-x-2">
-          <NInput
-            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
-          />
-          <NSelect
-            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+          <NInput v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" />
+          <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
             :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter"
-          />
+            label-field="key" @keydown="handleEnter" />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
@@ -573,12 +590,6 @@ async function onSuccessAuth() {
                 </span>
               </template>
             </NButton>
-            <!-- <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
-              下次消耗{{
-                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}`
-                : `${Math.ceil((prompt?.length || 0))}`
-              }}字符
-            </div> -->
           </div>
         </div>
       </div>
@@ -697,7 +708,7 @@ async function onSuccessAuth() {
 
 .btn-style {
   width: 40px;
-	height: 25px;
+  height: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -878,14 +889,16 @@ async function onSuccessAuth() {
 }
 
 .chat-main {
-	height: calc(100% - 50px);
-	padding-top: 50px;
+  height: calc(100% - 50px);
+  padding-top: 50px;
 }
+
 .uppercase {
-	cursor: pointer;
+  cursor: pointer;
 }
+
 .is3_5 {
-	background-color: #ceeaca;
-    color: #4fa444;
+  background-color: #ceeaca;
+  color: #4fa444;
 }
 </style>

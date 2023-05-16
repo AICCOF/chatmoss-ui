@@ -6,6 +6,7 @@ import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { staticData } from '@/store/static'
+import activity  from './../activity.vue'
 // import html2canvas from 'html2canvas'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
@@ -13,6 +14,7 @@ const useAuthStore = useAuthStoreWithout()
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const token = ref('')
+let modelValue = ref(false)
 
 interface Emit {
   (e: 'login'): void
@@ -69,10 +71,13 @@ function settingMainEvent() {
 function shopEvent() {
   const questionBtnDom = document.querySelector('.setting-main2') as HTMLDivElement
   questionBtnDom.click()
-  
+
   // html2canvas(document.querySelector("#image-wrapper")).then(function (canvas) {
   //   document.body.appendChild(canvas);
   // });
+}
+function clickActivity() {
+  modelValue.value = true
 }
 </script>
 
@@ -99,6 +104,7 @@ function shopEvent() {
       </div>
     </div>
     <div class="header-left">
+
       <div class="tip-text-content">
         <p v-if="token">
           <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
@@ -107,15 +113,20 @@ function shopEvent() {
           <span class="v-login" @click="loginEvent('login')">登录&注册</span>
         </p>
       </div>
+      <div class="tip-text-content">
+        <p v-if="token">
+          <n-tag type="success" :bordered="false"  round  @click="clickActivity">
+            活动
+          </n-tag>
+        </p>
+      </div>
       <div class="header-right-item header-item-btn text-test">
-        <NPopover trigger="click" :duration="500" @update:show="()=> userStore.residueCountAPI()">
+        <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
           <template #trigger>
             余额
           </template>
-          <div
-            v-for="(row, i) of userStore.packageList" :key="i"
-            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 "
-          >
+          <div v-for="(row, i) of userStore.packageList" :key="i"
+            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 ">
             <div>
               <div style="width:200px" class="flex justify-between">
                 <span class="mr-4">{{ row.title }}</span>
@@ -126,12 +137,12 @@ function shopEvent() {
               <div v-for="(item, i) of row.list" :key="i" class="">
                 <div class="mt-1 flex justify-between">
                   <span class="mr-1">{{ item.title }}</span>
-                 
-                  <NTag style="cursor: pointer;"  type="success" size="small" round @click="handleClose(row)">
-                      {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
-                 </NTag>
-                 
-                 
+
+                  <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
+                    {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
+                  </NTag>
+
+
                 </div>
               </div>
             </div>
@@ -149,6 +160,7 @@ function shopEvent() {
           </div>
         </NPopover>
       </div>
+      <activity v-model="modelValue"></activity>
     </div>
   </header>
 </template>
@@ -307,13 +319,15 @@ function shopEvent() {
     }
   }
 }
+
 .pointer {
-	cursor: pointer;
+  cursor: pointer;
 }
+
 .t-input1 {
   font-size: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
-	margin-left: 10px;
+  margin-left: 10px;
 }
 </style>

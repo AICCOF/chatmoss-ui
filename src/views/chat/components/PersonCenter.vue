@@ -196,12 +196,13 @@ function getNSwitchModeValue(): any {
             </template>
             <div
               v-for="(item, index) of personCenter.notices" :key="index"
-              class="notice flex items-center justify-center"
+              class="notice flex items-center mt-2"
+              style="max-width: 250px"
             >
-              <div class="mr-4">
+              <div class="mr-4 " style="width:30px">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
-              <div>
+              <div class="flex-1">
                 <div> {{ item.content }}</div>
                 <div>{{ item.createTime }}</div>
               </div>

@@ -1,25 +1,28 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
-import { NDropdown, useMessage } from 'naive-ui'
+import { NDropdown, useMessage, NButton } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
 import TextComponent from './Text.vue'
-import { SvgIcon } from '@/components/common'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
 import { t } from '@/locales'
 
 interface Props {
   dateTime?: string
+  isShow:Boolean;
   text?: string
+  askMsg: string;
   inversion?: boolean
   error?: boolean
   loading?: boolean
 }
+const emit = defineEmits<Emit>()
+interface Emit {
+  (ev: 'ask', askMsg: string): void
+  (ev: 'online', askMsg: string): void
+}
 
-// interface Emit {
-//   (ev: 'delete'): void
-// }
-// const emit = defineEmits<Emit>()
+
 const props = defineProps<Props>()
 
 const Message = useMessage()
@@ -28,53 +31,64 @@ const { iconRender } = useIconRender()
 
 const textRef = ref<HTMLElement>()
 
-const options = [
+const options = props.isShow?[
+  // {
+  //   label: t('chat.copy'),
+  //   key: 'copyText',
+  //   icon: iconRender({ icon: 'ri:file-copy-2-line' }),
+  // },
   {
-    label: t('chat.copy'),
-    key: 'copyText',
-    icon: iconRender({ icon: 'ri:file-copy-2-line' }),
+    label: t('重新提问'),
+    key: 'ask',
+    icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
   },
+  {
+    label: t('联网提问'),
+    key: 'online',
+    icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+  },
+]: [
 ]
 
-function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
+function handleSelect(key: string, askMsg: string) {
   switch (key) {
     case 'copyText':
       copyText({ text: props.text ?? '' })
       Message.success('已复制到剪切板')
+      return;
+    case 'ask':
+      emit('ask', askMsg)
+      return;
+    case 'online':
+      emit('online', askMsg)
+      return;
+
   }
 }
 </script>
 
 <template>
   <div class="flex w-full mb-6 overflow-hidden" :class="[{ 'flex-row-reverse': inversion }]">
-    <div
-      :class="[inversion ? 'ml-2' : 'mr-2']"
-    >
+    <div :class="[inversion ? 'ml-2' : 'mr-2']">
       <!-- <AvatarComponent :image="inversion" /> -->
     </div>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
       <p class="text-xs text-[#b4bbc4]" :class="[inversion ? 'text-right' : 'text-left']">
         {{ dateTime }}
       </p>
-      <div
-        class="flex items-end gap-1 mt-2"
-        :class="[inversion ? 'flex-row-reverse' : 'flex-row']"
-      >
-        <TextComponent
-          ref="textRef"
-          :inversion="inversion"
-          :error="error"
-          :text="text"
-          :loading="loading"
-          @copy="() => handleSelect('copyText')"
-        />
-        <div class="flex flex-col">
-          <NDropdown :placement="!inversion ? 'right' : 'left'" :options="options" @select="handleSelect">
-            <button class="transition text-neutral-300 hover:text-neutral-800 dark:hover:text-neutral-200">
-              <SvgIcon icon="ri:more-2-fill" />
-            </button>
-          </NDropdown>
+      <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" @copy="handleSelect('copyText','')"/>
+
+      </div>
+      <div class="flex mt-2 ml-2" v-if="!inversion">
+        <div class="mr-3" v-for="(option, i) in options" text :key="i">
+          <NButton text @click="handleSelect(option.key, askMsg)">
+            <component :is="option.icon"></component>
+            <span class="ml-1">{{ option.label }}</span>
+          </NButton>
+
         </div>
+
       </div>
     </div>
   </div>

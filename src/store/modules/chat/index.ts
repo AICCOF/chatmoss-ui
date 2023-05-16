@@ -18,6 +18,7 @@ export const useChatStore = defineStore('chat-store', {
     return {
       ...getLocalState(),
       chat: [],
+      searchMsg:''
     }
   },
   getters: {
@@ -40,10 +41,10 @@ export const useChatStore = defineStore('chat-store', {
     getUuid(state: Chat.ChatState) {
       return state.active as any
     },
-    chatsCollect() {
+    chatsCollect(state: Chat.ChatState) {
       let chat: Chat.ChatInfo[] = this.chat;
       let localChat: Chat.ChatInfo[] = this.localChat;
-      return [...chat, ...localChat]
+      return [...chat.filter((row) => row.title.indexOf(state.searchMsg)>-1), ...localChat.filter((row) => row.title.indexOf(state.searchMsg)>-1)]
     },
 
     getChatByUuid(state: Chat.ChatState) {
@@ -121,9 +122,15 @@ export const useChatStore = defineStore('chat-store', {
       if (result && !result.data) {
         result.data = []
         const res = await getConversationDetail({ conversationId: this.active, pageSize: 100 })
-        result.data.push(...res.rows.map((row: any) => {
+        let rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
+        result.data.push(...rows.map((row: any,i:number,array:any[]) => {
+          let ast = '';
+          if (row.content.startsWith('1:') && array[i - 1]){
+            ast = array[i - 1].content.slice(2);
+          }
           return {
             ...row,
+            ast,
             inversion: !!row.content.startsWith('0:'),
             text: row.content.slice(2),
           }
