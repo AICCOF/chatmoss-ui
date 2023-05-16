@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { NDropdown, useMessage, NButton } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
 import TextComponent from './Text.vue'
@@ -9,7 +9,7 @@ import { t } from '@/locales'
 
 interface Props {
   dateTime?: string
-  isShow:Boolean;
+  isShow: Boolean;
   text?: string
   askMsg: string;
   inversion?: boolean
@@ -31,24 +31,24 @@ const { iconRender } = useIconRender()
 
 const textRef = ref<HTMLElement>()
 
-const options = props.isShow?[
-  // {
-  //   label: t('chat.copy'),
-  //   key: 'copyText',
-  //   icon: iconRender({ icon: 'ri:file-copy-2-line' }),
-  // },
-  {
-    label: t('重新提问'),
-    key: 'ask',
-    icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
-  },
-  {
-    label: t('联网提问'),
-    key: 'online',
-    icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-  },
-]: [
-]
+// console.error(props.isShow)
+let options: any[] = [];
+watch(() => props.isShow, (value) => {
+  options = value ? [
+    {
+      label: t('重新提问'),
+      key: 'ask',
+      icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
+    },
+    {
+      label: t('联网提问'),
+      key: 'online',
+      icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+    },
+  ] : []
+
+}, { immediate: true })
+
 
 function handleSelect(key: string, askMsg: string) {
   switch (key) {
@@ -77,7 +77,8 @@ function handleSelect(key: string, askMsg: string) {
         {{ dateTime }}
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" @copy="handleSelect('copyText','')"/>
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
+          @copy="handleSelect('copyText', '')" />
 
       </div>
       <div class="flex mt-2 ml-2" v-if="!inversion">
