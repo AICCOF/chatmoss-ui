@@ -415,6 +415,7 @@ vsCodeUtils({
     if (questionListDom === null || questionListDom.innerText !== '新建问题') {
       questionBtnDom.click()
       console.log('新建问题')
+      clickMessage()
     }
     else {
       prompt.value = selectedText
@@ -429,21 +430,22 @@ vsCodeUtils({
   },
 })
 function clickMessage() {
-  setTimeout(() => {
-    const dom = document.querySelector('#ask-question') as any
-    // console.log(dom)
-    dom && dom.click()
-    localStorage.setItem('selectedText', '')
-  }, 1500)
-}
-
-onMounted(() => {
   const selectedText = localStorage.getItem('selectedText')
   console.log('??', selectedText)
   if (selectedText) {
     prompt.value = selectedText
-    clickMessage()
+    localStorage.setItem('selectedText', '')
+    setTimeout(() => {
+      const dom = document.querySelector('#ask-question') as any
+      // console.log(dom)
+      dom && dom.click()
+    }, 1500)
   }
+}
+
+onMounted(() => {
+
+  clickMessage()
 
   chatStore.chatList()
 })

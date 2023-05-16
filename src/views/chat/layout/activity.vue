@@ -62,14 +62,14 @@ function lockUrl(row) {
 </script>
 
 <template>
-  <NModal v-model:show="showModal" preset="card" @afterLeave="onAfterLeave">
+  <NModal v-model:show="showModal" preset="card" @afterLeave="onAfterLeave" >
     <div class="flex justify-center">
       <n-carousel autoplay centered-slides>
         <img v-for="(row, i) of list" :key="i" class="carousel-img m-auto" :src="row.img" @click="lockUrl(row)">
       </n-carousel>
     </div>
   </NModal>
-  <NModal v-model:show="ifFrame.isShow" @afterLeave="onAfterLeave">
+  <NModal v-model:show="ifFrame.isShow"  >
     <iframe :src="ifFrame.url" frameborder="0" style="width:80vw;height:80vh"></iframe>
   </NModal>
 </template>
