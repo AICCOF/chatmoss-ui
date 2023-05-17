@@ -166,7 +166,7 @@ async function onConversation(askMsg?: string, type?: number) {
     ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
     return
   }
-  if (localStorage.getItem('apiKey') && userStore.isHighVersion) {
+  if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
     ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换')
     return
   }

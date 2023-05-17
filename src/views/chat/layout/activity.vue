@@ -11,7 +11,7 @@ interface Props {
 let list = ref([
   {
     img: 'https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg',
-    url: 'https://windicss.org/utilities/layout/spacing.html#margin'
+    url: 'https://h5.aihao123.cn/pages/app/help/index.html'
   },
   {
     img: 'https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel2.jpeg',
