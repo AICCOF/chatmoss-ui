@@ -26,6 +26,7 @@ const appStore = useAppStore()
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
+const NInputRef = ref<HTMLInputElement | null>(null)
 const NSelectRef = ref<HTMLInputElement | null>(null)
 
 if (!localStorage.getItem('chatMossPiecesNumber'))
@@ -321,6 +322,13 @@ async function onConversation() {
   }
 }
 
+const handleSelectInput = (event: any) => {
+  prompt.value = event.data
+  setTimeout(() => {
+    NInputRef.value?.focus()
+  }, 200)
+}
+
 function handleEnter(event: KeyboardEvent) {
   // 如果输入的是/,并且按下的键是删除键，同时prompt.value的值只有/则把prompt.value的值置空
   if (event.key === 'Backspace' && prompt.value === '/')
@@ -560,13 +568,13 @@ async function onSuccessAuth() {
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex justify-between space-x-2">
           <NInput
-            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
           />
           <NSelect
             v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
             :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter"
+            label-field="key" @keydown="handleEnter" @input="handleSelectInput"
           />
           <!-- MOSS字数 -->
           <div class="btn-style">
