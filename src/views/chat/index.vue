@@ -322,6 +322,10 @@ async function onConversation() {
 }
 
 function handleEnter(event: KeyboardEvent) {
+  // 如果输入的是/,并且按下的键是删除键，同时prompt.value的值只有/则把prompt.value的值置空
+  if (event.key === 'Backspace' && prompt.value === '/')
+    prompt.value = ''
+
   // 输入 prompt / 重新获取焦点 第一次 / prompt.value时空字符
   if (event.key === '/' && !prompt.value) {
     setTimeout(() => {
