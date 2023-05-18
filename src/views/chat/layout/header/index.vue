@@ -115,9 +115,9 @@ function clickActivity() {
       </div>
       <div class="tip-text-content">
         <p v-if="token">
-          <n-tag type="success" :bordered="false"  round  @click="clickActivity">
+          <n-button round secondary type="success" size="tiny"  @click="clickActivity">
             活动
-          </n-tag>
+          </n-button>
         </p>
       </div>
       <div class="header-right-item header-item-btn text-test">
