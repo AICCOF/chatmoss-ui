@@ -3,6 +3,7 @@ import { createDiscreteApi } from 'naive-ui'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
 import { getToken } from '../auth/helper'
+import dayjs from 'dayjs'
 const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
   {},
@@ -45,6 +46,57 @@ export const useChatStore = defineStore('chat-store', {
       let chat: Chat.ChatInfo[] = this.chat;
       let localChat: Chat.ChatInfo[] = this.localChat;
       return [...chat.filter((row) => row.title.indexOf(state.searchMsg)>-1), ...localChat.filter((row) => row.title.indexOf(state.searchMsg)>-1)]
+    },
+    sortTimeChat(){
+      let timeList: {
+        title:string,
+        data: Chat.ChatState[]
+      }[] = [
+        {
+          title:'今天',
+          data:[]
+        },
+        {
+          title: '昨天',
+          data: []
+        },
+        {
+          title: '三天前',
+          data: []
+        },
+        {
+          title: '七天前',
+          data: []
+        },
+        {
+          title: '一个月前',
+          data: []
+        }
+      ]
+      this.chatsCollect.forEach((row)=>{
+        let timestamp = row.timestamp
+        if (timestamp> dayjs().startOf('day').valueOf()){
+            timeList[0].data.push(row)
+        } else if (
+          timestamp < dayjs().startOf('day').valueOf() &&
+          timestamp > dayjs().startOf('day').subtract(1, 'day').valueOf()
+          ){
+          timeList[1].data.push(row)
+        } else if (
+          timestamp < dayjs().startOf('day').subtract(1, 'day').valueOf() &&
+          timestamp > dayjs().startOf('day').subtract(3, 'day').valueOf()
+        ) {
+          timeList[2].data.push(row)
+        } else if (
+          timestamp < dayjs().startOf('day').subtract(3, 'day').valueOf() &&
+          timestamp > dayjs().startOf('day').subtract(7, 'day').valueOf()
+        ) {
+          timeList[3].data.push(row)
+        } else {
+          timeList[4].data.push(row)
+        }
+      })     
+      return  timeList 
     },
 
     getChatByUuid(state: Chat.ChatState) {
