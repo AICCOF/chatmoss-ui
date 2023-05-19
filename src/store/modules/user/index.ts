@@ -2,10 +2,14 @@ import { defineStore } from 'pinia'
 // import { getToken } from '../auth/helper'
 import type { UserInfo, UserState } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
-import { residueCount } from '@/api'
+import { getActivityList, residueCount } from '@/api'
 import { localStorage } from '@/utils/storage/localStorage'
 export const useUserStore = defineStore('user-store', {
-  state: (): UserState => getLocalState(),
+  state: (): UserState => {
+    return {
+      ...getLocalState(),
+    }
+  },
   getters: {
     getNotices(state) {
       return state.userInfo.notices
@@ -82,6 +86,9 @@ export const useUserStore = defineStore('user-store', {
         },
       ]
     },
+    activities(state){
+      return state.activityList
+    }
 
   },
   actions: {
@@ -115,6 +122,12 @@ export const useUserStore = defineStore('user-store', {
 
         return Promise.reject(error)
       }
+    },
+    async getActivityListAPI() {
+      let res = await getActivityList<any>()
+      this.activityList = res.data || []
+      // console.error(res.data)
+
     },
     updateUserInfo(userInfo: Partial<UserInfo>) {
       this.userInfo = { ...this.userInfo, ...userInfo }

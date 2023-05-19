@@ -114,7 +114,7 @@ function clickActivity() {
         </p>
       </div>
       <div class="tip-text-content">
-        <p v-if="token">
+        <p v-if="token && userStore.activities.length > 0">
           <n-button round secondary type="success" size="tiny"  @click="clickActivity">
             活动
           </n-button>

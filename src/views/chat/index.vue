@@ -448,6 +448,7 @@ onMounted(() => {
   clickMessage()
 
   chatStore.chatList()
+  userStore.getActivityListAPI();
 })
 
 onUnmounted(() => {

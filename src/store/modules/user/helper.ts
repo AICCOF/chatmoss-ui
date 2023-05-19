@@ -41,6 +41,11 @@ export interface UserInfo {
 
 export interface UserState {
   userInfo: UserInfo
+  activityList: {
+    img: string;
+    isSelf: boolean;
+    url: string
+  }[]
 }
 
 export function defaultSetting(): UserState {
@@ -58,7 +63,7 @@ export function defaultSetting(): UserState {
       notices: [],
       user: { nickname: '', email: '', plusEndTime: undefined },
     },
-
+    activityList: []
   }
 }
 export function getLocalState(): UserState {
@@ -67,7 +72,7 @@ export function getLocalState(): UserState {
     ...defaultSetting().userInfo,
     ...localSetting.userInfo,
   }
-  return { userInfo }
+  return { userInfo, activityList: [] }
 }
 
 export function setLocalState(setting: UserState): void {

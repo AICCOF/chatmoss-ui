@@ -3,30 +3,14 @@
 import { NModal, NCarousel, NCarouselItem } from 'naive-ui'
 import { ref, watch, defineProps, defineEmits } from 'vue'
 import { getToken } from '@/store/modules/auth/helper'
+import { useUserStore } from '@/store'
+const userStore = useUserStore()
 let showModal = ref(false)
 const props = defineProps<Props>()
 interface Props {
   modelValue: boolean
 }
-let list = ref([
-  {
-    img: 'https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg',
-    url: 'https://h5.aihao123.cn/pages/app/help/index.html'
-  },
-  {
-    img: 'https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel2.jpeg',
-    url: 'https://www.baidu.com'
-  },
-  {
-    img: 'https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel3.jpeg',
-    url: 'https://www.baidu.com'
-  },
-  {
-    img: 'https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg',
-    url: 'https://www.baidu.com'
-  }
-
-])
+// let list = ref(userStore.activities)
 
 let ifFrame = ref({
   isShow: false,
@@ -67,7 +51,7 @@ function lockUrl(row: any) {
       <n-carousel centered-slides effect="card" prev-slide-style="transform:translateX(-168%) translateZ(-200px); opacity:1"
         next-slide-style="opacity: 1; transform: translateX(68%) translateZ(-200px);" :loop="false" draggable>
 
-        <n-carousel-item :style="{ width: '80%' }" v-for="(row, i) of list" :key="i">
+        <n-carousel-item :style="{ width: '80%' }" v-for="(row, i) of userStore.activities" :key="i">
           <img class="carousel-img m-auto" :src="row.img" @click="lockUrl(row)">
 
         </n-carousel-item>
