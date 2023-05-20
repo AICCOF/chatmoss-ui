@@ -199,10 +199,10 @@ async function loginEvent() {
             trigger: ['input', 'blur'],
           }"
         >
-          <NInput v-model:value="loginForm.email" placeholder="请输入邮箱" clearable />
+          <NInput v-model:value="loginForm.email" autocomplete="on" placeholder="请输入邮箱" clearable />
         </NFormItem>
         <NFormItem
-          label="密码" path="password" :rule="{
+          label="密码" path="password" autocomplete="on" :rule="{
             required: true,
             message: '密码由字母、数字或下划线组成！',
             trigger: ['input', 'blur'],

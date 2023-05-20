@@ -37,10 +37,12 @@ function onAfterLeave() {
 function lockUrl(row: any) {
   let url = new URL(row.url);
   row.isSelf && url.searchParams.set('token', getToken())
+  url.searchParams.set('time', `${new Date().getTime()}`)
   ifFrame.value = {
     isShow: true,
     url: url.toString()
   }
+  onAfterLeave()
 }
 
 </script>
@@ -51,7 +53,7 @@ function lockUrl(row: any) {
       <n-carousel centered-slides effect="card" prev-slide-style="transform:translateX(-168%) translateZ(-200px); opacity:1"
         next-slide-style="opacity: 1; transform: translateX(68%) translateZ(-200px);" :loop="false" draggable>
 
-        <n-carousel-item :style="{ width: '80%' }" v-for="(row, i) of userStore.activities" :key="i">
+        <n-carousel-item :style="{ width: '375px' }" v-for="(row, i) of userStore.activities" :key="i">
           <img class="carousel-img m-auto" :src="row.img" @click="lockUrl(row)">
 
         </n-carousel-item>
@@ -69,15 +71,15 @@ function lockUrl(row: any) {
 
   </NModal>
   <NModal v-model:show="ifFrame.isShow">
-    <iframe :src="ifFrame.url" frameborder="0" style="width:80vw;height:80vh"></iframe>
+    <iframe :src="ifFrame.url" frameborder="0" style="width:375px;height:90vh"></iframe>
   </NModal>
 </template>
 
 <style>
 .carousel-img {
   margin: 0 auto;
-  width: 100%;
-  height: 100%;
+  width: 300px;
+  height: 400px;
   object-fit: cover;
 }
 
