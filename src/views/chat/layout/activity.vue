@@ -36,7 +36,7 @@ function onAfterLeave() {
 }
 function lockUrl(row: any) {
   let url = new URL(row.url);
-  url.searchParams.set('token', getToken())
+  row.isSelf && url.searchParams.set('token', getToken())
   ifFrame.value = {
     isShow: true,
     url: url.toString()
