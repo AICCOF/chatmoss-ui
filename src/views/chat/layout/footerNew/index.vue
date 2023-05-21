@@ -149,7 +149,8 @@ const show = ref(false)
 
 .wrapper-mian {
     width: 375px;
-    height: 80vh;
+    height: 85vh;
+		border-radius: 10px;
 		transform: scale(0.95);
 		iframe {
 			width: 375px;
