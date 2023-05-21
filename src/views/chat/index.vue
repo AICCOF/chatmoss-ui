@@ -185,9 +185,10 @@ async function onConversation(askMsg?: string, type?: number) {
     chatOptions = {
       conversationId: chatStore.getUuid,
       openaiVersion: userStore.getOpenaiVersion,
-      online: 1
+      online: 1,
     }
-  } else {
+  }
+  else {
     chatOptions = {
       conversationId: chatStore.getUuid,
       openaiVersion: userStore.getOpenaiVersion,
@@ -258,7 +259,7 @@ async function onConversation(askMsg?: string, type?: number) {
       prompt: texts,
       options: {
         ...options,
-        ...chatOptions
+        ...chatOptions,
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -347,8 +348,6 @@ async function onConversation(askMsg?: string, type?: number) {
     userStore.residueCountAPI()
   }
 }
-
-
 
 function handleEnter(event: KeyboardEvent) {
   // 输入 prompt / 重新获取焦点 第一次 / prompt.value时空字符
@@ -444,11 +443,10 @@ function clickMessage() {
 }
 
 onMounted(() => {
-
   clickMessage()
 
   chatStore.chatList()
-  userStore.getActivityListAPI();
+  userStore.getActivityListAPI()
 })
 
 onUnmounted(() => {
@@ -535,17 +533,23 @@ async function onSuccessAuth() {
               <!-- 标题 -->
               <div class="no-data-info-title">
                 ChatMoss
-                <span v-if="!!isPlus" :class="{ is3_5: isPlus === '3.5' }"
-                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
-                  @click="setOpenaiVersion">
+                <span
+                  v-if="!!isPlus" :class="{ is3_5: isPlus === '3.5' }"
+                  class="no-data-info-title1 bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
+                  @click="setOpenaiVersion"
+                >
                   {{ isPlus }} 模型
                 </span>
               </div>
               <div class="no-data-btns-list">
-                <div v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)">
-                  <img class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
-                    alt="">
+                <div
+                  v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
+                  @click="noDataInfoEvent(index)"
+                >
+                  <img
+                    class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
+                    alt=""
+                  >
                   <div class="btns-item-text">
                     {{ item.text }}
                   </div>
@@ -555,12 +559,14 @@ async function onSuccessAuth() {
           </template>
           <template v-else>
             <div>
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :is-show="dataSources.length - 1 == index" :askMsg="item.ast" :inversion="item.inversion"
-                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn" />
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                :is-show="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
+                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
+              />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
-                <NButton v-if="loading" type="warning" @click="handleStop" disabled>
+                <NButton v-if="loading" type="warning" @click="handleStop">
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
                   </template>
@@ -579,11 +585,15 @@ async function onSuccessAuth() {
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex justify-between space-x-2">
-          <NInput v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" />
-          <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+          <NInput
+            v-if="!prompt || prompt[0] !== '/'" v-model:value="prompt" class="step1" autofocus type="textarea"
+            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
+          />
+          <NSelect
+            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
             :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter" />
+            label-field="key" @keydown="handleEnter"
+          />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">

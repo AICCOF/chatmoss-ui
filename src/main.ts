@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { NoticeBar, Swipe, SwipeItem, Switch } from 'vant'
+import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
 import App from './App.vue'
 import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
@@ -17,10 +17,10 @@ getDomainAPI().then(() => {
   bootstrap()
 })
 
-
 async function bootstrap() {
   const app = createApp(App)
   app.use(NoticeBar)
+  app.use(Overlay)
   app.use(Swipe)
   app.use(SwipeItem)
   app.use(Switch)
@@ -34,5 +34,3 @@ async function bootstrap() {
 
   app.mount('#app')
 }
-
-

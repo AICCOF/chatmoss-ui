@@ -5,6 +5,28 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const steps = [
   {
+    target: '.header-right-item1',
+    content: '不用登录就可以在设置中心设置key使用3.5模型',
+    params: {
+      placement: 'right',
+    },
+  },
+  {
+    target: '.header-right-item2',
+    content: 'ChatMoss商店可以购买字符和包月模式，更有4.0模型套餐',
+    params: {
+      placement: 'right',
+    },
+  },
+  {
+    target: '.tip-text-content1',
+    content: '登录后可以在活动中进行签到，每周可获得78000字符奖励',
+  },
+  {
+    target: '.text-test1',
+    content: '这里可以看自己的包月套餐余额，和自己字符余额',
+  },
+  {
     target: '.step1',
     content: '在这里可以输入你的问题，Shift + Enter = 换行，Enter 发送消息',
   },
@@ -13,42 +35,36 @@ const steps = [
     content: '输入/可唤起预设角色哦~，回答更加准确',
   },
   {
-    target: '.step2',
-    content: '开启上下文后，字符消耗 = 问的问题字数 + 回答的答案字数之和，新问题新建问题进行问答更节省字符',
+    target: '.footer-item-btn1',
+    content: '这里可以新建会话，建议一个问题一个会话，这样会节省字符',
   },
   {
-    target: '.step3',
-    content: '联网模式将会从网络上查询资料后，再结合您的问题，综合进行回答；开启联网模式后，上下文模式将自动关闭，只会去网络上查询您当前提问的这个问题；因为目前无法智能的分析您的问题是否需要联网，所以需要进行网络查询的时候，开启联网模式，不需要上网查询的时候关闭联网模式，这样效果最好。',
+    target: '.footer-item-btn2',
+    content: '这里可以看到自己历史的会话记录',
   },
   {
-    target: '.step4',
-    content: '登录后每天将有免费的字符额度可以使用，快去注册登录吧~',
-    params: {
-      placement: 'right',
-    },
-    before: () => {
-      return new Promise((res) => {
-        appStore.setSiderCollapsed(false)
-        setTimeout(() => {
-          res(true)
-        }, 300)
-      })
-    },
+    target: '.header-right-item-help',
+    content: '更多问题解答和更多平台使用，请点击ChatMoss帮助中心',
   },
   {
-    target: '.step5',
-    content: '字符不够使用，可以进入ChatMoss商店进行字符购买',
-    params: {
-      placement: 'right',
-    },
+    target: '.no-data-info-title1',
+    content: '点击这里可以快捷切换3.5模型或者4.0模型哦~',
   },
-  {
-    target: '.step6',
-    content: '在个人中心，可以设置key，填写key之后，将不会消耗ChatMoss字符数；个人中心还可以对ChatMoss系统进行设置。',
-    params: {
-      placement: 'right',
-    },
-  },
+  // {
+  //   target: '.step4',
+  //   content: '登录后每天将有免费的字符额度可以使用，快去注册登录吧~',
+  //   params: {
+  //     placement: 'right',
+  //   },
+  //   before: () => {
+  //     return new Promise((res) => {
+  //       appStore.setSiderCollapsed(false)
+  //       setTimeout(() => {
+  //         res(true)
+  //       }, 300)
+  //     })
+  //   },
+  // },
 ]
 
 const options = {

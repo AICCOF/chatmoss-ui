@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { NButton, NPopover, NTag } from 'naive-ui'
 import { computed, onMounted, ref, watchEffect } from 'vue'
+import activity from './../activity.vue'
 import { useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { staticData } from '@/store/static'
-import activity  from './../activity.vue'
 // import html2canvas from 'html2canvas'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
@@ -14,7 +14,7 @@ const useAuthStore = useAuthStoreWithout()
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const token = ref('')
-let modelValue = ref(false)
+const modelValue = ref(false)
 
 interface Emit {
   (e: 'login'): void
@@ -84,7 +84,7 @@ function clickActivity() {
 <template>
   <header class="header-main">
     <div class="header-right">
-      <div class="header-right-item">
+      <div class="header-right-item header-right-item1">
         <!-- 个人中心 -->
         <NPopover trigger="hover">
           <template #trigger>
@@ -93,7 +93,7 @@ function clickActivity() {
           <span>设置中心</span>
         </NPopover>
       </div>
-      <div class="header-right-item">
+      <div class="header-right-item header-right-item2">
         <!-- 商店 -->
         <NPopover trigger="hover">
           <template #trigger>
@@ -104,8 +104,7 @@ function clickActivity() {
       </div>
     </div>
     <div class="header-left">
-
-      <div class="tip-text-content">
+      <div class="tip-text-content tip-text-content1">
         <p v-if="token">
           <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
         </p>
@@ -115,18 +114,20 @@ function clickActivity() {
       </div>
       <div class="tip-text-content">
         <p v-if="token && userStore.activities.length > 0">
-          <n-button round secondary type="success" size="tiny"  @click="clickActivity">
+          <NButton round secondary type="success" size="tiny" @click="clickActivity">
             活动
-          </n-button>
+          </NButton>
         </p>
       </div>
-      <div class="header-right-item header-item-btn text-test">
+      <div class="header-right-item header-item-btn text-test text-test1">
         <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
           <template #trigger>
             余额
           </template>
-          <div v-for="(row, i) of userStore.packageList" :key="i"
-            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 ">
+          <div
+            v-for="(row, i) of userStore.packageList" :key="i"
+            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 "
+          >
             <div>
               <div style="width:200px" class="flex justify-between">
                 <span class="mr-4">{{ row.title }}</span>
@@ -141,8 +142,6 @@ function clickActivity() {
                   <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
                     {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
                   </NTag>
-
-
                 </div>
               </div>
             </div>
@@ -160,7 +159,7 @@ function clickActivity() {
           </div>
         </NPopover>
       </div>
-      <activity v-model="modelValue"></activity>
+      <activity v-model="modelValue" />
     </div>
   </header>
 </template>
