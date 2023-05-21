@@ -79,6 +79,9 @@ function shopEvent() {
 function clickActivity() {
   modelValue.value = true
 }
+function getActivityListEvent() {
+  userStore.getActivityListAPI()
+}
 </script>
 
 <template>
@@ -113,7 +116,7 @@ function clickActivity() {
         </p>
       </div>
       <div class="tip-text-content">
-        <p v-if="token && userStore.activities.length > 0">
+        <p v-if="token" @click="getActivityListEvent">
           <NButton round secondary type="success" size="tiny" @click="clickActivity">
             活动
           </NButton>

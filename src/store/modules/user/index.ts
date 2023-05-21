@@ -86,9 +86,9 @@ export const useUserStore = defineStore('user-store', {
         },
       ]
     },
-    activities(state){
+    activities(state) {
       return state.activityList
-    }
+    },
 
   },
   actions: {
@@ -124,10 +124,9 @@ export const useUserStore = defineStore('user-store', {
       }
     },
     async getActivityListAPI() {
-      let res = await getActivityList<any>()
+      const res = await getActivityList<any>()
       this.activityList = res.data || []
       // console.error(res.data)
-
     },
     updateUserInfo(userInfo: Partial<UserInfo>) {
       this.userInfo = { ...this.userInfo, ...userInfo }

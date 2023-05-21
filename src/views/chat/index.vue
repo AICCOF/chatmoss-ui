@@ -40,11 +40,13 @@ appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
 if (!localStorage.getItem('chatmossMode'))
   localStorage.setItem('chatmossMode', 'normal')
 
-// 专业模式初始化
+// 字体初始化
 if (!localStorage.getItem('fontSizeNum')) {
   localStorage.setItem('fontSizeNum', '100%')
 }
 else {
+  const fontSizeNumNew: any = localStorage.getItem('fontSizeNum')
+  localStorage.setItem('fontSizeNum', fontSizeNumNew.endsWith('%') ? fontSizeNumNew : `${fontSizeNumNew < 50 ? 50 : fontSizeNumNew}%`)
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
