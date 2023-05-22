@@ -1,19 +1,18 @@
 <script setup lang='ts'>
-import { computed } from 'vue'
-import { NInput, NPopconfirm, NScrollbar } from 'naive-ui'
-import {  useMessage } from 'naive-ui'
+import { computed, ref } from 'vue'
+import { NInput, NPopconfirm,NCheckbox, NCheckboxGroup, NScrollbar } from 'naive-ui'
+// import {  useMessage } from 'naive-ui'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { copyText } from '@/utils/format'
+// import { copyText } from '@/utils/format'
 const { isMobile } = useBasicLayout()
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
-
 // console.log(chatStore.$state)
 const dataSources = computed(() => chatStore.sortTimeChat)
-const Message = useMessage()
+// const Message = useMessage()
 async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
     return
@@ -31,9 +30,9 @@ function handleEdit({ id }: Chat.ChatInfo, isEdit: boolean, event?: MouseEvent) 
   chatStore.updateHistory(id, { isEdit })
 }
 
-function handleDelete(index: number, event?: MouseEvent | TouchEvent) {
+function handleDelete(index: number, { id }: Chat.ChatInfo, event?: MouseEvent | TouchEvent) {
   event?.stopPropagation()
-  chatStore.deleteHistory(index)
+  chatStore.deleteHistory(id)
 }
 
 function handleEnter({ id }: Chat.ChatInfo, isEdit: boolean, event: KeyboardEvent) {
@@ -46,19 +45,12 @@ function isActive(id: any) {
   return chatStore.active === id
 }
 
-function handleCopyText(row) {
-  if(chatStore.active === row.id){
-    copyText({ text: row.id ?? '' })
-    Message.success('已复制会话id')
-    return;
-  }
-  
-}
+
 </script>
 
 <template>
   <NScrollbar class="px-4">
-    <div class="flex flex-col gap-2 text-sm">
+    <div class="flex flex-col gap-2 text-sm scroll">
       <template v-if="!dataSources.length">
         <div class="flex flex-col items-center mt-4 text-center text-neutral-300">
           <SvgIcon icon="ri:inbox-line" class="mb-2 text-3xl" />
@@ -66,6 +58,7 @@ function handleCopyText(row) {
         </div>
       </template>
       <template v-else>
+        <n-checkbox-group v-model:value="chatStore.deleteIds">
         <div v-for="(row, i) of dataSources" :key="i">
           <div v-if="row.data.length > 0" class="px-1 py-1">
              {{ row.title }}
@@ -77,7 +70,7 @@ function handleCopyText(row) {
               @click="handleSelect(item)"
             >
               <span>
-                <SvgIcon icon="ri:message-3-line" @click='handleCopyText(item)' />
+                 <n-checkbox :value="item.id" label="" />
               </span>
               <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
                 <NInput
@@ -99,7 +92,7 @@ function handleCopyText(row) {
                   </button>
                   <!-- group-hover:visible -->
                   <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
-                    <NPopconfirm placement="bottom" @positive-click="handleDelete(index, $event)">
+                    <NPopconfirm placement="bottom" @positive-click="handleDelete(index, item, $event)">
                       <template #trigger>
                         <button class="p-1" @click.stop>
                           <SvgIcon icon="ri:delete-bin-line" />
@@ -113,6 +106,7 @@ function handleCopyText(row) {
             </a>
           </div>
         </div>
+        </n-checkbox-group>
       </template>
     </div>
   </NScrollbar>

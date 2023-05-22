@@ -5,9 +5,10 @@ import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { localStorage } from '@/utils/storage/localStorage'
+import {  useMessage } from 'naive-ui'
 const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
-
+const Message = useMessage()
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const token = ref('')
@@ -48,6 +49,14 @@ watchEffect(() => {
   const { user } = userStore.userInfo
   if (user.email)
     resetToken()
+  if(userStore.isAuth === 2 && getToken()){
+    console.log(1)
+    useAuthStore.setToken('')
+    sendToMsg('chatMossToken', '')
+    chatStore.clearList()
+    userStore.residueCountAPI()
+    Message.error('登录已过期,请重新登录')
+  }
 })
 
 onMounted(() => {

@@ -6,7 +6,8 @@ import TextComponent from './Text.vue'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
 import { t } from '@/locales'
-
+import { useChatStore } from '@/store'
+const chatStore = useChatStore()
 interface Props {
   dateTime?: string
   isShow: Boolean;
@@ -75,7 +76,7 @@ function handleSelect(key: string, askMsg: string) {
     </div>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
       <p class="text-xs text-[#b4bbc4]" :class="[inversion ? 'text-right' : 'text-left']">
-        {{ dateTime }}<span v-if="id">({{ id }})</span>
+     {{ dateTime }}  <span v-if="chatStore.active">({{ chatStore.active }})  </span>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"

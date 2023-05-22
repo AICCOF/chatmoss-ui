@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
+import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, NSelect, useDialog, useMessage , NPopconfirm } from 'naive-ui'
 import Tips from '../../tips.vue'
 import { useModel } from '../../components/Modal/hooks/useModal'
 import List from './List.vue'
@@ -148,20 +148,29 @@ async function exchangeMossEvent() {
 </script>
 
 <template>
-  <NLayoutSider
-    :collapsed="collapsed" :collapsed-width="0" :width="200" show-trigger="arrow-circle"
+  <NLayoutSider :collapsed="collapsed" :collapsed-width="0" :width="200" show-trigger="arrow-circle"
     collapse-mode="transform" position="absolute" bordered :style="getMobileClass"
-    @update-collapsed="handleUpdateCollapsed"
-  >
+    @update-collapsed="handleUpdateCollapsed">
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
         <div v-show="true" class="p-4">
-          <NButton id="question-btn" dashed block @click="handleAdd">
-            新建问题
-          </NButton>
+          <div class="mb-2">
+            <NButton id="question-btn"  dashed block @click="handleAdd">
+              新建问题
+            </NButton>
+          </div>
+          
+          <NPopconfirm placement="bottom" @positive-click="()=> chatStore.deleteBatchHistory()">
+            <template #trigger>
+              <NButton id="question-btn2" dashed block @click.stop>
+                批量删除
+              </NButton>
+            </template>
+           确定进行此操作?
+          </NPopconfirm>
           <NInput class="mt-4" v-model:value="chatStore.searchMsg" type="text" placeholder="搜索标题" />
         </div>
-       
+
         <div class="flex-1 min-h-0 pb-12 overflow-hidden">
           <List />
         </div>
@@ -179,10 +188,8 @@ async function exchangeMossEvent() {
           </div>
           <Tips @login="showModelEvent" />
         </div>
-        <NModal
-          v-model:show="showSettingModal" preset="card"
-          style="min-width: 300px; height: 85vh; overflow: scroll; width: 80%;"
-        >
+        <NModal v-model:show="showSettingModal" preset="card"
+          style="min-width: 300px; height: 85vh; overflow: scroll; width: 80%;">
           <NCard title="ChatMoss商店" :bordered="false" size="huge" role="dialog" aria-modal="true">
             <div>
               <div class="title-h1">
@@ -202,10 +209,8 @@ async function exchangeMossEvent() {
                 字符兑换包月模式
               </div>
               <div class="flex">
-                <NSelect
-                  v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2"
-                  placeholder="请输入您的兑换码"
-                />
+                <NSelect v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2"
+                  placeholder="请输入您的兑换码" />
                 <NButton type="primary" ghost @click="exchangeMossEvent">
                   确定
                 </NButton>
@@ -221,11 +226,9 @@ async function exchangeMossEvent() {
               </div>
               <div class="tip-text-input1" />
               <div class="flex flex-wrap">
-                <div
-                  v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
+                <div v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
                   class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-                  @click="buyEvent(item)"
-                >
+                  @click="buyEvent(item)">
                   <div class="title-h2">
                     {{ item.title }}
                   </div>
@@ -248,11 +251,9 @@ async function exchangeMossEvent() {
               </div>
               <div class="tip-text-input1" />
               <div class="flex flex-wrap">
-                <div
-                  v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
+                <div v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
                   class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-                  @click="buyEvent(item)"
-                >
+                  @click="buyEvent(item)">
                   <div class="title-h2">
                     {{ item.title }}
                   </div>
@@ -274,11 +275,9 @@ async function exchangeMossEvent() {
                 小提示：OpenAI限制了5美元key的速度，字符包速度不受影响（字符包用的是120美金的key）
               </div> -->
               <div class="flex flex-wrap">
-                <div
-                  v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
+                <div v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
                   class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-                  @click="buyEvent(item)"
-                >
+                  @click="buyEvent(item)">
                   <div class="title-h2">
                     {{ item.title }}
                   </div>
@@ -296,10 +295,8 @@ async function exchangeMossEvent() {
         </NModal>
         <!-- 购买字符数 -->
         <NModal v-model:show="shopModal">
-          <NCard
-            style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
-            :mask-closable="true"
-          >
+          <NCard style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
+            :mask-closable="true">
             <div class="tip-text-input2">
               支付宝扫码购买（暂不支持微信）
             </div>
@@ -311,10 +308,8 @@ async function exchangeMossEvent() {
         </NModal>
         <!-- 登录注册功能 -->
         <NModal v-model:show="showModal" transform-origin="center">
-          <NCard
-            style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog"
-            aria-modal="true"
-          >
+          <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog"
+            aria-modal="true">
             <Login :tab="tab" @loginSuccess="() => { handleSubmit() }" />
           </NCard>
         </NModal>

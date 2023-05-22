@@ -5,9 +5,10 @@ import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { getActivityList, residueCount } from '@/api'
 import { localStorage } from '@/utils/storage/localStorage'
 export const useUserStore = defineStore('user-store', {
-  state: (): UserState => {
+  state: () => {
     return {
       ...getLocalState(),
+      isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录
     }
   },
   getters: {
@@ -111,8 +112,13 @@ export const useUserStore = defineStore('user-store', {
           ...this.userInfo, ...res.data,
         }
 
-        if (!res.data.user)
+        if (!res.data.user){
           this.userInfo.user.authed = false
+          this.isAuth = 2;
+        }else{
+          this.isAuth = 1;
+        }
+        
 
         return Promise.resolve(res)
       }

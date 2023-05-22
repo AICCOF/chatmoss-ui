@@ -25,6 +25,14 @@ export function deleteConversation<T>(params:any) {
     },
   })
 }
+export function deleteBatchConversation<T>(params: any) {
+  return deleteRequest<T>({
+    url: `/luomacode-api/conversation/batch`,
+    data: {
+      data: params
+    },
+  })
+}
 
 export function editConversation<T>(params: any) {
   return put<T>({
