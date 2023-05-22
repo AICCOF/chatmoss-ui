@@ -75,21 +75,21 @@ export const useChatStore = defineStore('chat-store', {
       ]
       this.chatsCollect.forEach((row)=>{
         let timestamp = row.timestamp
-        if (timestamp> dayjs().startOf('day').valueOf()){
+        if (timestamp>= dayjs().startOf('day').valueOf()){
             timeList[0].data.push(row)
         } else if (
           timestamp < dayjs().startOf('day').valueOf() &&
-          timestamp > dayjs().startOf('day').subtract(1, 'day').valueOf()
+          timestamp >= dayjs().startOf('day').subtract(1, 'day').valueOf()
           ){
           timeList[1].data.push(row)
         } else if (
           timestamp < dayjs().startOf('day').subtract(1, 'day').valueOf() &&
-          timestamp > dayjs().startOf('day').subtract(3, 'day').valueOf()
+          timestamp >= dayjs().startOf('day').subtract(3, 'day').valueOf()
         ) {
           timeList[2].data.push(row)
         } else if (
           timestamp < dayjs().startOf('day').subtract(3, 'day').valueOf() &&
-          timestamp > dayjs().startOf('day').subtract(7, 'day').valueOf()
+          timestamp >= dayjs().startOf('day').subtract(7, 'day').valueOf()
         ) {
           timeList[3].data.push(row)
         } else {

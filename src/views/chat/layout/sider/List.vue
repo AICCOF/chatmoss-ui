@@ -1,10 +1,11 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
 import { NInput, NPopconfirm, NScrollbar } from 'naive-ui'
+import {  useMessage } from 'naive-ui'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-
+import { copyText } from '@/utils/format'
 const { isMobile } = useBasicLayout()
 
 const appStore = useAppStore()
@@ -12,7 +13,7 @@ const chatStore = useChatStore()
 
 // console.log(chatStore.$state)
 const dataSources = computed(() => chatStore.sortTimeChat)
-
+const Message = useMessage()
 async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
     return
@@ -44,6 +45,15 @@ function handleEnter({ id }: Chat.ChatInfo, isEdit: boolean, event: KeyboardEven
 function isActive(id: any) {
   return chatStore.active === id
 }
+
+function handleCopyText(row) {
+  if(chatStore.active === row.id){
+    copyText({ text: row.id ?? '' })
+    Message.success('已复制会话id')
+    return;
+  }
+  
+}
 </script>
 
 <template>
@@ -58,7 +68,7 @@ function isActive(id: any) {
       <template v-else>
         <div v-for="(row, i) of dataSources" :key="i">
           <div v-if="row.data.length > 0" class="px-1 py-1">
-            {{ row.title }}
+             {{ row.title }}
           </div>
           <div v-for="(item, index) of row.data" :key="index" class="group">
             <a
@@ -67,7 +77,7 @@ function isActive(id: any) {
               @click="handleSelect(item)"
             >
               <span>
-                <SvgIcon icon="ri:message-3-line" />
+                <SvgIcon icon="ri:message-3-line" @click='handleCopyText(item)' />
               </span>
               <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
                 <NInput
