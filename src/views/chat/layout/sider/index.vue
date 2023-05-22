@@ -155,24 +155,24 @@ async function exchangeMossEvent() {
   >
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
-        <div v-show="false" class="p-4">
+        <div v-show="true" class="p-4">
           <NButton id="question-btn" dashed block @click="handleAdd">
             新建问题
           </NButton>
+          <NInput class="mt-4" v-model:value="chatStore.searchMsg" type="text" placeholder="搜索标题" />
         </div>
-        <div class="flex-1 min-h-0 pt-12 pb-12 overflow-hidden">
+       
+        <div class="flex-1 min-h-0 pb-12 overflow-hidden">
           <List />
         </div>
         <!-- 拓展功能区域 -->
         <div v-show="false" class="continuation">
           <div class="setting-main setting-main1" @click="myHomeSubmit">
-            <!-- <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon2.png" alt=""> -->
             <div class="setting-text step6">
               个人中心
             </div>
           </div>
           <div class="setting-main setting-main2" @click="handleSettingSubmit">
-            <!-- <img class="setting-btn" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v2.0/icon3.png" alt=""> -->
             <div class="setting-text step5">
               ChatMoss商店
             </div>

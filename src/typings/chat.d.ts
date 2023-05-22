@@ -4,6 +4,7 @@ declare namespace Chat {
 		timestamp: number;
 		createTime: string
 		text: string
+		ast:string;
 		inversion?: boolean
 		error?: boolean
 		loading?: boolean
@@ -21,6 +22,7 @@ declare namespace Chat {
 	interface ChatState {
 		active: number | string | null
 		chat: ChatInfo[],
+		searchMsg:string,
 		localChat: ChatInfo[],
 	}
 

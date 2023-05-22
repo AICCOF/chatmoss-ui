@@ -11,7 +11,7 @@ const appStore = useAppStore()
 const chatStore = useChatStore()
 
 // console.log(chatStore.$state)
-const dataSources = computed(() => chatStore.chatsCollect)
+const dataSources = computed(() => chatStore.sortTimeChat)
 
 async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
@@ -56,49 +56,52 @@ function isActive(id: any) {
         </div>
       </template>
       <template v-else>
-        <div v-for="(item, index) of dataSources" :key="index" class="group">
-          <a
-            class="question-list relative flex items-center gap-3 px-3 py-3 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
-            :class="isActive(item.id) && ['border-[#00CCFF]', 'bg-neutral-100', 'text-[#0099FF]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]', 'pr-14']"
-            @click="handleSelect(item)"
-          >
-            <span>
-              <SvgIcon icon="ri:message-3-line" />
-            </span>
-            <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
-              <NInput
-                v-if="item.isEdit"
-                v-model:value="item.tem"
-                size="tiny"
-                @keypress="handleEnter(item, false, $event)"
-              />
-              <span v-else>{{ item.title || '新建问题' }}</span>
-            </div>
-            <!-- v-if="isActive(item.uuid)" -->
-            <div class="absolute z-10 flex visible right-1">
-              <template v-if="item.isEdit && isActive(item.id)">
-                <button class="p-1" @click="handleEdit(item, false, $event)">
-                  <SvgIcon icon="ri:save-line" />
-                </button>
-              </template>
-              <template v-if="!item.isEdit">
-                <button v-if="isActive(item.id)" class="p-1">
-                  <SvgIcon icon="ri:edit-line" @click="handleEdit(item, true, $event)" />
-                </button>
-                <!-- group-hover:visible -->
-                <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
-                  <NPopconfirm placement="bottom" @positive-click="handleDelete(index, $event)">
-                    <template #trigger>
-                      <button class="p-1" @click.stop>
-                        <SvgIcon icon="ri:delete-bin-line" />
-                      </button>
-                    </template>
-                    {{ $t('chat.deleteHistoryConfirm') }}
-                  </NPopconfirm>
-                </div>
-              </template>
-            </div>
-          </a>
+        <div v-for="(row, i) of dataSources" :key="i">
+          <div v-if="row.data.length > 0" class="px-1 py-1">
+            {{ row.title }}
+          </div>
+          <div v-for="(item, index) of row.data" :key="index" class="group">
+            <a
+              class="question-list relative flex items-center gap-3 px-3 py-3 mt-1 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
+              :class="isActive(item.id) && ['border-[#00CCFF]', 'bg-neutral-100', 'text-[#0099FF]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]', 'pr-14']"
+              @click="handleSelect(item)"
+            >
+              <span>
+                <SvgIcon icon="ri:message-3-line" />
+              </span>
+              <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
+                <NInput
+                  v-if="item.isEdit" v-model:value="item.tem" size="tiny"
+                  @keypress="handleEnter(item, false, $event)"
+                />
+                <span v-else>{{ item.title || '新建问题' }}</span>
+              </div>
+              <!-- v-if="isActive(item.uuid)" -->
+              <div class="absolute z-10 flex visible right-1">
+                <template v-if="item.isEdit && isActive(item.id)">
+                  <button class="p-1" @click="handleEdit(item, false, $event)">
+                    <SvgIcon icon="ri:save-line" />
+                  </button>
+                </template>
+                <template v-if="!item.isEdit">
+                  <button v-if="isActive(item.id)" class="p-1">
+                    <SvgIcon icon="ri:edit-line" @click="handleEdit(item, true, $event)" />
+                  </button>
+                  <!-- group-hover:visible -->
+                  <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
+                    <NPopconfirm placement="bottom" @positive-click="handleDelete(index, $event)">
+                      <template #trigger>
+                        <button class="p-1" @click.stop>
+                          <SvgIcon icon="ri:delete-bin-line" />
+                        </button>
+                      </template>
+                      {{ $t('chat.deleteHistoryConfirm') }}
+                    </NPopconfirm>
+                  </div>
+                </template>
+              </div>
+            </a>
+          </div>
         </div>
       </template>
     </div>

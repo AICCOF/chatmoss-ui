@@ -41,11 +41,13 @@ appStore.setTheme(localStorage.getItem('chatmossTheme') as any)
 if (!localStorage.getItem('chatmossMode'))
   localStorage.setItem('chatmossMode', 'normal')
 
-// 专业模式初始化
+// 字体初始化
 if (!localStorage.getItem('fontSizeNum')) {
   localStorage.setItem('fontSizeNum', '100%')
 }
 else {
+  const fontSizeNumNew: any = localStorage.getItem('fontSizeNum')
+  localStorage.setItem('fontSizeNum', fontSizeNumNew.endsWith('%') ? fontSizeNumNew : `${fontSizeNumNew < 50 ? 50 : fontSizeNumNew}%`)
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
@@ -149,13 +151,25 @@ async function ConfirmNotice(msg: string) {
   })
 }
 
-async function onConversation() {
+let chatOptions: Record<string, any> = {
+  conversationId: chatStore.getUuid,
+  openaiVersion: userStore.getOpenaiVersion,
+}
+function askFn(askMsg: string) {
+  onConversation(askMsg, 2)
+}
+function onlineFn(askMsg: string) {
+  // console.log(askMsg, 1)
+
+  onConversation(askMsg, 1)
+}
+async function onConversation(askMsg?: string, type?: number) {
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
   if (userStore.residueCount < 500000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
     ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
     return
   }
-  if (localStorage.getItem('apiKey') && userStore.isHighVersion) {
+  if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
     ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换')
     return
   }
@@ -170,8 +184,21 @@ async function onConversation() {
   //   return
   // }
   //  userStore.userInfo.residueCount <= 0
+  if (type === 1) {
+    chatOptions = {
+      conversationId: chatStore.getUuid,
+      openaiVersion: userStore.getOpenaiVersion,
+      online: 1,
+    }
+  }
+  else {
+    chatOptions = {
+      conversationId: chatStore.getUuid,
+      openaiVersion: userStore.getOpenaiVersion,
+    }
+  }
 
-  const message = prompt.value
+  const message = prompt.value || askMsg
 
   if (loading.value)
     return
@@ -187,6 +214,7 @@ async function onConversation() {
     text: message,
     inversion: true,
     error: false,
+    ast: '',
     conversationOptions: null,
     requestOptions: { prompt: message, options: null },
   })
@@ -210,6 +238,7 @@ async function onConversation() {
     loading: true,
     inversion: false,
     error: false,
+    ast: message,
     conversationOptions: { conversationId: chatStore.getUuid },
     requestOptions: { prompt: message, options: { ...options } },
   })
@@ -233,8 +262,7 @@ async function onConversation() {
       prompt: texts,
       options: {
         ...options,
-        conversationId: chatStore.getUuid,
-        openaiVersion: userStore.getOpenaiVersion,
+        ...chatOptions,
       },
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
@@ -249,6 +277,7 @@ async function onConversation() {
             createTime: new Date().toLocaleString(),
             text: chunk ?? '',
             inversion: false,
+            ast: message,
             error: false,
             loading: false,
             conversationOptions: {
@@ -309,6 +338,7 @@ async function onConversation() {
       createTime: new Date().toLocaleString(),
       text: errorMessage,
       inversion: false,
+      ast: message,
       error: true,
       loading: false,
       conversationOptions: null,
@@ -398,6 +428,7 @@ vsCodeUtils({
     if (questionListDom === null || questionListDom.innerText !== '新建问题') {
       questionBtnDom.click()
       console.log('新建问题')
+      clickMessage()
     }
     else {
       prompt.value = selectedText
@@ -412,23 +443,24 @@ vsCodeUtils({
   },
 })
 function clickMessage() {
-  setTimeout(() => {
-    const dom = document.querySelector('#ask-question') as any
-    // console.log(dom)
-    dom && dom.click()
-    localStorage.setItem('selectedText', '')
-  }, 1500)
-}
-
-onMounted(() => {
   const selectedText = localStorage.getItem('selectedText')
   console.log('??', selectedText)
   if (selectedText) {
     prompt.value = selectedText
-    clickMessage()
+    localStorage.setItem('selectedText', '')
+    setTimeout(() => {
+      const dom = document.querySelector('#ask-question') as any
+      // console.log(dom)
+      dom && dom.click()
+    }, 1500)
   }
+}
+
+onMounted(() => {
+  clickMessage()
 
   chatStore.chatList()
+  userStore.getActivityListAPI()
 })
 
 onUnmounted(() => {
@@ -516,9 +548,8 @@ async function onSuccessAuth() {
               <div class="no-data-info-title">
                 ChatMoss
                 <span
-                  v-if="!!isPlus"
-                  :class="{ is3_5: isPlus === '3.5' }"
-                  class="bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
+                  v-if="!!isPlus" :class="{ is3_5: isPlus === '3.5' }"
+                  class="no-data-info-title1 bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
                   @click="setOpenaiVersion"
                 >
                   {{ isPlus }} 模型
@@ -544,7 +575,8 @@ async function onSuccessAuth() {
             <div>
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :inversion="item.inversion" :error="item.error" :loading="item.loading"
+                :is-show="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
+                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
               />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
@@ -552,7 +584,7 @@ async function onSuccessAuth() {
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
                   </template>
-                  停止响应
+                  正在响应
                 </NButton>
               </div>
             </div>
@@ -585,12 +617,6 @@ async function onSuccessAuth() {
                 </span>
               </template>
             </NButton>
-            <!-- <div v-if="getIsApiKey() && userStore.userInfo.residueCount < 10000" class="moss-text">
-              下次消耗{{
-                isCorrelation ? `${Math.ceil((prompt.length + dataSources.map(item => item.text).join('\n').length))}`
-                : `${Math.ceil((prompt?.length || 0))}`
-              }}字符
-            </div> -->
           </div>
         </div>
       </div>
@@ -709,7 +735,7 @@ async function onSuccessAuth() {
 
 .btn-style {
   width: 40px;
-	height: 25px;
+  height: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -890,14 +916,16 @@ async function onSuccessAuth() {
 }
 
 .chat-main {
-	height: calc(100% - 50px);
-	padding-top: 50px;
+  height: calc(100% - 50px);
+  padding-top: 50px;
 }
+
 .uppercase {
-	cursor: pointer;
+  cursor: pointer;
 }
+
 .is3_5 {
-	background-color: #ceeaca;
-    color: #4fa444;
+  background-color: #ceeaca;
+  color: #4fa444;
 }
 </style>

@@ -137,6 +137,13 @@ export function paper<T>() {
   })
 }
 
+export function getActivityList<T>() {
+  return get<T>({
+    url: '/luomacode-api/activity/list',
+    data: {},
+  })
+}
+
 export function auth<T>() {
   return post<T>({
     url: '/luomacode-api/authed',
