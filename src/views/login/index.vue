@@ -89,11 +89,11 @@ async function sendCode() {
     })
 
     buttonInfo.time = 60
-
     timer = setInterval(() => {
       if (buttonInfo.time == 0 && timer) {
         clearInterval(timer)
         buttonInfo.text = '发送验证码'
+        timer = null;
         return
       }
       buttonInfo.time--

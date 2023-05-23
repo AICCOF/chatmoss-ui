@@ -70,7 +70,7 @@ function isActive(id: any) {
               @click="handleSelect(item)"
             >
               <span>
-                 <n-checkbox :value="item.id" label="" />
+                 <n-checkbox :value="item.id" label="" @click.stop/>
               </span>
               <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
                 <NInput
