@@ -2,13 +2,8 @@
 import { NPopover, useMessage } from 'naive-ui'
 // import { computed } from 'vue'
 import { ref } from 'vue'
-// import { useChatStore, useUserStore } from '@/store'
 
 const ms = useMessage()
-
-// const userStore = useUserStore()
-// const chatStore = useChatStore()
-// const dataSources = computed(() => chatStore.getChatByUuid())
 
 // 新建对话
 function createQuestion() {
@@ -16,15 +11,7 @@ function createQuestion() {
   questionBtnDom.click()
   ms.success('新建会话成功，请提问~')
 }
-// 问题反馈
-// function questionPushEvent() {
-//   const questionBtnDom = document.querySelector('.setting-main1') as HTMLDivElement
-//   questionBtnDom.click()
-//   setTimeout(() => {
-//     const questionBtnDom = document.querySelector('#question-push') as HTMLDivElement
-//     questionBtnDom.click()
-//   }, 100)
-// }
+
 // 历史记录
 function toggleButtonEvent() {
   const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
@@ -46,14 +33,8 @@ const show = ref(false)
         <div class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent">
           历史记录
         </div>
-      <!-- <div class="footer-item footer-item-btn">
-        提示词
-      </div> -->
       </div>
       <div class="footer-right">
-        <!-- <div v-if="userStore.packageList[0]?.timesResidue === 0 && userStore.packageList[1]?.timesResidue === 0" class="consumption-text">
-        下次预计消耗：{{ dataSources.map(item => item.text).join('\n').length }}
-      </div> -->
         <div class="footer-item" @click="show = true">
           <div class="header-right-item header-right-item-help">
             <NPopover trigger="hover">
@@ -66,7 +47,7 @@ const show = ref(false)
         </div>
       </div>
     </header>
-    <van-overlay :show="show" @click="show = false">
+    <van-overlay :show="show" @click="show = false" style="z-index:100">
       <div class="wrapper">
         <div class="wrapper-mian">
           <iframe src="https://h5.aihao123.cn/pages/app/help/index.html" frameborder="0" />

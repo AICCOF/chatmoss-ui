@@ -4,7 +4,7 @@ import { NaiveProvider } from '@/components/common'
 import { useTheme } from '@/hooks/useTheme'
 import { useLanguage } from '@/hooks/useLanguage'
 
-const { theme, themeOverrides } = useTheme()
+const { theme, themeOverrides, vantTheme } = useTheme()
 const { language } = useLanguage()
 </script>
 
@@ -16,7 +16,10 @@ const { language } = useLanguage()
     :locale="language"
   >
     <NaiveProvider>
-      <RouterView />
+      <van-config-provider :theme="vantTheme" class="h-full"> 
+          <RouterView />
+      </van-config-provider>
+   
     </NaiveProvider>
   </NConfigProvider>
 </template>

@@ -188,6 +188,7 @@ async function loginEvent() {
 }
 </script>
 
+
 <template>
   <NTabs v-model:value="tabStr" justify-content="space-evenly" type="line">
     <NTabPane name="login" tab="登录">

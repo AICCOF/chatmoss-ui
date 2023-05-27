@@ -4,10 +4,13 @@ import type { UserInfo, UserState } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { getActivityList, residueCount } from '@/api'
 import { localStorage } from '@/utils/storage/localStorage'
+import type { Notice } from '@/store/modules/user/helper'
+import { getSystemNotice, sendFeedback } from '@/api/personCenter'
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
       ...getLocalState(),
+      notices: [],
       isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录
     }
   },
@@ -93,6 +96,7 @@ export const useUserStore = defineStore('user-store', {
 
   },
   actions: {
+
     async residueCountAPI() {
       try {
         const res = await residueCount<{
@@ -112,13 +116,13 @@ export const useUserStore = defineStore('user-store', {
           ...this.userInfo, ...res.data,
         }
 
-        if (!res.data.user){
+        if (!res.data.user) {
           this.userInfo.user.authed = false
           this.isAuth = 2;
-        }else{
+        } else {
           this.isAuth = 1;
         }
-        
+
 
         return Promise.resolve(res)
       }
@@ -128,6 +132,10 @@ export const useUserStore = defineStore('user-store', {
 
         return Promise.reject(error)
       }
+    },
+    async getSystemNoticeAPI() {
+      const res = await getSystemNotice<Notice[]>()
+      this.setNotices(res.data)
     },
     async getActivityListAPI() {
       const res = await getActivityList<any>()

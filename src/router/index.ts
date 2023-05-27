@@ -3,15 +3,37 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
+import { PageLayout } from '@/views/page/layout'
 import chat from '@/views/chat/index.vue'
+import shop from '@/views/page/shop/index.vue'
+import login from '@/views/page/login/index.vue'
+import setting from '@/views/page/setting/index.vue'
 import c404 from '@/views/exception/404/index.vue'
 import c500 from '@/views/exception/500/index.vue'
 const routes: RouteRecordRaw[] = [
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   component: () => import('@/views/login/index.vue'),
-  // },
+  {
+    path: '/page',
+    name: 'page',
+    component: PageLayout,
+    // redirect: '/page/shop',
+    children: [
+      {
+        path: 'shop',
+        name: 'shop',
+        component: shop,
+      },
+      {
+        path: 'login',
+        name: 'login',
+        component: login,
+      },
+      {
+        path: 'setting',
+        name: 'setting',
+        component: setting,
+      },
+    ],
+  },
   {
     path: '/',
     name: 'Root',

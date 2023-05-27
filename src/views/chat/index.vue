@@ -602,7 +602,7 @@ async function onSuccessAuth() {
     </div>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
-        <div class="moss-btns flex justify-between space-x-2">
+        <div class="moss-btns flex justify-between space-x-2 w-full">
           <NInput
             v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
@@ -917,11 +917,6 @@ async function onSuccessAuth() {
   .network-btn-filter {
     filter: grayscale(90%);
   }
-}
-
-.chat-main {
-  height: calc(100% - 50px);
-  padding-top: 50px;
 }
 
 .uppercase {
