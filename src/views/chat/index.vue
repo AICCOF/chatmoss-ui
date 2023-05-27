@@ -546,10 +546,9 @@ async function onSuccessAuth() {
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     
     <main class="flex-1 overflow-hidden">
-     
-      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
-        <applicationList></applicationList>
-        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
+      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">  
+        <applicationList />
+        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: auto">
           <template v-if="!dataSources.length">
             <div class="no-data-info">
               <!-- 标题 -->

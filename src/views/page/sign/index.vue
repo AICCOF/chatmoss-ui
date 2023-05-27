@@ -6,7 +6,7 @@ import {ref} from 'vue'
 import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
 
-let url = ref(`https://h5.aihao123.cn/pages/app/signIn-new/index.html?token=${getToken()}&time=${new Date().getTime()}`)
+let url = ref(`http://h5.aihao123.cn/pages/app/signIn-new/index.html?token=${getToken()}&time=${new Date().getTime()}`)
 </script>
 
 <template>

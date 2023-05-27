@@ -135,15 +135,15 @@ function getActivityListEvent() {
     </div>
     <div class='flex w-full sub-header'>
       <div class="header-left">
-        <div class="header-right-item" @click="shopEvent">
-          <span>商城</span>
+        <div class="header-right-item" >
+          <span @click="shopEvent">商城</span>
         </div>
-        <div class="header-right-item" @click="() => { go({ name: 'invite' }) }">
-          <span>邀请</span>
+        <div class="header-right-item">
+          <span  @click="() => { go({ name: 'invite' }) }">邀请</span>
         </div>
 
-        <div class="header-right-item" @click="() => { go({ name: 'sign' }) }">
-          <span>签到</span>
+        <div class="header-right-item" >
+          <span @click="() => { go({ name: 'sign' }) }">签到</span>
         </div>
       </div>
       <div class="header-right">

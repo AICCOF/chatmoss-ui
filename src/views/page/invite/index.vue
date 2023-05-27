@@ -26,13 +26,13 @@ function handleSelect() {
     <div class="text-center">
       <div class="title">邀请朋友并赚取GPT-4.0信息</div>
       <div class="desc">为你和你的朋友赚取5个GPT4.0和50个GPT3.5查询</div>
-      <div class="desc">推荐更过,赚的更多</div>
+      <div class="desc">你推荐越多,你赚的越多</div>
     </div>
-    <van-cell-group title="邀请信息" inset>
+    <van-cell-group title="邀请链接" inset>
       <van-cell>
         <!-- 使用 right-icon 插槽来自定义右侧图标 -->
         <template #title>
-          https://vant-contrib.gitee.io/vant/#/zh-CN/cell
+          <div class="url">https://vant-contrib.gitee.io/vant/#/zh-CN/cell</div>
         </template>
         <template #right-icon>
           <van-button type="primary" size="mini" @click="handleSelect">复制</van-button>
@@ -50,6 +50,13 @@ function handleSelect() {
 </template>
 
 <style>
+.url{
+  width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
 .title {
   margin-top: 20px;
   font-size: 24px;

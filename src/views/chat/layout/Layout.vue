@@ -41,7 +41,6 @@ const getContainerClass = computed(() => {
         <Sider />
         <Header />
         <NLayoutContent class="h-full">
-          2323
           <RouterView v-slot="{ Component, route }">
             <component :is="Component" :key="route.fullPath" />
             <Footer />

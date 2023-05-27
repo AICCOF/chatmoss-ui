@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
-import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field } from 'vant';
+import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem } from 'vant';
 import App from './App.vue'
 import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
@@ -11,12 +11,13 @@ import getDomainAPI from './api/getDomain'
 import VueTour from 'v3-tour'
 import 'v3-tour/dist/vue-tour.css'
 
-getDomainAPI().then(() => {
-  bootstrap()
-}).catch(() => {
-  // console.log(error)
-  bootstrap()
-})
+bootstrap()
+// getDomainAPI().then(() => {
+//   bootstrap()
+// }).catch(() => {
+//   // console.log(error)
+//   bootstrap()
+// })
 
 async function bootstrap() {
   const app = createApp(App)
@@ -34,6 +35,10 @@ async function bootstrap() {
   app.use(CellGroup);
   app.use(Button);
   app.use(Field);
+  app.use(Icon);
+  app.use(Search);
+  app.use(Sidebar);
+  app.use(SidebarItem);
 
   setupAssets()
 
