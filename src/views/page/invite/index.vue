@@ -23,28 +23,30 @@ function handleSelect() {
     </template>
 
 
-    <div class="text-center">
-      <div class="title">邀请朋友并赚取GPT-4.0信息</div>
-      <div class="desc">为你和你的朋友赚取5个GPT4.0和50个GPT3.5查询</div>
-      <div class="desc">你推荐越多,你赚的越多</div>
-    </div>
-    <van-cell-group title="邀请链接" inset>
-      <van-cell>
-        <!-- 使用 right-icon 插槽来自定义右侧图标 -->
-        <template #title>
-          <div class="url">https://vant-contrib.gitee.io/vant/#/zh-CN/cell</div>
-        </template>
-        <template #right-icon>
-          <van-button type="primary" size="mini" @click="handleSelect">复制</van-button>
-        </template>
-      </van-cell>
-    </van-cell-group>
+   <div  class="dark:text-white">
+     <div class="text-center">
+        <div class="title">邀请朋友并赚取GPT-4.0信息</div>
+        <div class="desc">为你和你的朋友赚取5个GPT4.0和50个GPT3.5查询</div>
+        <div class="desc">你推荐越多,你赚的越多</div>
+      </div>
+      <van-cell-group title="邀请链接" inset>
+        <van-cell>
+          <!-- 使用 right-icon 插槽来自定义右侧图标 -->
+          <template #title>
+            <div class="url">https://vant-contrib.gitee.io/vant/#/zh-CN/cell</div>
+          </template>
+          <template #right-icon>
+            <van-button type="primary" size="mini" @click="handleSelect">复制</van-button>
+          </template>
+        </van-cell>
+      </van-cell-group>
 
-    <div class="">
-      <div class="title">奖励</div>
-      <div class="desc">GPT-4: 100</div>
-      <div class="desc">GPT-3: 100</div>
-    </div>
+      <div class="">
+        <div class="title">奖励</div>
+        <div class="desc">GPT-4: 100</div>
+        <div class="desc">GPT-3: 100</div>
+      </div>
+   </div>
 
   </Page>
 </template>
@@ -67,6 +69,6 @@ function handleSelect() {
 .desc {
   margin-top: 10px;
   font-size: 14px;
-  color: #c9c9c9;
+  /* color: #c9c9c9; */
 }
 </style>

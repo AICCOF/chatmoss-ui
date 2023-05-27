@@ -9,7 +9,7 @@ import { getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
 import { localStorage } from '@/utils/storage/localStorage'
 import Page from "@/components/page/index.vue";
-import { useBack,useGo } from '@/utils/router'
+import { useBack, useGo } from '@/utils/router'
 const back = useBack()
 const go = useGo()
 // let props = defineProps(['register'])
@@ -158,92 +158,95 @@ function getNSwitchModeValue(): any {
       <van-nav-bar title="设置中心" left-text="返回" left-arrow @click-left="back">
       </van-nav-bar>
     </template>
-    <div class="flex items-center justify-between">
-      <div class="flex">
-        <!-- <span class="mr-4">用户名称：{{ nickname || '未登录' }}</span> -->
-        <!-- <span>{{ plusEndTime }}到期</span> -->
+    <div class="dark:text-white">
+      <div class="flex items-center justify-between ">
+        <div class="flex">
+          <!-- <span class="mr-4">用户名称：{{ nickname || '未登录' }}</span> -->
+          <!-- <span>{{ plusEndTime }}到期</span> -->
+        </div>
+        <div class="flex">
+          <NButton v-if="userStore.userInfo.user.email" id="question-push" type="primary" size="tiny" quaternary
+            @click="() => { go({ name: 'feedback' }) }">
+            问题反馈
+          </NButton>
+          <NButton type="primary" size="tiny" quaternary @click="() => { go({ name: 'login' }) }">
+            修改密码
+          </NButton>
+        </div>
       </div>
-      <div class="flex">
-        <NButton v-if="userStore.userInfo.user.email" id="question-push" type="primary" size="tiny" quaternary
-          @click="() => { go({ name: 'feedback' }) }">
-          问题反馈
-        </NButton>
-        <NButton type="primary" size="tiny" quaternary @click="()=>{ go({ name: 'login'}) }" >
-          修改密码
-        </NButton>
-      </div>
-    </div>
-    <NDivider />
-    <div class="title-h1">
-      ApiKeys设置
-    </div>
-    <div class="flex">
-      <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
-      <NButton type="primary" ghost @click="settingBtn">
-        确定
-      </NButton>
-    </div>
-    <div class="tip-text-input">
-      小提示：设置成功，并不代表您的key有余额或者正确
-    </div>
-    <div class="tip-text-input">
-      可以点击这个网址进行检查：
-      <a style="color: #0099FF;" href="http://open.aihao123.cn/" target="_blank">http://open.aihao123.cn/</a>
-    </div>
-    <NDivider />
-    <div>
+      <NDivider />
       <div class="title-h1">
-        OpenAI模型选择
+        ApiKeys设置
       </div>
       <div class="flex">
-        <NSelect v-model:value="modelValue" :options="options"
-          @change="(value) => { userStore.saveOpenaiVersion(value) }" />
+        <NInput v-model:value="apiKey" class="mr-2" type="text" placeholder="请输入您的apiKey" />
+        <NButton type="primary" ghost @click="settingBtn">
+          确定
+        </NButton>
       </div>
       <div class="tip-text-input">
-        小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
-        <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
-        倍，但是回答的更加专业
+        小提示：设置成功，并不代表您的key有余额或者正确
       </div>
-    </div>
-    <NDivider />
-    <div>
+      <div class="tip-text-input">
+        可以点击这个网址进行检查：
+        <a style="color: #0099FF;" href="http://open.aihao123.cn/" target="_blank">http://open.aihao123.cn/</a>
+      </div>
+      <NDivider />
+      <div>
+        <div class="title-h1">
+          OpenAI模型选择
+        </div>
+        <div class="flex">
+          <NSelect v-model:value="modelValue" :options="options"
+            @change="(value) => { userStore.saveOpenaiVersion(value) }" />
+        </div>
+        <div class="tip-text-input">
+          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
+          <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
+          倍，但是回答的更加专业
+        </div>
+      </div>
+      <NDivider />
+      <div>
+        <div class="title-h1">
+          ChatMoss主题设定
+        </div>
+        <div class="flex">
+          <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
+            @update:value="handleUpdateValue" />
+          {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
+        </div>
+      </div>
+      <NDivider />
+      <div>
+        <div class="title-h1">
+          回答模式（专业模式下会自动再每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
+        </div>
+        <div class="flex">
+          <NSwitch :default-value="getNSwitchModeValue()" checked-value="speciality" unchecked-value="normal"
+            @update:value="handleModeValue" />
+          {{ getNSwitchModeValue() === 'speciality' ? '专业模式' : '正常模式' }}
+        </div>
+      </div>
+      <NDivider />
       <div class="title-h1">
-        ChatMoss主题设定
+        字体大小设置
       </div>
       <div class="flex">
-        <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
-          @update:value="handleUpdateValue" />
-        {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
+        <NInput v-model:value="fontSizeNum" class="mr-2" type="text" placeholder="请输入字体设置比例" />
+        <NButton type="primary" ghost @click="fontSizeNumBtn">
+          确定
+        </NButton>
+      </div>
+      <NDivider />
+      <div>
+        <span class="title-h2">本机累计使用字符数</span>：未知
+      </div>
+      <div class="tip-text-input">
+        小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
       </div>
     </div>
-    <NDivider />
-    <div>
-      <div class="title-h1">
-        回答模式（专业模式下会自动再每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
-      </div>
-      <div class="flex">
-        <NSwitch :default-value="getNSwitchModeValue()" checked-value="speciality" unchecked-value="normal"
-          @update:value="handleModeValue" />
-        {{ getNSwitchModeValue() === 'speciality' ? '专业模式' : '正常模式' }}
-      </div>
-    </div>
-    <NDivider />
-    <div class="title-h1">
-      字体大小设置
-    </div>
-    <div class="flex">
-      <NInput v-model:value="fontSizeNum" class="mr-2" type="text" placeholder="请输入字体设置比例" />
-      <NButton type="primary" ghost @click="fontSizeNumBtn">
-        确定
-      </NButton>
-    </div>
-    <NDivider />
-    <div>
-      <span class="title-h2">本机累计使用字符数</span>：未知
-    </div>
-    <div class="tip-text-input">
-      小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
-    </div>
+
   </Page>
 </template>
 
