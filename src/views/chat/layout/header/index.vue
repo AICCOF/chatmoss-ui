@@ -60,13 +60,11 @@ onMounted(() => {
 
 // 系统设置
 function settingMainEvent() {
-  const questionBtnDom = document.querySelector('.setting-main1') as HTMLDivElement
-  questionBtnDom.click()
+  go({ name: 'setting' })
 }
 // ChatMoss商店
 function shopEvent() {
-  const questionBtnDom = document.querySelector('.setting-main2') as HTMLDivElement
-  questionBtnDom.click()
+  go({ name: 'shop' })
 }
 function clickActivity() {
   modelValue.value = true
@@ -137,14 +135,14 @@ function getActivityListEvent() {
     </div>
     <div class='flex w-full sub-header'>
       <div class="header-left">
-        <div class="header-right-item">
+        <div class="header-right-item"  @click="shopEvent">
           <span>商城</span>
         </div>
-        <div class="header-right-item">
+        <div class="header-right-item" @click="()=>{ go({ name: 'invite' }) }">
           <span>邀请</span>
         </div>
 
-        <div class="header-right-item">
+        <div class="header-right-item" @click="() => { go({ name: 'sign' }) }">
           <span>签到</span>
         </div>
       </div>

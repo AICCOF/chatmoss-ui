@@ -8,7 +8,7 @@ const back = useBack()
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="应用商店" left-text="返回" left-arrow @click-left="back">
+      <van-nav-bar title="签到" left-text="返回" left-arrow @click-left="back">
       </van-nav-bar>
     </template>
 

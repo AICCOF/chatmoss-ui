@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
-import { NavBar, ConfigProvider, Tab, Tabs } from 'vant';
+import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field } from 'vant';
 import App from './App.vue'
 import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
@@ -30,6 +30,11 @@ async function bootstrap() {
   app.use(ConfigProvider);
   app.use(Tab);
   app.use(Tabs);
+  app.use(Cell);
+  app.use(CellGroup);
+  app.use(Button);
+  app.use(Field);
+
   setupAssets()
 
   await setupRouter(app)
