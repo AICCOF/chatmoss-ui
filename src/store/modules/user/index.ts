@@ -11,7 +11,7 @@ export const useUserStore = defineStore('user-store', {
     return {
       ...getLocalState(),
       notices: [],
-      isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录
+      isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期
     }
   },
   getters: {
@@ -116,7 +116,7 @@ export const useUserStore = defineStore('user-store', {
           ...this.userInfo, ...res.data,
         }
 
-        if (!res.data.user) {
+        if (res.data.user) {
           this.userInfo.user.authed = false
           this.isAuth = 2;
         } else {

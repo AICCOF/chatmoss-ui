@@ -10,7 +10,7 @@ const Message = useMessage()
 let value = ref('')
 
 function handleSelect() {
-  copyText({ text:  '' })
+  copyText({ text: '' })
   Message.success('已复制到剪切板')
 }
 </script>
@@ -41,22 +41,25 @@ function handleSelect() {
     </van-cell-group>
 
     <div class="">
-        <div class="title">奖励</div>
-        <div class="desc">GPT-4: 100</div>
-        <div class="desc">GPT-3: 100</div>
-      </div>
+      <div class="title">奖励</div>
+      <div class="desc">GPT-4: 100</div>
+      <div class="desc">GPT-3: 100</div>
+    </div>
 
   </Page>
 </template>
 
 <style>
-.title{
-  margin-top:20px;
+.title {
+  margin-top: 20px;
   font-size: 24px;
   font-weight: bold;
+  color: #c9c9c9;
 }
-.desc{
-  margin-top:10px;
+
+.desc {
+  margin-top: 10px;
   font-size: 14px;
+  color: #c9c9c9;
 }
 </style>

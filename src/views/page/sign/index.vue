@@ -12,9 +12,9 @@ let url = ref(`https://h5.aihao123.cn/pages/app/signIn-new/index.html?token=${ge
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="签到" left-text="返回" left-arrow @click-left="back">
+      <van-nav-bar title="" left-text="返回" left-arrow @click-left="back">
       </van-nav-bar>
     </template>
-    <iframe :src="url" frameborder="0" style="width:100%;height:100%" />
+    <iframe :src="url" frameborder="0" style="width:100%;height:100%;" />
   </Page>
 </template>

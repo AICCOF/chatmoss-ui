@@ -49,13 +49,13 @@ watchEffect(() => {
   const { user } = userStore.userInfo
   if (user.email)
     resetToken()
+
   if(userStore.isAuth === 2 && getToken()){
-    console.log(1)
-    useAuthStore.setToken('')
-    sendToMsg('chatMossToken', '')
-    chatStore.clearList()
-    userStore.residueCountAPI()
-    Message.error('登录已过期,请重新登录')
+    // useAuthStore.setToken('')
+    // sendToMsg('chatMossToken', '')
+    // chatStore.clearList()
+    // userStore.residueCountAPI()
+    // Message.error('登录已过期,请重新登录')
   }
 })
 
