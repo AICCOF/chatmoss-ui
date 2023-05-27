@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-// import { getToken } from '../auth/helper'
+import { getToken } from '../auth/helper'
 import type { UserInfo, UserState } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { getActivityList, residueCount } from '@/api'
@@ -115,12 +115,17 @@ export const useUserStore = defineStore('user-store', {
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
-
+        // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
         if (res.data.user) {
           this.userInfo.user.authed = false
           this.isAuth = 2;
         } else {
-          this.isAuth = 1;
+          if (getToken()) {
+            this.isAuth = 3;
+          } else {
+            this.isAuth = 1;
+          }
+
         }
 
 
