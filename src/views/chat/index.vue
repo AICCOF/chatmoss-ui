@@ -12,6 +12,7 @@ import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } 
 import { auth, fetchChatAPIProcess, paper } from '@/api'
 import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
+import applicationList from './applicationList.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
@@ -543,8 +544,11 @@ async function onSuccessAuth() {
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
+    
     <main class="flex-1 overflow-hidden">
+     
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
+        <applicationList></applicationList>
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
           <template v-if="!dataSources.length">
             <div class="no-data-info">
@@ -595,8 +599,7 @@ async function onSuccessAuth() {
           </template>
         </div>
       </div>
-    </main>
-    <div v-if="!userStore.userInfo.user.authed" class="text-center">
+    </main>    <div v-if="!userStore.userInfo.user.authed" class="text-center">
       <!-- 通关ChatMoss使用教程，获得20w字符奖励 -->
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>

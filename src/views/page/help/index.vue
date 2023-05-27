@@ -8,10 +8,9 @@ const back = useBack()
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="应用商店" left-text="返回" left-arrow @click-left="back">
+      <van-nav-bar title="帮助中心" left-text="返回" left-arrow @click-left="back">
       </van-nav-bar>
     </template>
-    <div>我是应用商店</div>
-  
+    <iframe src="https://h5.aihao123.cn/pages/app/help/index.html" frameborder="0" style="width:100%;height:100%;margin-top: -46px;" />
   </Page>
 </template>

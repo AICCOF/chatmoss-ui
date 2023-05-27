@@ -87,39 +87,39 @@ function getActivityListEvent() {
             <span>设置中心</span>
           </NPopover>
         </div>
-         <div class="header-right-item">
-            <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
-              <template #trigger>
-                <NButton quaternary circle size="tiny">
-                  <template #icon>
-                    <span class="">
-                      <SvgIcon icon="mdi:message-badge-outline" />
-                    </span>
-                  </template>
-                </NButton>
-              </template>
-              <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-                style="max-width: 250px">
-                <div class="mr-4 " style="width:30px">
-                  <img :src="item.icon" style="width:30px" class="circle" alt="">
-                </div>
-                <div class="flex-1">
-                  <div> {{ item.content }}</div>
-                  <div>{{ item.createTime }}</div>
-                </div>
-              </div>
-            </NPopover>
-        </div>
         <div class="header-right-item">
-          <!-- 商店 -->
-          <NPopover trigger="hover">
+          <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
             <template #trigger>
-              <img :src="staticData.img6" alt="" @click="shopEvent">
+              <NButton quaternary circle size="tiny">
+                <template #icon>
+                  <span class="">
+                    <SvgIcon icon="mdi:message-badge-outline" />
+                  </span>
+                </template>
+              </NButton>
             </template>
-            <span>ChatMoss商店</span>
+            <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+              style="max-width: 250px">
+              <div class="mr-4 " style="width:30px">
+                <img :src="item.icon" style="width:30px" class="circle" alt="">
+              </div>
+              <div class="flex-1">
+                <div> {{ item.content }}</div>
+                <div>{{ item.createTime }}</div>
+              </div>
+            </div>
           </NPopover>
         </div>
-       
+
+        <div class="header-right-item header-right-item-help">
+          <NPopover trigger="hover">
+            <template #trigger>
+              <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt="" @click="() => { go({ name: 'help' }) }">
+            </template>
+            <span>ChatMoss帮助中心</span>
+          </NPopover>
+        </div>
+
       </div>
       <div class="header-right">
         <div class="tip-text-content tip-text-content1">
@@ -135,10 +135,10 @@ function getActivityListEvent() {
     </div>
     <div class='flex w-full sub-header'>
       <div class="header-left">
-        <div class="header-right-item"  @click="shopEvent">
+        <div class="header-right-item" @click="shopEvent">
           <span>商城</span>
         </div>
-        <div class="header-right-item" @click="()=>{ go({ name: 'invite' }) }">
+        <div class="header-right-item" @click="() => { go({ name: 'invite' }) }">
           <span>邀请</span>
         </div>
 
