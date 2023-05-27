@@ -11,6 +11,7 @@ import setting from '@/views/page/setting/index.vue'
 import application from '@/views/page/application/index.vue'
 import invite from '@/views/page/invite/index.vue'
 import help from '@/views/page/help/index.vue'
+import feedback from '@/views/page/feedback/index.vue'
 import sign from '@/views/page/sign/index.vue'
 import c404 from '@/views/exception/404/index.vue'
 import c500 from '@/views/exception/500/index.vue'
@@ -55,6 +56,11 @@ const routes: RouteRecordRaw[] = [
         path: 'help',
         name: 'help',
         component: help,
+      },
+      {
+        path: 'feedback',
+        name: 'feedback',
+        component: feedback,
       },
     ],
   },

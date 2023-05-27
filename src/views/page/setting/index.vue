@@ -9,8 +9,9 @@ import { getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
 import { localStorage } from '@/utils/storage/localStorage'
 import Page from "@/components/page/index.vue";
-import { useBack } from '@/utils/router'
+import { useBack,useGo } from '@/utils/router'
 const back = useBack()
+const go = useGo()
 // let props = defineProps(['register'])
 const emits = defineEmits(['modifyPassword', 'register'])
 
@@ -164,10 +165,10 @@ function getNSwitchModeValue(): any {
       </div>
       <div class="flex">
         <NButton v-if="userStore.userInfo.user.email" id="question-push" type="primary" size="tiny" quaternary
-          @click="openModel()">
+          @click="() => { go({ name: 'feedback' }) }">
           问题反馈
         </NButton>
-        <NButton type="primary" size="tiny" quaternary @click="emits('modifyPassword')">
+        <NButton type="primary" size="tiny" quaternary @click="()=>{ go({ name: 'login'}) }" >
           修改密码
         </NButton>
       </div>
