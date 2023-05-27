@@ -1,23 +1,20 @@
 <script setup lang="ts">
-import { NAlert, NAvatar, NButton, NCard, NDivider, NForm, NFormItem, NInput, NPopover, NSelect, NSpace, NSwitch, useMessage, useNotification } from 'naive-ui'
+import { NAvatar, NButton, NDivider, NInput, NSelect, NSwitch, useMessage, useNotification } from 'naive-ui'
 import { computed, h, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import uni from '@dcloudio/uni-webview-js'
 import { useAppStore, useUserStore } from '@/store'
-import { SvgIcon } from '@/components/common'
 import { getSystemNotice, sendFeedback } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
 import { localStorage } from '@/utils/storage/localStorage'
-import Page from "@/components/page/index.vue";
+import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
-const back = useBack()
-const go = useGo()
 // let props = defineProps(['register'])
 const emits = defineEmits(['modifyPassword', 'register'])
-
+const back = useBack()
+const go = useGo()
 const userStore = useUserStore()
 const notification = useNotification()
-
 
 const ms = useMessage()
 const appStore = useAppStore()
@@ -105,8 +102,6 @@ function fontSizeNumBtn() {
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
 
-
-
 // 主题
 function handleUpdateValue(chatmossTheme: string) {
   ms.info(chatmossTheme === 'dark' ? '深色模式开启' : '浅色模式开启')
@@ -155,18 +150,19 @@ function getNSwitchModeValue(): any {
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="设置中心" left-text="返回" left-arrow @click-left="back">
-      </van-nav-bar>
+      <van-nav-bar title="设置中心" left-text="返回" left-arrow @click-left="back" />
     </template>
-    <div class="dark:text-white">
+    <div class="setting-mian dark:text-white">
       <div class="flex items-center justify-between ">
         <div class="flex">
           <!-- <span class="mr-4">用户名称：{{ nickname || '未登录' }}</span> -->
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <NButton v-if="userStore.userInfo.user.email" id="question-push" type="primary" size="tiny" quaternary
-            @click="() => { go({ name: 'feedback' }) }">
+          <NButton
+            v-if="userStore.userInfo.user.email" id="question-push" type="primary" size="tiny" quaternary
+            @click="() => { go({ name: 'feedback' }) }"
+          >
             问题反馈
           </NButton>
           <NButton type="primary" size="tiny" quaternary @click="() => { go({ name: 'login' }) }">
@@ -174,7 +170,6 @@ function getNSwitchModeValue(): any {
           </NButton>
         </div>
       </div>
-      <NDivider />
       <div class="title-h1">
         ApiKeys设置
       </div>
@@ -197,8 +192,10 @@ function getNSwitchModeValue(): any {
           OpenAI模型选择
         </div>
         <div class="flex">
-          <NSelect v-model:value="modelValue" :options="options"
-            @change="(value) => { userStore.saveOpenaiVersion(value) }" />
+          <NSelect
+            v-model:value="modelValue" :options="options"
+            @change="(value) => { userStore.saveOpenaiVersion(value) }"
+          />
         </div>
         <div class="tip-text-input">
           小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
@@ -212,8 +209,10 @@ function getNSwitchModeValue(): any {
           ChatMoss主题设定
         </div>
         <div class="flex">
-          <NSwitch :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
-            @update:value="handleUpdateValue" />
+          <NSwitch
+            :default-value="getNSwitchValue()" checked-value="dark" unchecked-value="light"
+            @update:value="handleUpdateValue"
+          />
           {{ getNSwitchValue() === 'dark' ? '深色模式' : '浅色模式' }}
         </div>
       </div>
@@ -223,8 +222,10 @@ function getNSwitchModeValue(): any {
           回答模式（专业模式下会自动再每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
         </div>
         <div class="flex">
-          <NSwitch :default-value="getNSwitchModeValue()" checked-value="speciality" unchecked-value="normal"
-            @update:value="handleModeValue" />
+          <NSwitch
+            :default-value="getNSwitchModeValue()" checked-value="speciality" unchecked-value="normal"
+            @update:value="handleModeValue"
+          />
           {{ getNSwitchModeValue() === 'speciality' ? '专业模式' : '正常模式' }}
         </div>
       </div>
@@ -246,7 +247,6 @@ function getNSwitchModeValue(): any {
         小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
       </div>
     </div>
-
   </Page>
 </template>
 
@@ -271,5 +271,11 @@ function getNSwitchModeValue(): any {
 .title-h1 {
   margin: 10px 0px;
   color: #FF6666;
+}
+
+.setting-mian {
+	padding: 0 15px;
+	padding-top: 20px;
+	padding-bottom: 60px;
 }
 </style>

@@ -1,36 +1,36 @@
 <script lang="ts" setup>
-import { useGo } from '@/utils/router'
 import draggable from 'vuedraggable'
 import { ref } from 'vue'
+import { useGo } from '@/utils/router'
 const go = useGo()
 
-let enabled = ref(false);
-let list = ref([
-  { name: "John", id: 0 },
-  { name: "Joao", id: 1 },
-  { name: "Jean", id: 2 }
+const enabled = ref(false)
+const list = ref([
+  { name: 'John', id: '00001' },
+  { name: 'Joao', id: '00002' },
+  { name: 'Jean', id: '00003' },
 ])
 function handleEdit() {
-  enabled.value = true;
+  enabled.value = true
 }
-function handleDelete(row,i){
+function handleDelete(row, i) {
   console.log(i)
-  list.value.splice(i,1)
+  list.value.splice(i, 1)
 }
 
 function handleSave() {
-  enabled.value = false;
+  enabled.value = false
 }
-
 </script>
+
 <template>
   <div class="wrap">
     <div class="list">
       <draggable :list="list" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost">
         <template #item="{ element, index }">
           <div class="img">
-            <span class="close" v-if="enabled"  @click="handleDelete(element, index)">
-              <van-icon name="cross"/>
+            <span v-if="enabled" class="close" @click="handleDelete(element, index)">
+              <van-icon name="cross" />
             </span>
             <div :class="[enabled ? 'animate-pulse animate' : '']">
               <img src="./../chat/img/icon1.png" alt="">
@@ -39,13 +39,11 @@ function handleSave() {
           </div>
         </template>
       </draggable>
-
-
     </div>
     <div class="btns">
       <div class="btn">
-        <van-icon name="edit" @click="() => handleEdit()" v-if="!enabled" />
-        <span @click="() => handleSave()" v-if="enabled" style="font-size: 12px;">保存</span>
+        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
+        <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
       </div>
       <div class="btn">
         <van-icon name="plus" @click="() => { go({ name: 'application' }) }" />
@@ -76,50 +74,85 @@ function handleSave() {
 
 }
 </style>
+
 <style scoped lang="less">
 .wrap {
-  width: 40px;
-  padding-top: 10px;
-  border-right: 1px solid #bbbbbb;
-}
+	height: 95%;
+  width: 45px;
+	border-right: 0.5px solid rgba(145,158,171,.16);
+	border-bottom: 0.5px solid rgba(145,158,171,.16);
+	box-sizing: border-box;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 
-.img {
-  margin: 0 auto;
-  position: relative;
-  width: 30px;
-  height: 30px;
-  margin-top: 10px;
+	.list {
+		width: 45px;
+		height: 80%;
 
-  .animate {
-    animation-duration: 0.2s !important;
-  }
+		.img {
+			margin: 0 auto;
+			position: relative;
+			width: 45px;
+			height: 45px;
+			margin-top: 10px;
+			// background: linear-gradient(270deg, #323337 50%, rgba(70, 79, 111, 0.5) 100%);
+			// box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.05);
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
 
-  .close {
-    position: absolute;
-    right: -5px;
-    top: -10px;
-  }
+			&:hover {
+				background: linear-gradient(270deg, #323337 50%, rgba(70, 79, 111, 0.5) 100%);
+				box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.05);
+			}
 
-  span {
-    position: absolute;
-    right: 2px;
-    bottom: -6px;
-    color: white;
-  }
+			img {
+				width: 26px;
+				height: 26px
+			}
 
-}
+			.animate {
+				animation-duration: 0.2s !important;
+			}
 
-.list {
-  height: 80%;
-}
+			.close {
+				position: absolute;
+				right: -5px;
+				top: -10px;
+			}
 
-.btns {
-  height: 20%;
-  font-size: 24px;
-}
+			span {
+				position: absolute;
+				left: 5px;
+				bottom: 0px;
+				color: #fff;
+				opacity: 0.5;
+				font-size: 12px;
+				transform: scale(0.6);
+			}
 
-.btn {
-  padding-left: 6px;
-  box-sizing: border-box;
+		}
+	}
+
+	.btns {
+		height: 20%;
+		font-size: 24px;
+		.btn {
+			width: 45px;
+			height: 45px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+
+			&:hover {
+				background: linear-gradient(270deg, #323337 50%, rgba(70, 79, 111, 0.5) 100%);
+				box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.05);
+			}
+		}
+	}
+
 }
 </style>

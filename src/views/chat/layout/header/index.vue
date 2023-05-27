@@ -23,9 +23,9 @@ interface Emit {
 }
 
 function loginEvent(type: string) {
-  if (type === 'login') {
+  if (type === 'login')
     go({ name: 'login' })
-  }
+
   if (type === 'exit') {
     useAuthStore.setToken('')
     sendToMsg('chatMossToken', '')
@@ -76,7 +76,7 @@ function getActivityListEvent() {
 
 <template>
   <header class="header-main">
-    <div class='flex w-full header'>
+    <div class="flex w-full header">
       <div class="header-left">
         <div class="header-right-item">
           <!-- 个人中心 -->
@@ -98,8 +98,10 @@ function getActivityListEvent() {
                 </template>
               </NButton>
             </template>
-            <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-              style="max-width: 250px">
+            <div
+              v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+              style="max-width: 250px"
+            >
               <div class="mr-4 " style="width:30px">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
@@ -119,7 +121,6 @@ function getActivityListEvent() {
             <span>ChatMoss帮助中心</span>
           </NPopover>
         </div>
-
       </div>
       <div class="header-right">
         <div class="tip-text-content tip-text-content1">
@@ -130,19 +131,18 @@ function getActivityListEvent() {
             <span class="v-login" @click="loginEvent('login')">登录&注册</span>
           </p>
         </div>
-
       </div>
     </div>
-    <div class='flex w-full sub-header'>
+    <div class="flex w-full sub-header">
       <div class="header-left">
-        <div class="header-right-item" >
+        <div class="header-right-item">
           <span @click="shopEvent">商城</span>
         </div>
         <div class="header-right-item">
-          <span  @click="() => { go({ name: 'invite' }) }">邀请</span>
+          <span @click="() => { go({ name: 'invite' }) }">邀请</span>
         </div>
 
-        <div class="header-right-item" >
+        <div class="header-right-item">
           <span @click="() => { go({ name: 'sign' }) }">签到</span>
         </div>
       </div>
@@ -159,8 +159,10 @@ function getActivityListEvent() {
             <template #trigger>
               余额
             </template>
-            <div v-for="(row, i) of userStore.packageList" :key="i"
-              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 ">
+            <div
+              v-for="(row, i) of userStore.packageList" :key="i"
+              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 "
+            >
               <div>
                 <div style="width:200px" class="flex justify-between">
                   <span class="mr-4">{{ row.title }}</span>
@@ -207,7 +209,7 @@ function getActivityListEvent() {
   overflow: scroll;
   position: fixed;
   align-items: center;
-  padding: 0 16px;
+  // padding: 0 16px;
   user-select: none;
   backdrop-filter: blur(20px);
   background-color: rgba(60, 128, 253, 0.1);
@@ -236,6 +238,12 @@ function getActivityListEvent() {
       justify-content: center;
       cursor: pointer;
 
+			&:hover {
+        transform: scale(1.05);
+				font-weight: 600;
+				color: #3c72ff;
+			}
+
       &:active {
         transform: scale(.96);
       }
@@ -248,14 +256,15 @@ function getActivityListEvent() {
   }
 }
 
-
 .header {
-  height: 50px;
+	padding: 0 16px;
+  height: 45px;
 }
 
 .sub-header {
-  border-top: 1px solid #fff;
-  height: 40px;
+	border-top: 1px solid #242627;
+	padding: 0 16px;
+  height: 45px;
 }
 
 .chat-main {
@@ -375,5 +384,9 @@ function getActivityListEvent() {
   margin-top: 10px;
   margin-bottom: 10px;
   margin-left: 10px;
+}
+
+.page .header {
+	padding: 0px;
 }
 </style>

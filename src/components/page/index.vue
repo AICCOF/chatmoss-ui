@@ -1,13 +1,11 @@
 <template>
   <div>
     <div class="header">
-      <slot name="title"></slot>
-
+      <slot name="title" />
     </div>
     <div class="pages">
-      <slot></slot>
+      <slot />
     </div>
-
   </div>
 </template>
 
@@ -32,9 +30,8 @@
 .pages {
   height: 100vh;
   box-sizing: border-box;
-
   overflow-y: auto;
-  padding:0 8px;
+  // padding:0 8px;
   padding-top: 46px;
 }
 </style>

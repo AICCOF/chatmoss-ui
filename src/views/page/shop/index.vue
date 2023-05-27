@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import Page from "@/components/page/index.vue";
-import {  useBack } from '@/utils/router'
-import { toMoss } from '@/api'
-import { ShopInfo, exchangeOptions } from './data'
 import { ref } from 'vue'
-import { useAppStore, useChatStore, useUserStore } from '@/store'
-import { NButton, NCard, NDivider, NInput, NModal, NSelect, useDialog, useMessage, } from 'naive-ui'
+import { NButton, NCard, NDivider, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
+import { ShopInfo, exchangeOptions } from './data'
+import Page from '@/components/page/index.vue'
+import { useBack } from '@/utils/router'
+import { toMoss } from '@/api'
+import { useUserStore } from '@/store'
 import { exchange } from '@/api/personCenter'
 
 const personCenter = ref(ShopInfo)
@@ -68,16 +68,14 @@ async function exchangeMossEvent() {
     },
   })
 }
-
 </script>
+
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="ChatMoss商店" left-text="返回" left-arrow @click-left="back">
-      </van-nav-bar>
+      <van-nav-bar title="ChatMoss商店" left-text="返回" left-arrow @click-left="back" />
     </template>
-    <div>
-
+    <div class="shop-main">
       <div>
         <div class="title-h1">
           兑换码（登录后才能兑换哦~）
@@ -104,18 +102,18 @@ async function exchangeMossEvent() {
       </div>
       <NDivider />
 
-
       <van-tabs v-model:active="activeName" class="dark:text-white">
         <van-tab title="4.0模型套餐" name="a">
-
           <div class="tip-text-input1">
             小提示：不同的套餐次数可以累加
           </div>
           <div class="tip-text-input1" />
           <div class="flex flex-wrap">
-            <div v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
+            <div
+              v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
               class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-              @click="buyEvent(item)">
+              @click="buyEvent(item)"
+            >
               <div class="title-h2">
                 {{ item.title }}
               </div>
@@ -134,9 +132,11 @@ async function exchangeMossEvent() {
           </div>
           <div class="tip-text-input1" />
           <div class="flex flex-wrap">
-            <div v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
+            <div
+              v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
               class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer "
-              @click="buyEvent(item)">
+              @click="buyEvent(item)"
+            >
               <div class="title-h2">
                 {{ item.title }}
               </div>
@@ -148,13 +148,14 @@ async function exchangeMossEvent() {
               </div>
             </div>
           </div>
-
         </van-tab>
         <van-tab title="字符包" name="c">
           <div class="flex flex-wrap">
-            <div v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
+            <div
+              v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
               class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-              @click="buyEvent(item)">
+              @click="buyEvent(item)"
+            >
               <div class="title-h2">
                 {{ item.title }}
               </div>
@@ -168,15 +169,14 @@ async function exchangeMossEvent() {
           </div>
         </van-tab>
       </van-tabs>
-
-
-
     </div>
 
     <!-- 购买字符数 -->
     <NModal v-model:show="shopModal">
-      <NCard style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
-        :mask-closable="true">
+      <NCard
+        style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
+        :mask-closable="true"
+      >
         <div class="tip-text-input2">
           支付宝扫码购买（暂不支持微信）
         </div>
@@ -186,11 +186,8 @@ async function exchangeMossEvent() {
         </div>
       </NCard>
     </NModal>
-
   </Page>
 </template>
-
-
 
 <style>
 .title-h1 {
@@ -230,5 +227,9 @@ async function exchangeMossEvent() {
   margin: 0 auto;
 }
 
-
+.shop-main {
+	padding: 0 15px;
+	padding-top: 10px;
+	padding-bottom: 20px;
+}
 </style>

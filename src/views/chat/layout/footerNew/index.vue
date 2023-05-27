@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NPopover, useMessage } from 'naive-ui'
+import { useMessage } from 'naive-ui'
 // import { computed } from 'vue'
 import { ref } from 'vue'
 
@@ -35,7 +35,7 @@ const show = ref(false)
         </div>
       </div>
       <div class="footer-right">
-        <div class="footer-item" @click="show = true">
+        <!-- <div class="footer-item" @click="show = true">
           <div class="header-right-item header-right-item-help">
             <NPopover trigger="hover">
               <template #trigger>
@@ -44,10 +44,10 @@ const show = ref(false)
               <span>ChatMoss帮助中心</span>
             </NPopover>
           </div>
-        </div>
+        </div> -->
       </div>
     </header>
-    <van-overlay :show="show" @click="show = false" style="z-index:100">
+    <van-overlay :show="show" style="z-index:100" @click="show = false">
       <div class="wrapper">
         <div class="wrapper-mian">
           <iframe src="https://h5.aihao123.cn/pages/app/help/index.html" frameborder="0" />

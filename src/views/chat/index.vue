@@ -6,13 +6,13 @@ import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
+import applicationList from './applicationList.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
 import { auth, fetchChatAPIProcess, paper } from '@/api'
 import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
-import applicationList from './applicationList.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
@@ -180,9 +180,9 @@ async function onConversation(askMsg?: string, type?: number) {
     if (!res)
       return
   }
-  if(!chatStore.getUuid){
-     ms.warning('当前会话丢失,请新建会话或打开历史记录选择会话.')
-     return 
+  if (!chatStore.getUuid) {
+    ms.warning('当前会话丢失,请新建会话或打开历史记录选择会话.')
+    return
   }
   // if (!userStore.isAsk) {
   //   ms.error('当前字数已用尽，请等待明日免费字符，或者在商店内购买字符使用，或者上传key使用')
@@ -544,15 +544,17 @@ async function onSuccessAuth() {
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
-    
     <main class="flex-1 overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">  
+      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList />
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: auto">
           <template v-if="!dataSources.length">
             <div class="no-data-info">
+              <div class="no-data-img">
+                初始状态占位图片
+              </div>
               <!-- 标题 -->
-              <div class="no-data-info-title">
+              <!-- <div class="no-data-info-title">
                 ChatMoss
                 <span
                   v-if="!!isPlus" :class="{ is3_5: isPlus === '3.5' }"
@@ -561,8 +563,8 @@ async function onSuccessAuth() {
                 >
                   {{ isPlus }} 模型
                 </span>
-              </div>
-              <div class="no-data-btns-list">
+              </div> -->
+              <!-- <div class="no-data-btns-list">
                 <div
                   v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
                   @click="noDataInfoEvent(index)"
@@ -575,7 +577,7 @@ async function onSuccessAuth() {
                     {{ item.text }}
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </template>
           <template v-else>
@@ -643,7 +645,17 @@ async function onSuccessAuth() {
 
 <style lang="less">
 .no-data-info {
-  margin-top: 5%;
+  margin-top: 45%;
+
+	.no-data-img {
+		width: 300px;
+		height: 200px;
+		border: 1px solid red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+		margin: 0 auto;
+	}
 
   .no-data-info-title {
     position: relative;
