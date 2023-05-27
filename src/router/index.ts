@@ -8,6 +8,9 @@ import chat from '@/views/chat/index.vue'
 import shop from '@/views/page/shop/index.vue'
 import login from '@/views/page/login/index.vue'
 import setting from '@/views/page/setting/index.vue'
+import application from '@/views/page/application/index.vue'
+import invite from '@/views/page/invite/index.vue'
+import sign from '@/views/page/sign/index.vue'
 import c404 from '@/views/exception/404/index.vue'
 import c500 from '@/views/exception/500/index.vue'
 const routes: RouteRecordRaw[] = [
@@ -31,6 +34,21 @@ const routes: RouteRecordRaw[] = [
         path: 'setting',
         name: 'setting',
         component: setting,
+      },
+      {
+        path: 'application',
+        name: 'application',
+        component: application,
+      },
+      {
+        path: 'invite',
+        name: 'invite',
+        component: invite,
+      },
+      {
+        path: 'sign',
+        name: 'sign',
+        component: sign,
       },
     ],
   },
