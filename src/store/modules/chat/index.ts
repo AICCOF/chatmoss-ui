@@ -1,18 +1,21 @@
 import { defineStore } from 'pinia'
 import { createDiscreteApi } from 'naive-ui'
-import { getLocalState, setLocalState } from './helper'
-import { addConversation, deleteConversation, editConversation, getConversationDetail, getConversationList, deleteBatchConversation } from '@/api/conversation'
-import { getToken } from '../auth/helper'
 import dayjs from 'dayjs'
+import { getToken } from '../auth/helper'
+import { getLocalState, setLocalState } from './helper'
+import { addConversation, deleteBatchConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
+// import { useUserStore } from '@/store'
+
+// const userStore = useUserStore()
 const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
   {},
 )
 
-let flag = 'MOSS_';
+const flag = 'MOSS_'
 
 export function verify(id: any) {
-  return `${id}`.indexOf(flag) > - 1
+  return `${id}`.includes(flag)
 }
 export const useChatStore = defineStore('chat-store', {
   state: () => {
@@ -20,19 +23,19 @@ export const useChatStore = defineStore('chat-store', {
       ...getLocalState(),
       chat: [],
       searchMsg: '',
-      deleteIds: []
+      deleteIds: [],
     }
   },
   getters: {
     textLength() {
-      let dataSources = this.getChatByUuid() as any[];
+      const dataSources = this.getChatByUuid() as any[]
       // console.log(dataSources, 'textLength')
       return Math.ceil(dataSources.map(item => item.text).join('\n').length)
     },
     isLimit() {
       console.log(this.textLength, 'textLength')
-      let leg = this.textLength as number;
-      return leg > 2500;
+      const leg = this.textLength as number
+      return leg > 2500
     },
     getChatHistoryByCurrentActive(state: Chat.ChatState) {
       const index = state.chat.findIndex(item => item.id === state.active)
@@ -44,88 +47,95 @@ export const useChatStore = defineStore('chat-store', {
       return state.active as any
     },
     chatsCollect(state: Chat.ChatState) {
-      let chat: Chat.ChatInfo[] = this.chat;
-      let localChat: Chat.ChatInfo[] = this.localChat;
-      return [...chat.filter((row) => row.title.indexOf(state.searchMsg) > -1), ...localChat.filter((row) => row.title.indexOf(state.searchMsg) > -1)]
+      const chat: Chat.ChatInfo[] = this.chat
+      const localChat: Chat.ChatInfo[] = this.localChat
+      return [...chat.filter(row => row.title.includes(state.searchMsg)), ...localChat.filter(row => row.title.includes(state.searchMsg))]
     },
     sortTimeChat() {
-      let timeList: {
-        title: string,
+      const timeList: {
+        title: string
         data: Chat.ChatState[]
       }[] = [
-          {
-            title: '今天',
-            data: []
-          },
-          {
-            title: '昨天',
-            data: []
-          },
-          {
-            title: '三天前',
-            data: []
-          },
-          {
-            title: '七天前',
-            data: []
-          },
-          {
-            title: '一个月前',
-            data: []
-          }
-        ]
+        {
+          title: '今天',
+          data: [],
+        },
+        {
+          title: '昨天',
+          data: [],
+        },
+        {
+          title: '三天前',
+          data: [],
+        },
+        {
+          title: '七天前',
+          data: [],
+        },
+        {
+          title: '一个月前',
+          data: [],
+        },
+      ]
       this.chatsCollect.forEach((row) => {
-        let timestamp = row.timestamp
-        if (timestamp >= dayjs().startOf('day').valueOf()) {
+        const timestamp = row.timestamp
+        if (timestamp >= dayjs().startOf('day').valueOf())
           timeList[0].data.push(row)
-        } else if (
-          timestamp < dayjs().startOf('day').valueOf() &&
-          timestamp >= dayjs().startOf('day').subtract(1, 'day').valueOf()
-        ) {
+
+        else if (
+          timestamp < dayjs().startOf('day').valueOf()
+          && timestamp >= dayjs().startOf('day').subtract(1, 'day').valueOf()
+        )
           timeList[1].data.push(row)
-        } else if (
-          timestamp < dayjs().startOf('day').subtract(1, 'day').valueOf() &&
-          timestamp >= dayjs().startOf('day').subtract(3, 'day').valueOf()
-        ) {
+
+        else if (
+          timestamp < dayjs().startOf('day').subtract(1, 'day').valueOf()
+          && timestamp >= dayjs().startOf('day').subtract(3, 'day').valueOf()
+        )
           timeList[2].data.push(row)
-        } else if (
-          timestamp < dayjs().startOf('day').subtract(3, 'day').valueOf() &&
-          timestamp >= dayjs().startOf('day').subtract(7, 'day').valueOf()
-        ) {
+
+        else if (
+          timestamp < dayjs().startOf('day').subtract(3, 'day').valueOf()
+          && timestamp >= dayjs().startOf('day').subtract(7, 'day').valueOf()
+        )
           timeList[3].data.push(row)
-        } else {
+
+        else
           timeList[4].data.push(row)
-        }
       })
       return timeList
     },
 
     getChatByUuid(state: Chat.ChatState) {
       return () => {
-        let active = state.active as any;
+        const active = state.active as any
 
-        if (!active) return []
-        if (verify(state.active)) {
+        if (!active)
+          return []
+        if (verify(state.active))
           return (state.localChat.find(item => item.id === state.active)?.data ?? [])
-        } else {
+
+        else
           return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => a.timestamp - b.timestamp)
-        }
       }
     },
   },
 
   actions: {
     async createChat(title?: string) {
-      let token = getToken()
-      if (token) {
-        await this.createOriginChat(title);
-      } else {
-        await this.createLocalChat(title);
-      }
+      const token = getToken()
+      if (token)
+        await this.createOriginChat(title)
+
+      else
+        await this.createLocalChat(title)
     },
     async createOriginChat(title?: string) {
       try {
-        const res = await addConversation({ title: title || '新建问题' })
+        const res = await addConversation({
+          title: title || '新建问题',
+          appId: '17',
+        })
         this.active = res.msg as number
         this.chat.unshift(res.list[0])
         this.reloadRoute()
@@ -136,21 +146,21 @@ export const useChatStore = defineStore('chat-store', {
     },
     async createLocalChat(title?: string) {
       // this.active = []
-      let timestamp = new Date().getTime()
-      let id = "MOSS_" + timestamp;
+      const timestamp = new Date().getTime()
+      const id = `MOSS_${timestamp}`
       this.localChat.unshift({
         timestamp,
         id,
-        "title": title || "新建问题",
+        title: title || '新建问题',
         isEdit: false,
-        data: []
+        data: [],
       })
       this.active = id
       this.reloadRoute()
     },
     async chatList() {
       const res = await getConversationList()
-      this.chat = res.list || [];
+      this.chat = res.list || []
       this.getConversationDetail()
       // 没有选中某一项的处理逻辑
       // setTimeout(() => {
@@ -175,12 +185,12 @@ export const useChatStore = defineStore('chat-store', {
       if (result && !result.data) {
         result.data = []
         const res = await getConversationDetail({ conversationId: this.active, pageSize: 100 })
-        let rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
+        const rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
         result.data.push(...rows.map((row: any, i: number, array: any[]) => {
-          let ast = '';
-          if (row.content.startsWith('1:') && array[i - 1]) {
-            ast = array[i - 1].content.slice(2);
-          }
+          let ast = ''
+          if (row.content.startsWith('1:') && array[i - 1])
+            ast = array[i - 1].content.slice(2)
+
           return {
             ...row,
             ast,
@@ -192,13 +202,12 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async updateHistory(id: any, edit: Partial<Chat.ChatInfo>) {
+      const token = getToken()
+      if (token && !verify(id))
+        await this.updateOriginHistory(id, edit)
 
-      let token = getToken()
-      if (token && !verify(id)) {
-        await this.updateOriginHistory(id, edit);
-      } else {
-        await this.updateLocalHistory(id, edit);
-      }
+      else
+        await this.updateLocalHistory(id, edit)
     },
     async updateOriginHistory(id: number, edit: Partial<Chat.ChatInfo>) {
       const index = this.chat.findIndex(item => item.id === id)
@@ -213,9 +222,6 @@ export const useChatStore = defineStore('chat-store', {
             await editConversation({ title: this.chat[index].tem, conversationId: this.chat[index].id })
             this.chat[index].title = this.chat[index].tem as string
           }
-
-
-
         }
         await this.getConversationDetail()
       }
@@ -241,14 +247,12 @@ export const useChatStore = defineStore('chat-store', {
 
       if (index !== -1) {
         this.deleteOriginHistory(index)
-      } else {
-        const i = this.localChat.findIndex(item => item.id === id)
-        if (i !== -1) {
-          this.deleteLocalHistory(i)
-        }
       }
-
-
+      else {
+        const i = this.localChat.findIndex(item => item.id === id)
+        if (i !== -1)
+          this.deleteLocalHistory(i)
+      }
     },
     async deleteOriginHistory(index: number) {
       await deleteConversation({ conversationId: this.chat[index].id })
@@ -264,7 +268,6 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute()
     },
     async deleteLocalHistory(index: number) {
-
       this.localChat.splice(index, 1)
       const chat = this.localChat[this.localChat.length - 1]
       if (!chat)
@@ -274,29 +277,27 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute()
     },
     async deleteBatchHistory() {
-
-      console.log(this.$state);
-      let originIds = [];
-      let localIds = [];
-      this.$state.deleteIds.forEach(id => {
-        if (verify(id)) {
+      console.log(this.$state)
+      const originIds = []
+      const localIds = []
+      this.$state.deleteIds.forEach((id) => {
+        if (verify(id))
           localIds.push(id)
-        } else {
+
+        else
           originIds.push(id)
-        }
-      });
+      })
       if (originIds.length > 0) {
-        await deleteBatchConversation({ "conversationIds": originIds.join(',') })
+        await deleteBatchConversation({ conversationIds: originIds.join(',') })
         await this.chatList()
       }
-      this.$state.deleteIds.forEach(id => {
+      this.$state.deleteIds.forEach((id) => {
         const i = this.localChat.findIndex(item => item.id === id)
-        if (i !== -1) {
+        if (i !== -1)
           this.deleteLocalHistory(i)
-        }
-      });
-      this.active = null;
-      this.deleteIds = [];
+      })
+      this.active = null
+      this.deleteIds = []
     },
     async setActive(id: any) {
       this.active = id
@@ -315,12 +316,12 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     async addChatByUuid(id: number, chat: Chat.Chat) {
-      let token = getToken()
-      if (token && !verify(this.active)) {
-        await this.addOriginChat(id, chat);
-      } else {
-        await this.addLocalChat(id, chat);
-      }
+      const token = getToken()
+      if (token && !verify(this.active))
+        await this.addOriginChat(id, chat)
+
+      else
+        await this.addLocalChat(id, chat)
     },
     async addLocalChat(id: number, chat: Chat.Chat) {
       if (!id || id === 0) {
@@ -336,12 +337,11 @@ export const useChatStore = defineStore('chat-store', {
         }
         result.data.push(chat)
         this.recordState()
-      } else {
-        //  兼容没有找到会话id的情况
-        this.addLocalChat(0, chat);
-
       }
-
+      else {
+        //  兼容没有找到会话id的情况
+        this.addLocalChat(0, chat)
+      }
     },
     async addOriginChat(id: number, chat: Chat.Chat) {
       if (!id || id === 0) {
@@ -358,18 +358,19 @@ export const useChatStore = defineStore('chat-store', {
         }
         result.data.push(chat)
         this.recordState()
-      } else {
-        this.addLocalChat(0, chat);
+      }
+      else {
+        this.addLocalChat(0, chat)
       }
     },
 
     async updateChatByUuid(id: number, index: number, chat: Chat.Chat) {
-      let token = getToken()
-      if (token && !verify(this.active)) {
-        await this.updateOriginChatByUuid(id, index, chat);
-      } else {
-        await this.updateLocalChatByUuid(id, index, chat);
-      }
+      const token = getToken()
+      if (token && !verify(this.active))
+        await this.updateOriginChatByUuid(id, index, chat)
+
+      else
+        await this.updateLocalChatByUuid(id, index, chat)
     },
     updateOriginChatByUuid(id: number, index: number, chat: Chat.Chat) {
       if (!id || id === 0) {
