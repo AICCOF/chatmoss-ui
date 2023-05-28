@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import draggable from 'vuedraggable'
-import { ref, nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 import { showConfirmDialog, showToast } from 'vant'
-import { useGo } from '@/utils/router'
-import { getApplicationInstall, getApplicationInstallList, getApplicationSort } from '@/api/application'
-import { useUserStore, useChatStore } from '@/store'
 import { useMessage } from 'naive-ui'
+import { useGo } from '@/utils/router'
+import { getApplicationInstall, getApplicationSort } from '@/api/application'
+import { useChatStore, useUserStore } from '@/store'
 
 const ms = useMessage()
 
@@ -18,99 +18,100 @@ const deleteItem = ref([])
 
 userStore.getApplicationInstallListAPI()
 
-
-
 function handleEdit() {
-	enabled.value = true
+  enabled.value = true
 }
 function handleClick(row) {
-	if (!enabled.value)
-		userStore.setAppId(row.appId)
-	nextTick(() => {
-		chatStore.chatList();
-		ms.warning('切换应用成果,请新建会话或者选中历史会话在提问')
-	})
-
+  if (!enabled.value)
+    userStore.setAppId(row.appId)
+  nextTick(() => {
+    chatStore.chatList()
+    ms.warning('切换应用成功,请新建会话或者选中历史会话在提问')
+  })
 }
 function handleDelete(row, i) {
-	deleteItem.value.push(i)
-	list.value.installList.splice(i, 1)
+  deleteItem.value.push(i)
+  list.value.installList.splice(i, 1)
 }
 
 function handleSave() {
-	showConfirmDialog({
-		title: '保存',
-		message:
+  showConfirmDialog({
+    title: '保存',
+    message:
 			'确定进行此操作?',
-	})
-		.then(async () => {
-			// on confirm
-			const data = list.value.installList.map((row, index) => {
-				return {
-					appId: row.appId,
-					sort: index + 1,
-				}
-			})
-			const res = await getApplicationSort(data)
+  })
+    .then(async () => {
+      // on confirm
+      const data = list.value.installList.map((row, index) => {
+        return {
+          appId: row.appId,
+          sort: index + 1,
+        }
+      })
+      const res = await getApplicationSort(data)
 
-			if (deleteItem.value.length > 0) {
-				await getApplicationInstall({
-					appId: deleteItem.value.join(','),
-					installed: 1,
-				})
-			}
+      if (deleteItem.value.length > 0) {
+        await getApplicationInstall({
+          appId: deleteItem.value.join(','),
+          installed: 1,
+        })
+      }
 
-			deleteItem.value = []
-			getApplicationInstallListAPI()
-			showToast(res.msg)
-		})
-		.catch(() => {
-			// on cancel
-		})
+      deleteItem.value = []
+      getApplicationInstallListAPI()
+      showToast(res.msg)
+    })
+    .catch(() => {
+      // on cancel
+    })
 
-	enabled.value = false
+  enabled.value = false
 }
 </script>
 
 <template>
-	<div class="wrap">
-		<div class="list">
-			<draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group" ghost-class="ghost">
-				<template #item="{ element }">
-					<div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-						@click="handleClick(element)">
-						<span class="span"> {{ element.appId }}</span>
-						<div>
-							<img :src="element.iconUrl" alt="">
-						</div>
-					</div>
-				</template>
-			</draggable>
-			<draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost">
-				<template #item="{ element, index }">
-					<div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-						@click="handleClick(element)">
-						<span v-if="enabled" class="close" @click="handleDelete(element, index)">
-							<van-icon name="cross" />
-						</span>
-						<span class="span"> {{ element.appId }}</span>
-						<div :class="[enabled ? 'animate-pulse animate' : '']">
-							<img :src="element.iconUrl" alt="">
-						</div>
-					</div>
-				</template>
-			</draggable>
-		</div>
-		<div class="btns">
-			<div class="btn">
-				<van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
-				<span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
-			</div>
-			<div class="btn">
-				<van-icon name="plus" @click="() => { go({ name: 'application' }) }" />
-			</div>
-		</div>
-	</div>
+  <div class="wrap">
+    <div class="list">
+      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group" ghost-class="ghost">
+        <template #item="{ element }">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
+            <span class="span"> {{ element.appId }}</span>
+            <div>
+              <img :src="element.iconUrl" alt="">
+            </div>
+          </div>
+        </template>
+      </draggable>
+      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost">
+        <template #item="{ element, index }">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
+            <span v-if="enabled" class="close" @click="handleDelete(element, index)">
+              <van-icon name="cross" />
+            </span>
+            <span class="span"> {{ element.appId }}</span>
+            <div :class="[enabled ? 'animate-pulse animate' : '']">
+              <img :src="element.iconUrl" alt="">
+            </div>
+          </div>
+        </template>
+      </draggable>
+    </div>
+    <div class="btns">
+      <div class="btn">
+        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
+        <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
+      </div>
+      <div class="btn">
+        <van-icon name="plus" @click="() => { go({ name: 'application' }) }" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>

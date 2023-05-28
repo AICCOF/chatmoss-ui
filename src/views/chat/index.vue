@@ -62,7 +62,6 @@ const isPlus = computed(() => {
 if (!localStorage.getItem('isCorrelation'))
   localStorage.setItem('isCorrelation', 'true')
 
-
 let controller = new AbortController()
 
 const ms = useMessage()
@@ -548,7 +547,7 @@ async function onSuccessAuth() {
           <template v-if="!dataSources.length">
             <div class="no-data-info">
               <!-- 应用介绍 -->
-              <div class="no-data-info-text" v-if="userStore.currentApp">
+              <div v-if="userStore.currentApp" class="no-data-info-text">
                 应用介绍：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
@@ -583,7 +582,7 @@ async function onSuccessAuth() {
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
     <footer :class="footerClass">
-      <div class="w-full max-w-screen-xl m-auto">
+      <div class="w-full m-auto">
         <div class="moss-btns flex justify-between space-x-2 w-full">
           <NInput
             v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus

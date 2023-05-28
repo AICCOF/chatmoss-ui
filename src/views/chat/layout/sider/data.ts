@@ -78,7 +78,7 @@ export const ShopInfo = {
     {
       title: '一天体验套餐',
       desc: '20次(每人限一次)',
-      count: '0.9元',
+      count: '1.01元',
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_0.png',
     },
     {

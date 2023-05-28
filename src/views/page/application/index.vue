@@ -1,93 +1,104 @@
 <script lang="ts" setup>
-import Page from "@/components/page/index.vue";
-import { useBack, useGo } from '@/utils/router'
 import { ref } from 'vue'
-import { getApplicationList } from '@/api/application'
-import { getApplicationTypeList, getApplicationInstall, getApplicationLike, getApplicationSearch } from '@/api/application'
+import { useMessage } from 'naive-ui'
+import Page from '@/components/page/index.vue'
+import { useBack, useGo } from '@/utils/router'
+import { getApplicationInstall, getApplicationLike, getApplicationList, getApplicationSearch, getApplicationTypeList } from '@/api/application'
+const ms = useMessage()
 const back = useBack()
 const go = useGo()
-const value = ref('');
-const flag = ref(true);
-const active = ref(0);
-const typeList = ref('');
-const dataList = ref([]);
+const value = ref('')
+const flag = ref(true)
+const active = ref(0)
+const typeList = ref('')
+const dataList = ref([])
 
 async function getApplicationListAPI(appType) {
-  let res = await getApplicationList({
+  const res = await getApplicationList({
     appType,
     pageNum: 1,
-    pageSize: 1000
-  });
-  dataList.value = res.rows || [];
+    pageSize: 1000,
+  })
+  dataList.value = res.rows || []
 }
 
 async function getApplicationSearchAPI(appType) {
   if (value.value) {
-    let res = await getApplicationSearch(value.value);
-    dataList.value = res.rows || [];
-    flag.value = false;
-  } else {
-    getApplicationListAPI(typeList.value[active.value].id)
-    flag.value = true;
+    const res = await getApplicationSearch(value.value)
+    dataList.value = res.rows || []
+    flag.value = false
   }
-
+  else {
+    getApplicationListAPI(typeList.value[active.value].id)
+    flag.value = true
+  }
 }
 
 function handleChange(index: number) {
   getApplicationListAPI(typeList.value[index].id)
 }
 // getApplicationListAPI();
-getApplicationTypeListAPI();
+getApplicationTypeListAPI()
 async function getApplicationTypeListAPI() {
-  let res = await getApplicationTypeList();
+  const res = await getApplicationTypeList()
   typeList.value = (res.list || [])
-  active.value = 0;
+  active.value = 0
   getApplicationListAPI(typeList.value[active.value].id)
 }
 async function handleLike(row) {
-  let res = await getApplicationLike({
+  console.log('', row.liked)
+  ms.success(row.liked === 1 ? '已取消点赞，点赞结果一分钟后更新' : '点赞成功，点赞结果一分钟后更新')
+  const res = await getApplicationLike({
     appId: row.id,
-    type: row.liked === 0 ? 1 : 0
+    type: row.liked === 0 ? 1 : 0,
   })
 
-  row.liked = row.liked === 0 ? 1 : 0;
+  row.liked = row.liked === 0 ? 1 : 0
 }
 
 async function handleInstalled(row) {
+  ms.success(row.installed === 1 ? '卸载成功' : '安装成功')
   await getApplicationInstall({
     appId: row.id,
-    type: row.installed === 0 ? 1 : 0
+    type: row.installed === 0 ? 1 : 0,
   })
-  row.installed = row.installed === 0 ? 1 : 0;
+  row.installed = row.installed === 0 ? 1 : 0
 }
 </script>
 
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="应用商店" left-text="返回" left-arrow @click-left="back">
-      </van-nav-bar>
+      <van-nav-bar title="应用商店" left-text="返回" left-arrow @click-left="back" />
     </template>
     <div class="flex justify-center justify-around mt-4">
-      <van-button type="primary" style="width:40%" @click="() => { go({ name: 'createApp' }) }">创建应用</van-button>
-      <van-button type="success" style="width:40%" @click="() => { go({ name: 'appList' }) }">查看自己创建的应用</van-button>
+      <van-button type="primary" style="width:40%" @click="() => { go({ name: 'createApp' }) }">
+        创建应用
+      </van-button>
+      <van-button type="success" style="width:40%" @click="() => { go({ name: 'appList' }) }">
+        查看自己创建的应用
+      </van-button>
     </div>
 
     <div class="mt-4 flex items-center">
-      <van-search v-model="value" class="flex-1" placeholder="搜索应用" @search="getApplicationSearchAPI" show-action>
+      <van-search v-model="value" class="flex-1 button-t1" placeholder="搜索应用" show-action @search="getApplicationSearchAPI">
         <template #action>
-          <div @click="getApplicationSearchAPI">搜索</div>
+          <van-button size="small" type="primary" @click="getApplicationSearchAPI">
+            搜索
+          </van-button>
         </template>
       </van-search>
     </div>
 
     <div class="flex">
-      <van-sidebar v-model="active" @change="handleChange" v-if="flag">
-        <van-sidebar-item :title="row.typeName" v-for="(row, i) of typeList" :key="i" />
+      <van-sidebar v-if="flag" v-model="active" @change="handleChange">
+        <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
       </van-sidebar>
       <div class="mt-4  flex-1 pl-4 w-full">
-        <div class="flex justify-between items-center  dark:text-white w-full flex-1 item" v-for="(item, i) of dataList"
-          :key="i">
+        <div
+          v-for="(item, i) of dataList" :key="i"
+          class="flex justify-between items-center  dark:text-white w-full flex-1 item"
+        >
           <div class="flex items-center flex-1">
             <div class="mr-2">
               <img :src="item.icon" alt="" style="width:30px;height: 30px;">
@@ -97,29 +108,38 @@ async function handleInstalled(row) {
               <div class="w-full pr-4 flex-1">
                 <div class="flex  items-center w-full">
                   <span class="text-base mr-4">{{ item.appName }}</span>
-                  <span @click="handleLike(item)">
-                    <van-icon name="like-o" style="color:red;" v-if='item.liked === 0' />
-                    <van-icon name="like" style="color:red;" v-if='item.liked === 1' /><span>{{ item.likeCountStr
+                  <span style="cursor: pointer;" @click="handleLike(item)">
+                    <van-icon v-if="item.liked === 0" name="like-o" style="color:red;" />
+                    <van-icon v-if="item.liked === 1" name="like" style="color:red;" /><span style="margin-left: 4px;">{{ item.likeCountStr
                     }}</span>
                   </span>
                 </div>
-                <div class="text-sm">{{ item.desc }}</div>
+                <div class="text-sm">
+                  {{ item.desc }}
+                </div>
               </div>
             </div>
           </div>
           <div @click="handleInstalled(item)">
-            <van-button type="primary" size="mini" v-if='item.installed === 0'>安装</van-button>
-            <van-button type="primary" size="mini" v-if='item.installed === 1'>卸载</van-button>
+            <van-button v-if="item.installed === 0" type="primary" size="mini">
+              安装
+            </van-button>
+            <van-button v-if="item.installed === 1" type="primary" size="mini">
+              卸载
+            </van-button>
           </div>
         </div>
-
       </div>
     </div>
-
   </Page>
 </template>
-<style scoped>
+
+<style lang="less" scoped>
 .item {
   height: 50px;
+}
+
+/deep/ .van-search__action {
+	margin-top: -10px;
 }
 </style>

@@ -259,7 +259,7 @@ function getNSwitchModeValue(): any {
       <NDivider />
       <div>
         <div class="title-h1">
-          回答模式（专业模式下会自动再每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
+          回答模式（专业模式下会自动在每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
         </div>
         <div class="flex">
           <NSwitch

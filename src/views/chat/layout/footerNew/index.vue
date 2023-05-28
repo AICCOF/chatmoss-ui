@@ -68,7 +68,7 @@ const show = ref(false)
 	font-style: italic;
 }
 .footer-main {
-	max-width: 1280px;
+	// max-width: 1280px;
 	width: 100%;
 	min-width: 250px;
 	overflow: scroll;

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { NButton, NPopover, NTag } from 'naive-ui'
-import { computed, onMounted, ref, watchEffect , h } from 'vue'
+import { NAvatar, NButton, NPopover, NTag, useMessage, useNotification } from 'naive-ui'
+import { computed, h, onMounted, ref, watchEffect } from 'vue'
 import activity from './../activity.vue'
 import { SvgIcon } from '@/components/common'
 import { useUserStore } from '@/store'
@@ -10,7 +10,6 @@ import { staticData } from '@/store/static'
 import { useGo } from '@/utils/router'
 import { getSystemNotice } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
-import { NAvatar, useMessage, useNotification } from 'naive-ui'
 const Message = useMessage()
 // const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
@@ -55,26 +54,28 @@ function handleClose(row: any) {
 watchEffect(() => {
   const { user } = userStore.userInfo
   if (user.email)
-    // resetToken()
-  if (userStore.isAuth === 3) {
-    useAuthStore.setToken('')
-    sendToMsg('chatMossToken', '')
-    chatStore.clearList()
-    userStore.residueCountAPI()
-    Message.error('登录已过期,请重新登录')
+  // resetToken()
+  {
+    if (userStore.isAuth === 3) {
+      useAuthStore.setToken('')
+      sendToMsg('chatMossToken', '')
+      chatStore.clearList()
+      userStore.residueCountAPI()
+      Message.error('登录已过期,请重新登录')
+    }
   }
 })
 
 onMounted(() => {
   // resetToken()
-  getSystemNoticeAPI();
+  getSystemNoticeAPI()
 })
 const temNotice = computed(() => userStore.getNotices || [])
 async function getSystemNoticeAPI() {
   const res = await getSystemNotice<Notice[]>()
   // personCenter.value.notices = res.data || []
 
-  const notice =  res.data[0]
+  const notice = res.data[0]
 
   if (res.data.length > temNotice.value.length) {
     notification.create({
@@ -92,7 +93,6 @@ async function getSystemNoticeAPI() {
   }
   userStore.setNotices(res.data)
 }
-
 
 // 系统设置
 function settingMainEvent() {
@@ -134,8 +134,10 @@ function getActivityListEvent() {
                 </template>
               </NButton>
             </template>
-            <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-              style="max-width: 250px">
+            <div
+              v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+              style="max-width: 250px"
+            >
               <div class="mr-4 " style="width:30px">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
@@ -150,8 +152,10 @@ function getActivityListEvent() {
         <div class="header-right-item header-right-item-help">
           <NPopover trigger="hover">
             <template #trigger>
-              <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt=""
-                @click="() => { go({ name: 'help' }) }">
+              <img
+                src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt=""
+                @click="() => { go({ name: 'help' }) }"
+              >
             </template>
             <span>ChatMoss帮助中心</span>
           </NPopover>
@@ -173,29 +177,30 @@ function getActivityListEvent() {
         <div class="header-right-item">
           <span @click="shopEvent">商城</span>
         </div>
-        <div class="header-right-item" v-if="userStore.isAuth === 2">
+        <!-- <div v-if="userStore.isAuth === 2" class="header-right-item">
           <span @click="() => { go({ name: 'invite' }) }">邀请</span>
-        </div>
-
-        <div class="header-right-item" v-if="userStore.isAuth === 2">
+        </div> -->
+        <div v-if="userStore.isAuth === 2" class="header-right-item">
           <span @click="() => { go({ name: 'sign' }) }">签到</span>
         </div>
       </div>
       <div class="header-right">
-        <div class="tip-text-content">
+        <!-- <div class="tip-text-content">
           <p v-if="useAuthStore.token" @click="getActivityListEvent">
             <NButton round secondary type="success" size="tiny" @click="clickActivity">
               活动
             </NButton>
           </p>
-        </div>
+        </div> -->
         <div class="header-right-item header-item-btn text-test text-test1">
           <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
             <template #trigger>
               余额
             </template>
-            <div v-for="(row, i) of userStore.packageList" :key="i"
-              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 ">
+            <div
+              v-for="(row, i) of userStore.packageList" :key="i"
+              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 "
+            >
               <div>
                 <div style="width:200px" class="flex justify-between">
                   <span class="mr-4">{{ row.title }}</span>
@@ -236,7 +241,7 @@ function getActivityListEvent() {
 
 <style lang="less">
 .header-main {
-  max-width: 1280px;
+  // max-width: 1280px;
   width: 100%;
   min-width: 250px;
   overflow: scroll;

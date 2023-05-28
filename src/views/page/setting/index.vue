@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { NAvatar, NButton, NDivider, NInput, NSelect, NSwitch, useMessage, useNotification } from 'naive-ui'
-import { computed, h, onMounted, reactive, ref } from 'vue'
+import { NButton, NDivider, NInput, NSelect, NSwitch, useMessage } from 'naive-ui'
+import { onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import uni from '@dcloudio/uni-webview-js'
 import { useAppStore, useUserStore } from '@/store'
@@ -13,14 +13,12 @@ const back = useBack()
 const go = useGo()
 const userStore = useUserStore()
 
-
 const ms = useMessage()
 const appStore = useAppStore()
 
 // const nickname = computed(() => {
 //   return userStore.userInfo.user.nickname
 // })
-
 
 onMounted(() => {
   updated()
@@ -83,8 +81,6 @@ const feedBackForm = reactive({
   title: '',
   content: '',
 })
-
-
 
 // 模型选择
 // console.log(userStore.getOpenaiVersion)
@@ -178,7 +174,7 @@ function getNSwitchModeValue(): any {
       <NDivider />
       <div>
         <div class="title-h1">
-          回答模式（专业模式下会自动再每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
+          回答模式（专业模式下会自动在每个问题后面拼接 请详细回答 五个字，理论上回答内容更多）
         </div>
         <div class="flex">
           <NSwitch

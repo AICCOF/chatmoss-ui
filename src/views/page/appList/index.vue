@@ -1,21 +1,19 @@
 <script lang="ts" setup>
-import Page from "@/components/page/index.vue";
-import { useBack, useGo } from '@/utils/router'
-import { getApplicationMy, getApplicationDelete } from '@/api/application'
-import { showConfirmDialog, showToast } from 'vant';
+import { showConfirmDialog, showToast } from 'vant'
 import { ref } from 'vue'
+import Page from '@/components/page/index.vue'
+import { useBack, useGo } from '@/utils/router'
+import { getApplicationDelete, getApplicationMy } from '@/api/application'
 const back = useBack()
 const go = useGo()
 const myList = ref([])
 async function getApplicationMyAPI() {
-  let res = await getApplicationMy()
+  const res = await getApplicationMy()
 
   myList.value = res.rows || []
 }
 
-getApplicationMyAPI();
-
-
+getApplicationMyAPI()
 
 async function handleDelete(row) {
   showConfirmDialog({
@@ -25,35 +23,31 @@ async function handleDelete(row) {
   })
     .then(async () => {
       // on confirm
-      let res = await getApplicationDelete(row.id)
-      getApplicationMyAPI();
+      const res = await getApplicationDelete(row.id)
+      getApplicationMyAPI()
       showToast(res.msg)
     })
     .catch(() => {
       // on cancel
-    });
-
+    })
 }
 
 async function handleEdit(row) {
   go({
     name: 'createApp',
-    query: { id: row.id }
+    query: { id: row.id },
   })
 }
-
 </script>
 
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="应用列表" left-text="返回" left-arrow @click-left="back">
-      </van-nav-bar>
+      <van-nav-bar title="应用列表" left-text="返回" left-arrow @click-left="back" />
     </template>
 
     <div class="mt-4  flex-1 pl-4 w-full wrap-main">
-
-      <div class="flex justify-between items-center  dark:text-white w-full flex-1" v-for="(item, i) of myList" :key="i">
+      <div v-for="(item, i) of myList" :key="i" class="flex justify-between items-center  dark:text-white w-full flex-1">
         <div class="flex items-center flex-1">
           <div class="mr-2">
             <img :src="item.icon" alt="" style="width:30px;height: 30px;">
@@ -63,22 +57,26 @@ async function handleEdit(row) {
             <div class="w-full pr-4 flex-1">
               <div class="flex  items-center w-full">
                 <span class="text-base mr-4">{{ item.appName }}</span>
-                <span>
+                <span style="cursor: pointer;">
                   <!-- <van-icon name="like-o" style="color:red;" /> -->
                   <van-icon name="like" style="color:red;" /><span>{{ item.likeCount }}</span>
                 </span>
               </div>
-              <div class="text-sm">{{ item.desc }}</div>
+              <div class="text-sm">
+                {{ item.desc }}
+              </div>
             </div>
           </div>
         </div>
         <div>
-          <van-button type="primary" size="mini" class="mr-2" @click="handleEdit(item)">编辑</van-button>
-          <van-button type="primary" size="mini" @click="handleDelete(item)">删除</van-button>
+          <van-button type="primary" size="mini" class="mr-2" @click="handleEdit(item)">
+            编辑
+          </van-button>
+          <van-button type="primary" size="mini" @click="handleDelete(item)">
+            删除
+          </van-button>
         </div>
       </div>
-
     </div>
-
   </Page>
 </template>
