@@ -134,7 +134,7 @@ export const useChatStore = defineStore('chat-store', {
       try {
         const res = await addConversation({
           title: title || '新建问题',
-          appId: '17',
+          // appId: '17',
         })
         this.active = res.msg as number
         this.chat.unshift(res.list[0])
