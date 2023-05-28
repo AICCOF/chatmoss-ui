@@ -1,18 +1,28 @@
 <script lang="ts" setup>
 import { useMessage } from 'naive-ui'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
 import { copyText } from '@/utils/format'
+import { getInviteInfo, InviteRes } from '@/api/invite'
 const back = useBack()
 const Message = useMessage()
 
-const value = ref('')
+
+const info = ref<InviteRes>()
 
 function handleSelect() {
-  copyText({ text: '' })
+  copyText({ text: info.value ? info.value.inviteCode : '' })
   Message.success('已复制到剪切板')
 }
+async function getInviteInfoAPI() {
+  let res = await getInviteInfo<InviteRes>()
+  info.value = res.data || {}
+}
+
+onMounted(() => {
+  getInviteInfoAPI();
+})
 </script>
 
 <template>
@@ -21,7 +31,7 @@ function handleSelect() {
       <van-nav-bar title="邀请" left-text="返回" left-arrow @click-left="back" />
     </template>
 
-    <div class="invite-mian dark:text-white">
+    <div class="invite-mian dark:text-white" v-if="info">
       <div class="text-center">
         <div class="title">
           邀请朋友并赚取GPT-4.0信息
@@ -38,7 +48,7 @@ function handleSelect() {
           <!-- 使用 right-icon 插槽来自定义右侧图标 -->
           <template #title>
             <div class="url">
-              https://vant-contrib.gitee.io/vant/#/zh-CN/cell
+              {{ info.inviteCode }}
             </div>
           </template>
           <template #right-icon>
@@ -54,13 +64,13 @@ function handleSelect() {
           奖励
         </div>
         <div class="">
-          累计获得奖励15天
+          累计获得奖励{{ info['35TotalDays'] + info['40TotalDays'] }}天
         </div>
         <div class="desc">
-          GPT 4.0: 100次/天
+          GPT 4.0: {{ info['40Times'] }}次/天
         </div>
         <div class="desc">
-          GPT 3.5: 50次/天
+          GPT 3.5: {{ info['35Times'] }}次/天
         </div>
       </div>
     </div>
@@ -68,13 +78,14 @@ function handleSelect() {
 </template>
 
 <style>
-.url{
-  width: 240px;
+.url {
+  width: 280px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
 }
+
 .title {
   font-size: 24px;
   font-weight: bold;
@@ -88,8 +99,8 @@ function handleSelect() {
 }
 
 .invite-mian {
-	padding: 0 15px;
-	padding-top: 20px;
-	padding-bottom: 60px;
+  padding: 0 15px;
+  padding-top: 20px;
+  padding-bottom: 60px;
 }
 </style>

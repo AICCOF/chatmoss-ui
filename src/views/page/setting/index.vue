@@ -122,10 +122,7 @@ const feedBackForm = reactive({
   content: '',
 })
 
-async function sendFeedbackEvent() {
-  await sendFeedback(feedBackForm)
-  ms.success('我们确定问题之后，会为您下发10万字符奖励，感谢您的反馈。')
-}
+
 
 // 模型选择
 // console.log(userStore.getOpenaiVersion)

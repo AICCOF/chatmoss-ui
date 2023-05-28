@@ -547,7 +547,8 @@ async function onSuccessAuth() {
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList />
-        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: auto">
+        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"
+          style="height: 100%;overflow: auto">
           <template v-if="!dataSources.length">
             <div class="no-data-info">
               <div class="no-data-img">
@@ -582,11 +583,9 @@ async function onSuccessAuth() {
           </template>
           <template v-else>
             <div>
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                 :is-show="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
-                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
-              />
+                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -600,22 +599,19 @@ async function onSuccessAuth() {
           </template>
         </div>
       </div>
-    </main>    <div v-if="!userStore.userInfo.user.authed" class="text-center">
+    </main>
+    <div v-if="!userStore.userInfo.user.authed" class="text-center">
       <!-- 通关ChatMoss使用教程，获得20w字符奖励 -->
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="moss-btns flex justify-between space-x-2 w-full">
-          <NInput
-            v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
-          />
-          <NSelect
-            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+          <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus
+            type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" />
+          <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
             :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter" @input="handleSelectInput"
-          />
+            label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
@@ -645,17 +641,21 @@ async function onSuccessAuth() {
 
 <style lang="less">
 .no-data-info {
-  margin-top: 45%;
+  // margin-top: 45%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-	.no-data-img {
-		width: 300px;
-		height: 200px;
-		border: 1px solid red;
+  .no-data-img {
+    width: 300px;
+    height: 200px;
+    border: 1px solid red;
     display: flex;
     align-items: center;
     justify-content: center;
-		margin: 0 auto;
-	}
+    margin: 0 auto;
+  }
 
   .no-data-info-title {
     position: relative;

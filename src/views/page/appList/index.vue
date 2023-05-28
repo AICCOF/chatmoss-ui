@@ -1,7 +1,46 @@
 <script lang="ts" setup>
 import Page from "@/components/page/index.vue";
-import { useBack } from '@/utils/router'
+import { useBack, useGo } from '@/utils/router'
+import { getApplicationMy, getApplicationDelete } from '@/api/application'
+import { showConfirmDialog, showToast } from 'vant';
+import { ref } from 'vue'
 const back = useBack()
+const go = useGo()
+const myList = ref([])
+async function getApplicationMyAPI() {
+  let res = await getApplicationMy()
+
+  myList.value = res.rows || []
+}
+
+getApplicationMyAPI();
+
+
+
+async function handleDelete(row) {
+  showConfirmDialog({
+    title: '删除',
+    message:
+      '确认删除?',
+  })
+    .then(async () => {
+      // on confirm
+      let res = await getApplicationDelete(row.appId)
+      getApplicationMyAPI();
+      showToast(res.msg)
+    })
+    .catch(() => {
+      // on cancel
+    });
+
+}
+
+async function handleEdit(row) {
+  go({
+    name: 'createApp',
+    query: { id: row.id }
+  })
+}
 
 </script>
 
@@ -12,30 +51,30 @@ const back = useBack()
       </van-nav-bar>
     </template>
 
-    <div class="mt-4  flex-1 pl-4 w-full">
+    <div class="mt-4  flex-1 pl-4 w-full wrap-main">
 
-      <div class="flex justify-between items-center  dark:text-white w-full flex-1" v-for="item of 6">
+      <div class="flex justify-between items-center  dark:text-white w-full flex-1" v-for="(item, i) of myList" :key="i">
         <div class="flex items-center flex-1">
           <div class="mr-2">
-            <img src="./../../chat/img/icon1.png" alt="" style="width:30px;height: 30px;">
+            <img :src="item.icon" alt="" style="width:30px;height: 30px;">
           </div>
           <div class="flex flex-1 w-full">
-            <span class="mr-2 flex justify-center text-base" style="width:30px">1</span>
+            <span class="mr-2 flex justify-center text-base" style="width:30px">{{ i + 1 }}</span>
             <div class="w-full pr-4 flex-1">
               <div class="flex  items-center w-full">
-                <span class="text-base mr-4">title</span>
+                <span class="text-base mr-4">{{ item.appName }}</span>
                 <span>
                   <!-- <van-icon name="like-o" style="color:red;" /> -->
-                  <van-icon name="like" style="color:red;" /><span>123</span>
+                  <van-icon name="like" style="color:red;" /><span>{{ item.likeCount }}</span>
                 </span>
               </div>
-              <div class="text-sm">desc</div>
+              <div class="text-sm">{{ item.desc }}</div>
             </div>
           </div>
         </div>
         <div>
-          <van-button type="primary" size="mini" class="mr-2">编辑</van-button>
-          <van-button type="primary" size="mini">删除</van-button>
+          <van-button type="primary" size="mini" class="mr-2" @click="handleEdit(item)">编辑</van-button>
+          <van-button type="primary" size="mini" @click="handleDelete(item)">删除</van-button>
         </div>
       </div>
 

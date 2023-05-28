@@ -3,74 +3,117 @@ import draggable from 'vuedraggable'
 import { ref } from 'vue'
 import { useGo } from '@/utils/router'
 const go = useGo()
-
+import { getApplicationInstallList, getApplicationSort } from '@/api/application'
+import { showConfirmDialog, showToast } from 'vant';
 const enabled = ref(false)
-const list = ref([
-  { name: 'John', id: '00001' },
-  { name: 'Joao', id: '00002' },
-  { name: 'Jean', id: '00003' },
-])
+const list = ref({
+	installList: [],
+	systemList: [],
+})
+let deleteItem = ref([])
+getApplicationInstallListAPI();
+async function getApplicationInstallListAPI() {
+	let res = await getApplicationInstallList();
+	list.value = res.data || {
+		installList: [],
+		systemList: [],
+	}
+}
+
 function handleEdit() {
-  enabled.value = true
+	enabled.value = true
 }
 function handleDelete(row, i) {
-  console.log(i)
-  list.value.splice(i, 1)
+	deleteItem.value.push(i);
+	list.value.installList.splice(i, 1)
 }
 
 function handleSave() {
-  enabled.value = false
+	showConfirmDialog({
+		title: '保存',
+		message:
+			'确定进行此操作?',
+	})
+		.then(async () => {
+			// on confirm
+			let data = list.value.installList.map((row,index)=>{
+				return {
+					appId: row.appId,
+					sort: index+1
+				}
+			})
+			let res = await getApplicationSort(data)
+			getApplicationInstallListAPI();
+			showToast(res.msg)
+		})
+		.catch(() => {
+			// on cancel
+		});
+
+	enabled.value = false
 }
 </script>
 
 <template>
-  <div class="wrap">
-    <div class="list">
-      <draggable :list="list" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost">
-        <template #item="{ element, index }">
-          <div class="img">
-            <span v-if="enabled" class="close" @click="handleDelete(element, index)">
-              <van-icon name="cross" />
-            </span>
-            <div :class="[enabled ? 'animate-pulse animate' : '']">
-              <img src="./../chat/img/icon1.png" alt="">
-              <span> {{ element.id }}</span>
-            </div>
-          </div>
-        </template>
-      </draggable>
-    </div>
-    <div class="btns">
-      <div class="btn">
-        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
-        <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
-      </div>
-      <div class="btn">
-        <van-icon name="plus" @click="() => { go({ name: 'application' }) }" />
-      </div>
-    </div>
-  </div>
+	<div class="wrap">
+		<div class="list">
+			<draggable :list="list.systemList" :disabled="true" item-key="name" class="list-group" ghost-class="ghost">
+				<template #item="{ element }">
+					<div class="img">
+						<span class="span"> {{ element.appId }}</span>
+						<div>
+							<img :src="element.iconUrl" alt="">
+
+						</div>
+					</div>
+				</template>
+			</draggable>
+			<draggable :list="list.installList" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost">
+				<template #item="{ element, index }">
+					<div class="img">
+						<span v-if="enabled" class="close" @click="handleDelete(element, index)">
+							<van-icon name="cross" />
+						</span>
+						<span class="span"> {{ element.appId }}</span>
+						<div :class="[enabled ? 'animate-pulse animate' : '']">
+							<img :src="element.iconUrl" alt="">
+
+						</div>
+					</div>
+				</template>
+			</draggable>
+		</div>
+		<div class="btns">
+			<div class="btn">
+				<van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
+				<span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
+			</div>
+			<div class="btn">
+				<van-icon name="plus" @click="() => { go({ name: 'application' }) }" />
+			</div>
+		</div>
+	</div>
 </template>
 
 <style>
 @keyframes pulse {
 
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
+	0%,
+	100% {
+		transform: rotate(0deg);
+	}
 
-  25% {
-    transform: rotate(-10deg);
-  }
+	25% {
+		transform: rotate(-10deg);
+	}
 
-  50% {
-    transform: rotate(0deg);
-  }
+	50% {
+		transform: rotate(0deg);
+	}
 
-  75% {
-    transform: rotate(10deg);
-  }
+	75% {
+		transform: rotate(10deg);
+	}
 
 }
 </style>
@@ -78,9 +121,9 @@ function handleSave() {
 <style scoped lang="less">
 .wrap {
 	height: 95%;
-  width: 45px;
-	border-right: 0.5px solid rgba(145,158,171,.16);
-	border-bottom: 0.5px solid rgba(145,158,171,.16);
+	width: 45px;
+	border-right: 0.5px solid rgba(145, 158, 171, .16);
+	border-bottom: 0.5px solid rgba(145, 158, 171, .16);
 	box-sizing: border-box;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -114,18 +157,19 @@ function handleSave() {
 			}
 
 			.animate {
-				animation-duration: 0.2s !important;
+				animation-duration: 0s !important;
 			}
 
 			.close {
 				position: absolute;
-				right: -5px;
 				top: -10px;
+				left: 5px;
 			}
 
-			span {
+
+			.span {
 				position: absolute;
-				left: 5px;
+				right: 0px;
 				bottom: 0px;
 				color: #fff;
 				opacity: 0.5;
@@ -139,6 +183,7 @@ function handleSave() {
 	.btns {
 		height: 20%;
 		font-size: 24px;
+
 		.btn {
 			width: 45px;
 			height: 45px;

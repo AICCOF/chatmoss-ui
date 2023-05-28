@@ -1,11 +1,28 @@
 <script lang="ts" setup>
 import Page from "@/components/page/index.vue";
-import { useBack,useGo } from '@/utils/router'
+import { useBack, useGo } from '@/utils/router'
 import { ref } from 'vue'
+import { getApplicationList } from '@/api/application'
+import { getApplicationTypeList } from '@/api/application'
 const back = useBack()
 const go = useGo()
 const value = ref('');
 const active = ref('');
+const typeList = ref('');
+
+async function getApplicationListAPI() {
+  let res = getApplicationList({
+    pageNum: 1,
+    pageSize: 10
+  });
+
+}
+getApplicationListAPI();
+getApplicationTypeListAPI();
+async function getApplicationTypeListAPI() {
+  let res = await getApplicationTypeList();
+  typeList.value = (res.list || [])
+}
 </script>
 
 <template>
@@ -15,8 +32,8 @@ const active = ref('');
       </van-nav-bar>
     </template>
     <div class="flex justify-center justify-around mt-4">
-      <van-button type="primary" style="width:40%" @click="()=>{go({name:'createApp'})}">创建应用</van-button>
-      <van-button type="success" style="width:40%" @click="()=>{go({name:'appList'})}">查看自己创建的应用</van-button>
+      <van-button type="primary" style="width:40%" @click="() => { go({ name: 'createApp' }) }">创建应用</van-button>
+      <van-button type="success" style="width:40%" @click="() => { go({ name: 'appList' }) }">查看自己创建的应用</van-button>
     </div>
 
     <div class="mt-4">
@@ -25,9 +42,7 @@ const active = ref('');
 
     <div class="flex">
       <van-sidebar v-model="active">
-        <van-sidebar-item title="标签名称" />
-        <van-sidebar-item title="标签名称" />
-        <van-sidebar-item title="标签名称" />
+        <van-sidebar-item :title="row.typeName"  v-for="(row,i) of typeList" :key="i"/>
       </van-sidebar>
       <div class="mt-4  flex-1 pl-4 w-full">
 
@@ -51,7 +66,7 @@ const active = ref('');
             </div>
           </div>
           <div>
-            <van-button type="primary"  size="mini">安装</van-button>
+            <van-button type="primary" size="mini">安装</van-button>
           </div>
         </div>
 
