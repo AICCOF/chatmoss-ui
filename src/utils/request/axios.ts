@@ -1,6 +1,7 @@
 import axios, { type AxiosResponse } from 'axios'
 import { useAuthStoreWithout } from '@/store/modules'
 import { getDomain } from '@/api/getDomain'
+
 const service = axios.create({
   baseURL: '',
 })

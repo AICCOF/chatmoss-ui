@@ -150,7 +150,7 @@ export const useChatStore = defineStore('chat-store', {
     },
     async chatList() {
       const res = await getConversationList()
-      this.chat = res.list
+      this.chat = res.list || [];
       this.getConversationDetail()
       // 没有选中某一项的处理逻辑
       // setTimeout(() => {

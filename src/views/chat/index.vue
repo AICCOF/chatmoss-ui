@@ -193,12 +193,14 @@ async function onConversation(askMsg?: string, type?: number) {
     chatOptions = {
       conversationId: chatStore.getUuid,
       openaiVersion: userStore.getOpenaiVersion,
+      appId: userStore.appIdValue,
       online: 1,
     }
   }
   else {
     chatOptions = {
       conversationId: chatStore.getUuid,
+      appId: userStore.appIdValue,
       openaiVersion: userStore.getOpenaiVersion,
     }
   }
@@ -466,6 +468,7 @@ onMounted(() => {
 
   chatStore.chatList()
   userStore.getActivityListAPI()
+  userStore.residueCountAPI()
 })
 
 onUnmounted(() => {
@@ -546,7 +549,7 @@ async function onSuccessAuth() {
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
-        <applicationList />
+        <applicationList v-if="userStore.isAuth === 2"/>
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"
           style="height: 100%;overflow: auto">
           <template v-if="!dataSources.length">
@@ -554,31 +557,6 @@ async function onSuccessAuth() {
               <div class="no-data-img">
                 初始状态占位图片
               </div>
-              <!-- 标题 -->
-              <!-- <div class="no-data-info-title">
-                ChatMoss
-                <span
-                  v-if="!!isPlus" :class="{ is3_5: isPlus === '3.5' }"
-                  class="no-data-info-title1 bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
-                  @click="setOpenaiVersion"
-                >
-                  {{ isPlus }} 模型
-                </span>
-              </div> -->
-              <!-- <div class="no-data-btns-list">
-                <div
-                  v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)"
-                >
-                  <img
-                    class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
-                    alt=""
-                  >
-                  <div class="btns-item-text">
-                    {{ item.text }}
-                  </div>
-                </div>
-              </div> -->
             </div>
           </template>
           <template v-else>

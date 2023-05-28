@@ -49,7 +49,23 @@ export function getApplicationMy<T>() {
     }
   })
 }
-
+export function getApplicationSearch<T>(appName) {
+  return get<T>({
+    url: `/luomacode-api/application/search`,
+    data: {
+      appName: appName
+    }
+  })
+}
+// /application/queryById
+export function getApplicationQueryById<T>(id) {
+  return get<T>({
+    url: `/luomacode-api/application/queryById`,
+    data: {
+      id: id
+    }
+  })
+}
 export function getApplicationInstallList<T>() {
   return get<T>({
     url: `/luomacode-api/application/install/list`,
@@ -72,6 +88,22 @@ export function getApplicationDelete<T>(appId) {
 export function getApplicationSort<T>(data) {
   return put<T>({
     url: `/luomacode-api/application/install/sort`,
+    data
+  })
+}
+
+export function getApplicationInstall<T>(data) {
+  // 0 安装, 1 卸载
+  return post<T>({
+    url: `/luomacode-api/application/install`,
+    data
+  })
+}
+
+export function getApplicationLike<T>(data) {
+  // 0 安装, 1 卸载
+  return post<T>({
+    url: `/luomacode-api/application/like`,
     data
   })
 }

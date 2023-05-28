@@ -11,10 +11,13 @@ export const useUserStore = defineStore('user-store', {
     return {
       ...getLocalState(),
       notices: [],
-      isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期
+      isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
   },
   getters: {
+    appIdValue(state) {
+      return state.appId || '1'
+    },
     getNotices(state) {
       return state.userInfo.notices
     },
@@ -96,7 +99,7 @@ export const useUserStore = defineStore('user-store', {
 
   },
   actions: {
-
+    
     async residueCountAPI() {
       try {
         const res = await residueCount<{
@@ -116,7 +119,7 @@ export const useUserStore = defineStore('user-store', {
           ...this.userInfo, ...res.data,
         }
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
-        if (res.data.user) {
+        if (res.data && res.data.user) {
           this.userInfo.user.authed = false
           this.isAuth = 2;
         } else {
@@ -168,8 +171,13 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo.notices = value
       this.recordState()
     },
+    setAppId(appId){
+      this.appId = appId
+      this.recordState();
+    },
 
     recordState() {
+      console.log(this.$state)
       setLocalState(this.$state)
     },
   },

@@ -2,16 +2,13 @@
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
 import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, NSelect, useDialog, useMessage , NPopconfirm } from 'naive-ui'
-import Tips from '../../tips.vue'
+// import Tips from '../../tips.vue'
 import { useModel } from '../../components/Modal/hooks/useModal'
 import List from './List.vue'
 import Footer from './Footer.vue'
-import PersonCenter from './../../components/PersonCenter.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
-const person = ref(null) as any
-const [registerModal, { openModel }] = useModel()
 const userStore = useUserStore()
 const showModal = ref(false)
 const appStore = useAppStore()
@@ -56,20 +53,7 @@ function myHomeSubmit() {
   go({name:'setting'})
 }
 
-function modifyPassword() {
-  tab.value = 'forget'
-  showModal.value = true
-}
-// 登录注册功能
-function showModelEvent() {
-  tab.value = 'login'
-  showModal.value = true
-}
-function handleSubmit() {
-  showModal.value = false
-  userStore.residueCountAPI()
-  token.value = getToken()
-}
+
 
 watch(
   isMobile,
@@ -125,9 +109,7 @@ watch(
               ChatMoss商店
             </div>
           </div>
-          <Tips @login="showModelEvent" />
         </div>
-        <PersonCenter ref="person" @register="registerModal" @modify-password="modifyPassword" />
       </main>
       <Footer />
     </div>

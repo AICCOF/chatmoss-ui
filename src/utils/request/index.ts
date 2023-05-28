@@ -1,7 +1,7 @@
 import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
 import request from './axios'
 import { useAuthStore } from '@/store'
-
+import { showToast } from 'vant';
 export interface HttpOption {
   url: string
   data?: any
@@ -15,7 +15,7 @@ export interface HttpOption {
 
 export interface Response<T = any> {
   data: T
-  code:number;
+  code: number;
   message: string | null
   status: string
   [propName: string]: any;
@@ -27,16 +27,18 @@ function http<T = any>(
   const successHandler = (res: AxiosResponse<Response<T>>) => {
     const authStore = useAuthStore()
     // 代表是二进制，文本
-    if (typeof res.data !== 'object' ){
+    if (typeof res.data !== 'object') {
       return Promise.resolve(res.data)
     }
-    if (res.data.code === 0 || res.data.code === 200){
+    if ([0, 200, 204].includes(res.data.code)) {
       return Promise.resolve(res.data)
     }
     if (res.data.status === 'Unauthorized') {
       authStore.removeToken()
       window.location.reload()
     }
+
+    showToast(res.data.msg)
 
     return Promise.reject(res.data)
   }

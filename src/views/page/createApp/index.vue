@@ -1,17 +1,19 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { NButton, NForm, NFormItem, NInput, NSelect, NSpace, NSwitch } from 'naive-ui'
 import { FormInst, FormItemRule, useMessage } from 'naive-ui'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
-import { getApplicationIconList, getApplicationCreate, getApplicationTypeList } from '@/api/application'
+import { getApplicationIconList, getApplicationCreate, getApplicationTypeList, getApplicationQueryById } from '@/api/application'
+import { useRouter } from 'vue-router'
+const router = useRouter();
 const back = useBack()
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const formValue = ref({
   iconUrl: 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'
 })
-let rules =  {
+let rules = {
   iconId: {
     required: true,
     message: '输入选择图标',
@@ -28,7 +30,7 @@ let rules =  {
     required: true,
     message: '输入指令',
   },
-  type: {
+  appType: {
     required: true,
     message: '请选择应用类型',
   }
@@ -40,7 +42,7 @@ function handleValidateButtonClick() {
   formRef.value?.validate((errors) => {
     console.log(errors)
     if (!errors) {
-    
+
       getApplicationCreateAPI();
     }
   })
@@ -51,10 +53,10 @@ getApplicationListAPI();
 getApplicationTypeListAPI();
 async function getApplicationTypeListAPI() {
   let res = await getApplicationTypeList();
-  typeList.value = (res.list || []).map(row=>{
+  typeList.value = (res.list || []).map(row => {
     return {
-      label:row.typeName,
-      value:row.id
+      label: row.typeName,
+      value: row.id
     }
   })
 }
@@ -64,8 +66,8 @@ async function getApplicationListAPI() {
 }
 
 async function getApplicationCreateAPI() {
-   let res = await getApplicationCreate(formValue.value);
-   message.success(res.msg)
+  let res = await getApplicationCreate(formValue.value);
+  message.success(res.msg)
 }
 function handleImage(row) {
 
@@ -73,6 +75,15 @@ function handleImage(row) {
   formValue.value.iconId = row.id
   showBottom.value = false;
 }
+onMounted(async () => {
+
+  if (router.currentRoute.value) {
+    let id = router.currentRoute.value.query.id
+    let res = await getApplicationQueryById(id)
+    formValue.value = res.data || {}
+  }
+
+})
 
 
 </script>
@@ -107,7 +118,7 @@ function handleImage(row) {
             }" placeholder="输入指令" />
         </NFormItem>
         <NFormItem label="应用类型" path="type" required>
-          <NSelect v-model:value="formValue.type" placeholder="应用类型" :options="typeList" />
+          <NSelect v-model:value="formValue.appType" placeholder="应用类型" :options="typeList" />
         </NFormItem>
 
         <NFormItem label="发布商店" path="share" required>
@@ -129,7 +140,7 @@ function handleImage(row) {
 
     <van-action-sheet v-model:show="showBottom" title="选择图标">
       <div class="content">
-        <div class="list" >
+        <div class="list">
           <div class="item" v-for="(item, i) of iconList" :key="i">
             <img :src="item.url" alt="" @click="handleImage(item)">
           </div>

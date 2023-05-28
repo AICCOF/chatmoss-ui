@@ -3,15 +3,23 @@ import draggable from 'vuedraggable'
 import { ref } from 'vue'
 import { useGo } from '@/utils/router'
 const go = useGo()
-import { getApplicationInstallList, getApplicationSort } from '@/api/application'
+import { getApplicationInstallList, getApplicationSort , getApplicationInstall } from '@/api/application'
 import { showConfirmDialog, showToast } from 'vant';
+import { useUserStore } from '@/store'
+const userStore = useUserStore()
+
+
 const enabled = ref(false)
 const list = ref({
 	installList: [],
 	systemList: [],
 })
 let deleteItem = ref([])
+
 getApplicationInstallListAPI();
+
+
+
 async function getApplicationInstallListAPI() {
 	let res = await getApplicationInstallList();
 	list.value = res.data || {
@@ -22,6 +30,11 @@ async function getApplicationInstallListAPI() {
 
 function handleEdit() {
 	enabled.value = true
+}
+function handleClick(row){
+	if(!enabled.value){
+		userStore.setAppId(row.appId)
+	}
 }
 function handleDelete(row, i) {
 	deleteItem.value.push(i);
@@ -36,13 +49,24 @@ function handleSave() {
 	})
 		.then(async () => {
 			// on confirm
-			let data = list.value.installList.map((row,index)=>{
+			let data = list.value.installList.map((row, index) => {
 				return {
 					appId: row.appId,
-					sort: index+1
+					sort: index + 1
 				}
 			})
 			let res = await getApplicationSort(data)
+
+			if(deleteItem.value.length>0){
+
+				await getApplicationInstall({
+					appId: deleteItem.value.join(','),
+					type:1
+				})
+			}
+
+
+			deleteItem.value = [];
 			getApplicationInstallListAPI();
 			showToast(res.msg)
 		})
@@ -59,25 +83,24 @@ function handleSave() {
 		<div class="list">
 			<draggable :list="list.systemList" :disabled="true" item-key="name" class="list-group" ghost-class="ghost">
 				<template #item="{ element }">
-					<div class="img">
+					<div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']" @click="handleClick(element)">
 						<span class="span"> {{ element.appId }}</span>
-						<div>
+						<div >
 							<img :src="element.iconUrl" alt="">
-
 						</div>
 					</div>
 				</template>
 			</draggable>
 			<draggable :list="list.installList" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost">
 				<template #item="{ element, index }">
-					<div class="img">
+					<div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']" @click="handleClick(element)">
 						<span v-if="enabled" class="close" @click="handleDelete(element, index)">
 							<van-icon name="cross" />
 						</span>
 						<span class="span"> {{ element.appId }}</span>
-						<div :class="[enabled ? 'animate-pulse animate' : '']">
+						<div
+							:class="[enabled ? 'animate-pulse animate' : '']">
 							<img :src="element.iconUrl" alt="">
-
 						</div>
 					</div>
 				</template>
@@ -154,6 +177,10 @@ function handleSave() {
 			img {
 				width: 26px;
 				height: 26px
+			}
+
+			&.active {
+				background-color: rgba(90, 90, 90, 0.2)
 			}
 
 			.animate {

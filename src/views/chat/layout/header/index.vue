@@ -9,13 +9,15 @@ import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { staticData } from '@/store/static'
 import { useGo } from '@/utils/router'
+import { useMessage } from 'naive-ui'
+const Message = useMessage()
 // const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const go = useGo()
-const token = ref('')
+// const token = ref('')
 const modelValue = ref(false)
 
 interface Emit {
@@ -44,19 +46,28 @@ function handleClose(row: any) {
 }
 
 // 重置token
-const resetToken = () => {
-  token.value = getToken() as string
-}
+// const resetToken = () => {
+//   token.value = getToken() as string
+// }
 
 watchEffect(() => {
   const { user } = userStore.userInfo
   if (user.email)
-    resetToken()
+    // resetToken()
+  if (userStore.isAuth === 3) {
+    useAuthStore.setToken('')
+    sendToMsg('chatMossToken', '')
+    chatStore.clearList()
+    userStore.residueCountAPI()
+    Message.error('登录已过期,请重新登录')
+  }
 })
 
 onMounted(() => {
-  resetToken()
+  // resetToken()
 })
+
+
 
 // 系统设置
 function settingMainEvent() {
@@ -98,10 +109,8 @@ function getActivityListEvent() {
                 </template>
               </NButton>
             </template>
-            <div
-              v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-              style="max-width: 250px"
-            >
+            <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+              style="max-width: 250px">
               <div class="mr-4 " style="width:30px">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
@@ -116,7 +125,8 @@ function getActivityListEvent() {
         <div class="header-right-item header-right-item-help">
           <NPopover trigger="hover">
             <template #trigger>
-              <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt="" @click="() => { go({ name: 'help' }) }">
+              <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt=""
+                @click="() => { go({ name: 'help' }) }">
             </template>
             <span>ChatMoss帮助中心</span>
           </NPopover>
@@ -124,7 +134,7 @@ function getActivityListEvent() {
       </div>
       <div class="header-right">
         <div class="tip-text-content tip-text-content1">
-          <p v-if="token">
+          <p v-if="useAuthStore.token">
             <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
           </p>
           <p v-else>
@@ -138,11 +148,11 @@ function getActivityListEvent() {
         <div class="header-right-item">
           <span @click="shopEvent">商城</span>
         </div>
-        <div class="header-right-item">
+        <div class="header-right-item" v-if="userStore.isAuth === 2">
           <span @click="() => { go({ name: 'invite' }) }">邀请</span>
         </div>
 
-        <div class="header-right-item">
+        <div class="header-right-item" v-if="userStore.isAuth === 2">
           <span @click="() => { go({ name: 'sign' }) }">签到</span>
         </div>
       </div>
@@ -159,10 +169,8 @@ function getActivityListEvent() {
             <template #trigger>
               余额
             </template>
-            <div
-              v-for="(row, i) of userStore.packageList" :key="i"
-              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 "
-            >
+            <div v-for="(row, i) of userStore.packageList" :key="i"
+              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 ">
               <div>
                 <div style="width:200px" class="flex justify-between">
                   <span class="mr-4">{{ row.title }}</span>
@@ -238,11 +246,11 @@ function getActivityListEvent() {
       justify-content: center;
       cursor: pointer;
 
-			&:hover {
+      &:hover {
         transform: scale(1.05);
-				font-weight: 600;
-				color: #3c72ff;
-			}
+        font-weight: 600;
+        color: #3c72ff;
+      }
 
       &:active {
         transform: scale(.96);
@@ -257,13 +265,13 @@ function getActivityListEvent() {
 }
 
 .header {
-	padding: 0 16px;
+  padding: 0 16px;
   height: 45px;
 }
 
 .sub-header {
-	border-top: 1px solid #242627;
-	padding: 0 16px;
+  border-top: 1px solid #242627;
+  padding: 0 16px;
   height: 45px;
 }
 
@@ -387,6 +395,6 @@ function getActivityListEvent() {
 }
 
 .page .header {
-	padding: 0px;
+  padding: 0px;
 }
 </style>
