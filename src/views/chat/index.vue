@@ -62,9 +62,6 @@ const isPlus = computed(() => {
 if (!localStorage.getItem('isCorrelation'))
   localStorage.setItem('isCorrelation', 'true')
 
-// const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
-// const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
-// const showNetwork = ref(false)
 
 let controller = new AbortController()
 
@@ -493,12 +490,6 @@ const noDataInfo = [
     text: '上下文越长，字符消耗越多',
   },
 ]
-function noDataInfoEvent(index: any) {
-  // prompt.value = ''
-  // prompt.value = noDataInfo[index].text
-  // handleSubmit()
-  // ms.info('更多问题解答和反馈，请加QQ群')
-}
 
 const paperList = ref<Chat.paper[]>([])
 const nowPaperIndex = ref<number>(0)
@@ -524,10 +515,10 @@ async function startTutorial() {
   }
 }
 
-function setOpenaiVersion() {
-  userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
-  ms.success('模型切换成功')
-}
+// function setOpenaiVersion() {
+//   userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
+//   ms.success('模型切换成功')
+// }
 
 async function onSuccessAuth() {
   try {
@@ -557,8 +548,8 @@ async function onSuccessAuth() {
           <template v-if="!dataSources.length">
             <div class="no-data-info">
               <!-- 应用介绍 -->
-              <div class="no-data-info-text">
-                应用介绍：驼峰命名变量生成器
+              <div class="no-data-info-text" v-if="userStore.currentApp">
+                应用介绍：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
               <div class="no-data-img">

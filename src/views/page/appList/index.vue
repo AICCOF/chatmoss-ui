@@ -25,7 +25,7 @@ async function handleDelete(row) {
   })
     .then(async () => {
       // on confirm
-      let res = await getApplicationDelete(row.appId)
+      let res = await getApplicationDelete(row.id)
       getApplicationMyAPI();
       showToast(res.msg)
     })

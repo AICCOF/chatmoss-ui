@@ -5,11 +5,13 @@ import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { getActivityList, residueCount } from '@/api'
 import { localStorage } from '@/utils/storage/localStorage'
 import type { Notice } from '@/store/modules/user/helper'
-import { getSystemNotice, sendFeedback } from '@/api/personCenter'
+import { getSystemNotice } from '@/api/personCenter'
+import { getApplicationInstall, getApplicationInstallList, getApplicationSort } from '@/api/application'
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
       ...getLocalState(),
+      appList: {},
       notices: [],
       isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
@@ -96,10 +98,27 @@ export const useUserStore = defineStore('user-store', {
     activities(state) {
       return state.activityList
     },
-
+    appsListMap(state){
+      let map = {};
+      if (state.appList.installList){
+        state.appList.installList.forEach((row) => {
+          map[row.appId] = row
+        })
+      }
+      if (state.appList.systemList) {
+        state.appList.systemList.forEach((row) => {
+          map[row.appId] = row
+        })
+      }
+     
+     
+      return map
+    },
+    currentApp(state){
+      return state.appsListMap[state.appId] 
+    }
   },
-  actions: {
-    
+  actions: {  
     async residueCountAPI() {
       try {
         const res = await residueCount<{
@@ -150,6 +169,13 @@ export const useUserStore = defineStore('user-store', {
       this.activityList = res.data || []
       // console.error(res.data)
     },
+    async getApplicationInstallListAPI() {
+      const res = await getApplicationInstallList()
+      this.appList = res.data || {
+        installList: [],
+        systemList: [],
+      }
+    },
     updateUserInfo(userInfo: Partial<UserInfo>) {
       this.userInfo = { ...this.userInfo, ...userInfo }
       this.recordState()
@@ -177,7 +203,6 @@ export const useUserStore = defineStore('user-store', {
     },
 
     recordState() {
-      console.log(this.$state)
       setLocalState(this.$state)
     },
   },

@@ -1,21 +1,23 @@
 <script lang="ts" setup>
 import { NButton, NPopover, NTag } from 'naive-ui'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect , h } from 'vue'
 import activity from './../activity.vue'
 import { SvgIcon } from '@/components/common'
 import { useUserStore } from '@/store'
-import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { staticData } from '@/store/static'
 import { useGo } from '@/utils/router'
-import { useMessage } from 'naive-ui'
+import { getSystemNotice } from '@/api/personCenter'
+import type { Notice } from '@/store/modules/user/helper'
+import { NAvatar, useMessage, useNotification } from 'naive-ui'
 const Message = useMessage()
 // const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
+const notification = useNotification()
 const go = useGo()
 // const token = ref('')
 const modelValue = ref(false)
@@ -65,8 +67,31 @@ watchEffect(() => {
 
 onMounted(() => {
   // resetToken()
+  getSystemNoticeAPI();
 })
+const temNotice = computed(() => userStore.getNotices || [])
+async function getSystemNoticeAPI() {
+  const res = await getSystemNotice<Notice[]>()
+  // personCenter.value.notices = res.data || []
 
+  const notice =  res.data[0]
+
+  if (res.data.length > temNotice.value.length) {
+    notification.create({
+      content: notice.content,
+      meta: notice.createTime,
+      avatar: () =>
+        h(NAvatar, {
+          size: 'small',
+          round: true,
+          src: notice.icon,
+        }),
+      duration: 5000,
+      keepAliveOnHover: true,
+    })
+  }
+  userStore.setNotices(res.data)
+}
 
 
 // 系统设置
@@ -158,7 +183,7 @@ function getActivityListEvent() {
       </div>
       <div class="header-right">
         <div class="tip-text-content">
-          <p v-if="token" @click="getActivityListEvent">
+          <p v-if="useAuthStore.token" @click="getActivityListEvent">
             <NButton round secondary type="success" size="tiny" @click="clickActivity">
               活动
             </NButton>

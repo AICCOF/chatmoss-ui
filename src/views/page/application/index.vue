@@ -16,7 +16,7 @@ async function getApplicationListAPI(appType) {
   let res = await getApplicationList({
     appType,
     pageNum: 1,
-    pageSize: 10
+    pageSize: 1000
   });
   dataList.value = res.rows || [];
 }
@@ -50,13 +50,13 @@ async function handleLike(row) {
     type: row.liked === 0 ? 1 : 0
   })
 
-  row.like = row.liked === 0 ? 1 : 0;
+  row.liked = row.liked === 0 ? 1 : 0;
 }
 
 async function handleInstalled(row) {
   await getApplicationInstall({
     appId: row.id,
-    installed: row.installed === 0 ? 1 : 0
+    type: row.installed === 0 ? 1 : 0
   })
   row.installed = row.installed === 0 ? 1 : 0;
 }
@@ -73,13 +73,17 @@ async function handleInstalled(row) {
       <van-button type="success" style="width:40%" @click="() => { go({ name: 'appList' }) }">查看自己创建的应用</van-button>
     </div>
 
-    <div class="mt-4">
-      <van-search v-model="value" placeholder="搜索应用" @blur="getApplicationSearchAPI" />
+    <div class="mt-4 flex items-center">
+      <van-search v-model="value" class="flex-1" placeholder="搜索应用" @search="getApplicationSearchAPI" show-action>
+        <template #action>
+          <div @click="getApplicationSearchAPI">搜索</div>
+        </template>
+      </van-search>
     </div>
 
     <div class="flex">
       <van-sidebar v-model="active" @change="handleChange" v-if="flag">
-              <van-sidebar-item :title="row.typeName" v-for="(row, i) of typeList" :key="i" />
+        <van-sidebar-item :title="row.typeName" v-for="(row, i) of typeList" :key="i" />
       </van-sidebar>
       <div class="mt-4  flex-1 pl-4 w-full">
         <div class="flex justify-between items-center  dark:text-white w-full flex-1 item" v-for="(item, i) of dataList"
@@ -95,7 +99,8 @@ async function handleInstalled(row) {
                   <span class="text-base mr-4">{{ item.appName }}</span>
                   <span @click="handleLike(item)">
                     <van-icon name="like-o" style="color:red;" v-if='item.liked === 0' />
-                    <van-icon name="like" style="color:red;" v-if='item.liked === 1' /><span>{{ item.likeCountStr }}</span>
+                    <van-icon name="like" style="color:red;" v-if='item.liked === 1' /><span>{{ item.likeCountStr
+                    }}</span>
                   </span>
                 </div>
                 <div class="text-sm">{{ item.desc }}</div>

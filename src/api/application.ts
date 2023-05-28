@@ -35,6 +35,12 @@ export function getApplicationCreate<T>(data) {
     data,
   })
 }
+export function getApplicationUpdate<T>(data) {
+  return post<T>({
+    url: '/luomacode-api/application/update',
+    data,
+  })
+}
 
 export function getApplicationMy<T>() {
   return get<T>({

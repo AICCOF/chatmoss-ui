@@ -4,8 +4,6 @@ import { computed, h, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import uni from '@dcloudio/uni-webview-js'
 import { useAppStore, useUserStore } from '@/store'
-import { getSystemNotice, sendFeedback } from '@/api/personCenter'
-import type { Notice } from '@/store/modules/user/helper'
 import { localStorage } from '@/utils/storage/localStorage'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
@@ -14,7 +12,7 @@ const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
 const go = useGo()
 const userStore = useUserStore()
-const notification = useNotification()
+
 
 const ms = useMessage()
 const appStore = useAppStore()
@@ -22,55 +20,19 @@ const appStore = useAppStore()
 // const nickname = computed(() => {
 //   return userStore.userInfo.user.nickname
 // })
-const personCenter = ref<{
-  notices: any[]
-  [K: string]: any
-}>({
-  score: 0,
-  notices: [],
-  dataList: [],
-  keyList: [],
-  shops: [
-    {
-      title: '500万字符包',
-      desc: '99元 1元 = 5万字符',
-      count: 30,
-    },
-  ],
-})
+
 
 onMounted(() => {
   updated()
 })
 function updated() {
   getPlusInfoAPI()
-  getSystemNoticeAPI()
+  // getSystemNoticeAPI()
   // getKeyListAPI()
   userStore.residueCountAPI()
 }
-const temNotice = computed(() => userStore.getNotices || [])
-async function getSystemNoticeAPI() {
-  const res = await getSystemNotice<Notice[]>()
-  personCenter.value.notices = res.data || []
+// const temNotice = computed(() => userStore.getNotices || [])
 
-  const notice = personCenter.value.notices[personCenter.value.notices.length - 1]
-
-  if (res.data.length > temNotice.value.length) {
-    notification.create({
-      content: notice.content,
-      meta: notice.createTime,
-      avatar: () =>
-        h(NAvatar, {
-          size: 'small',
-          round: true,
-          src: notice.icon,
-        }),
-      duration: 5000,
-      keepAliveOnHover: true,
-    })
-    userStore.setNotices(res.data)
-  }
-}
 async function getPlusInfoAPI() {
   // const res = await getPlusInfo()
   // personCenter.value.score = res.data

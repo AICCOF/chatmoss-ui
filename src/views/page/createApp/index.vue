@@ -4,7 +4,7 @@ import { NButton, NForm, NFormItem, NInput, NSelect, NSpace, NSwitch } from 'nai
 import { FormInst, FormItemRule, useMessage } from 'naive-ui'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
-import { getApplicationIconList, getApplicationCreate, getApplicationTypeList, getApplicationQueryById } from '@/api/application'
+import { getApplicationIconList, getApplicationCreate, getApplicationTypeList, getApplicationQueryById, getApplicationUpdate } from '@/api/application'
 import { useRouter } from 'vue-router'
 const router = useRouter();
 const back = useBack()
@@ -42,8 +42,12 @@ function handleValidateButtonClick() {
   formRef.value?.validate((errors) => {
     console.log(errors)
     if (!errors) {
+      if (formValue.value.id) {
+        getApplicationUpdateAPI()
+      } else {
+        getApplicationCreateAPI();
+      }
 
-      getApplicationCreateAPI();
     }
   })
 
@@ -69,6 +73,10 @@ async function getApplicationCreateAPI() {
   let res = await getApplicationCreate(formValue.value);
   message.success(res.msg)
 }
+async function getApplicationUpdateAPI() {
+  let res = await getApplicationUpdate(formValue.value);
+  message.success(res.msg)
+}
 function handleImage(row) {
 
   formValue.value.iconUrl = row.url
@@ -77,10 +85,25 @@ function handleImage(row) {
 }
 onMounted(async () => {
 
-  if (router.currentRoute.value) {
+  if (router.currentRoute.value.query) {
     let id = router.currentRoute.value.query.id
-    let res = await getApplicationQueryById(id)
-    formValue.value = res.data || {}
+    if (id) {
+      let res = await getApplicationQueryById(id)
+      let data = res.data || {}
+      formValue.value = {
+        id: data.id,
+        iconId: data.iconId,
+        iconUrl: data.icon,
+        appName: data.appName,
+        iconUrl: data.icon,
+        appName: data.appName,
+        desc: data.desc,
+        promot:data.promot,
+        share:data.share,
+        contextEnabled: data.contextEnabled
+      }
+    }
+
   }
 
 })
@@ -98,7 +121,7 @@ onMounted(async () => {
 
 
       <NForm ref="formRef" :model="formValue" :rules="rules">
-        <NFormItem label="选择图标" path="iconId" required>
+        <NFormItem label="选择图标" path="iconUrl" required>
           <van-image round width="4rem" height="4rem" :src="formValue.iconUrl" class="m-auto"
             @click="() => { showBottom = true }" />
         </NFormItem>

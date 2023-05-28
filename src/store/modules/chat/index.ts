@@ -4,9 +4,8 @@ import dayjs from 'dayjs'
 import { getToken } from '../auth/helper'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteBatchConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
-// import { useUserStore } from '@/store'
+import { useUserStore } from '@/store'
 
-// const userStore = useUserStore()
 const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
   {},
@@ -49,34 +48,39 @@ export const useChatStore = defineStore('chat-store', {
     chatsCollect(state: Chat.ChatState) {
       const chat: Chat.ChatInfo[] = this.chat
       const localChat: Chat.ChatInfo[] = this.localChat
-      return [...chat.filter(row => row.title.includes(state.searchMsg)), ...localChat.filter(row => row.title.includes(state.searchMsg))]
+      if (getToken()) {
+        return [...chat.filter(row => row.title.includes(state.searchMsg))]
+      } else {
+        return [...localChat.filter(row => row.title.includes(state.searchMsg))]
+      }
+
     },
     sortTimeChat() {
       const timeList: {
         title: string
         data: Chat.ChatState[]
       }[] = [
-        {
-          title: '今天',
-          data: [],
-        },
-        {
-          title: '昨天',
-          data: [],
-        },
-        {
-          title: '三天前',
-          data: [],
-        },
-        {
-          title: '七天前',
-          data: [],
-        },
-        {
-          title: '一个月前',
-          data: [],
-        },
-      ]
+          {
+            title: '今天',
+            data: [],
+          },
+          {
+            title: '昨天',
+            data: [],
+          },
+          {
+            title: '三天前',
+            data: [],
+          },
+          {
+            title: '七天前',
+            data: [],
+          },
+          {
+            title: '一个月前',
+            data: [],
+          },
+        ]
       this.chatsCollect.forEach((row) => {
         const timestamp = row.timestamp
         if (timestamp >= dayjs().startOf('day').valueOf())
@@ -126,15 +130,15 @@ export const useChatStore = defineStore('chat-store', {
       const token = getToken()
       if (token)
         await this.createOriginChat(title)
-
       else
         await this.createLocalChat(title)
     },
     async createOriginChat(title?: string) {
+      const userStore = useUserStore()
       try {
         const res = await addConversation({
           title: title || '新建问题',
-          // appId: '17',
+          appId: userStore.appIdValue
         })
         this.active = res.msg as number
         this.chat.unshift(res.list[0])
@@ -159,19 +163,16 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute()
     },
     async chatList() {
-      const res = await getConversationList()
+      const userStore = useUserStore()
+      this.active = null;
+      const res = await getConversationList({
+        appId: userStore.appIdValue
+      })
       this.chat = res.list || []
+      // this.active = res.list[0] ? res.list[0].id : null;
+      // console.log(res.list[0].id)
       this.getConversationDetail()
-      // 没有选中某一项的处理逻辑
-      // setTimeout(() => {
-      //   const questionListDom = document.querySelector('.question-list') as HTMLDivElement
-      //   const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-      //   if (!localStorage.getItem('chatStorage')) {
-      //     questionListDom
-      //       ? questionListDom.click() // 如果有数据，但是没有选中，就先操作dom节点选中第一个
-      //       : questionBtnDom.click() // 如果没有数据，就先操作dom节点，新建一个问题
-      //   }
-      // }, 500)
+
     },
     clearList() {
       this.chat = []
