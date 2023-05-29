@@ -121,7 +121,8 @@ export const useUserStore = defineStore('user-store', {
       return map
     },
     currentApp(state){
-      return state.appsListMap[state.appId] 
+      // console.log(state.appsListMap, )
+      return state.appsListMap[state.appIdValue] 
     }
   },
   actions: {  

@@ -169,7 +169,7 @@ export const useChatStore = defineStore('chat-store', {
         appId: userStore.appIdValue
       })
       this.chat = res.list || []
-      this.active = res.list[0] ? res.list[0].id : null;
+      this.active = this.chat[0] ? this.chat[0].id : null;
       // console.log(res.list[0].id)
       this.getConversationDetail()
 
