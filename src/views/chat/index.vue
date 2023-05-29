@@ -561,7 +561,7 @@ async function onSuccessAuth() {
             <div>
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :is-show="(dataSources.length - 1 == index) && userStore.currentApp.system === 1" :ask-msg="item.ast" :inversion="item.inversion"
+                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
               />
 

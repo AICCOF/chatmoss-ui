@@ -32,7 +32,7 @@ function handleClick(row) {
 
 }
 function handleDelete(row, i) {
-	deleteItem.value.push(i)
+	deleteItem.value.push(row.appId)
 	userStore.appList.installList.splice(i, 1)
 }
 
@@ -44,24 +44,24 @@ function handleSave() {
 	})
 		.then(async () => {
 			// on confirm
-			const data = list.value.installList.map((row, index) => {
+			const data = userStore.appList.installList.map((row, index) => {
 				return {
 					appId: row.appId,
 					sort: index + 1,
 				}
 			})
 			const res = await getApplicationSort(data)
-
+			// console.log(deleteItem)
 			if (deleteItem.value.length > 0) {
 				await getApplicationInstall({
 					appId: deleteItem.value.join(','),
-					installed: 1,
+					type: 0,
 				})
 			}
 
 			deleteItem.value = []
-			getApplicationInstallListAPI()
-			showToast(res.msg)
+			userStore.getApplicationInstallListAPI()
+			// showToast(res.msg)
 		})
 		.catch(() => {
 			// on cancel
