@@ -12,7 +12,9 @@ const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 let title = ref('')
 const formValue = ref({
-  iconUrl: ''
+  iconUrl: '',
+  share: 1,
+  contextEnabled: 1
 })
 let rules = {
   iconId: {
@@ -69,7 +71,7 @@ async function getApplicationListAPI() {
   let res = await getApplicationIconList();
   // console.log(iconList, res)
   formValue.value.iconUrl = res.rows[0] ? res.rows[0].url : ''
-  formValue.value.iconId = res.rows[0] ? res.rows[0].id: ''
+  formValue.value.iconId = res.rows[0] ? res.rows[0].id : ''
   iconList.value = res.rows || []
 
 }
@@ -95,14 +97,12 @@ onMounted(async () => {
   if (router.currentRoute.value.query) {
     let id = router.currentRoute.value.query.id
     if (id) {
-      title.value = '新建应用'
+      title.value = '编辑应用'
       let res = await getApplicationQueryById(id)
       let data = res.data || {}
       formValue.value = {
         id: data.id,
         iconId: data.iconId,
-        iconUrl: data.icon,
-        appName: data.appName,
         iconUrl: data.icon,
         appName: data.appName,
         appType: data.appType,
