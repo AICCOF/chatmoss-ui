@@ -142,13 +142,14 @@ export const useUserStore = defineStore('user-store', {
 
         this.userInfo.timesInfo = undefined
 
-        this.centerPicUrl = res.data.centerPicUrl;
+       
 
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
         if (res.data && res.data.user) {
+          this.centerPicUrl = res.data.centerPicUrl;
           this.userInfo.user.authed = false
           this.isAuth = 2;
         } else {
