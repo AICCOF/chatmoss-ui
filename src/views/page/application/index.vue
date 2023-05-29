@@ -41,7 +41,7 @@ function handleChange(index: number) {
 getApplicationTypeListAPI()
 async function getApplicationTypeListAPI() {
   const res = await getApplicationTypeList()
-  typeList.value = ([{id:'', typeName:'全部'},...res.list] || [])
+  typeList.value = ([{ id: '', typeName: '全部' }, ...res.list] || [])
   active.value = 0
   getApplicationListAPI(typeList.value[active.value].id)
 }
@@ -73,15 +73,15 @@ async function handleInstalled(row) {
     </template>
     <div class="flex justify-center justify-around mt-4">
       <van-button type="primary" style="width:40%" @click="() => { go({ name: 'createApp' }) }">
-        创建应用
+        创建新的应用
       </van-button>
       <van-button type="success" style="width:40%" @click="() => { go({ name: 'appList' }) }">
-        查看自己创建的应用
+        查看创建的应用
       </van-button>
     </div>
 
     <div class="mt-4 flex items-center">
-      <van-search v-model="value" class="flex-1 button-t1" placeholder="搜索应用" show-action @search="getApplicationSearchAPI" :clearable="false">
+      <van-search v-model="value" class="flex-1 button-t1" placeholder="搜索应用" show-action :clearable="false" @search="getApplicationSearchAPI">
         <template #action>
           <van-button size="small" type="primary" @click="getApplicationSearchAPI">
             搜索
@@ -91,7 +91,7 @@ async function handleInstalled(row) {
     </div>
 
     <div class="flex">
-      <van-sidebar v-if="flag" v-model="active" @change="handleChange" style class="sidebar">
+      <van-sidebar v-if="flag" v-model="active" style class="sidebar" @change="handleChange">
         <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
       </van-sidebar>
       <div class="mt-4  flex-1 pl-4 w-full content">
@@ -101,10 +101,11 @@ async function handleInstalled(row) {
         >
           <div class="flex items-center flex-1">
             <div class="mr-2">
-              <img :src="item.icon" alt="" style="width:30px;height: 30px;">
+              <!-- <img :src="item.icon" alt="" style="width:30px;height: 30px;"> -->
+              <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt="" style="width:30px;height: 30px;">
             </div>
             <div class="flex flex-1 w-full">
-              <span class="mr-2 flex justify-center text-base" style="width:30px">{{ i + 1 }}</span>
+              <span class="mr-2 flex justify-center text-base text-center" style="width:30px">{{ i + 1 }}</span>
               <div class="w-full pr-4 flex-1">
                 <div class="flex  items-center w-full">
                   <span class="text-base mr-4">{{ item.appName }}</span>
@@ -124,7 +125,7 @@ async function handleInstalled(row) {
             <van-button v-if="item.installed === 0" type="primary" size="mini">
               安装
             </van-button>
-            <van-button v-if="item.installed === 1" type="primary" size="mini">
+            <van-button v-if="item.installed === 1" type="danger" size="mini">
               卸载
             </van-button>
           </div>
@@ -135,7 +136,6 @@ async function handleInstalled(row) {
 </template>
 
 <style lang="less" scoped>
-
 .content{
   height: calc(100vh - 200px);
   overflow-y: auto;
@@ -146,10 +146,26 @@ async function handleInstalled(row) {
   overflow-y: auto;
 }
 .item {
-
+	padding: 0px 20px;
+	cursor: pointer;
+	&:hover {
+		background-color: #1c1c1e;
+	}
 }
 
 /deep/ .van-search__action {
 	margin-top: -10px;
+}
+
+.text-center {
+	display: flex;
+	align-items: center;
+}
+
+.text-sm {
+	font-size: 12px;
+	color: #fff;
+	opacity: .8;
+	margin-top: 4px;
 }
 </style>

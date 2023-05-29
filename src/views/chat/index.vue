@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref , watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -21,7 +21,7 @@ import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 
 const authStore = useAuthStoreWithout()
-const go = useGo();
+const go = useGo()
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -104,11 +104,10 @@ const currentIndex = computed({
     userInputindex.value = val
   },
 })
-watch(()=> chatStore.getChatByUuid(),(...vals)=>{
+watch(() => chatStore.getChatByUuid(), (...vals) => {
   // console.log(vals)
-   scrollToBottom();
+  scrollToBottom()
 })
-
 
 function handleSubmit() {
   showModal.value = false
@@ -549,17 +548,38 @@ async function onSuccessAuth() {
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
         <div
-          id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"  ref="scrollRef"
+          id="image-wrapper" ref="scrollRef" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"
           style="height: 100%;overflow: auto"
         >
           <template v-if="!dataSources.length">
             <div class="no-data-info">
               <!-- 应用介绍 -->
               <div v-if="userStore.currentApp" class="no-data-info-text">
-                应用介绍：{{ userStore.currentApp.desc }}
+                应用使用说明：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
-                <img class="no-data-img" v-if="userStore.centerPicUrl" :src="userStore.centerPicUrl" alt="" @click="()=>{go({name:'invite'})}">
+              <img v-else-if="userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl" alt="" @click="() => { go({ name: 'sign' }) }">
+              <div v-else>
+                <!-- 后面期望这里跳转使用教程页面 -->
+                <div class="no-data-info-tip-title">
+                  使用说明：
+                </div>
+                <div class="no-data-info-tip-text">
+                  1.有key免费使用：左上角个人中心设置自己的key，无限制使用（可以不用登录）
+                </div>
+                <div class="no-data-info-tip-text">
+                  2.登录后每日5万字符使用额度，每周参与签到可以获得7.8w字符，还有应用商店数千款应用等你探索~快去注册吧
+                </div>
+                <div class="no-data-info-tip-text">
+                  3.暂未未登录，您可以免费体验3万字符，字符余额可以在右上角可以查看
+                </div>
+                <div class="no-data-info-tip-text">
+                  4.大部分问题都可以点击左上角帮助页面，自行查阅解决
+                </div>
+                <div class="no-data-info-tip-text">
+                  5.ChatMoss商店兑换码需要登录后才可以兑换！
+                </div>
+              </div>
             </div>
           </template>
           <template v-else>
@@ -634,6 +654,20 @@ async function onSuccessAuth() {
   justify-content: center;
 	position: relative;
 
+	.no-data-info-tip-title {
+		font-size: 14px;
+		color: #fff;
+		margin-bottom: 20px;
+		font-weight: 600;
+	}
+	.no-data-info-tip-text {
+		width: 340px;
+		font-size: 14px;
+		color: #fff;
+		line-height: 28px;
+		margin-bottom: 10px;
+	}
+
 	.no-data-info-text {
 		width: 100%;
 		text-align: center;
@@ -646,8 +680,8 @@ async function onSuccessAuth() {
 	}
 
   .no-data-img {
-    width: 450px;
-    height: 300px;
+    width: 360px;
+    height: 240px;
     display: flex;
     align-items: center;
     justify-content: center;

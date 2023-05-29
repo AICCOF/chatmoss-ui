@@ -102,7 +102,6 @@ function settingMainEvent() {
 function shopEvent() {
   go({ name: 'shop' })
 }
-
 </script>
 
 <template>
@@ -270,6 +269,7 @@ function shopEvent() {
       align-items: center;
       justify-content: center;
       cursor: pointer;
+			font-size: 12px;
 
       &:hover {
         transform: scale(1.05);

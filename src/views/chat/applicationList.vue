@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import draggable from 'vuedraggable'
 import { nextTick, ref } from 'vue'
-import { showConfirmDialog, showToast } from 'vant'
-import { useMessage, NPopover } from 'naive-ui'
+import { showConfirmDialog } from 'vant'
+import { NPopover, useMessage } from 'naive-ui'
 import { useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationSort } from '@/api/application'
 import { useChatStore, useUserStore } from '@/store'
@@ -19,110 +19,119 @@ const deleteItem = ref([])
 userStore.getApplicationInstallListAPI()
 
 function handleEdit() {
-	enabled.value = true
+  enabled.value = true
 }
 function handleClick(row) {
-	if (!enabled.value) {
-		userStore.setAppId(row.appId)
-		nextTick(() => {
-			chatStore.chatList()
-			// ms.warning('切换应用成功,请新建会话或者选中历史会话在提问')
-		})
-	}
-
+  if (!enabled.value) {
+    userStore.setAppId(row.appId)
+    nextTick(() => {
+      chatStore.chatList()
+      // ms.warning('切换应用成功,请新建会话或者选中历史会话在提问')
+    })
+  }
 }
 function handleDelete(row, i) {
-	deleteItem.value.push(row.appId)
-	userStore.appList.installList.splice(i, 1)
+  deleteItem.value.push(row.appId)
+  userStore.appList.installList.splice(i, 1)
 }
 
 function handleSave() {
-	showConfirmDialog({
-		title: '保存',
-		message:
+  showConfirmDialog({
+    title: '保存',
+    message:
 			'确定进行此操作?',
-	})
-		.then(async () => {
-			// on confirm
-			const data = userStore.appList.installList.map((row, index) => {
-				return {
-					appId: row.appId,
-					sort: index + 1,
-				}
-			})
-			const res = await getApplicationSort(data)
-			// console.log(deleteItem)
-			if (deleteItem.value.length > 0) {
-				await getApplicationInstall({
-					appId: deleteItem.value.join(','),
-					type: 0,
-				})
-			}
+  })
+    .then(async () => {
+      // on confirm
+      const data = userStore.appList.installList.map((row, index) => {
+        return {
+          appId: row.appId,
+          sort: index + 1,
+        }
+      })
+      const res = await getApplicationSort(data)
+      // console.log(deleteItem)
+      if (deleteItem.value.length > 0) {
+        await getApplicationInstall({
+          appId: deleteItem.value.join(','),
+          type: 0,
+        })
+      }
 
-			deleteItem.value = []
-			userStore.getApplicationInstallListAPI()
-			// showToast(res.msg)
-		})
-		.catch(() => {
-			// on cancel
-		})
+      deleteItem.value = []
+      userStore.getApplicationInstallListAPI()
+      // showToast(res.msg)
+    })
+    .catch(() => {
+      // on cancel
+    })
 
-	enabled.value = false
+  enabled.value = false
 }
 </script>
 
 <template>
-	<div class="wrap">
-		<div class="list">
-			<draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-				ghost-class="ghost">
-				<template #item="{ element }">
-					<div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-						@click="handleClick(element)">
-						<span class="span"> {{ element.appId }}</span>
-						<div>
-
-							<NPopover trigger="hover">
-								<template #trigger>
-									<img :src="element.iconUrl" alt="">
-								</template>
-								<span>{{ element.appName }}</span>
-							</NPopover>
-						</div>
-					</div>
-				</template>
-			</draggable>
-			<draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-				ghost-class="ghost">
-				<template #item="{ element, index }">
-					<div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-						@click="handleClick(element)">
-						<span v-if="enabled" class="close" @click="handleDelete(element, index)">
-							<van-icon name="cross" />
-						</span>
-						<span class="span"> {{ element.appId }}</span>
-						<div :class="[enabled ? 'animate-pulse animate' : '']">
-							<NPopover trigger="hover">
-								<template #trigger>
-									<img :src="element.iconUrl" alt="">
-								</template>
-								<span>{{ element.appName }}</span>
-							</NPopover>
-						</div>
-					</div>
-				</template>
-			</draggable>
-		</div>
-		<div class="btns">
-			<div class="btn">
-				<van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
-				<span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
-			</div>
-			<div class="btn">
-				<van-icon name="plus" @click="() => { go({ name: 'application' }) }" />
-			</div>
-		</div>
-	</div>
+  <div class="wrap">
+    <div class="list">
+      <draggable
+        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
+        <template #item="{ element }">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
+            <span class="span"> {{ element.appId.toString(2).padStart(5, '0') }}</span>
+            <div>
+              <NPopover trigger="hover">
+                <template #trigger>
+                  <!-- <img :src="element.iconUrl" alt=""> -->
+                  <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/s-logo1.png" alt="">
+                </template>
+                <span>{{ element.appName }}</span>
+              </NPopover>
+            </div>
+          </div>
+        </template>
+      </draggable>
+      <draggable
+        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
+        <template #item="{ element, index }">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
+            <span v-if="enabled" class="close" @click="handleDelete(element, index)">
+              <van-icon class="close-icon" name="cross" />
+            </span>
+            <span class="span"> {{ element.appId.toString(2).padStart(5, '0') }}</span>
+            <div :class="[enabled ? 'animate-pulse animate' : '']">
+              <NPopover trigger="hover">
+                <template #trigger>
+                  <!-- <img :src="element.iconUrl" alt=""> -->
+                  <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt="">
+                </template>
+                <span>{{ element.appName }}</span>
+              </NPopover>
+            </div>
+          </div>
+        </template>
+      </draggable>
+    </div>
+    <div class="btns">
+      <div class="btn">
+        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
+        <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
+      </div>
+      <div class="btn">
+        <!-- <van-icon name="plus" @click="() => { go({ name: 'application' }) }" /> -->
+        <img class="btn-icon" src="./img/appstore.png" alt="" @click="() => { go({ name: 'application' }) }">
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>
@@ -199,16 +208,27 @@ function handleSave() {
 				position: absolute;
 				top: -10px;
 				left: 5px;
+				.close-icon {
+					background: rgba(255, 255, 255, .3);
+					border-radius: 50%;
+					padding: 1px;
+					top: 10px;
+					left: 0;
+					transform: scale(0.8);
+				}
 			}
 
 			.span {
 				position: absolute;
 				right: 0px;
-				bottom: 0px;
+				bottom: -4px;
 				color: #fff;
-				opacity: 0.5;
+				opacity: 0.8;
 				font-size: 12px;
 				transform: scale(0.6);
+				width: 45px;
+				right: 0px;
+				text-align: center;
 			}
 
 		}
@@ -217,6 +237,11 @@ function handleSave() {
 	.btns {
 		height: 20%;
 		font-size: 24px;
+		height: 20%;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
 		.btn {
 			width: 45px;
@@ -225,6 +250,11 @@ function handleSave() {
 			align-items: center;
 			justify-content: center;
 			cursor: pointer;
+
+			.btn-icon {
+				width: 26px;
+				height: 26px;
+			}
 
 			&:hover {
 				background: linear-gradient(270deg, #323337 50%, rgba(70, 79, 111, 0.5) 100%);

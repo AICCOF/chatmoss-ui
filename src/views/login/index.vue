@@ -93,7 +93,7 @@ async function sendCode() {
       if (buttonInfo.time == 0 && timer) {
         clearInterval(timer)
         buttonInfo.text = '发送验证码'
-        timer = null;
+        timer = null
         return
       }
       buttonInfo.time--
@@ -187,7 +187,6 @@ async function loginEvent() {
   }
 }
 </script>
-
 
 <template>
   <NTabs v-model:value="tabStr" justify-content="space-evenly" type="line">
