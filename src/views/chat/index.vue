@@ -176,10 +176,10 @@ async function onConversation(askMsg?: string, type?: number) {
     if (!res)
       return
   }
-  if (!chatStore.getUuid) {
-    ms.warning('当前会话丢失,请新建会话或打开历史记录选择会话.')
-    return
-  }
+  // if (!chatStore.getUuid) {
+  //   ms.warning('当前会话丢失,请新建会话或打开历史记录选择会话.')
+  //   return
+  // }
   // if (!userStore.isAsk) {
   //   ms.error('当前字数已用尽，请等待明日免费字符，或者在商店内购买字符使用，或者上传key使用')
   //   return
@@ -560,7 +560,7 @@ async function onSuccessAuth() {
             <div>
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :is-show="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
+                :is-show="(dataSources.length - 1 == index) && userStore.currentApp.system===1" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
               />
 

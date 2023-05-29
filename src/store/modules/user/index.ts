@@ -102,12 +102,18 @@ export const useUserStore = defineStore('user-store', {
       let map = {};
       if (state.appList.installList){
         state.appList.installList.forEach((row) => {
-          map[row.appId] = row
+          map[row.appId] = {
+            system:0,
+            ...row
+          }
         })
       }
       if (state.appList.systemList) {
         state.appList.systemList.forEach((row) => {
-          map[row.appId] = row
+          map[row.appId] = {
+            system: 1,
+            ...row
+          }
         })
       }
      

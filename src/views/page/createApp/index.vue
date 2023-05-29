@@ -10,8 +10,9 @@ const router = useRouter();
 const back = useBack()
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
+let title = ref('')
 const formValue = ref({
-  iconUrl: 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'
+  iconUrl: ''
 })
 let rules = {
   iconId: {
@@ -66,15 +67,21 @@ async function getApplicationTypeListAPI() {
 }
 async function getApplicationListAPI() {
   let res = await getApplicationIconList();
+  // console.log(iconList, res)
+  formValue.value.iconUrl = res.rows[0] ? res.rows[0].url : ''
+  formValue.value.iconId = res.rows[0] ? res.rows[0].id: ''
   iconList.value = res.rows || []
+
 }
 
 async function getApplicationCreateAPI() {
   let res = await getApplicationCreate(formValue.value);
+  back();
   message.success(res.msg)
 }
 async function getApplicationUpdateAPI() {
   let res = await getApplicationUpdate(formValue.value);
+  back();
   message.success(res.msg)
 }
 function handleImage(row) {
@@ -88,6 +95,7 @@ onMounted(async () => {
   if (router.currentRoute.value.query) {
     let id = router.currentRoute.value.query.id
     if (id) {
+      title.value = '新建应用'
       let res = await getApplicationQueryById(id)
       let data = res.data || {}
       formValue.value = {
@@ -97,11 +105,14 @@ onMounted(async () => {
         appName: data.appName,
         iconUrl: data.icon,
         appName: data.appName,
+        appType: data.appType,
         desc: data.desc,
-        promot:data.promot,
-        share:data.share,
+        promot: data.promot,
+        share: data.share,
         contextEnabled: data.contextEnabled
       }
+    } else {
+      title.value = '新建应用'
     }
 
   }
@@ -114,7 +125,7 @@ onMounted(async () => {
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="创建应用" left-text="返回" left-arrow @click-left="back" />
+      <van-nav-bar :title="title" left-text="返回" left-arrow @click-left="back" />
     </template>
 
     <NSpace vertical class="create-store-main mt-4">
@@ -140,7 +151,7 @@ onMounted(async () => {
               maxRows: 5,
             }" placeholder="输入指令" />
         </NFormItem>
-        <NFormItem label="应用类型" path="type" required>
+        <NFormItem label="应用类型" path="appType" required>
           <NSelect v-model:value="formValue.appType" placeholder="应用类型" :options="typeList" />
         </NFormItem>
 

@@ -169,7 +169,7 @@ export const useChatStore = defineStore('chat-store', {
         appId: userStore.appIdValue
       })
       this.chat = res.list || []
-      // this.active = res.list[0] ? res.list[0].id : null;
+      this.active = res.list[0] ? res.list[0].id : null;
       // console.log(res.list[0].id)
       this.getConversationDetail()
 
@@ -259,10 +259,9 @@ export const useChatStore = defineStore('chat-store', {
       await deleteConversation({ conversationId: this.chat[index].id })
       await this.chatList()
 
-      const chat = this.chat[this.chat.length - 1]
+      const chat = this.chat[0]
       if (!chat)
         this.active = null
-
       else
         this.active = chat.id
 
@@ -270,7 +269,7 @@ export const useChatStore = defineStore('chat-store', {
     },
     async deleteLocalHistory(index: number) {
       this.localChat.splice(index, 1)
-      const chat = this.localChat[this.localChat.length - 1]
+      const chat = this.localChat[0]
       if (!chat)
         this.active = null
       else

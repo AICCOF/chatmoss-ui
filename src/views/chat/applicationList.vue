@@ -22,16 +22,18 @@ function handleEdit() {
   enabled.value = true
 }
 function handleClick(row) {
-  if (!enabled.value)
-    userStore.setAppId(row.appId)
-  nextTick(() => {
-    chatStore.chatList()
-    ms.warning('切换应用成功,请新建会话或者选中历史会话在提问')
-  })
+  if (!enabled.value){
+		userStore.setAppId(row.appId)
+		nextTick(() => {
+			chatStore.chatList()
+			// ms.warning('切换应用成功,请新建会话或者选中历史会话在提问')
+		})
+	}
+   
 }
 function handleDelete(row, i) {
   deleteItem.value.push(i)
-  list.value.installList.splice(i, 1)
+  userStore.appList.installList.splice(i, 1)
 }
 
 function handleSave() {

@@ -41,7 +41,7 @@ function handleChange(index: number) {
 getApplicationTypeListAPI()
 async function getApplicationTypeListAPI() {
   const res = await getApplicationTypeList()
-  typeList.value = (res.list || [])
+  typeList.value = ([{id:'', typeName:'全部'},...res.list] || [])
   active.value = 0
   getApplicationListAPI(typeList.value[active.value].id)
 }
@@ -81,7 +81,7 @@ async function handleInstalled(row) {
     </div>
 
     <div class="mt-4 flex items-center">
-      <van-search v-model="value" class="flex-1 button-t1" placeholder="搜索应用" show-action @search="getApplicationSearchAPI">
+      <van-search v-model="value" class="flex-1 button-t1" placeholder="搜索应用" show-action @search="getApplicationSearchAPI" :clearable="false">
         <template #action>
           <van-button size="small" type="primary" @click="getApplicationSearchAPI">
             搜索
@@ -91,10 +91,10 @@ async function handleInstalled(row) {
     </div>
 
     <div class="flex">
-      <van-sidebar v-if="flag" v-model="active" @change="handleChange">
+      <van-sidebar v-if="flag" v-model="active" @change="handleChange" style class="sidebar">
         <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
       </van-sidebar>
-      <div class="mt-4  flex-1 pl-4 w-full">
+      <div class="mt-4  flex-1 pl-4 w-full content">
         <div
           v-for="(item, i) of dataList" :key="i"
           class="flex justify-between items-center  dark:text-white w-full flex-1 item"
@@ -135,6 +135,16 @@ async function handleInstalled(row) {
 </template>
 
 <style lang="less" scoped>
+
+.content{
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.sidebar{
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+}
 .item {
   height: 50px;
 }
