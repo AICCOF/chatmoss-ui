@@ -551,16 +551,14 @@ async function onSuccessAuth() {
                 应用介绍：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
-              <div class="no-data-img">
-                初始状态占位图片
-              </div>
+              <img class="no-data-img" src="./img/invite-friends.png" alt="">
             </div>
           </template>
           <template v-else>
             <div>
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :is-show="(dataSources.length - 1 == index) && userStore.currentApp.system===1" :ask-msg="item.ast" :inversion="item.inversion"
+                :is-show="(dataSources.length - 1 == index) && userStore.currentApp.system === 1" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
               />
 
@@ -640,13 +638,14 @@ async function onSuccessAuth() {
 	}
 
   .no-data-img {
-    width: 300px;
-    height: 200px;
-    border: 1px solid red;
+    width: 450px;
+    height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+		border-radius: 10px;
+		cursor: pointer;
   }
 
   .no-data-info-title {
@@ -932,5 +931,12 @@ async function onSuccessAuth() {
 .is3_5 {
   background-color: #ceeaca;
   color: #4fa444;
+}
+
+@media screen and(max-width: 768px) {
+  .no-data-img {
+    width: 250px !important;
+    height: 166px !important;
+  }
 }
 </style>
