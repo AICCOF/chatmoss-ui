@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
       ...getLocalState(),
+      centerPicUrl: '',
       appList: {},
       notices: [],
       isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
@@ -98,12 +99,12 @@ export const useUserStore = defineStore('user-store', {
     activities(state) {
       return state.activityList
     },
-    appsListMap(state){
+    appsListMap(state) {
       let map = {};
-      if (state.appList.installList){
+      if (state.appList.installList) {
         state.appList.installList.forEach((row) => {
           map[row.appId] = {
-            system:0,
+            system: 0,
             ...row
           }
         })
@@ -116,16 +117,16 @@ export const useUserStore = defineStore('user-store', {
           }
         })
       }
-     
-     
+
+
       return map
     },
-    currentApp(state){
+    currentApp(state) {
       // console.log(state.appsListMap, )
-      return state.appsListMap[state.appIdValue] 
+      return state.appsListMap[state.appIdValue]
     }
   },
-  actions: {  
+  actions: {
     async residueCountAPI() {
       try {
         const res = await residueCount<{
@@ -140,6 +141,8 @@ export const useUserStore = defineStore('user-store', {
         }>()
 
         this.userInfo.timesInfo = undefined
+
+        this.centerPicUrl = res.data.centerPicUrl;
 
         this.userInfo = {
           ...this.userInfo, ...res.data,
@@ -204,7 +207,7 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo.notices = value
       this.recordState()
     },
-    setAppId(appId){
+    setAppId(appId) {
       this.appId = appId
       this.recordState();
     },

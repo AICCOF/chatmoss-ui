@@ -102,12 +102,7 @@ function settingMainEvent() {
 function shopEvent() {
   go({ name: 'shop' })
 }
-function clickActivity() {
-  modelValue.value = true
-}
-function getActivityListEvent() {
-  userStore.getActivityListAPI()
-}
+
 </script>
 
 <template>

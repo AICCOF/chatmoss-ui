@@ -146,7 +146,7 @@ async function handleInstalled(row) {
   overflow-y: auto;
 }
 .item {
-  height: 50px;
+
 }
 
 /deep/ .van-search__action {

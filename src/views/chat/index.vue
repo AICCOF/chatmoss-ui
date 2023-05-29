@@ -18,7 +18,10 @@ import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
+import { useGo } from '@/utils/router'
+
 const authStore = useAuthStoreWithout()
+const go = useGo();
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -551,7 +554,7 @@ async function onSuccessAuth() {
                 应用介绍：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
-              <img class="no-data-img" src="./img/invite-friends.png" alt="">
+                <img class="no-data-img" v-if="userStore.centerPicUrl" :src="userStore.centerPicUrl" alt="" @click="()=>{go({name:'invite'})}">
             </div>
           </template>
           <template v-else>
