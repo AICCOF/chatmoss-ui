@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref , watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -104,6 +104,11 @@ const currentIndex = computed({
     userInputindex.value = val
   },
 })
+watch(()=> chatStore.getChatByUuid(),(...vals)=>{
+  // console.log(vals)
+   scrollToBottom();
+})
+
 
 function handleSubmit() {
   showModal.value = false
@@ -541,10 +546,10 @@ async function onSuccessAuth() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex-1 overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
+      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
         <div
-          id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"
+          id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"  ref="scrollRef"
           style="height: 100%;overflow: auto"
         >
           <template v-if="!dataSources.length">

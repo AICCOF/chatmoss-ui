@@ -120,7 +120,13 @@ export const useChatStore = defineStore('chat-store', {
           return (state.localChat.find(item => item.id === state.active)?.data ?? [])
 
         else
-          return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => a.timestamp - b.timestamp)
+          // console.log(state.chat)
+          return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) =>{
+            if (a.id && b.id) {
+              return a.id - b.id
+            }
+            return  a.timestamp - b.timestamp
+          })
       }
     },
   },
