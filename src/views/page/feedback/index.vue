@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NAlert, NButton, NForm, NFormItem, NInput, NSpace, useMessage } from 'naive-ui'
+import { NAlert, NButton, NForm, NFormItem, NInput, useMessage } from 'naive-ui'
 import { reactive } from 'vue'
 import {  sendFeedback } from '@/api/personCenter'
 import Page from "@/components/page/index.vue";

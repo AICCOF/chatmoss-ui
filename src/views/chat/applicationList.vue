@@ -22,7 +22,8 @@ function handleEdit() {
   enabled.value = true
 }
 function handleClick(row) {
-  if (!enabled.value) {
+  console.log(userStore.appIdValue, row.appId)
+  if (!enabled.value && userStore.appIdValue !== row.appId) {
     if (row.isOpened === 0) {
       ms.info(row.notOpenReason || '暂未开放，敬请期待...')
       return

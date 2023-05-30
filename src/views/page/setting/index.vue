@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NButton, NDivider, NInput, NSelect, NSwitch, useMessage } from 'naive-ui'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 // import dayjs from 'dayjs'
 import uni from '@dcloudio/uni-webview-js'
 import { useAppStore, useUserStore } from '@/store'
@@ -24,22 +24,9 @@ onMounted(() => {
   updated()
 })
 function updated() {
-  getPlusInfoAPI()
-  // getSystemNoticeAPI()
-  // getKeyListAPI()
   userStore.residueCountAPI()
 }
-// const temNotice = computed(() => userStore.getNotices || [])
 
-async function getPlusInfoAPI() {
-  // const res = await getPlusInfo()
-  // personCenter.value.score = res.data
-}
-// async function getKeyListAPI() {
-//   const res = await getKeyList<any>()
-//   // console.log(res.data.rows)
-//   personCenter.value.dataList = res.data.rows
-// }
 
 defineExpose({ updated })
 
@@ -77,10 +64,6 @@ function getNSwitchValue(): any {
   return localStorage.getItem('chatmossTheme')
 }
 
-const feedBackForm = reactive({
-  title: '',
-  content: '',
-})
 
 // 模型选择
 // console.log(userStore.getOpenaiVersion)

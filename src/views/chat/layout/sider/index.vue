@@ -1,21 +1,18 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, NSelect, useDialog, useMessage , NPopconfirm } from 'naive-ui'
+import { NLayoutSider, NPopconfirm } from 'naive-ui'
 // import Tips from '../../tips.vue'
-import { useModel } from '../../components/Modal/hooks/useModal'
+
 import List from './List.vue'
 import Footer from './Footer.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
-import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
-const userStore = useUserStore()
-const showModal = ref(false)
+// const userStore = useUserStore()
+// const showModal = ref(false)
 const appStore = useAppStore()
 const chatStore = useChatStore()
-const token = ref(getToken())
 const go = useGo()
-const tab = ref('login')
 const isMobile = ref(true)
 const collapsed = computed(() => appStore.siderCollapsed)
 

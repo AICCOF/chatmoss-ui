@@ -18,12 +18,11 @@ const userStore = useUserStore()
 const chatStore = useChatStore()
 const notification = useNotification()
 const go = useGo()
-// const token = ref('')
 const modelValue = ref(false)
 
-interface Emit {
-  (e: 'login'): void
-}
+// interface Emit {
+//   (e: 'login'): void
+// }
 
 function loginEvent(type: string) {
   if (type === 'login')
@@ -46,10 +45,6 @@ function handleClose(row: any) {
   shopEvent()
 }
 
-// 重置token
-// const resetToken = () => {
-//   token.value = getToken() as string
-// }
 
 watchEffect(() => {
   const { user } = userStore.userInfo
@@ -73,7 +68,6 @@ onMounted(() => {
 const temNotice = computed(() => userStore.getNotices || [])
 async function getSystemNoticeAPI() {
   const res = await getSystemNotice<Notice[]>()
-  // personCenter.value.notices = res.data || []
 
   const notice = res.data[0]
 
