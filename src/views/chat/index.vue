@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -108,7 +108,7 @@ watch(() => chatStore.getChatByUuid(), (...vals) => {
   // <!-- console.log(vals) -->
   setTimeout(() => {
     scrollToBottom()
-  }, 300);
+  }, 300)
 })
 
 function handleSubmit() {
@@ -171,12 +171,12 @@ function onlineFn(askMsg: string) {
 }
 async function onConversation(askMsg?: string, type?: number) {
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
-  if (userStore.residueCount < 500000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
+  if (userStore.residueCount < 200000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
+    ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
     return
   }
   if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换')
+    ms.error('请先去设置中心移除key再使用4.0进行提问')
     return
   }
 
@@ -522,8 +522,6 @@ async function startTutorial() {
   }
 }
 
-
-
 async function onSuccessAuth() {
   try {
     await auth()
@@ -546,9 +544,9 @@ async function onSuccessAuth() {
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
         <div
-          id="image-wrapper"  class="w-full max-w-screen-xl m-auto flex" :class="[isMobile ? 'p-2' : 'p-4']"
+          v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex"
+          :class="[isMobile ? 'p-2' : 'p-4']"
           style="height: 100%;overflow: hidden"
-          v-show="!chatStore.loading"
         >
           <template v-if="!dataSources.length">
             <div class="no-data-info text-[#000] dark:text-white w-full">
@@ -561,13 +559,13 @@ async function onSuccessAuth() {
               <div v-else>
                 <!-- 后面期望这里跳转使用教程页面 -->
                 <div class="no-data-info-tip-title">
-                  使用说明：
+                  ChatMoss 使用说明：
                 </div>
                 <div class="no-data-info-tip-text">
-                  1.有key免费使用：左上角个人中心设置自己的key，无限制使用（可以不用登录）
+                  1.免费使用：在左上角个人中心设置自己的key后，可无限制使用（可以不用登录）
                 </div>
                 <div class="no-data-info-tip-text">
-                  2.登录后每日5万字符使用额度，每周参与签到可以获得7.8w字符，还有应用商店数千款应用等你探索~快去注册吧
+                  2.登录后每日5万字符使用额度，每周参与签到可以获得7.8w字符，还有应用商店数千款应用等你探索~快去登录吧，登录后更精彩！
                 </div>
                 <div class="no-data-info-tip-text">
                   3.暂未未登录，您可以免费体验3万字符，字符余额可以在右上角可以查看
@@ -582,7 +580,7 @@ async function onSuccessAuth() {
             </div>
           </template>
           <template v-else>
-            <div style="width:100%;overflow:auto" ref="scrollRef">
+            <div ref="scrollRef" style="width:100%;overflow:auto">
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)" :ask-msg="item.ast" :inversion="item.inversion"
@@ -655,7 +653,7 @@ async function onSuccessAuth() {
 
 	.no-data-info-tip-title {
 		font-size: 14px;
-		color: #fff;
+		color: #FF6666;
 		margin-bottom: 20px;
 		font-weight: 600;
 	}

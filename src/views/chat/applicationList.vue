@@ -77,12 +77,16 @@ function handleSave() {
 <template>
   <div class="wrap">
     <div class="list">
-      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
-            <span class="span text-[#000] dark:text-white"> {{ element.appId.toString(2).padStart(5, '0') }}</span>
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
+            <span class="span text-[#000] dark:text-white">{{ element.appName.length > 5 ? element.appName.slice(0, 5) : element.appName }}</span>
             <div>
               <NPopover trigger="hover">
                 <template #trigger>
@@ -95,15 +99,19 @@ function handleSave() {
           </div>
         </template>
       </draggable>
-      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element, index }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <span v-if="enabled" class="close" @click="handleDelete(element, index)">
               <van-icon class="close-icon" name="cross" />
             </span>
-            <span class="span dark:text-white text-[#000]"> {{ element.appId.toString(2).padStart(5, '0') }}</span>
+            <span class="span dark:text-white text-[#000]">{{ element.appName.length > 5 ? element.appName.slice(0, 5) : element.appName }}</span>
             <div :class="[enabled ? 'animate-pulse animate' : '']">
               <NPopover trigger="hover">
                 <template #trigger>
@@ -218,14 +226,14 @@ function handleSave() {
 
       .span {
         position: absolute;
-        right: 0px;
         bottom: -4px;
         opacity: 0.8;
         font-size: 12px;
         transform: scale(0.6);
-        width: 45px;
-        right: 0px;
+        width: 60px;
         text-align: center;
+				opacity: .9;
+				font-weight: 600;
       }
 
     }

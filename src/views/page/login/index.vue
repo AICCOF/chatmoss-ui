@@ -252,7 +252,7 @@ async function loginEvent() {
                 show-password-on="mousedown"
               />
             </NFormItem>
-            <NFormItem
+            <!-- <NFormItem
               label="昵称" path="nickname" :rule="{
                 required: true,
                 message: '请输入昵称',
@@ -260,7 +260,7 @@ async function loginEvent() {
               }"
             >
               <NInput v-model:value="registerForm.nickname" placeholder="请输入昵称" clearable />
-            </NFormItem>
+            </NFormItem> -->
             <NFormItem
               label="邮箱验证码" path="emailCode" :rule="{
                 required: true,
@@ -288,7 +288,7 @@ async function loginEvent() {
               />
             </NFormItem>
             <NFormItem
-              label="邀请人邮箱（双方都可获得10w字符额度）" path="email" :rule="{
+              label="邀请人邮箱（双方都可获得100,000字符）" path="email" :rule="{
                 required: false,
                 message: '',
                 trigger: ['input', 'blur'],

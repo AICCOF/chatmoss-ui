@@ -293,7 +293,7 @@ async function loginEvent() {
           />
         </NFormItem>
         <NFormItem
-          label="邀请人邮箱（双方都可获得10w字符额度）" path="email" :rule="{
+          label="邀请人邮箱（双方都可获得100,000字符）" path="email" :rule="{
             required: false,
             message: '',
             trigger: ['input', 'blur'],

@@ -111,7 +111,7 @@ async function exchangeMossEvent() {
           <div class="flex flex-wrap">
             <div
               v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
-              class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
+              class="meal-main item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
               @click="buyEvent(item)"
             >
               <div class="title-h2">
@@ -134,7 +134,7 @@ async function exchangeMossEvent() {
           <div class="flex flex-wrap">
             <div
               v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
-              class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer "
+              class="meal-main item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer "
               @click="buyEvent(item)"
             >
               <div class="title-h2">
@@ -153,7 +153,7 @@ async function exchangeMossEvent() {
           <div class="flex flex-wrap">
             <div
               v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
-              class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
+              class="meal-main item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
               @click="buyEvent(item)"
             >
               <div class="title-h2">
@@ -189,7 +189,12 @@ async function exchangeMossEvent() {
   </Page>
 </template>
 
-<style>
+<style scoped lang="less">
+.meal-main {
+  height: 7rem;
+  flex: 1;
+  min-width: 6rem;
+}
 .title-h1 {
   margin: 10px 0px;
   color: #FF6666;
