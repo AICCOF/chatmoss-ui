@@ -181,6 +181,16 @@ export const useChatStore = defineStore('chat-store', {
         this.getConversationDetail()
       }
     },
+    clearList() {
+      this.chat = []
+      // this.localChat = [];
+      if (this.localChat.length>0){
+        this.active = this.localChat[0].id
+      }else{
+        this.active = null
+      }
+     
+    },
     async getConversationDetail() {
       if (!this.active)
         return
@@ -369,7 +379,7 @@ export const useChatStore = defineStore('chat-store', {
         this.recordState()
       }
       else {
-        this.addLocalChat(0, chat)
+        // this.addLocalChat(0, chat)
       }
     },
 

@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -105,8 +105,10 @@ const currentIndex = computed({
   },
 })
 watch(() => chatStore.getChatByUuid(), (...vals) => {
-  console.log(vals)
-  scrollToBottom()
+  // <!-- console.log(vals) -->
+  setTimeout(() => {
+    scrollToBottom()
+  }, 300);
 })
 
 function handleSubmit() {
@@ -277,9 +279,9 @@ async function onConversation(askMsg?: string, type?: number) {
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
-        const { responseText } = xhr
-        const chunk = responseText
-        // console.log(chunk)
+        // const { responseText } = xhr
+        const chunk = xhr.responseText
+        // console.log(chunk,'chunk', xhr.responseText)
         try {
           // const data = JSON.parse(chunk)
           updateChat(chatStore.getUuid, dataSources.value.length - 1, {
@@ -544,8 +546,8 @@ async function onSuccessAuth() {
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
         <div
-          id="image-wrapper" ref="scrollRef" class="w-full max-w-screen-xl m-auto flex" :class="[isMobile ? 'p-2' : 'p-4']"
-          style="height: 100%;overflow: auto"
+          id="image-wrapper"  class="w-full max-w-screen-xl m-auto flex" :class="[isMobile ? 'p-2' : 'p-4']"
+          style="height: 100%;overflow: hidden"
           v-show="!chatStore.loading"
         >
           <template v-if="!dataSources.length">
@@ -580,7 +582,7 @@ async function onSuccessAuth() {
             </div>
           </template>
           <template v-else>
-            <div style="width:100%">
+            <div style="width:100%;overflow:auto" ref="scrollRef">
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)" :ask-msg="item.ast" :inversion="item.inversion"

@@ -24,7 +24,7 @@ function handleEdit() {
 function handleClick(row) {
   if (!enabled.value) {
     if (row.isOpened === 0) {
-      ms.info('正在开发，暂未开放，敬请期待...')
+      ms.info(row.notOpenReason || '暂未开放，敬请期待...')
       return
     }
     userStore.setAppId(row.appId)
