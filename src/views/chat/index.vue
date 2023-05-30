@@ -543,11 +543,8 @@ async function onSuccessAuth() {
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
-        <div
-          v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex"
-          :class="[isMobile ? 'p-2' : 'p-4']"
-          style="height: 100%;overflow: hidden"
-        >
+        <div v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex"
+          :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: hidden">
           <template v-if="!dataSources.length">
             <div class="no-data-info text-[#000] dark:text-white w-full">
               <!-- 应用介绍 -->
@@ -555,7 +552,8 @@ async function onSuccessAuth() {
                 应用使用说明：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
-              <img v-if="userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl" alt="" @click="() => { go({ name: 'sign' }) }">
+              <img v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
+                alt="" @click="() => { go({ name: 'sign' }) }">
               <div v-else>
                 <!-- 后面期望这里跳转使用教程页面 -->
                 <div class="no-data-info-tip-title">
@@ -581,11 +579,10 @@ async function onSuccessAuth() {
           </template>
           <template v-else>
             <div ref="scrollRef" style="width:100%;overflow:auto">
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)" :ask-msg="item.ast" :inversion="item.inversion"
-                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
-              />
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
+                :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn"
+                @online="onlineFn" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -607,15 +604,11 @@ async function onSuccessAuth() {
     <footer :class="footerClass">
       <div class="w-full m-auto">
         <div class="moss-btns flex justify-between space-x-2 w-full">
-          <NInput
-            v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus
-            type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
-          />
-          <NSelect
-            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+          <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus
+            type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" />
+          <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
             :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter" @input="handleSelectInput"
-          />
+            label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
@@ -649,32 +642,33 @@ async function onSuccessAuth() {
   display: flex;
   align-items: center;
   justify-content: center;
-	position: relative;
+  position: relative;
 
-	.no-data-info-tip-title {
-		font-size: 14px;
-		color: #FF6666;
-		margin-bottom: 20px;
-		font-weight: 600;
-	}
-	.no-data-info-tip-text {
-		width: 340px;
-		font-size: 14px;
-		color: #fff;
-		line-height: 28px;
-		margin-bottom: 10px;
-	}
+  .no-data-info-tip-title {
+    font-size: 14px;
+    color: #FF6666;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
 
-	.no-data-info-text {
-		width: 100%;
-		text-align: center;
-		font-size: 14px;
-		// color: #fff;
-		position: absolute;
+  .no-data-info-tip-text {
+    width: 340px;
+    font-size: 14px;
+    // color: #fff;
+    line-height: 28px;
+    margin-bottom: 10px;
+  }
+
+  .no-data-info-text {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    // color: #fff;
+    position: absolute;
     opacity: 0.5;
     font-size: 12px;
     top: 30px;
-	}
+  }
 
   .no-data-img {
     width: 360px;
@@ -683,8 +677,8 @@ async function onSuccessAuth() {
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-		border-radius: 10px;
-		cursor: pointer;
+    border-radius: 10px;
+    cursor: pointer;
   }
 
   .no-data-info-title {
