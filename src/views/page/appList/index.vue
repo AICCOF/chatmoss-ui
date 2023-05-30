@@ -84,12 +84,15 @@ async function handleEdit(row) {
 
 <style scoped lang="less">
 
+
+
 .item {
+  @apply hover:bg-[#eaeaea];
 	padding: 6px 20px;
 	cursor: pointer;
-	&:hover {
-		background-color: #1c1c1e;
-	}
+  min-height: 7rem;
+  
+  @apply hover:dark:bg-[#1c1c1e];
 }
 
 

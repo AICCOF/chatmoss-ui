@@ -30,12 +30,12 @@ function setOpenaiVersion() {
 	<div>
 		<header class="footer-main">
 			<div class="footer-left">
-				<div class="footer-item footer-item-btn footer-item-btn1" @click="createQuestion">
+				<NTag class="footer-item footer-item-btn footer-item-btn1" type="success" @click="createQuestion">
 					新建会话
-				</div>
-				<div class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent">
+				</NTag>
+				<NTag class="footer-item footer-item-btn footer-item-btn2" type="success" @click="toggleButtonEvent">
 					历史记录
-				</div>
+				</NTag>
 			</div>
 			<div class="footer-right">
 				<div class="footer-item">
@@ -44,7 +44,7 @@ function setOpenaiVersion() {
 							<template #trigger>
 								切换模型
 							</template>
-							<NTag type="success" size="small" round >
+							<NTag type="success" size="small" class="footer-item footer-item-btn footer-item-btn1">
 								GPT-{{ userStore.getOpenaiVersion }}
 							</NTag>
 						</NPopover>
@@ -122,7 +122,7 @@ function setOpenaiVersion() {
 		padding: 0 6px;
 		border-radius: 4px;
 		margin-right: 8px;
-		background-color: #3872e0;
+		// background-color: #3872e0;
 	}
 }
 

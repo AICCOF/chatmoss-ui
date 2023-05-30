@@ -195,7 +195,7 @@ onMounted(async () => {
   flex-wrap: wrap;
 
   .item {
-    width: 25%;
+    width: 20%;
     box-sizing: border-box;
     padding: 10px;
 

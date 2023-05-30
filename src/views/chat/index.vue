@@ -105,7 +105,7 @@ const currentIndex = computed({
   },
 })
 watch(() => chatStore.getChatByUuid(), (...vals) => {
-  // console.log(vals)
+  console.log(vals)
   scrollToBottom()
 })
 
@@ -544,12 +544,12 @@ async function onSuccessAuth() {
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
         <div
-          id="image-wrapper" ref="scrollRef" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"
+          id="image-wrapper" ref="scrollRef" class="w-full max-w-screen-xl m-auto flex" :class="[isMobile ? 'p-2' : 'p-4']"
           style="height: 100%;overflow: auto"
           v-show="!chatStore.loading"
         >
           <template v-if="!dataSources.length">
-            <div class="no-data-info">
+            <div class="no-data-info text-[#000] dark:text-white w-full">
               <!-- 应用介绍 -->
               <div v-if="userStore.currentApp" class="no-data-info-text">
                 应用使用说明：{{ userStore.currentApp.desc }}
@@ -580,7 +580,7 @@ async function onSuccessAuth() {
             </div>
           </template>
           <template v-else>
-            <div>
+            <div style="width:100%">
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)" :ask-msg="item.ast" :inversion="item.inversion"
@@ -669,7 +669,7 @@ async function onSuccessAuth() {
 		width: 100%;
 		text-align: center;
 		font-size: 14px;
-		color: #fff;
+		// color: #fff;
 		position: absolute;
     opacity: 0.5;
     font-size: 12px;

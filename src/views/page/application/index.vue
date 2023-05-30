@@ -147,13 +147,14 @@ async function handleInstalled(row) {
   overflow-y: auto;
 }
 .item {
+  @apply hover:bg-[#eaeaea];
 	padding: 6px 20px;
 	cursor: pointer;
-  &:hover {
-		background-color: #1c1c1e;
-	}
-	
+  min-height: 7rem;
+  
+  @apply hover:dark:bg-[#1c1c1e];
 }
+
 
 /deep/ .van-search__action {
 	margin-top: -10px;
