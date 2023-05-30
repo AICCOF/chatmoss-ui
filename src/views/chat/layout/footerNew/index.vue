@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useMessage , NTag } from 'naive-ui'
+import { useMessage, NTag, NPopover } from 'naive-ui'
 import { useUserStore } from '@/store'
 // import { computed } from 'vue'
 // import { ref } from 'vue'
@@ -40,13 +40,13 @@ function setOpenaiVersion() {
 			<div class="footer-right">
 				<div class="footer-item">
 					<div class="header-right-item header-right-item-help">
-						<NPopover trigger="hover" @click="setOpenaiVersion">
+						<NPopover trigger="hover" >
 							<template #trigger>
-								切换模型
+								<NTag type="success" size="small" class="footer-item footer-item-btn footer-item-btn1" @click="setOpenaiVersion">
+									GPT-{{ userStore.getOpenaiVersion }}
+								</NTag>
 							</template>
-							<NTag type="success" size="small" class="footer-item footer-item-btn footer-item-btn1">
-								GPT-{{ userStore.getOpenaiVersion }}
-							</NTag>
+							切换模型
 						</NPopover>
 					</div>
 				</div>
