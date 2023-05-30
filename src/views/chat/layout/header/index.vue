@@ -193,7 +193,7 @@ function shopEvent() {
             </template>
             <div
               v-for="(row, i) of userStore.packageList" :key="i"
-              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 "
+              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
             >
               <div>
                 <div style="width:200px" class="flex justify-between">
@@ -214,7 +214,7 @@ function shopEvent() {
               </div>
             </div>
 
-            <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc]  mt-2">
+            <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
               <div style="width:200px">
                 <span class="mr-4">字符数：{{ mossCount }}</span>
               </div>
