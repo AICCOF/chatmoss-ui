@@ -101,8 +101,8 @@ async function handleInstalled(row) {
         >
           <div class="flex items-center flex-1">
             <div class="mr-2">
-              <!-- <img :src="item.icon" alt="" style="width:30px;height: 30px;"> -->
-              <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt="" style="width:30px;height: 30px;">
+              <img :src="item.icon" alt="" style="width:30px;height: 30px;">
+              <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt="" style="width:30px;height: 30px;"> -->
             </div>
             <div class="flex flex-1 w-full">
               <span class="mr-2 flex justify-center text-base text-center" style="width:30px">{{ i + 1 }}</span>
@@ -135,6 +135,7 @@ async function handleInstalled(row) {
   </Page>
 </template>
 
+
 <style lang="less" scoped>
 .content{
   height: calc(100vh - 200px);
@@ -146,11 +147,12 @@ async function handleInstalled(row) {
   overflow-y: auto;
 }
 .item {
-	padding: 0px 20px;
+	padding: 6px 20px;
 	cursor: pointer;
-	&:hover {
+  &:hover {
 		background-color: #1c1c1e;
 	}
+	
 }
 
 /deep/ .van-search__action {
@@ -164,7 +166,7 @@ async function handleInstalled(row) {
 
 .text-sm {
 	font-size: 12px;
-	color: #fff;
+	// color: #fff;
 	opacity: .8;
 	margin-top: 4px;
 }

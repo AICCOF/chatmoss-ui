@@ -23,6 +23,7 @@ export const useChatStore = defineStore('chat-store', {
       chat: [],
       searchMsg: '',
       deleteIds: [],
+      loading: false,
     }
   },
   getters: {
@@ -113,7 +114,6 @@ export const useChatStore = defineStore('chat-store', {
     getChatByUuid(state: Chat.ChatState) {
       return () => {
         const active = state.active as any
-
         if (!active)
           return []
         if (verify(state.active))
@@ -121,11 +121,11 @@ export const useChatStore = defineStore('chat-store', {
 
         else
           // console.log(state.chat)
-          return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) =>{
+          return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => {
             if (a.id && b.id) {
               return a.id - b.id
             }
-            return  a.timestamp - b.timestamp
+            return a.timestamp - b.timestamp
           })
       }
     },
@@ -169,21 +169,17 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute()
     },
     async chatList() {
-      const userStore = useUserStore()
-      this.active = null;
-      const res = await getConversationList({
-        appId: userStore.appIdValue
-      })
-      this.chat = res.list || []
-      this.active = this.chat[0] ? this.chat[0].id : null;
-      // console.log(res.list[0].id)
-      this.getConversationDetail()
-
-    },
-    clearList() {
-      this.chat = []
-      // this.localChat = [];
-      this.active = null
+      if (getToken()) {
+        const userStore = useUserStore()
+        this.active = null;
+        const res = await getConversationList({
+          appId: userStore.appIdValue
+        })
+        this.chat = res.list || []
+        this.active = this.chat[0] ? this.chat[0].id : null;
+        // console.log(res.list[0].id)
+        this.getConversationDetail()
+      }
     },
     async getConversationDetail() {
       if (!this.active)
@@ -191,20 +187,27 @@ export const useChatStore = defineStore('chat-store', {
       const result = this.chat.find(item => item.id === this.active)
       if (result && !result.data) {
         result.data = []
-        const res = await getConversationDetail({ conversationId: this.active, pageSize: 100 })
-        const rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
-        result.data.push(...rows.map((row: any, i: number, array: any[]) => {
-          let ast = ''
-          if (row.content.startsWith('1:') && array[i - 1])
-            ast = array[i - 1].content.slice(2)
+        this.loading = true;
+        try {
+          const res = await getConversationDetail({ conversationId: this.active, pageSize: 200 })
+          const rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
+          result.data.push(...rows.map((row: any, i: number, array: any[]) => {
+            let ast = ''
+            if (row.content.startsWith('1:') && array[i - 1])
+              ast = array[i - 1].content.slice(2)
 
-          return {
-            ...row,
-            ast,
-            inversion: !!row.content.startsWith('0:'),
-            text: row.content.slice(2),
-          }
-        }))
+            return {
+              ...row,
+              ast,
+              inversion: !!row.content.startsWith('0:'),
+              text: row.content.slice(2),
+            }
+          }))
+        } catch (error) {
+
+        } finally {
+          this.loading = false
+        }
       }
     },
 

@@ -172,8 +172,10 @@ export const useUserStore = defineStore('user-store', {
       this.setNotices(res.data)
     },
     async getActivityListAPI() {
-      const res = await getActivityList<any>()
-      this.activityList = res.data || []
+      if (getToken()){
+        const res = await getActivityList<any>()
+        this.activityList = res.data || []
+      }  
       // console.error(res.data)
     },
     async getApplicationInstallListAPI() {

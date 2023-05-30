@@ -30,7 +30,7 @@ function http<T = any>(
     if (typeof res.data !== 'object') {
       return Promise.resolve(res.data)
     }
-    if ([0, 200, 204].includes(res.data.code)) {
+    if ([0, 200].includes(res.data.code)) {
       return Promise.resolve(res.data)
     }
     if (res.data.status === 'Unauthorized') {

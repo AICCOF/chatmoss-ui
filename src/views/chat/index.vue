@@ -468,7 +468,6 @@ function clickMessage() {
 
 onMounted(() => {
   clickMessage()
-
   chatStore.chatList()
   userStore.getActivityListAPI()
   userStore.residueCountAPI()
@@ -521,10 +520,7 @@ async function startTutorial() {
   }
 }
 
-// function setOpenaiVersion() {
-//   userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
-//   ms.success('模型切换成功')
-// }
+
 
 async function onSuccessAuth() {
   try {
@@ -550,6 +546,7 @@ async function onSuccessAuth() {
         <div
           id="image-wrapper" ref="scrollRef" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']"
           style="height: 100%;overflow: auto"
+          v-show="!chatStore.loading"
         >
           <template v-if="!dataSources.length">
             <div class="no-data-info">
@@ -558,7 +555,7 @@ async function onSuccessAuth() {
                 应用使用说明：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
-              <img v-else-if="userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl" alt="" @click="() => { go({ name: 'sign' }) }">
+              <img v-if="userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl" alt="" @click="() => { go({ name: 'sign' }) }">
               <div v-else>
                 <!-- 后面期望这里跳转使用教程页面 -->
                 <div class="no-data-info-tip-title">

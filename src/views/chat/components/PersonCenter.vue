@@ -359,7 +359,7 @@ function getNSwitchModeValue(): any {
   </BasicModal>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 .item {
   height: 7rem;
   flex: 1;

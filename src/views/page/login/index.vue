@@ -262,16 +262,6 @@ async function loginEvent() {
               <NInput v-model:value="registerForm.nickname" placeholder="请输入昵称" clearable />
             </NFormItem>
             <NFormItem
-              label="手机号" path="phone" :rule="{
-                required: true,
-                message: '请输入手机号',
-                trigger: ['input', 'blur'],
-              }"
-            >
-              <NInput v-model:value="registerForm.phone" placeholder="请输入手机号" clearable />
-            </NFormItem>
-
-            <NFormItem
               label="邮箱验证码" path="emailCode" :rule="{
                 required: true,
                 message: '请输入邮箱验证码',

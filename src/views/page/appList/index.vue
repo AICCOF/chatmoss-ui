@@ -47,7 +47,7 @@ async function handleEdit(row) {
     </template>
 
     <div class="mt-4  flex-1 pl-4 w-full wrap-main">
-      <div v-for="(item, i) of myList" :key="i" class="flex justify-between items-center  dark:text-white w-full flex-1">
+      <div v-for="(item, i) of myList" :key="i" class="flex justify-between items-center  dark:text-white w-full flex-1 item">
         <div class="flex items-center flex-1">
           <div class="mr-2">
             <img :src="item.icon" alt="" style="width:30px;height: 30px;">
@@ -59,7 +59,8 @@ async function handleEdit(row) {
                 <span class="text-base mr-4">{{ item.appName }}</span>
                 <span style="cursor: pointer;">
                   <!-- <van-icon name="like-o" style="color:red;" /> -->
-                  <van-icon name="like" style="color:red;" /><span>{{ item.likeCount }}</span>
+                  <van-icon name="like" style="color:red;" /><span style="margin-left: 4px;">{{ item.likeCountStr
+                  }}</span>
                 </span>
               </div>
               <div class="text-sm">
@@ -72,7 +73,7 @@ async function handleEdit(row) {
           <van-button type="primary" size="mini" class="mr-2" @click="handleEdit(item)">
             编辑
           </van-button>
-          <van-button type="primary" size="mini" @click="handleDelete(item)">
+          <van-button size="mini" type="danger"  @click="handleDelete(item)">
             删除
           </van-button>
         </div>
@@ -80,3 +81,16 @@ async function handleEdit(row) {
     </div>
   </Page>
 </template>
+
+<style scoped lang="less">
+
+.item {
+	padding: 6px 20px;
+	cursor: pointer;
+	&:hover {
+		background-color: #1c1c1e;
+	}
+}
+
+
+</style>

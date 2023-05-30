@@ -86,8 +86,8 @@ function handleSave() {
             <div>
               <NPopover trigger="hover">
                 <template #trigger>
-                  <!-- <img :src="element.iconUrl" alt=""> -->
-                  <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/s-logo1.png" alt="">
+                  <img :src="element.iconUrl" alt="">
+                  <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/s-logo1.png" alt=""> -->
                 </template>
                 <span>{{ element.appName }}</span>
               </NPopover>
@@ -111,8 +111,8 @@ function handleSave() {
             <div :class="[enabled ? 'animate-pulse animate' : '']">
               <NPopover trigger="hover">
                 <template #trigger>
-                  <!-- <img :src="element.iconUrl" alt=""> -->
-                  <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt="">
+                  <img :src="element.iconUrl" alt="">
+                  <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt=""> -->
                 </template>
                 <span>{{ element.appName }}</span>
               </NPopover>
@@ -186,7 +186,7 @@ function handleSave() {
 			justify-content: center;
 			cursor: pointer;
 
-			&:hover {
+		  &:hover {
 				background: linear-gradient(270deg, #323337 50%, rgba(70, 79, 111, 0.5) 100%);
 				box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.05);
 			}

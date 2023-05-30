@@ -16,6 +16,7 @@
   position: fixed;
   // height: 40px;
   width: 100%;
+  z-index: 100;
   // display: flex;
   // background-color: white;
   // align-items: center;
