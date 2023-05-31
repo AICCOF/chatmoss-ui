@@ -112,8 +112,6 @@ watch(() => chatStore.getChatByUuid(), (...vals) => {
 })
 
 function handleSubmit() {
-  showModal.value = false
-
   userStore.residueCountAPI()
   onConversation()
 }
@@ -319,7 +317,7 @@ async function onConversation(askMsg?: string, type?: number) {
       // error.msg
       ms.error(error.msg)
       // 代表未登录
-      showModal.value = true
+      // showModal.value = true
     }
     // 答应其他信息
     const errorMessage = error.msg
@@ -622,11 +620,6 @@ async function onSuccessAuth() {
         </div>
       </div>
     </footer>
-    <NModal v-model:show="showModal" transform-origin="center">
-      <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
-        <Login @loginSuccess="() => { handleSubmit() }" />
-      </NCard>
-    </NModal>
     <NModal v-model:show="showPaper" transform-origin="center">
       <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
         <Paper v-model:sort="nowPaperIndex" :paper-list="paperList" @success="onSuccessAuth" />
