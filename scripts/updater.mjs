@@ -32,7 +32,7 @@ async function resolveUpdater() {
 
 	const tag = tags.find((t) => t.name.startsWith("v"));
 
-	console.log(tag);
+	console.log('tag',tag);
 
 	const {
 		data: latestRelease
@@ -40,6 +40,7 @@ async function resolveUpdater() {
 		...options,
 		tag: tag.name,
 	});
+	console.log('latestRelease', latestRelease);
 
 	// 根据需要选择需更新的平台，应与编译脚本平台选择对应
 	const updateData = {
