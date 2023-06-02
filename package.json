@@ -9,6 +9,8 @@
     "chatgpt"
   ],
   "scripts": {
+    "updater": "node scripts/updater.mjs",
+    "release": "node scripts/release.mjs",
     "dev": "vite",
     "build": "run-p build-vscode-only",
     "mac": "run-p type-check build-mac-only && npm run tauri-build",
@@ -56,6 +58,7 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@actions/github": "^5.1.1",
     "@antfu/eslint-config": "^0.35.3",
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
@@ -73,6 +76,7 @@
     "husky": "^8.0.3",
     "less": "^4.1.3",
     "lint-staged": "^13.1.2",
+    "node-fetch": "^3.3.1",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.21",
     "rimraf": "^4.2.0",
