@@ -9,9 +9,9 @@ import { useUserStore } from '@/store'
 import { exchange } from '@/api/personCenter'
 
 import { getToken } from '@/store/modules/auth/helper'
-const url = ref(`http://h5.aihao123.cn/pages/app/store/index.html?token=${getToken()}&time=${new Date().getTime()}`)
+const url = ref(`https://h5.aihao123.cn/pages/app/store/index.html?token=${getToken()}&time=${new Date().getTime()}`)
 
-const personCenter = ref(ShopInfo)
+// const personCenter = ref(ShopInfo)
 const ms = useMessage()
 const userStore = useUserStore()
 const activeName = ref('')
