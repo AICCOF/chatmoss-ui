@@ -8,6 +8,9 @@ import { toMoss } from '@/api'
 import { useUserStore } from '@/store'
 import { exchange } from '@/api/personCenter'
 
+import { getToken } from '@/store/modules/auth/helper'
+const url = ref(`http://h5.aihao123.cn/pages/app/store/index.html?token=${getToken()}&time=${new Date().getTime()}`)
+
 const personCenter = ref(ShopInfo)
 const ms = useMessage()
 const userStore = useUserStore()
@@ -100,75 +103,7 @@ async function exchangeMossEvent() {
           </NButton>
         </div>
       </div>
-      <NDivider />
-
-      <van-tabs v-model:active="activeName" class="dark:text-white">
-        <van-tab title="4.0模型套餐" name="a">
-          <div class="tip-text-input1">
-            小提示：不同的套餐次数可以累加
-          </div>
-          <div class="tip-text-input1" />
-          <div class="flex flex-wrap">
-            <div
-              v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
-              class="meal-main item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-              @click="buyEvent(item)"
-            >
-              <div class="title-h2">
-                {{ item.title }}
-              </div>
-              <div class="desc">
-                {{ item.desc }}
-              </div>
-              <div class="desc">
-                ￥ {{ item.count }}
-              </div>
-            </div>
-          </div>
-        </van-tab>
-        <van-tab title="3.0模型套餐" name="b">
-          <div class="tip-text-input1">
-            小提示：不同的套餐次数可以累加
-          </div>
-          <div class="tip-text-input1" />
-          <div class="flex flex-wrap">
-            <div
-              v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
-              class="meal-main item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer "
-              @click="buyEvent(item)"
-            >
-              <div class="title-h2">
-                {{ item.title }}
-              </div>
-              <div class="desc">
-                {{ item.desc }}
-              </div>
-              <div class="desc">
-                ￥ {{ item.count }}
-              </div>
-            </div>
-          </div>
-        </van-tab>
-        <van-tab title="字符包" name="c">
-          <div class="flex flex-wrap">
-            <div
-              v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
-              class="meal-main item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-              @click="buyEvent(item)"
-            >
-              <div class="title-h2">
-                {{ item.title }}
-              </div>
-              <div class="desc">
-                {{ item.desc }}
-              </div>
-              <div class="desc">
-                ￥ {{ item.count }}
-              </div>
-            </div>
-          </div>
-        </van-tab>
-      </van-tabs>
+      <iframe :src="url" frameborder="0" style="border-radius: 10px; margin-top: 20px; width:100%;height:100%;" />
     </div>
 
     <!-- 购买字符数 -->
@@ -233,6 +168,7 @@ async function exchangeMossEvent() {
 }
 
 .shop-main {
+	height: calc(100vh - 250px);
 	padding: 0 15px;
 	padding-top: 10px;
 	padding-bottom: 20px;
