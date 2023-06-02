@@ -90,6 +90,9 @@ jobs:
       - name: Install app dependencies and build it win
         if: matrix.platform == 'windows-latest'
         run: yarn && yarn build-win-only 
+      - name: Install app dependencies and build it ubuntu
+        if: matrix.platform == 'ubuntu-latest'
+        run: yarn && yarn build-win-only 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
