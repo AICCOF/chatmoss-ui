@@ -1,6 +1,6 @@
 # Updater Log
 
-## v4.0.7
+## v4.0.8
 
 - feat: xxx
-- fix: xxx
+- fix: 修复新增按钮展示问题
