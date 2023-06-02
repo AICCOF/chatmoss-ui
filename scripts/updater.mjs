@@ -81,6 +81,7 @@ async function updater() {
 		if (/.sig$/.test(asset.name)) {
 			sig = await getSignature(asset.browser_download_url);
 		}
+		console.log(sig)
 		platforms.forEach((platform) => {
 			if (reg.test(asset.name)) {
 				// 设置平台签名，检测应用更新需要验证签名
