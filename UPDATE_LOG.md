@@ -1,9 +1,13 @@
 # Updater Log
+
+## v4.0.14
+
+- feat: xxx
+- fix: 修复商城打不开问题
 ## v4.0.13
 
 - feat: xxx
 - fix: 修复商城打不开问题
-- 
 ## v4.0.12
 
 - feat: xxx
