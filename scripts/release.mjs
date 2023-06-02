@@ -36,7 +36,7 @@ async function release() {
 	packageJson.version = nextVersion;
 
 	const nextTag = `v${nextVersion}`;
-	// await updatelog(nextTag, 'release');
+	await updatelog(nextTag, 'release');
 	// console.log(33)
 
 	// 将新版本写入 package.json 文件
@@ -44,13 +44,9 @@ async function release() {
 
 	// 提交修改的文件，打 tag 标签（tag 标签是为了触发 github action 工作流）并推送到远程
 	execSync('git add ./');
-	console.log('git add ./')
 	execSync(`git commit -m "v${nextVersion}"`);
-	console.log(`git commit -m "v${nextVersion}"`)
 	execSync(`git tag -a v${nextVersion} -m "v${nextVersion}"`);
 	console.log(`git tag -a v${nextVersion} -m "v${nextVersion}"`)
-	execSync(`git push`);
-	console.log('git push')
 	execSync(`git push origin v${nextVersion}`);
 	console.log(`Publish Successfully...`);
 }
