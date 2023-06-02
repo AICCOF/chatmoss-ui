@@ -14,7 +14,7 @@ const require = createRequire(
 	import.meta.url);
 
 async function release() {
-	const flag = process.argv[2] ? ? 'patch';
+	const flag = process.argv[2]??'patch';
 	const packageJson = require('../package.json');
 	let [a, b, c] = packageJson.version.split('.').map(Number);
 
@@ -36,16 +36,21 @@ async function release() {
 	packageJson.version = nextVersion;
 
 	const nextTag = `v${nextVersion}`;
-	await updatelog(nextTag, 'release');
+	// await updatelog(nextTag, 'release');
+	// console.log(33)
 
 	// 将新版本写入 package.json 文件
 	fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 2));
 
 	// 提交修改的文件，打 tag 标签（tag 标签是为了触发 github action 工作流）并推送到远程
-	execSync('git add ./package.json ./UPDATE_LOG.md');
+	execSync('git add ./');
+	console.log('git add ./')
 	execSync(`git commit -m "v${nextVersion}"`);
+	console.log(`git commit -m "v${nextVersion}"`)
 	execSync(`git tag -a v${nextVersion} -m "v${nextVersion}"`);
+	console.log(`git tag -a v${nextVersion} -m "v${nextVersion}"`)
 	execSync(`git push`);
+	console.log('git push')
 	execSync(`git push origin v${nextVersion}`);
 	console.log(`Publish Successfully...`);
 }
