@@ -1,11 +1,13 @@
-name: chatMoss CI
+name: ChatMoss CI
 
 on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   create-release:
     runs-on: ubuntu-latest
@@ -82,9 +84,12 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Install app dependencies and build it
-        run: yarn && yarn build
+      - name: Install app dependencies and build it mac
+        if: matrix.platform == 'macos-latest'
+        run: yarn && yarn build-mac-only
+      - name: Install app dependencies and build it win
+        if: matrix.platform == 'windows-latest'
+        run: yarn && yarn build-win-only 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "CHATMOSS",
-    "version": "0.0.5"
+    "version": "4.0.18"
   },
   "tauri": {
     "updater": {
