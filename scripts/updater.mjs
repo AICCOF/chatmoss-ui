@@ -1,28 +1,27 @@
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 import {
 	getOctokit,
 	context
-} from '@actions/github';
-import fs from 'fs';
+} from "@actions/github";
+import {
+	resolveUpdateLog
+} from "./updatelog.mjs";
 
-import updatelog from './updatelog.mjs';
+const UPDATE_TAG_NAME = "updater";
+const UPDATE_JSON_FILE = "update.json";
 
-const token = process.env.GITHUB_TOKEN;
-
-async function updater() {
-	if (!token) {
-		console.log('GITHUB_TOKEN is required');
-		process.exit(1);
+/// 生成 update.json 文件并更新 github updater release 中的文件
+async function resolveUpdater() {
+	if (process.env.GITHUB_TOKEN === undefined) {
+		throw new Error("GITHUB_TOKEN is required");
 	}
 
-	// 用户名，仓库名
 	const options = {
 		owner: context.repo.owner,
 		repo: context.repo.repo
 	};
-	const github = getOctokit(token);
+	const github = getOctokit(process.env.GITHUB_TOKEN);
 
-	// 获取 tag
 	const {
 		data: tags
 	} = await github.rest.repos.listTags({
@@ -31,13 +30,10 @@ async function updater() {
 		page: 1,
 	});
 
-	// 过滤包含 `v` 版本信息的 tag
-	const tag = tags.find((t) => t.name.startsWith('v'));
-	// console.log(`${JSON.stringify(tag, null, 2)}`);
+	const tag = tags.find((t) => t.name.startsWith("v"));
 
-	if (!tag) return;
+	console.log(tag);
 
-	// 获取此 tag 的详细信息
 	const {
 		data: latestRelease
 	} = await github.rest.repos.getReleaseByTag({
@@ -45,97 +41,122 @@ async function updater() {
 		tag: tag.name,
 	});
 
-	// 需要生成的静态 json 文件数据，根据自己的需要进行调整
+	// 根据需要选择需更新的平台，应与编译脚本平台选择对应
 	const updateData = {
 		version: tag.name,
-		// 使用 UPDATE_LOG.md，如果不需要版本更新日志，则将此字段置空
-		notes: updatelog(tag.name),
+		notes: await resolveUpdateLog(tag.name),
 		pub_date: new Date().toISOString(),
 		platforms: {
-			win64: {
-				signature: '',
-				url: ''
+			// comment out as needed
+			"windows-x86_64": {
+				signature: "",
+				url: ""
 			},
-			darwin: {
-				signature: '',
-				url: ''
-			}, // compatible with older formats
-			'darwin-aarch64': {
-				signature: '',
-				url: ''
+			// "darwin-aarch64": { signature: "", url: "" },
+			"darwin-x86_64": {
+				signature: "",
+				url: ""
 			},
-			'darwin-x86_64': {
-				signature: '',
-				url: ''
+			"linux-x86_64": {
+				signature: "",
+				url: ""
 			},
-			'windows-x86_64': {
-				signature: '',
-				url: ''
-			},
-			// 'windows-i686': { signature: '', url: '' }, // no supported
 		},
 	};
 
-	const setAsset = async (asset, reg, platforms) => {
-		let sig = '';
-		if (/.sig$/.test(asset.name)) {
-			sig = await getSignature(asset.browser_download_url);
-		}
-		console.log('asset', asset)
-		platforms.forEach((platform) => {
-			if (reg.test(asset.name)) {
-				// 设置平台签名，检测应用更新需要验证签名
-				if (sig) {
-					updateData.platforms[platform].signature = sig;
-					return;
-				}
-				// 设置下载链接
-				updateData.platforms[platform].url = asset.browser_download_url;
-			}
-		});
-	};
-
 	const promises = latestRelease.assets.map(async (asset) => {
-		// windows
-		await setAsset(asset, /.msi.zip/, ['win64', 'windows-x86_64']);
+		const {
+			name,
+			browser_download_url
+		} = asset;
 
-		// darwin
-		await setAsset(asset, /.app.tar.gz/, [
-			'darwin',
-			'darwin-x86_64',
-			'darwin-aarch64',
-		]);
+		// windows-x86_64 url
+		if (name.endsWith(".msi.zip")) {
+			updateData.platforms["windows-x86_64"].url = browser_download_url;
+		}
 
-		// linux
-		// await setAsset(asset, /.AppImage.tar.gz/, ['linux', 'linux-x86_64']);
+		// windows-x86_64 signature
+		if (name.endsWith(".msi.zip.sig")) {
+			const sig = await getSignature(browser_download_url);
+			updateData.platforms["windows-x86_64"].signature = sig;
+		}
+
+		// darwin-x86_64 url (macos intel)
+		if (name.endsWith(".app.tar.gz") && !name.includes("aarch")) {
+			updateData.platforms["darwin-x86_64"].url = browser_download_url;
+		}
+		// darwin-x86_64 signature (macos intel)
+		if (name.endsWith(".app.tar.gz.sig") && !name.includes("aarch")) {
+			const sig = await getSignature(browser_download_url);
+			updateData.platforms["darwin-x86_64"].signature = sig;
+		}
+
+		// darwin-aarch64 url (macos silicon)
+		if (name.endsWith("aarch64.app.tar.gz")) {
+			updateData.platforms["darwin-aarch64"].url = browser_download_url;
+		}
+
+		// darwin-aarch64 signature (macos silicon)
+		if (name.endsWith("aarch64.app.tar.gz.sig")) {
+			const sig = await getSignature(browser_download_url);
+			updateData.platforms["darwin-aarch64"].signature = sig;
+		}
+
+		// linux-x86_64 url
+		if (name.endsWith(".AppImage.tar.gz")) {
+			updateData.platforms["linux-x86_64"].url = browser_download_url;
+		}
+		// linux-x86_64 signature
+		if (name.endsWith(".AppImage.tar.gz.sig")) {
+			const sig = await getSignature(browser_download_url);
+			updateData.platforms["linux-x86_64"].signature = sig;
+		}
 	});
+
 	await Promise.allSettled(promises);
+	console.log(updateData);
 
-	if (!fs.existsSync('updater')) {
-		fs.mkdirSync('updater');
+	Object.entries(updateData.platforms).forEach(([key, value]) => {
+		if (!value.url) {
+			console.log(`[Error]: failed to parse release for "${key}"`);
+			delete updateData.platforms[key];
+		}
+	});
+
+	// 更新 update.json 文件
+	const {
+		data: updateRelease
+	} = await github.rest.repos.getReleaseByTag({
+		...options,
+		tag: UPDATE_TAG_NAME,
+	});
+
+	for (let asset of updateRelease.assets) {
+		if (asset.name === UPDATE_JSON_FILE) {
+			await github.rest.repos.deleteReleaseAsset({
+				...options,
+				asset_id: asset.id,
+			});
+		}
 	}
 
-	// 将数据写入文件
-	fs.writeFileSync(
-		'./updater/install.json',
-		JSON.stringify(updateData, null, 2)
-	);
-	console.log('Generate updater/install.json');
+	await github.rest.repos.uploadReleaseAsset({
+		...options,
+		release_id: updateRelease.id,
+		name: UPDATE_JSON_FILE,
+		data: JSON.stringify(updateData, null, 2),
+	});
 }
 
-updater().catch(console.error);
-
-// 获取签名内容
 async function getSignature(url) {
-	try {
-		const response = await fetch(url, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/octet-stream'
-			},
-		});
-		return response.text();
-	} catch (_) {
-		return '';
-	}
+	const response = await fetch(url, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/octet-stream"
+		},
+	});
+
+	return response.text();
 }
+
+resolveUpdater().catch(console.error);
