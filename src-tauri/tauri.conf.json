@@ -15,7 +15,7 @@
       "active": true,
       "dialog": true,
       "endpoints": [
-        "https://releases.myapp.com/{{target}}/{{current_version}}"
+        "https://aiccof.github.io/chatmoss-ui/install.json"
       ],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdGRTk1QkZCN0NGNjA0MTQKUldRVUJQWjgrMXZwZnlFZlhrWGRqdUVFeVZXbEYzL2pjNDNUbTRtaUtFVkdneUtMeGxpUEZzTjcK"
     },
