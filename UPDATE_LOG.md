@@ -1,4 +1,10 @@
 # Updater Log
+
+## v4.0.12
+
+- feat: xxx
+- fix: 测试热更新
+
 ## v4.0.11
 
 - feat: xxx

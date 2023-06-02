@@ -1,6 +1,6 @@
 {
   "name": "chatmoss-ui",
-  "version": "4.0.11",
+  "version": "4.0.12",
   "private": false,
   "description": "chatmoss-ui",
   "author": "AICCOF",
@@ -14,7 +14,7 @@
     "dev": "vite",
     "build": "run-p build-vscode-only",
     "mac": "run-p type-check build-mac-only && npm run tauri-build",
-    "mac-dev": "run-p type-check build-mac-only && npm run tauri-debug",
+    "mac-dev": "run-p build-mac-only && npm run tauri-debug",
     "win": "run-p type-check build-win-only && npm run tauri-build",
     "win-dev": "run-p type-check build-win-only && npm run tauri-debug",
     "vscode": "run-p type-check build-vscode-only && npm run tauri-build",
