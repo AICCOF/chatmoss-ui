@@ -62,8 +62,9 @@ export function defaultSetting(): UserState {
       isFinishGuide: false,
       notices: [],
       user: { nickname: '', email: '', plusEndTime: undefined },
+     
     },
-    activityList: []
+    activityList: [],
   }
 }
 export function getLocalState(): UserState {
@@ -72,7 +73,8 @@ export function getLocalState(): UserState {
     ...defaultSetting().userInfo,
     ...localSetting.userInfo,
   }
-  return { userInfo, activityList: [] }
+  // console.log(userInfo)
+  return { userInfo, activityList: [], appId: localSetting.appId }
 }
 
 export function setLocalState(setting: UserState): void {

@@ -73,7 +73,6 @@ defineExpose({ textRef })
       <span class="dark:text-white w-[4px] h-[20px] block animate-blink" />
     </template>
     <template v-if="!loading">
-      <!-- emit('copy-text') -->
       <div ref="textRef" class="leading-relaxed break-words" @dblclick="handleDoubleClick">
         <div v-if="!inversion" class="markdown-body" v-html="text" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />

@@ -3,15 +3,79 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
+import { PageLayout } from '@/views/page/layout'
 import chat from '@/views/chat/index.vue'
+import shop from '@/views/page/shop/index.vue'
+import login from '@/views/page/login/index.vue'
+import setting from '@/views/page/setting/index.vue'
+import application from '@/views/page/application/index.vue'
+import invite from '@/views/page/invite/index.vue'
+import help from '@/views/page/help/index.vue'
+import sign from '@/views/page/sign/index.vue'
+import feedback from '@/views/page/feedback/index.vue'
+import appList from '@/views/page/appList/index.vue'
+import createApp from '@/views/page/createApp/index.vue'
 import c404 from '@/views/exception/404/index.vue'
 import c500 from '@/views/exception/500/index.vue'
 const routes: RouteRecordRaw[] = [
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   component: () => import('@/views/login/index.vue'),
-  // },
+  {
+    path: '/page',
+    name: 'page',
+    component: PageLayout,
+    // redirect: '/page/shop',
+    children: [
+      {
+        path: 'shop',
+        name: 'shop',
+        component: shop,
+      },
+      {
+        path: 'login',
+        name: 'login',
+        component: login,
+      },
+      {
+        path: 'setting',
+        name: 'setting',
+        component: setting,
+      },
+      {
+        path: 'application',
+        name: 'application',
+        component: application,
+      },
+      {
+        path: 'invite',
+        name: 'invite',
+        component: invite,
+      },
+      {
+        path: 'sign',
+        name: 'sign',
+        component: sign,
+      },
+      {
+        path: 'help',
+        name: 'help',
+        component: help,
+      },
+      {
+        path: 'feedback',
+        name: 'feedback',
+        component: feedback,
+      },
+      {
+        path: 'createApp',
+        name: 'createApp',
+        component: createApp,
+      },
+      {
+        path: 'appList',
+        name: 'appList',
+        component: appList,
+      },
+    ],
+  },
   {
     path: '/',
     name: 'Root',

@@ -1,17 +1,26 @@
 import { defineStore } from 'pinia'
-// import { getToken } from '../auth/helper'
-import type { UserInfo, UserState } from './helper'
+import { getToken } from '../auth/helper'
+import type { UserInfo } from './helper'
 import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { getActivityList, residueCount } from '@/api'
 import { localStorage } from '@/utils/storage/localStorage'
+import type { Notice } from '@/store/modules/user/helper'
+import { getSystemNotice } from '@/api/personCenter'
+import { getApplicationInstallList } from '@/api/application'
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
       ...getLocalState(),
-      isAuth: 0 // 0 代表初始状态,1代表未登录,2 代表登录
+      centerPicUrl: '',
+      appList: {},
+      notices: [],
+      isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
   },
   getters: {
+    appIdValue(state) {
+      return state.appId || '1'
+    },
     getNotices(state) {
       return state.userInfo.notices
     },
@@ -90,7 +99,31 @@ export const useUserStore = defineStore('user-store', {
     activities(state) {
       return state.activityList
     },
+    appsListMap(state) {
+      const map = {}
+      if (state.appList.installList) {
+        state.appList.installList.forEach((row) => {
+          map[row.appId] = {
+            system: 0,
+            ...row,
+          }
+        })
+      }
+      if (state.appList.systemList) {
+        state.appList.systemList.forEach((row) => {
+          map[row.appId] = {
+            system: 1,
+            ...row,
+          }
+        })
+      }
 
+      return map
+    },
+    currentApp(state) {
+      // console.log(state.appsListMap, )
+      return state.appsListMap[state.appIdValue]
+    },
   },
   actions: {
     async residueCountAPI() {
@@ -111,14 +144,19 @@ export const useUserStore = defineStore('user-store', {
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
-
-        if (!res.data.user){
+        // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
+        if (res.data && res.data.user) {
+          this.centerPicUrl = res.data.centerPicUrl
           this.userInfo.user.authed = false
-          this.isAuth = 2;
-        }else{
-          this.isAuth = 1;
+          this.isAuth = 2
         }
-        
+        else {
+          if (getToken())
+            this.isAuth = 3
+
+          else
+            this.isAuth = 1
+        }
 
         return Promise.resolve(res)
       }
@@ -129,10 +167,23 @@ export const useUserStore = defineStore('user-store', {
         return Promise.reject(error)
       }
     },
+    async getSystemNoticeAPI() {
+      const res = await getSystemNotice<Notice[]>()
+      this.setNotices(res.data)
+    },
     async getActivityListAPI() {
-      const res = await getActivityList<any>()
-      this.activityList = res.data || []
+      if (getToken()){
+        const res = await getActivityList<any>()
+        this.activityList = res.data || []
+      }  
       // console.error(res.data)
+    },
+    async getApplicationInstallListAPI() {
+      const res = await getApplicationInstallList()
+      this.appList = res.data || {
+        installList: [],
+        systemList: [],
+      }
     },
     updateUserInfo(userInfo: Partial<UserInfo>) {
       this.userInfo = { ...this.userInfo, ...userInfo }
@@ -153,6 +204,10 @@ export const useUserStore = defineStore('user-store', {
 
     setNotices(value: any[]) {
       this.userInfo.notices = value
+      this.recordState()
+    },
+    setAppId(appId) {
+      this.appId = appId
       this.recordState()
     },
 

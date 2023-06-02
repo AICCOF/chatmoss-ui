@@ -2,10 +2,10 @@ import post, { deleteRequest, get, put } from '@/utils/request'
 
 
 
-export function getConversationList<T>() {
+export function getConversationList<T>(data) {
   return get<T>({
     url: `/luomacode-api/conversation/list`,
-    data: {},
+    data: data,
   })
 }
 

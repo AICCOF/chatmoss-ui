@@ -18,6 +18,7 @@
     "vscode": "run-p type-check build-vscode-only && npm run tauri-build",
     "vscode-dev": "run-p type-check build-vscode-only && npm run tauri-debug",
     "preview": "vite preview",
+    "build-test": "vite build",
     "build-mac-only": "vite build --mode mac",
     "build-win-only": "vite build --mode win",
     "build-vscode-only": "vite build --mode vscode",
@@ -51,7 +52,8 @@
     "vue-drag-verify-img-chip": "^1.1.1",
     "vue-drag-verify2": "^1.2.0",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.35.3",

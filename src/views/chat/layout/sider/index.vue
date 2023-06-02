@@ -1,29 +1,18 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NButton, NCard, NDivider, NInput, NLayoutSider, NModal, NSelect, useDialog, useMessage , NPopconfirm } from 'naive-ui'
-import Tips from '../../tips.vue'
-import { useModel } from '../../components/Modal/hooks/useModal'
+import { NLayoutSider, NPopconfirm } from 'naive-ui'
+// import Tips from '../../tips.vue'
+
 import List from './List.vue'
-import { ShopInfo, exchangeOptions } from './data'
 import Footer from './Footer.vue'
-import PersonCenter from './../../components/PersonCenter.vue'
-import Login from '@/views/login/index.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
-import { getToken } from '@/store/modules/auth/helper'
-import { toMoss } from '@/api'
-import { exchange } from '@/api/personCenter'
-const person = ref(null) as any
-const [registerModal, { openModel }] = useModel()
-const userStore = useUserStore()
-const showModal = ref(false)
-const ms = useMessage()
+import { useGo } from '@/utils/router'
+// const userStore = useUserStore()
+// const showModal = ref(false)
 const appStore = useAppStore()
 const chatStore = useChatStore()
-const token = ref(getToken())
-
-// const { isMobile } = useBasicLayout()
-const tab = ref('login')
+const go = useGo()
 const isMobile = ref(true)
 const collapsed = computed(() => appStore.siderCollapsed)
 
@@ -48,55 +37,20 @@ const mobileSafeArea = computed(() => {
   }
 })
 
-// 兑换字符数
-const toMossCode = ref('')
-async function toMossEvent() {
-  if (toMossCode.value === '') {
-    ms.error('请输入字符包兑换码，字符包点击下面继续购买，感谢您的支持', { duration: 5000 })
-    return
-  }
-  try {
-    await toMoss<any>({
-      code: toMossCode.value,
-    }) as any
-    userStore.residueCountAPI()
-    ms.info('兑换成功，感谢您的支持！', { duration: 5000 })
-  }
-  catch (error: any) {
-    ms.error(error.msg, { duration: 5000 })
-  }
-}
 
-// 设置内容
-const showSettingModal = ref(false)
 
-const exchangeMossCode = ref('')
 function handleSettingSubmit() {
-  showSettingModal.value = true
-  exchangeMossCode.value = ''
-  toMossCode.value = ''
+  go({name:'shop'})
 }
 
 // 个人中心
 function myHomeSubmit() {
-  openModel()
-  person.value.updated()
+  // openModel()
+  // person.value.updated()
+  go({name:'setting'})
 }
 
-function modifyPassword() {
-  tab.value = 'forget'
-  showModal.value = true
-}
-// 登录注册功能
-function showModelEvent() {
-  tab.value = 'login'
-  showModal.value = true
-}
-function handleSubmit() {
-  showModal.value = false
-  userStore.residueCountAPI()
-  token.value = getToken()
-}
+
 
 watch(
   isMobile,
@@ -109,42 +63,8 @@ watch(
   },
 )
 
-const personCenter = ref(ShopInfo)
-const shopModal = ref(false)
-const shopData = ref({
-  title: '',
-  shopImg: '',
-})
-function buyEvent(item: any) {
-  shopModal.value = true
-  shopData.value = item
-}
 
-const dialog = useDialog()
-async function exchangeMossEvent() {
-  if (!exchangeMossCode.value)
-    return
 
-  dialog.info({
-    title: '兑换',
-    content: '是否确定兑换此套餐？',
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: async () => {
-      try {
-        await exchange({ itemId: exchangeMossCode.value })
-        userStore.residueCountAPI()
-        ms.success('兑换成功', { duration: 5000 })
-      }
-      catch (error: any) {
-        ms.error(error.msg, { duration: 5000 })
-      }
-    },
-    onNegativeClick: () => {
-
-    },
-  })
-}
 </script>
 
 <template>
@@ -186,134 +106,7 @@ async function exchangeMossEvent() {
               ChatMoss商店
             </div>
           </div>
-          <Tips @login="showModelEvent" />
         </div>
-        <NModal v-model:show="showSettingModal" preset="card"
-          style="min-width: 300px; height: 85vh; overflow: scroll; width: 80%;">
-          <NCard title="ChatMoss商店" :bordered="false" size="huge" role="dialog" aria-modal="true">
-            <div>
-              <div class="title-h1">
-                兑换码（登录后才能兑换哦~）
-              </div>
-              <div class="flex">
-                <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的兑换码" />
-                <NButton type="primary" ghost @click="toMossEvent">
-                  确定
-                </NButton>
-              </div>
-            </div>
-            <NDivider />
-
-            <div>
-              <div class="title-h1">
-                字符兑换包月模式
-              </div>
-              <div class="flex">
-                <NSelect v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2"
-                  placeholder="请输入您的兑换码" />
-                <NButton type="primary" ghost @click="exchangeMossEvent">
-                  确定
-                </NButton>
-              </div>
-            </div>
-            <NDivider />
-            <div class="">
-              <h1 class="title-h1">
-                chatMoss4.0包月商城
-              </h1>
-              <div class="tip-text-input1">
-                小提示：不同的套餐次数可以累加
-              </div>
-              <div class="tip-text-input1" />
-              <div class="flex flex-wrap">
-                <div v-for="(item, index) of personCenter.shopsV4" :key="index" :class="{ 'border-div': index === 0 }"
-                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-                  @click="buyEvent(item)">
-                  <div class="title-h2">
-                    {{ item.title }}
-                  </div>
-                  <div class="desc">
-                    {{ item.desc }}
-                  </div>
-                  <div class="desc">
-                    ￥ {{ item.count }}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <NDivider />
-            <div class="">
-              <h1 class="title-h1">
-                chatMoss3.5包月商城
-              </h1>
-              <div class="tip-text-input1">
-                小提示：不同的套餐次数可以累加
-              </div>
-              <div class="tip-text-input1" />
-              <div class="flex flex-wrap">
-                <div v-for="(item, index) of personCenter.shopsV3" :key="index" :class="{ 'border-div': index === 0 }"
-                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-                  @click="buyEvent(item)">
-                  <div class="title-h2">
-                    {{ item.title }}
-                  </div>
-                  <div class="desc">
-                    {{ item.desc }}
-                  </div>
-                  <div class="desc">
-                    ￥ {{ item.count }}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <NDivider />
-            <div class="">
-              <h1 class="title-h1">
-                字符包商城
-              </h1>
-              <!-- <div class="tip-text-input1">
-                小提示：OpenAI限制了5美元key的速度，字符包速度不受影响（字符包用的是120美金的key）
-              </div> -->
-              <div class="flex flex-wrap">
-                <div v-for="(item, index) of personCenter.shops" :key="index" :class="{ 'border-div': index === 0 }"
-                  class="item m-2 border-gray-50 border rounded-lg divide-solid text-center flex items-center justify-center flex-wrap flex-col cursor-pointer"
-                  @click="buyEvent(item)">
-                  <div class="title-h2">
-                    {{ item.title }}
-                  </div>
-                  <div class="desc">
-                    {{ item.desc }}
-                  </div>
-                  <div class="desc">
-                    ￥ {{ item.count }}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <NDivider />
-          </NCard>
-        </NModal>
-        <!-- 购买字符数 -->
-        <NModal v-model:show="shopModal">
-          <NCard style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
-            :mask-closable="true">
-            <div class="tip-text-input2">
-              支付宝扫码购买（暂不支持微信）
-            </div>
-            <img class="shop-img" :src="shopData.shopImg" alt="">
-            <div class="tip-text-input3">
-              您的支持就是我们的动力，我们会持续迭代本软件，提供更多更方便的功能！
-            </div>
-          </NCard>
-        </NModal>
-        <!-- 登录注册功能 -->
-        <NModal v-model:show="showModal" transform-origin="center">
-          <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog"
-            aria-modal="true">
-            <Login :tab="tab" @loginSuccess="() => { handleSubmit() }" />
-          </NCard>
-        </NModal>
-        <PersonCenter ref="person" @register="registerModal" @modify-password="modifyPassword" />
       </main>
       <Footer />
     </div>

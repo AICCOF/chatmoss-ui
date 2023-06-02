@@ -1,34 +1,34 @@
 <script lang="ts" setup>
-import { NButton, NPopover, NTag } from 'naive-ui'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { NAvatar, NButton, NPopover, NTag, useMessage, useNotification } from 'naive-ui'
+import { computed, h, onMounted, ref, watchEffect } from 'vue'
 import activity from './../activity.vue'
+import { SvgIcon } from '@/components/common'
 import { useUserStore } from '@/store'
-import { getToken } from '@/store/modules/auth/helper'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { staticData } from '@/store/static'
-// import html2canvas from 'html2canvas'
-const emit = defineEmits<Emit>()
+import { useGo } from '@/utils/router'
+import { getSystemNotice } from '@/api/personCenter'
+import type { Notice } from '@/store/modules/user/helper'
+const Message = useMessage()
+// const emit = defineEmits<Emit>()
 const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
-const token = ref('')
+const notification = useNotification()
+const go = useGo()
 const modelValue = ref(false)
 
-interface Emit {
-  (e: 'login'): void
-}
+// interface Emit {
+//   (e: 'login'): void
+// }
 
 function loginEvent(type: string) {
-  if (type === 'login') {
-    emit('login')
-    const vLoginEle = document.querySelectorAll('.v-login')[0] as any
-    vLoginEle.click()
-  }
+  if (type === 'login')
+    go({ name: 'login' })
+
   if (type === 'exit') {
-    const vExitEle = document.querySelectorAll('.v-exit')[0] as any
-    vExitEle.click()
     useAuthStore.setToken('')
     sendToMsg('chatMossToken', '')
     chatStore.clearList()
@@ -41,161 +41,217 @@ const mossCount = computed(() => {
   const residueCount = userStore.userInfo.residueCount * 10
   return `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
 })
-// // 未登录状态下描述
-// const mossNoLogin = computed(() => `还可试用${userStore.userInfo.residueCount * 10}字符`)
 function handleClose(row: any) {
   shopEvent()
 }
 
-// 重置token
-const resetToken = () => {
-  token.value = getToken() as string
-}
 
 watchEffect(() => {
   const { user } = userStore.userInfo
   if (user.email)
-    resetToken()
+  // resetToken()
+  {
+    if (userStore.isAuth === 3) {
+      useAuthStore.setToken('')
+      sendToMsg('chatMossToken', '')
+      chatStore.clearList()
+      userStore.residueCountAPI()
+      Message.error('登录已过期,请重新登录')
+    }
+  }
 })
 
 onMounted(() => {
-  resetToken()
+  // resetToken()
+  getSystemNoticeAPI()
 })
+const temNotice = computed(() => userStore.getNotices || [])
+async function getSystemNoticeAPI() {
+  const res = await getSystemNotice<Notice[]>()
+
+  const notice = res.data[0]
+
+  if (res.data.length > temNotice.value.length) {
+    notification.create({
+      content: notice.content,
+      meta: notice.createTime,
+      avatar: () =>
+        h(NAvatar, {
+          size: 'small',
+          round: true,
+          src: notice.icon,
+        }),
+      duration: 5000,
+      keepAliveOnHover: true,
+    })
+  }
+  userStore.setNotices(res.data)
+}
 
 // 系统设置
 function settingMainEvent() {
-  const questionBtnDom = document.querySelector('.setting-main1') as HTMLDivElement
-  questionBtnDom.click()
+  go({ name: 'setting' })
 }
 // ChatMoss商店
 function shopEvent() {
-  const questionBtnDom = document.querySelector('.setting-main2') as HTMLDivElement
-  questionBtnDom.click()
-
-  // html2canvas(document.querySelector("#image-wrapper")).then(function (canvas) {
-  //   document.body.appendChild(canvas);
-  // });
-}
-function clickActivity() {
-  modelValue.value = true
-}
-function getActivityListEvent() {
-  userStore.getActivityListAPI()
+  go({ name: 'shop' })
 }
 </script>
 
 <template>
   <header class="header-main">
-    <div class="header-right">
-      <div class="header-right-item header-right-item1">
-        <!-- 个人中心 -->
-        <NPopover trigger="hover">
-          <template #trigger>
-            <img :src="staticData.img4" alt="" @click="settingMainEvent">
-          </template>
-          <span>设置中心</span>
-        </NPopover>
-      </div>
-      <div class="header-right-item header-right-item2">
-        <!-- 商店 -->
-        <NPopover trigger="hover">
-          <template #trigger>
-            <img :src="staticData.img6" alt="" @click="shopEvent">
-          </template>
-          <span>ChatMoss商店</span>
-        </NPopover>
-      </div>
-    </div>
-    <div class="header-left">
-      <div class="tip-text-content tip-text-content1">
-        <p v-if="token">
-          <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
-        </p>
-        <p v-else>
-          <span class="v-login" @click="loginEvent('login')">登录&注册</span>
-        </p>
-      </div>
-      <div class="tip-text-content">
-        <p v-if="token" @click="getActivityListEvent">
-          <NButton round secondary type="success" size="tiny" @click="clickActivity">
-            活动
-          </NButton>
-        </p>
-      </div>
-      <div class="header-right-item header-item-btn text-test text-test1">
-        <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
-          <template #trigger>
-            余额
-          </template>
-          <div
-            v-for="(row, i) of userStore.packageList" :key="i"
-            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc] mt-2 "
-          >
-            <div>
-              <div style="width:200px" class="flex justify-between">
-                <span class="mr-4">{{ row.title }}</span>
-                <span> 当日可用次数：{{ row.timesResidue }}</span>
+    <div class="flex w-full header">
+      <div class="header-left">
+        <div class="header-right-item">
+          <!-- 个人中心 -->
+          <NPopover trigger="hover">
+            <template #trigger>
+              <img :src="staticData.img4" alt="" @click="settingMainEvent">
+            </template>
+            <span>设置中心</span>
+          </NPopover>
+        </div>
+        <div class="header-right-item">
+          <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
+            <template #trigger>
+              <NButton quaternary circle size="tiny">
+                <template #icon>
+                  <span class="">
+                    <SvgIcon icon="mdi:message-badge-outline" />
+                  </span>
+                </template>
+              </NButton>
+            </template>
+            <div
+              v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+              style="max-width: 250px"
+            >
+              <div class="mr-4 " style="width:30px">
+                <img :src="item.icon" style="width:30px" class="circle" alt="">
+              </div>
+              <div class="flex-1">
+                <div> {{ item.content }}</div>
+                <div>{{ item.createTime }}</div>
               </div>
             </div>
-            <div class="mt-2 ">
-              <div v-for="(item, i) of row.list" :key="i" class="">
-                <div class="mt-1 flex justify-between">
-                  <span class="mr-1">{{ item.title }}</span>
+          </NPopover>
+        </div>
 
-                  <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
-                    {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
-                  </NTag>
+        <div class="header-right-item header-right-item-help">
+          <NPopover trigger="hover">
+            <template #trigger>
+              <img
+                src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt=""
+                @click="() => { go({ name: 'help' }) }"
+              >
+            </template>
+            <span>ChatMoss帮助中心</span>
+          </NPopover>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="tip-text-content tip-text-content1">
+          <p v-if="useAuthStore.token">
+            <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
+          </p>
+          <p v-else>
+            <span class="v-login" @click="loginEvent('login')">登录&注册</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="flex w-full sub-header">
+      <div class="header-left">
+        <div class="header-right-item">
+          <span @click="shopEvent">商城</span>
+        </div>
+        <!-- <div v-if="userStore.isAuth === 2" class="header-right-item">
+          <span @click="() => { go({ name: 'invite' }) }">邀请</span>
+        </div> -->
+        <div v-if="userStore.isAuth === 2" class="header-right-item">
+          <span @click="() => { go({ name: 'sign' }) }">签到</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- <div class="tip-text-content">
+          <p v-if="useAuthStore.token" @click="getActivityListEvent">
+            <NButton round secondary type="success" size="tiny" @click="clickActivity">
+              活动
+            </NButton>
+          </p>
+        </div> -->
+        <div class="header-right-item header-item-btn text-test text-test1">
+          <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
+            <template #trigger>
+              余额
+            </template>
+            <div
+              v-for="(row, i) of userStore.packageList" :key="i"
+              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
+            >
+              <div>
+                <div style="width:200px" class="flex justify-between">
+                  <span class="mr-4">{{ row.title }}</span>
+                  <span> 当日可用次数：{{ row.timesResidue }}</span>
+                </div>
+              </div>
+              <div class="mt-2 ">
+                <div v-for="(item, i) of row.list" :key="i" class="">
+                  <div class="mt-1 flex justify-between">
+                    <span class="mr-1">{{ item.title }}</span>
+
+                    <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
+                      {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
+                    </NTag>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280cc]  mt-2">
-            <div style="width:200px">
-              <span class="mr-4">字符数：{{ mossCount }}</span>
+            <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
+              <div style="width:200px">
+                <span class="mr-4">字符数：{{ mossCount }}</span>
+              </div>
             </div>
-          </div>
-          <div class="flex  px-2 py-1  mt-2">
-            <NButton text color="#ff69b4" @click="handleClose">
-              +更多
-            </NButton>
-          </div>
-        </NPopover>
+            <div class="flex  px-2 py-1  mt-2">
+              <NButton text color="#ff69b4" @click="handleClose">
+                +更多
+              </NButton>
+            </div>
+          </NPopover>
+        </div>
+        <activity v-model="modelValue" />
       </div>
-      <activity v-model="modelValue" />
     </div>
+    <activity v-model="modelValue" />
   </header>
 </template>
 
 <style lang="less">
 .header-main {
-  max-width: 1280px;
+  // max-width: 1280px;
   width: 100%;
   min-width: 250px;
   overflow: scroll;
   position: fixed;
-  display: flex;
   align-items: center;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
-  padding: 0 16px;
+  // padding: 0 16px;
   user-select: none;
   backdrop-filter: blur(20px);
   background-color: rgba(60, 128, 253, 0.1);
   z-index: 20;
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  top: 0;
 
-  .header-left {
+  .header-right {
     width: 50%;
     display: flex;
     align-items: center;
     justify-content: flex-end;
   }
 
-  .header-right {
+  .header-left {
     width: 50%;
     display: flex;
     justify-content: flex-start;
@@ -207,6 +263,13 @@ function getActivityListEvent() {
       align-items: center;
       justify-content: center;
       cursor: pointer;
+			font-size: 12px;
+
+      &:hover {
+        transform: scale(1.05);
+        font-weight: 600;
+        color: #3c72ff;
+      }
 
       &:active {
         transform: scale(.96);
@@ -218,6 +281,23 @@ function getActivityListEvent() {
       }
     }
   }
+}
+
+.header {
+  padding: 0 16px;
+  height: 45px;
+}
+
+.sub-header {
+  border-top: 1px solid #242627;
+  padding: 0 16px;
+  height: 45px;
+}
+
+.chat-main {
+  height: calc(100%);
+  padding-top: 90px;
+  padding-bottom: 30px;
 }
 
 .header-item-btn {
@@ -331,5 +411,9 @@ function getActivityListEvent() {
   margin-top: 10px;
   margin-bottom: 10px;
   margin-left: 10px;
+}
+
+.page .header {
+  padding: 0px;
 }
 </style>

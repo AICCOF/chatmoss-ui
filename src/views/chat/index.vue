@@ -1,11 +1,12 @@
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
+import applicationList from './applicationList.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
@@ -17,7 +18,10 @@ import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
+import { useGo } from '@/utils/router'
+
 const authStore = useAuthStoreWithout()
+const go = useGo()
 
 const userStore = useUserStore()
 const showModal = ref(false)
@@ -61,10 +65,6 @@ const isPlus = computed(() => {
 if (!localStorage.getItem('isCorrelation'))
   localStorage.setItem('isCorrelation', 'true')
 
-// const isCorrelation = ref(localStorage.getItem('isCorrelation') === 'true')
-// const showNetwork = ref(localStorage.getItem('showNetwork') === 'true')
-// const showNetwork = ref(false)
-
 let controller = new AbortController()
 
 const ms = useMessage()
@@ -104,10 +104,14 @@ const currentIndex = computed({
     userInputindex.value = val
   },
 })
+watch(() => chatStore.getChatByUuid(), (...vals) => {
+  // <!-- console.log(vals) -->
+  setTimeout(() => {
+    scrollToBottom()
+  }, 300)
+})
 
 function handleSubmit() {
-  showModal.value = false
-
   userStore.residueCountAPI()
   onConversation()
 }
@@ -165,12 +169,12 @@ function onlineFn(askMsg: string) {
 }
 async function onConversation(askMsg?: string, type?: number) {
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
-  if (userStore.residueCount < 500000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('4.0模型消耗大量字符，需50万字符才可使用。请去ChatMoss商店补充字符数或切换至3.5模型')
+  if (userStore.residueCount < 200000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
+    ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
     return
   }
   if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('4.0仅支持字符包提问，请先于设置中心移除key再进行切换')
+    ms.error('请先去设置中心移除key再使用4.0进行提问')
     return
   }
 
@@ -179,10 +183,10 @@ async function onConversation(askMsg?: string, type?: number) {
     if (!res)
       return
   }
-  if(!chatStore.getUuid){
-     ms.warning('当前会话丢失,请新建会话或打开历史记录选择会话.')
-     return 
-  }
+  // if (!chatStore.getUuid) {
+  //   ms.warning('当前会话丢失,请新建会话或打开历史记录选择会话.')
+  //   return
+  // }
   // if (!userStore.isAsk) {
   //   ms.error('当前字数已用尽，请等待明日免费字符，或者在商店内购买字符使用，或者上传key使用')
   //   return
@@ -192,12 +196,14 @@ async function onConversation(askMsg?: string, type?: number) {
     chatOptions = {
       conversationId: chatStore.getUuid,
       openaiVersion: userStore.getOpenaiVersion,
+      appId: userStore.appIdValue,
       online: 1,
     }
   }
   else {
     chatOptions = {
       conversationId: chatStore.getUuid,
+      appId: userStore.appIdValue,
       openaiVersion: userStore.getOpenaiVersion,
     }
   }
@@ -271,9 +277,9 @@ async function onConversation(askMsg?: string, type?: number) {
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
-        const { responseText } = xhr
-        const chunk = responseText
-        // console.log(chunk)
+        // const { responseText } = xhr
+        const chunk = xhr.responseText
+        // console.log(chunk,'chunk', xhr.responseText)
         try {
           // const data = JSON.parse(chunk)
           updateChat(chatStore.getUuid, dataSources.value.length - 1, {
@@ -311,7 +317,7 @@ async function onConversation(askMsg?: string, type?: number) {
       // error.msg
       ms.error(error.msg)
       // 代表未登录
-      showModal.value = true
+      // showModal.value = true
     }
     // 答应其他信息
     const errorMessage = error.msg
@@ -462,9 +468,9 @@ function clickMessage() {
 
 onMounted(() => {
   clickMessage()
-
   chatStore.chatList()
   userStore.getActivityListAPI()
+  userStore.residueCountAPI()
 })
 
 onUnmounted(() => {
@@ -489,12 +495,6 @@ const noDataInfo = [
     text: '上下文越长，字符消耗越多',
   },
 ]
-function noDataInfoEvent(index: any) {
-  // prompt.value = ''
-  // prompt.value = noDataInfo[index].text
-  // handleSubmit()
-  // ms.info('更多问题解答和反馈，请加QQ群')
-}
 
 const paperList = ref<Chat.paper[]>([])
 const nowPaperIndex = ref<number>(0)
@@ -520,11 +520,6 @@ async function startTutorial() {
   }
 }
 
-function setOpenaiVersion() {
-  userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
-  ms.success('模型切换成功')
-}
-
 async function onSuccessAuth() {
   try {
     await auth()
@@ -544,44 +539,48 @@ async function onSuccessAuth() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex-1 overflow-hidden">
-      <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
-        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto" :class="[isMobile ? 'p-2' : 'p-4']">
+      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
+        <applicationList v-if="userStore.isAuth === 2" />
+        <div v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex"
+          :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: hidden">
           <template v-if="!dataSources.length">
-            <div class="no-data-info">
-              <!-- 标题 -->
-              <div class="no-data-info-title">
-                ChatMoss
-                <span
-                  v-if="!!isPlus" :class="{ is3_5: isPlus === '3.5' }"
-                  class="no-data-info-title1 bg-yellow-200 text-yellow-900 py-0.5 px-1.5 text-xs md:text-sm rounded-md uppercase"
-                  @click="setOpenaiVersion"
-                >
-                  {{ isPlus }} 模型
-                </span>
+            <div class="no-data-info text-[#000] dark:text-white w-full">
+              <!-- 应用介绍 -->
+              <div v-if="userStore.currentApp" class="no-data-info-text">
+                应用使用说明：{{ userStore.currentApp.desc }}
               </div>
-              <div class="no-data-btns-list">
-                <div
-                  v-for="(item, index) in noDataInfo" :key="index" class="no-data-btns-item"
-                  @click="noDataInfoEvent(index)"
-                >
-                  <img
-                    class="btns-item-img" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/tip.png"
-                    alt=""
-                  >
-                  <div class="btns-item-text">
-                    {{ item.text }}
-                  </div>
+              <!-- 空态占位图 -->
+              <img v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
+                alt="" @click="() => { go({ name: 'sign' }) }">
+              <div v-else>
+                <!-- 后面期望这里跳转使用教程页面 -->
+                <div class="no-data-info-tip-title">
+                  ChatMoss 使用说明：
+                </div>
+                <div class="no-data-info-tip-text">
+                  1.免费使用：在左上角个人中心设置自己的key后，可无限制使用（可以不用登录）
+                </div>
+                <div class="no-data-info-tip-text">
+                  2.登录后每日5万字符使用额度，每周参与签到可以获得7.8w字符，还有应用商店数千款应用等你探索~快去登录吧，登录后更精彩！
+                </div>
+                <div class="no-data-info-tip-text">
+                  3.暂未未登录，您可以免费体验3万字符，字符余额可以在右上角可以查看
+                </div>
+                <div class="no-data-info-tip-text">
+                  4.大部分问题都可以点击左上角帮助页面，自行查阅解决
+                </div>
+                <div class="no-data-info-tip-text">
+                  5.ChatMoss商店兑换码需要登录后才可以兑换！
                 </div>
               </div>
             </div>
           </template>
           <template v-else>
-            <div>
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :is-show="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
-                :error="item.error" :loading="item.loading" @ask="askFn" @online="onlineFn"
-              />
+            <div ref="scrollRef" style="width:100%;overflow:auto">
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
+                :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn"
+                @online="onlineFn" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -601,17 +600,13 @@ async function onSuccessAuth() {
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
     <footer :class="footerClass">
-      <div class="w-full max-w-screen-xl m-auto">
-        <div class="moss-btns flex justify-between space-x-2">
-          <NInput
-            v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus type="textarea"
-            :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
-          />
-          <NSelect
-            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+      <div class="w-full m-auto">
+        <div class="moss-btns flex justify-between space-x-2 w-full">
+          <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus
+            type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" />
+          <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
             :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter" @input="handleSelectInput"
-          />
+            label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
@@ -625,11 +620,6 @@ async function onSuccessAuth() {
         </div>
       </div>
     </footer>
-    <NModal v-model:show="showModal" transform-origin="center">
-      <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
-        <Login @loginSuccess="() => { handleSubmit() }" />
-      </NCard>
-    </NModal>
     <NModal v-model:show="showPaper" transform-origin="center">
       <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
         <Paper v-model:sort="nowPaperIndex" :paper-list="paperList" @success="onSuccessAuth" />
@@ -641,7 +631,48 @@ async function onSuccessAuth() {
 
 <style lang="less">
 .no-data-info {
-  margin-top: 5%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .no-data-info-tip-title {
+    font-size: 14px;
+    color: #FF6666;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .no-data-info-tip-text {
+    width: 340px;
+    font-size: 14px;
+    // color: #fff;
+    line-height: 28px;
+    margin-bottom: 10px;
+  }
+
+  .no-data-info-text {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    // color: #fff;
+    position: absolute;
+    opacity: 0.5;
+    font-size: 12px;
+    top: 30px;
+  }
+
+  .no-data-img {
+    width: 360px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 10px;
+    cursor: pointer;
+  }
 
   .no-data-info-title {
     position: relative;
@@ -919,11 +950,6 @@ async function onSuccessAuth() {
   }
 }
 
-.chat-main {
-  height: calc(100% - 50px);
-  padding-top: 50px;
-}
-
 .uppercase {
   cursor: pointer;
 }
@@ -931,5 +957,12 @@ async function onSuccessAuth() {
 .is3_5 {
   background-color: #ceeaca;
   color: #4fa444;
+}
+
+@media screen and(max-width: 768px) {
+  .no-data-img {
+    width: 250px !important;
+    height: 166px !important;
+  }
 }
 </style>

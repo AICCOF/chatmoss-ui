@@ -18,6 +18,9 @@ export function useTheme() {
   const theme = computed(() => {
     return isDark.value ? darkTheme : undefined
   })
+  const vantTheme = computed(() => {
+    return isDark.value ? 'dark' : 'light'
+  })
 
   const themeOverrides = computed<GlobalThemeOverrides>(() => {
     if (isDark.value) {
@@ -42,5 +45,5 @@ export function useTheme() {
     { immediate: true },
   )
 
-  return { theme, themeOverrides }
+  return { theme, themeOverrides, vantTheme }
 }
