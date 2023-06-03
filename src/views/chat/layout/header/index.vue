@@ -165,9 +165,9 @@ function shopEvent() {
         <div class="header-right-item">
           <span @click="shopEvent">商城</span>
         </div>
-        <!-- <div v-if="userStore.isAuth === 2" class="header-right-item">
+        <div v-if="userStore.isAuth === 2" class="header-right-item">
           <span @click="() => { go({ name: 'invite' }) }">邀请</span>
-        </div> -->
+        </div>
         <div v-if="userStore.isAuth === 2" class="header-right-item">
           <span @click="() => { go({ name: 'sign' }) }">签到</span>
         </div>
@@ -192,7 +192,7 @@ function shopEvent() {
               <div>
                 <div style="width:200px" class="flex justify-between">
                   <span class="mr-4">{{ row.title }}</span>
-                  <span> 当日可用次数：{{ row.timesResidue }}</span>
+                  <span> 可用次数：{{ row.timesResidue }}</span>
                 </div>
               </div>
               <div class="mt-2 ">

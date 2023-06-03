@@ -11,7 +11,7 @@ import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
 import { auth, fetchChatAPIProcess, paper } from '@/api'
-import Login from '@/views/login/index.vue'
+// import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmossGroup.json'
@@ -173,10 +173,10 @@ async function onConversation(askMsg?: string, type?: number) {
     ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
     return
   }
-  if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('请先去设置中心移除key再使用4.0进行提问')
-    return
-  }
+  // if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
+  //   ms.error('请先去设置中心移除key再使用4.0进行提问')
+  //   return
+  // }
 
   if (chatStore.isLimit && userStore.isHighVersion && userStore.isHighVersionMsg) {
     const res = await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0')
@@ -546,7 +546,7 @@ async function onSuccessAuth() {
           <template v-if="!dataSources.length">
             <div class="no-data-info text-[#000] dark:text-white w-full">
               <!-- 应用介绍 -->
-              <div v-if="userStore.currentApp" class="no-data-info-text">
+              <div v-if="authStore.token && userStore.currentApp" class="no-data-info-text">
                 应用使用说明：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
