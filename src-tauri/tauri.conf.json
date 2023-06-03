@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "CHATMOSS",
-    "version": "4.0.24"
+    "version": "4.0.25"
   },
   "tauri": {
     "windows": [

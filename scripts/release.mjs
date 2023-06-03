@@ -8,7 +8,7 @@ import {
 } from 'child_process';
 import fs from 'fs';
 
-import updatelog from './updatelog.mjs';
+import resolveUpdateLog from './updatelog.mjs';
 
 const require = createRequire(
 	import.meta.url);
@@ -38,7 +38,7 @@ async function release() {
 	tauriJson.package.version = nextVersion;
 
 	const nextTag = `v${nextVersion}`;
-	await updatelog(nextTag, 'release');
+	await resolveUpdateLog(nextTag, 'release');
 	
 	// console.log(33)
 
