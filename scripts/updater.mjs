@@ -3,9 +3,9 @@ import {
 	getOctokit,
 	context
 } from "@actions/github";
-import {
+import 
 	resolveUpdateLog
-} from "./updatelog.mjs";
+ from "./updatelog.mjs";
 
 const UPDATE_TAG_NAME = "updater";
 const UPDATE_JSON_FILE = "update.json";
