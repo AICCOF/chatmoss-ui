@@ -189,7 +189,7 @@ export const useChatStore = defineStore('chat-store', {
       }else{
         this.active = null
       }
-     
+
     },
     async getConversationDetail() {
       if (!this.active)
@@ -351,7 +351,7 @@ export const useChatStore = defineStore('chat-store', {
       if (result) {
         if (result.data && result.data.length == 0) {
           // 如果问的是第一个问题，编辑问题的标题
-          result.title = chat.text
+          // result.title = chat.text
           result.data = []
         }
         result.data.push(chat)
@@ -372,7 +372,7 @@ export const useChatStore = defineStore('chat-store', {
         if (!result.data) {
           // 如果问的是第一个问题，编辑问题的标题
           await editConversation({ title: chat.text, conversationId: this.active })
-          result.title = chat.text
+          // result.title = chat.text
           result.data = []
         }
         result.data.push(chat)

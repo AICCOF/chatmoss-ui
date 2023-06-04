@@ -1,16 +1,31 @@
 <script lang="ts" setup>
-import { NPopover, NTag, useMessage } from 'naive-ui'
-import { useUserStore } from '@/store'
+import { NButton, NCard, NInput, NModal, NPopover, NTag, useMessage } from 'naive-ui'
+import { ref } from 'vue'
+import { useChatStore, useUserStore } from '@/store'
 // import { computed } from 'vue'
-// import { ref } from 'vue'
 const userStore = useUserStore()
+const chatStore = useChatStore()
 const ms = useMessage()
+const showModal = ref(false)
+const sessionTitle = ref('')
+
+// 取消新建会话
+function cancelModal() {
+  showModal.value = false
+  sessionTitle.value = ''
+}
+
+// 新建会话弹出modal
+function createModal() {
+  showModal.value = true
+}
 
 // 新建对话
 function createQuestion() {
-  const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-  questionBtnDom.click()
+  chatStore.createChat(sessionTitle.value)
   ms.success('新建会话成功，请提问~')
+  showModal.value = false
+  sessionTitle.value = ''
 }
 
 // 历史记录
@@ -29,7 +44,7 @@ function setOpenaiVersion() {
   <div>
     <header class="footer-main">
       <div class="footer-left">
-        <NTag class="footer-item footer-item-btn footer-item-btn1" type="success" @click="createQuestion">
+        <NTag class="footer-item footer-item-btn footer-item-btn1" type="success" @click="createModal">
           新建会话
         </NTag>
         <NTag class="footer-item footer-item-btn footer-item-btn2" type="success" @click="toggleButtonEvent">
@@ -51,6 +66,31 @@ function setOpenaiVersion() {
         </div>
       </div>
     </header>
+    <NModal v-model:show="showModal">
+      <NCard
+        style="width: 600px"
+        title="创建会话"
+        :bordered="false"
+        size="huge"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div>
+          <span style="margin-right: 20px">会话名称:</span>
+          <NInput v-model:value="sessionTitle" type="text" placeholder="请输入会话名称" style="width: 400px" @keydown.enter="createQuestion" />
+        </div>
+        <template #footer>
+          <div style="display: flex; justify-content: flex-end">
+            <NButton size="small" style="cursor: pointer;" @click="cancelModal">
+              取消
+            </NButton>
+            <NButton type="primary" size="small" style="margin-left: 20px;cursor: pointer;" @click="createQuestion">
+              确定
+            </NButton>
+          </div>
+        </template>
+      </NCard>
+    </NModal>
   </div>
 </template>
 
