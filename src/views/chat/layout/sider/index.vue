@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NLayoutSider, NPopconfirm , NButton } from 'naive-ui'
+import { NLayoutSider, NPopconfirm , NButton, NInput, NModal, NCard } from 'naive-ui'
 // import Tips from '../../tips.vue'
 
 import List from './List.vue'
@@ -9,15 +9,30 @@ import Footer from './Footer.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useGo } from '@/utils/router'
 // const userStore = useUserStore()
-// const showModal = ref(false)
+const showModal = ref(false)
+const sessionTitle = ref('')
 const appStore = useAppStore()
 const chatStore = useChatStore()
 const go = useGo()
 const isMobile = ref(true)
 const collapsed = computed(() => appStore.siderCollapsed)
 
+// 取消新建会话
+function cancelModal() {
+  showModal.value = false
+  sessionTitle.value = ''
+}
+
+// 新建会话弹出modal
+function createModal() {
+  showModal.value = true
+}
+
 function handleAdd() {
-  chatStore.createChat()
+	showModal.value = false
+  chatStore.createChat(sessionTitle.value)
+	console.log(showModal.value)
+  sessionTitle.value = ''
 }
 
 function handleUpdateCollapsed() {
@@ -75,11 +90,11 @@ watch(
       <main class="flex flex-col flex-1 min-h-0">
         <div v-show="true" class="p-4">
           <div class="mb-2">
-            <NButton id="question-btn"  dashed block @click="handleAdd">
+            <NButton id="question-btn"  dashed block @click="createModal">
               新建问题
             </NButton>
           </div>
-          
+
           <NPopconfirm placement="bottom" @positive-click="()=> chatStore.deleteBatchHistory()">
             <template #trigger>
               <NButton id="question-btn2" dashed block @click.stop>
@@ -114,6 +129,31 @@ watch(
   <template v-if="isMobile">
     <div v-show="!collapsed" class="fixed inset-0 z-40 bg-black/40" @click="handleUpdateCollapsed" />
   </template>
+	<NModal v-model:show="showModal">
+      <NCard
+        style="width: 600px"
+        title="创建会话"
+        :bordered="false"
+        size="huge"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div>
+          <span style="margin-right: 20px">会话名称:</span>
+          <NInput v-model:value="sessionTitle" type="text" placeholder="请输入会话名称" style="width: 400px" />
+        </div>
+        <template #footer>
+          <div style="display: flex; justify-content: flex-end">
+            <NButton size="small" style="cursor: pointer;" @click="cancelModal">
+              取消
+            </NButton>
+            <NButton type="primary" size="small" style="margin-left: 20px;cursor: pointer;" @click="handleAdd">
+              确定
+            </NButton>
+          </div>
+        </template>
+      </NCard>
+    </NModal>
 </template>
 
 <style lang="less">
