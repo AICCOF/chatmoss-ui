@@ -11,7 +11,6 @@ import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
 import { auth, fetchChatAPIProcess, paper } from '@/api'
-import Login from '@/views/login/index.vue'
 import Paper from '@/views/paper/index.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmossGroup.json'
@@ -541,8 +540,10 @@ async function onSuccessAuth() {
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
-        <div v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex"
-          :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: hidden">
+        <div
+          v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex"
+          :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: hidden"
+        >
           <template v-if="!dataSources.length">
             <div class="no-data-info text-[#000] dark:text-white w-full">
               <!-- 应用介绍 -->
@@ -550,8 +551,10 @@ async function onSuccessAuth() {
                 应用使用说明：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
-              <img v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
-                alt="" @click="() => { go({ name: 'sign' }) }">
+              <img
+                v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
+                alt="" @click="() => { go({ name: 'shop' }) }"
+              >
               <div v-else>
                 <!-- 后面期望这里跳转使用教程页面 -->
                 <div class="no-data-info-tip-title">
@@ -577,10 +580,12 @@ async function onSuccessAuth() {
           </template>
           <template v-else>
             <div ref="scrollRef" style="width:100%;overflow:auto">
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn"
-                @online="onlineFn" />
+                @online="onlineFn"
+              />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -602,11 +607,15 @@ async function onSuccessAuth() {
     <footer :class="footerClass">
       <div class="w-full m-auto">
         <div class="moss-btns flex justify-between space-x-2 w-full">
-          <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus
-            type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" />
-          <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+          <NInput
+            v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus
+            type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
+          />
+          <NSelect
+            v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
             :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
+            label-field="key" @keydown="handleEnter" @input="handleSelectInput"
+          />
           <!-- MOSS字数 -->
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
