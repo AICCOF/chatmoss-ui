@@ -64,10 +64,11 @@ const verifyFlag = ref({
   forgetFlag: false,
 })
 const tabStr = ref('login')
-
+let disAble = ref(false)
 if (router.currentRoute.value.query) {
   if (router.currentRoute.value.query.invite) {
     tabStr.value = 'register'
+    disAble.value = true
     registerForm.invite = router.currentRoute.value.query.invite;
   }
 }
@@ -96,8 +97,12 @@ const forgetForm = reactive({
 })
 function handleBack() {
   if (router.currentRoute.value.query && router.currentRoute.value.query.invite) {
-    // console.log(11)
-    go({ name: 'Chat' })
+    // console.log(router.currentRoute.value.query.invite)
+    go({
+      name: 'Chat', query: {
+        invite: router.currentRoute.value.query.invite
+      }
+    })
   } else {
     back()
   }
@@ -296,7 +301,7 @@ async function loginEvent() {
                 message: '',
                 trigger: ['input', 'blur'],
               }">
-              <NInput v-model:value="registerForm.invite" placeholder="请输入邀请人邮箱" clearable />
+              <NInput v-model:value="registerForm.invite" placeholder="请输入邀请人邮箱" clearable :disabled="disAble" />
             </NFormItem>
 
             <NButton attr-type="button" block @click="registerEvent">

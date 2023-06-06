@@ -19,14 +19,15 @@ const chatStore = useChatStore()
 const notification = useNotification()
 const go = useGo()
 const modelValue = ref(false)
-
+import { useRouter } from 'vue-router'
+let router = useRouter();
 // interface Emit {
 //   (e: 'login'): void
 // }
 
 function loginEvent(type: string) {
   if (type === 'login')
-    go({ name: 'login' })
+    go({ name: 'login' , query: router.currentRoute.value.query })
 
   if (type === 'exit') {
     useAuthStore.setToken('')

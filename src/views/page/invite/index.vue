@@ -7,6 +7,7 @@ import { copyText } from '@/utils/format'
 import { getInviteInfo, InviteRes } from '@/api/invite'
 const back = useBack()
 const Message = useMessage()
+import { getToken } from '@/store/modules/auth/helper'
 
 
 const info = ref<InviteRes>()
@@ -24,73 +25,24 @@ function handleSelect() {
   Message.success('已复制链接')
 }
 
-async function getInviteInfoAPI() {
-  let res = await getInviteInfo<InviteRes>()
-  info.value = res.data || {}
-}
+// async function getInviteInfoAPI() {
+//   let res = await getInviteInfo<InviteRes>()
+//   info.value = res.data || {}
+// }
 
 onMounted(() => {
-  getInviteInfoAPI();
+  // getInviteInfoAPI();
 })
+const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?token=${getToken()}&time=${new Date().getTime()}`)
+
 </script>
 
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="邀请" left-text="返回" left-arrow @click-left="back" />
+      <van-nav-bar title="" left-text="返回" left-arrow @click-left="back" />
     </template>
-
-    <div class="invite-mian dark:text-white" v-if="info">
-      <div class="text-center">
-        <div class="">
-          邀请朋友并赚取GPT-4.0信息
-        </div>
-        <div class="">
-          为你和你的朋友赚取5个GPT4.0和50个GPT3.5查询
-        </div>
-        <div class="">
-          你推荐越多,你赚的越多
-        </div>
-      </div>
-      <van-cell-group title="邀请链接" inset>
-        <van-cell>
-          <!-- 使用 right-icon 插槽来自定义右侧图标 -->
-          <template #title>
-            <div class="url">
-              {{ text1 }}
-            </div>
-          </template>
-        </van-cell>
-        <van-button type="primary" block size="mini" @click="handleSelect">
-          复制
-        </van-button>
-      </van-cell-group>
-
-      <div class="">
-        <div class="title mt-4">
-          奖励
-        </div>
-        <div class="mt-2">
-          累计获得奖励{{ info['35TotalDays'] + info['40TotalDays'] }}天
-        </div>
-        <div class="flex justify-around mt-4">
-          <div class="desc text-center">
-            <div class="">
-              <span class="h">{{ info['40Times'] }}</span>
-              <span class="t">次</span>
-            </div>
-            <div>GPT 4.0</div>
-          </div>
-          <div class="desc text-center">
-            <div class=" ">
-              <span class="h">{{ info['35Times'] }}</span>
-              <span class="t">次</span>
-            </div>
-            <div>GPT 3.5</div>
-          </div>
-        </div>
-      </div>
-    </div>
+     <iframe :src="url" frameborder="0" style="border-radius: 10px;width:100%;height:100%;" />
   </Page>
 </template>
 
