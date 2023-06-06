@@ -69,7 +69,7 @@ function lockUrl(row: any) {
     </div>
   </NModal>
   <NModal v-model:show="ifFrame.isShow">
-    <iframe :src="ifFrame.url" frameborder="0" style="width:375px;height:80vh;transform: scale(0.95);border-radius: 10px;" />
+    <iframe :src="ifFrame.url" frameborder="0" style="width:375px;height:80vh;transform: scale(0.95);" />
   </NModal>
 </template>
 

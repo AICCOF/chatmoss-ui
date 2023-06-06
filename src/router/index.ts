@@ -80,7 +80,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'Root',
     component: ChatLayout,
-    redirect: '/chat',
+    // redirect: '/chat',
     children: [
       {
         path: '/chat/:uuid?',

@@ -1,88 +1,54 @@
 <script lang="ts" setup>
 import { useMessage } from 'naive-ui'
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
 import { copyText } from '@/utils/format'
-import { getInviteInfo, InviteRes } from '@/api/invite'
+import type { InviteRes } from '@/api/invite'
+import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
 const Message = useMessage()
 
-
 const info = ref<InviteRes>()
 
+const text = computed(() => {
+  return `ChatMoss 是由 GPT-4 驱动的人工智能助手，现在注册赠送你 100 个免费 GPT 次数，包括 GPT-4，GPT-3.5，应用市场等。 快点击链接领取吧：${location.origin}/#/page/login?invite=${info.value?.inviteCode}`
+})
+
+const text1 = computed(() => {
+  return `${location.origin}/#/page/login?invite=${info.value?.inviteCode}`
+})
+
 function handleSelect() {
-  copyText({ text: info.value ? info.value.inviteCode : '' })
-  Message.success('已复制到剪切板')
-}
-async function getInviteInfoAPI() {
-  let res = await getInviteInfo<InviteRes>()
-  info.value = res.data || {}
+  copyText({ text: text.value })
+  Message.success('已复制链接')
 }
 
+// async function getInviteInfoAPI() {
+//   let res = await getInviteInfo<InviteRes>()
+//   info.value = res.data || {}
+// }
+
 onMounted(() => {
-  getInviteInfoAPI();
+  // getInviteInfoAPI();
 })
+const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?token=${getToken()}&time=${new Date().getTime()}`)
 </script>
 
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="邀请" left-text="返回" left-arrow @click-left="back" />
+      <van-nav-bar title="" left-text="返回" left-arrow @click-left="back" />
     </template>
-
-    <div class="invite-mian dark:text-white" v-if="info">
-      <div class="text-center">
-        <div class="title">
-          邀请朋友并赚取GPT-4.0信息
-        </div>
-        <div class="desc">
-          为你和你的朋友赚取5个GPT4.0和50个GPT3.5查询
-        </div>
-        <div class="desc">
-          你推荐越多,你赚的越多
-        </div>
-      </div>
-      <van-cell-group title="邀请链接" inset>
-        <van-cell>
-          <!-- 使用 right-icon 插槽来自定义右侧图标 -->
-          <template #title>
-            <div class="url">
-              {{ info.inviteCode }}
-            </div>
-          </template>
-          <template #right-icon>
-            <van-button type="primary" size="mini" @click="handleSelect">
-              复制
-            </van-button>
-          </template>
-        </van-cell>
-      </van-cell-group>
-
-      <div class="">
-        <div class="title">
-          奖励
-        </div>
-        <div class="">
-          累计获得奖励{{ info['35TotalDays'] + info['40TotalDays'] }}天
-        </div>
-        <div class="desc">
-          GPT 4.0: {{ info['40Times'] }}次/天
-        </div>
-        <div class="desc">
-          GPT 3.5: {{ info['35Times'] }}次/天
-        </div>
-      </div>
-    </div>
+    <iframe :src="url" frameborder="0" style="width:100%;height:100%;" />
   </Page>
 </template>
 
-<style>
+<style scoped lang="less">
 .url {
-  width: 280px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: break-spaces;
+  text-overflow: unset;
+  word-break: break-all;
 
 }
 
@@ -95,7 +61,20 @@ onMounted(() => {
 .desc {
   margin-top: 10px;
   font-size: 14px;
+  box-sizing: border-box;
+  border: 1px solid #999;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+
   /* color: #c9c9c9; */
+  .h {
+    font-size: 26px;
+  }
+  .t{
+    font-size: 12px;
+    margin-left: 2px;
+  }
 }
 
 .invite-mian {

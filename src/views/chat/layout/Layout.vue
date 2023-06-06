@@ -8,11 +8,11 @@ import Footer from './footerNew/index.vue'
 import Permission from './Permission.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAuthStore, useChatStore } from '@/store'
-const router = useRouter()
+// const router = useRouter()
 // const appStore = useAppStore()
-const chatStore = useChatStore()
+// const chatStore = useChatStore()
 const authStore = useAuthStore()
-router.replace({ name: 'Chat', params: { uuid: chatStore.active } })
+// router.replace({ name: 'Chat', params: { uuid: chatStore.active } })
 
 const { isMobile } = useBasicLayout()
 
