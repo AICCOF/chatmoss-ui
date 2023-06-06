@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import { useMessage } from 'naive-ui'
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
 import { copyText } from '@/utils/format'
-import { getInviteInfo, InviteRes } from '@/api/invite'
+import type { InviteRes } from '@/api/invite'
+import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
 const Message = useMessage()
-import { getToken } from '@/store/modules/auth/helper'
-
 
 const info = ref<InviteRes>()
 
@@ -34,7 +33,6 @@ onMounted(() => {
   // getInviteInfoAPI();
 })
 const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?token=${getToken()}&time=${new Date().getTime()}`)
-
 </script>
 
 <template>
@@ -42,7 +40,7 @@ const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?token=${getTo
     <template #title>
       <van-nav-bar title="" left-text="返回" left-arrow @click-left="back" />
     </template>
-     <iframe :src="url" frameborder="0" style="border-radius: 10px;width:100%;height:100%;" />
+    <iframe :src="url" frameborder="0" style="width:100%;height:100%;" />
   </Page>
 </template>
 
@@ -78,7 +76,6 @@ const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?token=${getTo
     margin-left: 2px;
   }
 }
-
 
 .invite-mian {
   padding: 0 15px;

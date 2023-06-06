@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { NButton, NCard, NDivider, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
-import { ShopInfo, exchangeOptions } from './data'
+import { exchangeOptions } from './data'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
 import { toMoss } from '@/api'
@@ -103,7 +103,7 @@ async function exchangeMossEvent() {
           </NButton>
         </div>
       </div>
-      <iframe :src="url" frameborder="0" style="border-radius: 10px; margin-top: 20px; width:100%;height:100%;" />
+      <iframe :src="url" frameborder="0" style="margin-top: 20px; width:100%;height:100%;" />
     </div>
 
     <!-- 购买字符数 -->

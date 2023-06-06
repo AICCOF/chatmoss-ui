@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { NAvatar, NButton, NPopover, NTag, useMessage, useNotification } from 'naive-ui'
 import { computed, h, onMounted, ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import activity from './../activity.vue'
 import { SvgIcon } from '@/components/common'
 import { useUserStore } from '@/store'
@@ -19,15 +20,14 @@ const chatStore = useChatStore()
 const notification = useNotification()
 const go = useGo()
 const modelValue = ref(false)
-import { useRouter } from 'vue-router'
-let router = useRouter();
+const router = useRouter()
 // interface Emit {
 //   (e: 'login'): void
 // }
 
 function loginEvent(type: string) {
   if (type === 'login')
-    go({ name: 'login' , query: router.currentRoute.value.query })
+    go({ name: 'login', query: router.currentRoute.value.query })
 
   if (type === 'exit') {
     useAuthStore.setToken('')
@@ -45,7 +45,6 @@ const mossCount = computed(() => {
 function handleClose(row: any) {
   shopEvent()
 }
-
 
 watchEffect(() => {
   const { user } = userStore.userInfo
@@ -167,7 +166,7 @@ function shopEvent() {
           <span @click="shopEvent">商城</span>
         </div>
         <div v-if="userStore.isAuth === 2" class="header-right-item">
-          <span @click="() => { go({ name: 'invite' }) }">邀请</span>
+          <span @click="() => { go({ name: 'invite' }) }">邀请得4.0</span>
         </div>
         <div v-if="userStore.isAuth === 2" class="header-right-item">
           <span @click="() => { go({ name: 'sign' }) }">签到</span>
