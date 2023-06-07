@@ -9,6 +9,7 @@ import {
   useMessage,
 } from 'naive-ui'
 import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Page from '@/components/page/index.vue'
 import { useAuthStoreWithout, useChatStore } from '@/store'
 import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
@@ -16,10 +17,9 @@ import { sendToMsg } from '@/utils/vsCodeUtils'
 import dragVerifyImgChip from '@/components/dragVerifyImgChip.vue'
 import { staticData } from '@/store/static'
 import { useBack, useGo } from '@/utils/router'
-import { useRouter } from 'vue-router'
-let router = useRouter();
 // const props = defineProps(['tab'])
 const emit = defineEmits<Emit>()
+const router = useRouter()
 const back = useBack()
 const go = useGo()
 const chatStore = useChatStore()
@@ -43,9 +43,7 @@ const buttonInfo = reactive({
   time: 0,
 })
 
-
 // console.log(router)
-
 
 const verifyImg = ref<any>(null)
 const verifyImg1 = ref<any>(null)
@@ -64,12 +62,12 @@ const verifyFlag = ref({
   forgetFlag: false,
 })
 const tabStr = ref('login')
-let disAble = ref(false)
+const disAble = ref(false)
 if (router.currentRoute.value.query) {
   if (router.currentRoute.value.query.invite) {
     tabStr.value = 'register'
     disAble.value = true
-    registerForm.invite = router.currentRoute.value.query.invite;
+    registerForm.invite = router.currentRoute.value.query.invite
   }
 }
 function refresh(val: 'loginFlag' | 'forgetFlag') {
@@ -99,14 +97,15 @@ function handleBack() {
   if (router.currentRoute.value.query && router.currentRoute.value.query.invite) {
     // console.log(router.currentRoute.value.query.invite)
     go({
-      name: 'Chat', query: {
-        invite: router.currentRoute.value.query.invite
-      }
+      name: 'Chat',
+      query: {
+        invite: router.currentRoute.value.query.invite,
+      },
     })
-  } else {
+  }
+  else {
     back()
   }
-
 }
 
 async function sendCode() {
@@ -227,20 +226,26 @@ async function loginEvent() {
       <NTabs v-model:value="tabStr" justify-content="space-evenly" type="line">
         <NTabPane name="login" tab="登录">
           <NForm ref="formRef" :model="loginForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">
-            <NFormItem label="邮箱" path="email" :rule="{
+            <NFormItem
+              label="邮箱" path="email" :rule="{
                 required: true,
                 message: '请输入邮箱',
                 trigger: ['input', 'blur'],
-              }">
+              }"
+            >
               <NInput v-model:value="loginForm.email" autocomplete="on" placeholder="请输入邮箱" clearable />
             </NFormItem>
-            <NFormItem label="密码" path="password" autocomplete="on" :rule="{
+            <NFormItem
+              label="密码" path="password" autocomplete="on" :rule="{
                 required: true,
                 message: '密码由字母、数字或下划线组成！',
                 trigger: ['input', 'blur'],
-              }">
-              <NInput v-model:value="loginForm.password" placeholder="密码由字母、数字或下划线组成！" type="password"
-                show-password-on="mousedown" />
+              }"
+            >
+              <NInput
+                v-model:value="loginForm.password" placeholder="密码由字母、数字或下划线组成！" type="password"
+                show-password-on="mousedown"
+              />
             </NFormItem>
 
             <div>
@@ -252,20 +257,26 @@ async function loginEvent() {
         </NTabPane>
         <NTabPane name="register" tab="注册">
           <NForm ref="formRef" :model="registerForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">
-            <NFormItem label="邮箱" path="email" :rule="{
+            <NFormItem
+              label="邮箱" path="email" :rule="{
                 required: true,
                 message: '请输入邮箱',
                 trigger: ['input', 'blur'],
-              }">
+              }"
+            >
               <NInput v-model:value="registerForm.email" placeholder="请输入邮箱" clearable />
             </NFormItem>
-            <NFormItem label="密码" path="password" :rule="{
+            <NFormItem
+              label="密码" path="password" :rule="{
                 required: true,
                 message: '密码由字母、数字或下划线组成！',
                 trigger: ['input', 'blur'],
-              }">
-              <NInput v-model:value="registerForm.password" placeholder="密码由字母、数字或下划线组成！" type="password"
-                show-password-on="mousedown" />
+              }"
+            >
+              <NInput
+                v-model:value="registerForm.password" placeholder="密码由字母、数字或下划线组成！" type="password"
+                show-password-on="mousedown"
+              />
             </NFormItem>
             <!-- <NFormItem
               label="昵称" path="nickname" :rule="{
@@ -276,32 +287,40 @@ async function loginEvent() {
             >
               <NInput v-model:value="registerForm.nickname" placeholder="请输入昵称" clearable />
             </NFormItem> -->
-            <NFormItem label="邮箱验证码" path="emailCode" :rule="{
+            <NFormItem
+              label="邮箱验证码" path="emailCode" :rule="{
                 required: true,
                 message: '请输入邮箱验证码',
                 trigger: ['input', 'blur'],
-              }">
+              }"
+            >
               <NInput v-model:value="registerForm.emailCode" placeholder="请输入验证码" clearable />
               <NButton style="margin-left: 12px" @click="() => { verifyFlag.showLogin = true }">
                 {{ buttonInfo.text }}
               </NButton>
             </NFormItem>
 
-            <NFormItem v-if="verifyFlag.showLogin" label="滑块验证" :rule="{
+            <NFormItem
+              v-if="verifyFlag.showLogin" label="滑块验证" :rule="{
                 required: true,
-              }">
-              <dragVerifyImgChip ref="verifyImg" v-model:isPassing="verifyFlag.loginFlag" :imgsrc="imgsrc" show-refresh
+              }"
+            >
+              <dragVerifyImgChip
+                ref="verifyImg" v-model:isPassing="verifyFlag.loginFlag" :imgsrc="imgsrc" show-refresh
                 :bar-width="40" text="请按住滑块拖动" success-text="验证通过"
                 handler-icon="material-symbols:keyboard-double-arrow-right" success-icon="clarity:success-standard-solid"
                 refresh-icon="ic:twotone-refresh" @refresh="refresh('loginFlag')"
-                @passcallback="passcallback('loginFlag')" />
+                @passcallback="passcallback('loginFlag')"
+              />
             </NFormItem>
-            <NFormItem label="邀请人邮箱（双方都可获得100,000字符）" path="email" :rule="{
+            <NFormItem
+              label="邀请码（双方获得50次GPT-3.5次数）" path="email" :rule="{
                 required: false,
                 message: '',
                 trigger: ['input', 'blur'],
-              }">
-              <NInput v-model:value="registerForm.invite" placeholder="请输入邀请人邮箱" clearable :disabled="disAble" />
+              }"
+            >
+              <NInput v-model:value="registerForm.invite" placeholder="请输入邀请码（选填）" clearable :disabled="disAble" />
             </NFormItem>
 
             <NButton attr-type="button" block @click="registerEvent">
@@ -311,40 +330,52 @@ async function loginEvent() {
         </NTabPane>
         <NTabPane name="forget" tab="重置密码">
           <NForm ref="formRef" :model="forgetForm" :style="{ maxWidth: '640px' }" class="auto" style="margin:0 auto;">
-            <NFormItem label="注册邮箱" path="email" :rule="{
+            <NFormItem
+              label="注册邮箱" path="email" :rule="{
                 required: true,
                 message: '请输入注册邮箱',
                 trigger: ['input', 'blur'],
-              }">
+              }"
+            >
               <NInput v-model:value="forgetForm.email" placeholder="请输入注册邮箱" clearable />
             </NFormItem>
-            <NFormItem label="邮箱验证码" path="emailCode" :rule="{
+            <NFormItem
+              label="邮箱验证码" path="emailCode" :rule="{
                 required: true,
                 message: '请输入重置邮箱验证码',
                 trigger: ['input', 'blur'],
-              }">
+              }"
+            >
               <NInput v-model:value="forgetForm.emailCode" placeholder="请输入验证码" clearable />
               <NButton style="margin-left: 12px" @click="() => verifyFlag.showForget = true">
                 {{ buttonInfo.text }}
               </NButton>
             </NFormItem>
 
-            <NFormItem v-if="verifyFlag.showForget" label="滑块验证" :rule="{
+            <NFormItem
+              v-if="verifyFlag.showForget" label="滑块验证" :rule="{
                 required: true,
-              }">
-              <dragVerifyImgChip ref="verifyImg1" v-model:isPassing="verifyFlag.forgetFlag" :imgsrc="imgsrc" show-refresh
+              }"
+            >
+              <dragVerifyImgChip
+                ref="verifyImg1" v-model:isPassing="verifyFlag.forgetFlag" :imgsrc="imgsrc" show-refresh
                 :bar-width="40" text="请按住滑块拖动" success-text="验证通过"
                 handler-icon="material-symbols:keyboard-double-arrow-right" success-icon="clarity:success-standard-solid"
                 refresh-icon="ic:twotone-refresh" @refresh="refresh('forgetFlag')"
-                @passcallback="passcallback('forgetFlag')" />
+                @passcallback="passcallback('forgetFlag')"
+              />
             </NFormItem>
-            <NFormItem label="新的密码" path="password" :rule="{
+            <NFormItem
+              label="新的密码" path="password" :rule="{
                 required: true,
                 message: '请输入新的密码',
                 trigger: ['input', 'blur'],
-              }">
-              <NInput v-model:value="forgetForm.password" placeholder="密码由字母、数字或下划线组成！" type="password"
-                show-password-on="mousedown" />
+              }"
+            >
+              <NInput
+                v-model:value="forgetForm.password" placeholder="密码由字母、数字或下划线组成！" type="password"
+                show-password-on="mousedown"
+              />
             </NFormItem>
 
             <div>

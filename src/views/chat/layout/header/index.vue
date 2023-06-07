@@ -264,6 +264,7 @@ function shopEvent() {
       justify-content: center;
       cursor: pointer;
 			font-size: 12px;
+			white-space: nowrap;
 
       &:hover {
         transform: scale(1.05);
