@@ -94,7 +94,7 @@ async function exchangeMossEvent() {
 
       <div>
         <div class="title-h1">
-          字符兑换包月模式
+          字符兑换次数
         </div>
         <div class="flex">
           <NSelect v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2" placeholder="请输入您的兑换码" />

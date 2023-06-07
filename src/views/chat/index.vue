@@ -558,23 +558,11 @@ async function onSuccessAuth() {
               <div v-else>
                 <!-- 后面期望这里跳转使用教程页面 -->
                 <div class="no-data-info-tip-title">
-                  ChatMoss 使用说明：
+                  ChatMoss视频使用教程（新人必看）：
                 </div>
-                <div class="no-data-info-tip-text">
-                  1.免费使用：在左上角个人中心设置自己的key后，可无限制使用（可以不用登录）
-                </div>
-                <div class="no-data-info-tip-text">
-                  2.登录后每日5万字符使用额度，每周参与签到可以获得7.8w字符，还有应用商店数千款应用等你探索~快去登录吧，登录后更精彩！
-                </div>
-                <div class="no-data-info-tip-text">
-                  3.暂未未登录，您可以免费体验3万字符，字符余额可以在右上角可以查看
-                </div>
-                <div class="no-data-info-tip-text">
-                  4.大部分问题都可以点击左上角帮助页面，自行查阅解决
-                </div>
-                <div class="no-data-info-tip-text">
-                  5.ChatMoss商店兑换码需要登录后才可以兑换！
-                </div>
+                <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
+                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240" src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
+                </a>
               </div>
             </div>
           </template>
@@ -649,7 +637,7 @@ async function onSuccessAuth() {
   .no-data-info-tip-title {
     font-size: 14px;
     color: #FF6666;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-weight: 600;
   }
 

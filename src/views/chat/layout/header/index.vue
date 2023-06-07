@@ -192,7 +192,7 @@ function shopEvent() {
               <div>
                 <div style="width:200px" class="flex justify-between">
                   <span class="mr-4">{{ row.title }}</span>
-                  <span> 可用次数：{{ row.timesResidue }}</span>
+                  <span>可用次数：{{ row.timesResidue }}</span>
                 </div>
               </div>
               <div class="mt-2 ">
