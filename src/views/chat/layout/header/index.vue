@@ -239,7 +239,7 @@ function shopEvent() {
 .header-main {
   width: 100%;
   min-width: 250px;
-  overflow: scroll;
+  overflow: auto;
   position: fixed;
   // height: 96px;
   align-items: center;

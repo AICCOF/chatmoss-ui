@@ -42,6 +42,10 @@ module.exports = {
           '--moss-border-color': '#E6E6E6',
   			},
   			'.dark': {
+          '--moss-header-color': '#2B2D31',
+          // '--moss-bg-color': '#313338',
+          "--moss-bg-content-color": "#313338",
+          '--moss-bg-reply-color': '#FFFFFF10'
   			},
   		});
   	},
