@@ -8,50 +8,50 @@ const ms = useMessage()
 
 // 新建对话
 function createQuestion() {
-  const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-  questionBtnDom.click()
-  ms.success('新建会话成功，请提问~')
+	const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+	questionBtnDom.click()
+	ms.success('新建会话成功，请提问~')
 }
 
 // 历史记录
 function toggleButtonEvent() {
-  const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
-  toggleButton.click()
+	const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
+	toggleButton.click()
 }
 
 function setOpenaiVersion() {
-  userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
-  ms.success('模型切换成功')
+	userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
+	ms.success('模型切换成功')
 }
 </script>
 
 <template>
-  <div>
-    <header class="footer-main">
-      <div class="footer-left">
-        <NTag class="footer-item footer-item-btn footer-item-btn1" type="success" @click="createQuestion">
-          新建会话
-        </NTag>
-        <NTag class="footer-item footer-item-btn footer-item-btn2" type="success" @click="toggleButtonEvent">
-          历史记录
-        </NTag>
-      </div>
-      <div class="footer-right">
-        <div class="footer-item">
-          <div class="header-right-item header-right-item-help">
-            <NPopover trigger="hover">
-              <template #trigger>
-                <NTag type="success" size="small" class="footer-item footer-item-btn footer-item-btn1" @click="setOpenaiVersion">
-                  GPT-{{ userStore.getOpenaiVersion }}
-                </NTag>
-              </template>
-              切换模型
-            </NPopover>
-          </div>
-        </div>
-      </div>
-    </header>
-  </div>
+	<div>
+		<footer class="footer-main">
+			<div class="footer-left">
+				<div class="footer-item footer-item-btn footer-item-btn1" @click="createQuestion">
+					新建会话
+				</div>
+				<div class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent">
+					历史记录
+				</div>
+			</div>
+			<div class="footer-right">
+				<div class="footer-item">
+					<div class="header-right-item header-right-item-help">
+						<NPopover trigger="hover">
+							<template #trigger>
+								<div class="footer-item footer-item-btn footer-item-btn1" @click="setOpenaiVersion">
+									GPT-{{ userStore.getOpenaiVersion }}
+								</div>
+							</template>
+							切换模型
+						</NPopover>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
 </template>
 
 <style lang="less">
@@ -70,7 +70,7 @@ function setOpenaiVersion() {
 	width: 100%;
 	min-width: 250px;
 	overflow: scroll;
-	position: fixed;
+	// position: fixed;
 	display: flex;
 	align-items: center;
 	height: 40px;
@@ -82,10 +82,10 @@ function setOpenaiVersion() {
 	backdrop-filter: blur(20px);
 	// background-color: rgba(60, 128, 253, 0.05);
 	z-index: 20;
-	bottom: 88px;
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
+	// bottom: 88px;
+	// position: absolute;
+	// left: 0%;
+	// transform: translateX(-50%);
 
 	.footer-left {
 		width: 60%;
@@ -113,15 +113,11 @@ function setOpenaiVersion() {
 	}
 
 	.footer-item-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		font-size: 12px;
-		height: 26px;
-		padding: 0 6px;
-		border-radius: 4px;
-		margin-right: 8px;
-		// background-color: #3872e0;
+		background: var(--moss-bg-btn-color);
+		border-radius: 27px;
+		color:var(--moss-text-ask-color);
+		padding: 8px 21px;
+		margin-bottom: 22px;
 	}
 }
 

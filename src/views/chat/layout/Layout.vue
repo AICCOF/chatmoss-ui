@@ -1,10 +1,10 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
 import { NLayout, NLayoutContent } from 'naive-ui'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 import Sider from './sider/index.vue'
 import Header from './header/index.vue'
-import Footer from './footerNew/index.vue'
+
 import Permission from './Permission.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAuthStore, useChatStore } from '@/store'
@@ -44,7 +44,6 @@ const getContainerClass = computed(() => {
         <NLayoutContent class="h-full">
           <RouterView v-slot="{ Component, route }">
             <component :is="Component" :key="route.fullPath" />
-            <Footer />
           </RouterView>
         </NLayoutContent>
       </NLayout>

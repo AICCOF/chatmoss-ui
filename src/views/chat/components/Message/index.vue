@@ -75,7 +75,7 @@ function handleSelect(key: string, askMsg: string) {
       <!-- <AvatarComponent :image="inversion" /> -->
     </div>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
-      <p class="text-xs text-[#b4bbc4]" :class="[inversion ? 'text-right' : 'text-left']">
+      <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
      {{ dateTime }}  <span v-if="chatStore.active">({{ chatStore.active }})  </span>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
@@ -96,3 +96,10 @@ function handleSelect(key: string, askMsg: string) {
     </div>
   </div>
 </template>
+
+<style lang="less" scoped>
+  
+  .text-xs{
+    color:var(--moss-text-time-color)
+  }
+</style>

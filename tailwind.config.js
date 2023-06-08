@@ -24,8 +24,9 @@ module.exports = {
   	}) {
   		addBase({
   			':root': {
+          '--moss-header-color': '#FFFFFF',
   				'--moss-bg-color': '#6B83FF',
-          '--moss-bg-btn-color': '#45485C',
+          '--moss-bg-btn-color': '#45485C88',
           '--moss-bg-btn-send-color': '#38394B',
           '--moss-bg-ask-color': '#6388FF',
           '--moss-bg-reply-color': '#FFFFFF',

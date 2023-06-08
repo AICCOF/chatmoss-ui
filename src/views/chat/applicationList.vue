@@ -78,16 +78,12 @@ function handleSave() {
 <template>
   <div class="wrap">
     <div class="list">
-      <draggable
-        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-        ghost-class="ghost"
-      >
+      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost">
         <template #item="{ element }">
-          <div
-            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)"
-          >
-            <span class="span text-[#000] dark:text-white">{{ element.appName.length > 5 ? element.appName.slice(0, 5) : element.appName }}</span>
+          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)">
+
             <div>
               <NPopover trigger="hover">
                 <template #trigger>
@@ -97,22 +93,19 @@ function handleSave() {
                 <span>{{ element.appName }}</span>
               </NPopover>
             </div>
+            <div class="span">{{ element.appName.length > 5 ? element.appName.slice(0, 5) :
+              element.appName }}</div>
           </div>
         </template>
       </draggable>
-      <draggable
-        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-        ghost-class="ghost"
-      >
+      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost">
         <template #item="{ element, index }">
-          <div
-            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)"
-          >
+          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)">
             <span v-if="enabled" class="close" @click="handleDelete(element, index)">
               <van-icon class="close-icon" name="cross" />
             </span>
-            <span class="span dark:text-white text-[#000]">{{ element.appName.length > 5 ? element.appName.slice(0, 5) : element.appName }}</span>
             <div :class="[enabled ? 'animate-pulse animate' : '']">
               <NPopover trigger="hover">
                 <template #trigger>
@@ -122,6 +115,8 @@ function handleSave() {
                 <span>{{ element.appName }}</span>
               </NPopover>
             </div>
+            <div class="span">{{ element.appName.length > 5 ? element.appName.slice(0, 5) :
+              element.appName }}</div>
           </div>
         </template>
       </draggable>
@@ -139,33 +134,11 @@ function handleSave() {
   </div>
 </template>
 
-<style>
-@keyframes pulse {
-
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-
-  25% {
-    transform: rotate(-10deg);
-  }
-
-  50% {
-    transform: rotate(0deg);
-  }
-
-  75% {
-    transform: rotate(10deg);
-  }
-
-}
-</style>
 
 <style scoped lang="less">
 .wrap {
   height: 95%;
-  width: 45px;
+  width: 71px;
   border-right: 0.5px solid rgba(145, 158, 171, .16);
   border-bottom: 0.5px solid rgba(145, 158, 171, .16);
   box-sizing: border-box;
@@ -174,36 +147,30 @@ function handleSave() {
 
   .list {
     overflow: auto;
-    width: 45px;
+    // width: 71px;
     height: 80%;
 
     .img {
       margin: 0 auto;
       position: relative;
-      width: 45px;
-      height: 45px;
-      margin-top: 10px;
-      // background: linear-gradient(270deg, #323337 50%, rgba(70, 79, 111, 0.5) 100%);
-      // box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.05);
-      @apply hover:bg-[#eaeaea];
+      width: 100%;
+      // height: 45px;
+      padding: 10px 0;
+      background-color: var(--moss-header-color);
       border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      // display: flex;
+      // align-items: center;
+      // justify-content: center;
       cursor: pointer;
-      @apply hover:dark:bg-[#1c1c1e];
-
-      &:hover {
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.05);
-      }
 
       img {
         width: 26px;
-        height: 26px
+        height: 26px;
+        margin: 0 auto;
       }
 
       &.active {
-        background-color: rgba(90, 90, 90, 0.2)
+        background-color: var(--moss-bg-content-color)
       }
 
       .animate {
@@ -226,15 +193,14 @@ function handleSave() {
       }
 
       .span {
-        position: absolute;
-        bottom: -4px;
+        // position: absolute;
+        width: 100%;
         opacity: 0.8;
-        font-size: 12px;
-        transform: scale(0.6);
-        width: 60px;
+        font-size: 8px;
+        // transform: scale(0.6);
         text-align: center;
-				opacity: .9;
-				font-weight: 600;
+        opacity: .9;
+        font-weight: 600;
       }
 
     }
@@ -242,15 +208,15 @@ function handleSave() {
 
   .btns {
     height: 20%;
+    // width: 71px;
+    background-color: var(--moss-header-color);
     font-size: 24px;
-    height: 20%;
     font-size: 24px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-
     .btn {
-      width: 45px;
+      width: 100%;
       height: 45px;
       display: flex;
       align-items: center;
@@ -261,16 +227,8 @@ function handleSave() {
         width: 26px;
         height: 26px;
       }
-
-      @apply hover:bg-[#eaeaea];
-      @apply hover:dark:bg-[#1c1c1e];
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1),
       inset 0px 1px 0px rgba(255, 255, 255, 0.05);
-
-      // &:hover {
-      //   background: linear-gradient(270deg, #323337 50%, rgba(70, 79, 111, 0.5) 100%);
-      //   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), inset 0px 1px 0px rgba(255, 255, 255, 0.05);
-      // }
     }
   }
 

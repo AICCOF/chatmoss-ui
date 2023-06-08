@@ -18,6 +18,7 @@ import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
+import Footer from './layout/footerNew/index.vue'
 
 const authStore = useAuthStoreWithout()
 const go = useGo()
@@ -477,23 +478,7 @@ onUnmounted(() => {
     controller.abort()
 })
 
-const noDataInfo = [
-  {
-    text: '免费使用：不用登录就可以在设置中心设置Key呦~',
-  },
-  {
-    text: '可以点击余额查看自己的剩余字符&次数',
-  },
-  {
-    text: '问题和回答都会扣字符数',
-  },
-  {
-    text: '在ChatMoss商店内可以购买字符和次数',
-  },
-  {
-    text: '上下文越长，字符消耗越多',
-  },
-]
+
 
 const paperList = ref<Chat.paper[]>([])
 const nowPaperIndex = ref<number>(0)
@@ -541,11 +526,11 @@ async function onSuccessAuth() {
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
         <div
-          v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex"
+          v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex items-center"
           :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: hidden"
         >
           <template v-if="!dataSources.length">
-            <div class="no-data-info text-[#000] dark:text-white w-full">
+            <div class="no-data-info  w-full">
               <!-- 应用介绍 -->
               <div v-if="userStore.currentApp" class="no-data-info-text">
                 应用使用说明：{{ userStore.currentApp.desc }}
@@ -593,6 +578,7 @@ async function onSuccessAuth() {
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
     <footer :class="footerClass">
+      <Footer />
       <div class="w-full m-auto">
         <div class="moss-btns flex justify-between space-x-2 w-full">
           <NInput
@@ -626,7 +612,12 @@ async function onSuccessAuth() {
   </div>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
+.chat-main{
+  background-color: var(--moss-bg-content-color);
+}
+
+
 .no-data-info {
   height: 100%;
   display: flex;
@@ -653,9 +644,8 @@ async function onSuccessAuth() {
     width: 100%;
     text-align: center;
     font-size: 14px;
-    // color: #fff;
+    color:var(--moss-text-time-color);
     position: absolute;
-    opacity: 0.5;
     font-size: 12px;
     top: 30px;
   }

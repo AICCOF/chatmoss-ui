@@ -43,8 +43,7 @@ const wrapClass = computed(() => {
     'min-w-[20px]',
     'rounded-md',
     isMobile.value ? 'p-2' : 'p-3',
-    props.inversion ? 'bg-[#d2f9d1]' : 'bg-[#f4f6f8]',
-    props.inversion ? 'dark:bg-[#0066FF]' : 'dark:bg-[#1e1e20]',
+    props.inversion ? 'text-right' : 'text-left',
     { 'text-red-500': props.error },
   ]
 })
@@ -68,7 +67,7 @@ defineExpose({ textRef })
 </script>
 
 <template>
-  <div class="text-black" :class="wrapClass">
+  <div class="" :class="wrapClass">
     <template v-if="loading">
       <span class="dark:text-white w-[4px] h-[20px] block animate-blink" />
     </template>
@@ -81,6 +80,16 @@ defineExpose({ textRef })
   </div>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 @import url(./style.less);
+
+.text-left {
+  background-color: var(--moss-bg-reply-color);
+  color: var(--moss-text-reply-color);
+}
+
+.text-right {
+  background-color: var(--moss-bg-ask-color);
+  color: var(--moss-text-ask-color);
+}
 </style>

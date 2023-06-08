@@ -241,12 +241,13 @@ function shopEvent() {
   min-width: 250px;
   overflow: scroll;
   position: fixed;
-  height: 96px;
+  // height: 96px;
   align-items: center;
   user-select: none;
   z-index: 20;
   position: absolute;
   font-size: 14px;
+  background-color:var(--moss-header-color);
   color: var(--moss-text-blue-color);
   left: 0;
   top: 0;
@@ -321,6 +322,7 @@ function shopEvent() {
 
 .sub-header {
   border-top: 1px solid var(--moss-border-color);
+  border-bottom: 0.5px solid var(--moss-border-color);
   padding: 0 16px;
   height: 45px;
 }
@@ -373,4 +375,5 @@ function shopEvent() {
 
 .page .header {
   padding: 0px;
-}</style>
+}
+</style>
