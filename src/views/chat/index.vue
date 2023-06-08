@@ -879,47 +879,6 @@ async function onSuccessAuth() {
   --van-switch-size: 15px;
 }
 
-.shake {
-  transform-origin: bottom bottom;
-  animation: animashake 1.5s .2s ease-in-out both infinite;
-}
-
-@keyframes animashake {
-
-  0%,
-  100% {
-    transform: rotate(0deg);
-    transform-origin: 50% 0;
-  }
-
-  5% {
-    transform: rotate(2deg);
-  }
-
-  10%,
-  20%,
-  30% {
-    transform: rotate(-4deg);
-  }
-
-  15%,
-  25%,
-  35% {
-    transform: rotate(4deg);
-  }
-
-  40% {
-    transform: rotate(-2deg);
-  }
-
-  45% {
-    transform: rotate(2deg);
-  }
-
-  50% {
-    transform: rotate(0deg);
-  }
-}
 
 #scrollRef {
   display: flex;

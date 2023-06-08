@@ -7,7 +7,6 @@ import { SvgIcon } from '@/components/common'
 import { useUserStore } from '@/store'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
-import { staticData } from '@/store/static'
 import { useGo } from '@/utils/router'
 import { getSystemNotice } from '@/api/personCenter'
 import type { Notice } from '@/store/modules/user/helper'
@@ -102,11 +101,27 @@ function shopEvent() {
   <header class="header-main">
     <div class="flex w-full header">
       <div class="header-left">
+        <div class="tip-text-content1">
+          <p v-if="useAuthStore.token">
+            <span @click="loginEvent('exit')">退出登录</span>
+          </p>
+          <p v-else>
+            <span @click="loginEvent('login')">登录/注册</span>
+          </p>
+        </div>
+      </div>
+      <div class="header-right">
         <div class="header-right-item">
           <!-- 个人中心 -->
           <NPopover trigger="hover">
             <template #trigger>
-              <img :src="staticData.img4" alt="" @click="settingMainEvent">
+              <NButton quaternary circle size="tiny" @click="settingMainEvent">
+                <template #icon>
+                  <span class="">
+                    <SvgIcon icon="uil:setting" class="icon" />
+                  </span>
+                </template>
+              </NButton>
             </template>
             <span>设置中心</span>
           </NPopover>
@@ -117,15 +132,13 @@ function shopEvent() {
               <NButton quaternary circle size="tiny">
                 <template #icon>
                   <span class="">
-                    <SvgIcon icon="mdi:message-badge-outline" />
+                    <SvgIcon icon="ph:bell" class="icon" />
                   </span>
                 </template>
               </NButton>
             </template>
-            <div
-              v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-              style="max-width: 250px"
-            >
+            <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+              style="max-width: 250px">
               <div class="mr-4 " style="width:30px">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
@@ -140,36 +153,30 @@ function shopEvent() {
         <div class="header-right-item header-right-item-help">
           <NPopover trigger="hover">
             <template #trigger>
-              <img
-                src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/v3.0/img12.png" alt=""
-                @click="() => { go({ name: 'help' }) }"
-              >
+              <NButton quaternary circle size="tiny" @click="() => { go({ name: 'help' }) }">
+                <template #icon>
+                  <span class="">
+                    <SvgIcon icon="ph:question" class="icon" />
+                  </span>
+                </template>
+              </NButton>
             </template>
             <span>ChatMoss帮助中心</span>
           </NPopover>
         </div>
       </div>
-      <div class="header-right">
-        <div class="tip-text-content tip-text-content1">
-          <p v-if="useAuthStore.token">
-            <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
-          </p>
-          <p v-else>
-            <span class="v-login" @click="loginEvent('login')">登录&注册</span>
-          </p>
-        </div>
-      </div>
+
     </div>
     <div class="flex w-full sub-header">
       <div class="header-left">
-        <div class="header-right-item">
-          <span @click="shopEvent">商城</span>
+        <div class="header-left-item">
+          <span @click="shopEvent" class="shop">商城</span>
         </div>
-        <div v-if="userStore.isAuth === 2" class="header-right-item">
-          <span @click="() => { go({ name: 'invite' }) }">邀请得4.0</span>
+        <div v-if="userStore.isAuth === 2" class="header-left-item">
+          <span @click="() => { go({ name: 'invite' }) }" class="invite">邀请得4.0</span>
         </div>
-        <div v-if="userStore.isAuth === 2" class="header-right-item">
-          <span @click="() => { go({ name: 'sign' }) }">签到</span>
+        <div v-if="userStore.isAuth === 2" class="header-left-item">
+          <span @click="() => { go({ name: 'sign' }) }" class="sign">签到</span>
         </div>
       </div>
       <div class="header-right">
@@ -180,15 +187,16 @@ function shopEvent() {
             </NButton>
           </p>
         </div> -->
-        <div class="header-right-item header-item-btn text-test text-test1">
+        <div class="header-item-btn text-test text-test1">
+
+          <!-- <div class="activity" v-if="useAuthStore.token">活动</div> -->
+
           <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
             <template #trigger>
-              余额
+              <div class="money">余额</div>
             </template>
-            <div
-              v-for="(row, i) of userStore.packageList" :key="i"
-              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
-            >
+            <div v-for="(row, i) of userStore.packageList" :key="i"
+              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
               <div>
                 <div style="width:200px" class="flex justify-between">
                   <span class="mr-4">{{ row.title }}</span>
@@ -229,18 +237,17 @@ function shopEvent() {
 
 <style lang="less">
 .header-main {
-  // max-width: 1280px;
   width: 100%;
   min-width: 250px;
   overflow: scroll;
   position: fixed;
+  height: 96px;
   align-items: center;
-  // padding: 0 16px;
   user-select: none;
-  backdrop-filter: blur(20px);
-  background-color: rgba(60, 128, 253, 0.1);
   z-index: 20;
   position: absolute;
+  font-size: 14px;
+  color: var(--moss-text-blue-color);
   left: 0;
   top: 0;
 
@@ -249,38 +256,61 @@ function shopEvent() {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
+
+    .header-right-item {
+      margin: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      white-space: nowrap;
+
+      &:active {
+        transform: scale(.96);
+      }
+
+      .icon {
+        font-size: 18px;
+        color: var(--moss-text-blue-color);
+      }
+    }
+
   }
 
   .header-left {
     width: 50%;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
 
-    .header-right-item {
+    .header-left-item {
       margin-right: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-			font-size: 12px;
-			white-space: nowrap;
+      white-space: nowrap;
 
-      &:hover {
-        transform: scale(1.05);
-        font-weight: 600;
-        color: #3c72ff;
+      .shop {
+        color: var(--moss-text-purple-color)
       }
 
-      &:active {
-        transform: scale(.96);
+      .invite {
+        color: var(--moss-text-green-color)
       }
 
-      img {
-        width: 20px;
-        height: 20px;
+      .sign {
+        color: var(--moss-text-red-color)
       }
     }
+
   }
 }
 
@@ -290,7 +320,7 @@ function shopEvent() {
 }
 
 .sub-header {
-  border-top: 1px solid #242627;
+  border-top: 1px solid var(--moss-border-color);
   padding: 0 16px;
   height: 45px;
 }
@@ -302,106 +332,33 @@ function shopEvent() {
 }
 
 .header-item-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  height: 26px;
-  padding: 0 6px;
-  border-radius: 4px;
-  margin-right: 8px;
-  background-color: #3872e0;
-  cursor: pointer;
-}
-
-.text-test {
-  white-space: nowrap;
-  width: 50px;
-  height: 20px;
-  background-color: #ceeaca;
-  color: #4fa444;
   display: flex;
-  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  padding: 0 8px;
-  font-size: 12px;
-  text-transform: capitalize;
-  font-weight: 500;
-  border-radius: 40px;
-  gap: 2px;
-  margin-right: 0px;
-  cursor: pointer;
-}
-
-.tip-main {
-  width: 90%;
-  display: flex;
-  padding: 6px;
-  border-radius: 6px;
-  // background-color: #323232;
-  margin: 0 auto;
+  // gap: 4px;
+  font-size: 14px;
+  height: 30px;
+  padding: 0 6px;
+  background-color: var(--moss-bg-text-color);
+  color: var(--moss-text-blue-color);
+  // opacity: 0.1;
+  border-radius: 30px;
+  padding: 9px 4px;
   cursor: pointer;
 
-  &:active {
-    transform: scale(.96);
+  .activity {
+    padding-right: 12px;
+    padding-left: 12px;
+    border-right: 1px solid var(--moss-border-color);
   }
 
-  &:hover {
-    // background-color: #3c4250;
+  .money {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 
-.v-login {
-  color: #FF6666;
-  text-decoration: underline;
-  cursor: grab;
-  font-size: 12px;
-  white-space: nowrap;
-}
 
-.v-exit {
-  color: #FF6666;
-  text-decoration: underline;
-  cursor: grab;
-  font-size: 12px;
-  margin-left: 10px;
-  white-space: nowrap;
-}
-
-.number {
-  color: #FF6666;
-  cursor: grab;
-  font-size: 12px;
-}
-
-.notice-swipe {
-  height: 40px;
-  line-height: 40px;
-}
-
-.tip-text-content {
-  font-size: 10px;
-  width: auto;
-  margin-right: 16px;
-}
-
-.van-notice-bar {
-  width: 60%;
-  background-color: #111114 !important;
-  color: #fff;
-  text-align: center;
-
-  .van-notice-bar__wrap {
-    display: flex;
-    justify-content: center;
-
-    .van-swipe-item {
-      color: #FF6666;
-      font-size: 10px;
-    }
-  }
-}
 
 .pointer {
   cursor: pointer;
@@ -416,5 +373,4 @@ function shopEvent() {
 
 .page .header {
   padding: 0px;
-}
-</style>
+}</style>

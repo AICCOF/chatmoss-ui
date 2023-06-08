@@ -18,5 +18,31 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [{
+  	handler({
+  		addBase
+  	}) {
+  		addBase({
+  			':root': {
+  				'--moss-bg-color': '#6B83FF',
+          '--moss-bg-btn-color': '#45485C',
+          '--moss-bg-btn-send-color': '#38394B',
+          '--moss-bg-ask-color': '#6388FF',
+          '--moss-bg-reply-color': '#FFFFFF',
+          '--moss-bg-content-color': '#F7F8FC',
+          '--moss-bg-text-color': '#6B83FF22',
+  				'--moss-text-purple-color': '#A677E7',
+          '--moss-text-blue-color': '#6B83FF',
+          '--moss-text-green-color': '#52CABC',
+          '--moss-text-red-color': '#FE5D64',
+          '--moss-text-reply-color': '#45485C',
+          '--moss-text-ask-color': '#FFFFFF',
+          '--moss-text-time-color': '#9EA2B5',
+          '--moss-border-color': '#E6E6E6',
+  			},
+  			'.dark': {
+  			},
+  		});
+  	},
+  }],
 }
