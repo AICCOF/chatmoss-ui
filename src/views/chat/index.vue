@@ -426,7 +426,7 @@ const wrapClass = computed(() => {
 
 const footerClass = computed(() => {
   // let classes = ['p-4', 'pt-0']
-  const classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pt-0', 'pr-4', 'overflow-hidden']
+  const classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'pt-0', 'overflow-hidden']
   return classes
 })
 
@@ -579,10 +579,10 @@ async function onSuccessAuth() {
     </div>
     <footer :class="footerClass">
       <Footer />
-      <div class="w-full m-auto">
+      <div class="w-full m-auto p-2">
         <div class="moss-btns flex justify-between space-x-2 w-full">
           <NInput
-            v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1" autofocus
+            v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input" autofocus
             type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter"
           />
           <NSelect
@@ -594,7 +594,7 @@ async function onSuccessAuth() {
           <div class="btn-style">
             <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
               <template #icon>
-                <span class="dark:text-black">
+                <span class="">
                   <SvgIcon icon="ri:send-plane-fill" />
                 </span>
               </template>
@@ -744,6 +744,9 @@ async function onSuccessAuth() {
 
 .n-input.n-input--textarea {
   border-radius: 8px;
+}
+.input{
+  border: 0px;
 }
 
 /* 隐藏滚动进度条 */

@@ -37,11 +37,11 @@ function setOpenaiVersion() {
 				</div>
 			</div>
 			<div class="footer-right">
-				<div class="footer-item">
+				<div class="footer-item" style="margin-right: 0px;">
 					<div class="header-right-item header-right-item-help">
 						<NPopover trigger="hover">
 							<template #trigger>
-								<div class="footer-item footer-item-btn footer-item-btn1" @click="setOpenaiVersion">
+								<div class="footer-item footer-item-btn footer-item-btn1" style="margin-right: 0px;" @click="setOpenaiVersion" >
 									GPT-{{ userStore.getOpenaiVersion }}
 								</div>
 							</template>
@@ -55,37 +55,19 @@ function setOpenaiVersion() {
 </template>
 
 <style lang="less">
-.consumption-text {
-	white-space: nowrap;
-	width: 200px;
-	font-size: .75rem;
-	line-height: 1rem;
-	color: rgb(209 213 219);
-	text-align: right;
-	font-style: italic;
-}
+
 
 .footer-main {
-	// max-width: 1280px;
 	width: 100%;
 	min-width: 250px;
 	overflow: scroll;
-	// position: fixed;
 	display: flex;
 	align-items: center;
-	height: 40px;
-	min-height: 40px;
-	max-height: 40px;
-	// padding: 0 10px;
 	padding-left: 0.5rem;
 	user-select: none;
 	backdrop-filter: blur(20px);
-	// background-color: rgba(60, 128, 253, 0.05);
+	background-color: var(--moss-bg-content-color);
 	z-index: 20;
-	// bottom: 88px;
-	// position: absolute;
-	// left: 0%;
-	// transform: translateX(-50%);
 
 	.footer-left {
 		width: 60%;
@@ -116,8 +98,8 @@ function setOpenaiVersion() {
 		background: var(--moss-bg-btn-color);
 		border-radius: 27px;
 		color:var(--moss-text-ask-color);
-		padding: 8px 21px;
-		margin-bottom: 22px;
+		padding: 4px 10px;
+		margin-bottom: 11px;
 	}
 }
 
