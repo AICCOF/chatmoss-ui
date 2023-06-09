@@ -1,15 +1,18 @@
 import { createApp } from 'vue'
+import 'vant/lib/index.css'
+import 'v3-tour/dist/vue-tour.css'
 import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
-import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet } from 'vant';
+import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet, Divider,DropdownMenu, DropdownItem } from 'vant';
 import App from './App.vue'
 import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
 import { setupStore } from './store'
 import { setupRouter } from './router'
-import 'vant/lib/index.css'
+
+
 import getDomainAPI from './api/getDomain'
 import VueTour from 'v3-tour'
-import 'v3-tour/dist/vue-tour.css'
+
 
 // bootstrap()
 getDomainAPI().then(() => {
@@ -42,6 +45,9 @@ async function bootstrap() {
   app.use(SidebarItem);
   app.use(VanImage);
   app.use(Popup);
+  app.use(Divider);
+  app.use(DropdownMenu);
+  app.use(DropdownItem);
 
   setupAssets()
 
