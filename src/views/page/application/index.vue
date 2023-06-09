@@ -71,63 +71,66 @@ async function handleInstalled(row) {
     <template #title>
       <van-nav-bar title="应用商店" left-text="返回" left-arrow @click-left="back" />
     </template>
-    <div class="flex justify-center justify-around mt-4">
-      <van-button type="primary" style="width:40%" @click="() => { go({ name: 'createApp' }) }">
-        创建新的应用
-      </van-button>
-      <van-button type="success" style="width:40%" @click="() => { go({ name: 'appList' }) }">
-        查看创建的应用
-      </van-button>
-    </div>
+    <div class="wrap-main">
+      <div class="flex justify-center justify-around mt-4">
+        <div class="btn" @click="() => { go({ name: 'createApp' }) }">
+          创建新的应用
+        </div>
+        <div class="btn" @click="() => { go({ name: 'appList' }) }">
+          查看创建的应用
+        </div>
+      </div>
 
-    <div class="mt-4 flex items-center">
-      <van-search v-model="value" class="flex-1 button-t1" placeholder="搜索应用" show-action :clearable="false" @search="getApplicationSearchAPI">
-        <template #action>
-          <van-button size="small" type="primary" @click="getApplicationSearchAPI">
-            搜索
-          </van-button>
-        </template>
-      </van-search>
-    </div>
+      <div class="mt-1 flex items-center">
+        <van-search v-model="value" class="flex-1 button-t1 overflow-hidden" placeholder="搜索应用" show-action
+          :clearable="false" @search="getApplicationSearchAPI" style="border-radius: 40px;">
+          <template #action>
+            <!-- <van-button size="small" type="primary" @click="getApplicationSearchAPI">
+              搜索
+            </van-button> -->
+          </template>
+        </van-search>
+      </div>
 
-    <div class="flex">
-      <van-sidebar v-if="flag" v-model="active" style class="sidebar" @change="handleChange">
-        <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
-      </van-sidebar>
-      <div class="mt-4  flex-1 pl-4 w-full content">
-        <div
-          v-for="(item, i) of dataList" :key="i"
-          class="flex justify-between items-center  dark:text-white w-full flex-1 item"
-        >
-          <div class="flex items-center flex-1">
-            <div class="mr-2">
-              <img :src="item.icon" alt="" style="width:30px;height: 30px;">
-              <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt="" style="width:30px;height: 30px;"> -->
-            </div>
-            <div class="flex flex-1 w-full">
-              <span class="mr-2 flex justify-center text-base text-center" style="width:30px">{{ i + 1 }}</span>
-              <div class="w-full pr-4 flex-1">
-                <div class="flex  items-center w-full">
-                  <span class="text-base mr-4">{{ item.appName }}</span>
-                  <span style="cursor: pointer;" @click="handleLike(item)">
-                    <van-icon v-if="item.liked === 0" name="like-o" style="color:red;" />
-                    <van-icon v-if="item.liked === 1" name="like" style="color:red;" /><span style="margin-left: 4px;">{{ item.likeCountStr
-                    }}</span>
-                  </span>
+      <div class="flex main">
+        <van-sidebar v-if="flag" v-model="active" class="sidebar" @change="handleChange">
+          <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
+        </van-sidebar>
+        <div class="pt-1">
+          <div class="flex-1 w-full content px-8 pt-2">
+            <div v-for="(item, i) of dataList" :key="i"
+              class="flex justify-between items-center  w-full flex-1 item mt-2">
+              <div class="flex items-center flex-1">
+                <div class="mr-2">
+                  <img :src="item.icon" class="img" alt="" style="">
                 </div>
-                <div class="text-sm">
-                  {{ item.desc }}
+                <div class="flex flex-1 w-full">
+                  <span class="mr-2 flex justify-center text-base text-center" style="width:30px">{{ i + 1 }}</span>
+                  <div class="w-full pr-4 flex-1">
+                    <div class="flex  items-center w-full">
+                      <span class="text-base mr-4">{{ item.appName }}</span>
+                      <span style="cursor: pointer;" @click="handleLike(item)">
+                        <van-icon v-if="item.liked === 0" name="like-o" style="color:red;" />
+                        <van-icon v-if="item.liked === 1" name="like" style="color:red;" /><span
+                          style="margin-left: 4px;">{{ item.likeCountStr
+                          }}</span>
+                      </span>
+                    </div>
+                    <div class="text-sm">
+                      {{ item.desc }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div @click="handleInstalled(item)">
+                <div class="btns normal" v-if="item.installed === 0">
+                  安装
+                </div>
+                <div class="btns danger" v-if="item.installed === 1">
+                  卸载
                 </div>
               </div>
             </div>
-          </div>
-          <div @click="handleInstalled(item)">
-            <van-button v-if="item.installed === 0" type="primary" size="mini">
-              安装
-            </van-button>
-            <van-button v-if="item.installed === 1" type="danger" size="mini">
-              卸载
-            </van-button>
           </div>
         </div>
       </div>
@@ -135,40 +138,87 @@ async function handleInstalled(row) {
   </Page>
 </template>
 
+<style lang="less">
+.van-sidebar-item {
+  background-color: white;
+
+  &.van-sidebar-item--select {
+    background-color: var(--moss-bg-content-color);
+  }
+}
+</style>
 
 <style lang="less" scoped>
-.content{
+.main {
+  background-color: var(--moss-bg-content-color);
+}
+
+
+
+.wrap-main {
+  min-height: 100%;
+  // background-color: var(--moss-header-color);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.btn {
+  background: #FFFFFF;
+  border: 1px solid #6B83FF;
+  border-radius: 7px;
+  color: #6B83FF;
+  width: 165px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+}
+
+
+.content {
   height: calc(100vh - 200px);
   overflow-y: auto;
 }
 
-.sidebar{
-  height: calc(100vh - 200px);
+.sidebar {
+  height: calc(100vh - 150px);
   overflow-y: auto;
+  background-color: white;
 }
+
 .item {
-  @apply hover:bg-[#eaeaea];
-	padding: 6px 20px;
-	cursor: pointer;
+  background: #FFFFFF;
+  border-radius: 15px;
+  padding: 6px 20px;
+  cursor: pointer;
   min-height: 7rem;
-  
-  @apply hover:dark:bg-[#1c1c1e];
+  .img{
+    width: 40px;
+    height: 40px;
+    background: #FFFFFF;
+    border: 1px solid #E6E6E6;
+    border-radius: 50%;
+  }
 }
 
 
 /deep/ .van-search__action {
-	margin-top: -10px;
+  margin-top: -10px;
+}
+
+/deep/ .van-search__content {
+  border-radius: 40px;
 }
 
 .text-center {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .text-sm {
-	font-size: 12px;
-	// color: #fff;
-	opacity: .8;
-	margin-top: 4px;
+  font-size: 12px;
+  // color: #fff;
+  opacity: .8;
+  margin-top: 4px;
 }
 </style>

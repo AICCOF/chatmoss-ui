@@ -7,6 +7,9 @@ import { PageLayout } from '@/views/page/layout'
 import chat from '@/views/chat/index.vue'
 import shop from '@/views/page/shop/index.vue'
 import login from '@/views/page/login/index.vue'
+import Login from '@/views/page/login/login.vue'
+import register from '@/views/page/login/register.vue'
+import forget from '@/views/page/login/forget.vue'
 import setting from '@/views/page/setting/index.vue'
 import application from '@/views/page/application/index.vue'
 import invite from '@/views/page/invite/index.vue'
@@ -32,7 +35,17 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'login',
         name: 'login',
-        component: login,
+        component: Login,
+      },
+      {
+        path: 'forget',
+        name: 'forget',
+        component: forget,
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: register,
       },
       {
         path: 'setting',

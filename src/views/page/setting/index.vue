@@ -187,11 +187,6 @@ function handleModeValue(chatmossMode: string) {
           </div>
         </div>
       </div>
-
-
-
-
-
     </div>
   </Page>
 </template>
