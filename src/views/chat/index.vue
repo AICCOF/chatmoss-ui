@@ -160,14 +160,17 @@ let chatOptions: Record<string, any> = {
   openaiVersion: userStore.getOpenaiVersion,
 }
 function askFn(askMsg: string) {
-  onConversation(askMsg, 2)
+  onConversation(askMsg, {})
 }
 function onlineFn(askMsg: string) {
   // console.log(askMsg, 1)
 
-  onConversation(askMsg, 1)
+  onConversation(askMsg, { online: 1 })
 }
-async function onConversation(askMsg?: string, type?: number) {
+function jarvisFn(askMsg: string) {
+  onConversation(askMsg, { jarvis: 1 })
+}
+async function onConversation(askMsg?: string, opt?) {
   //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
   if (userStore.residueCount < 200000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
     ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
@@ -192,12 +195,14 @@ async function onConversation(askMsg?: string, type?: number) {
   //   return
   // }
   //  userStore.userInfo.residueCount <= 0
-  if (type === 1) {
+
+
+  if (opt) {
     chatOptions = {
       conversationId: chatStore.getUuid,
       openaiVersion: userStore.getOpenaiVersion,
       appId: userStore.appIdValue,
-      online: 1,
+      ...opt
     }
   }
   else {
@@ -553,7 +558,7 @@ async function onSuccessAuth() {
               <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn"
-                @online="onlineFn" />
+                @online="onlineFn" @jarvis="jarvisFn" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">

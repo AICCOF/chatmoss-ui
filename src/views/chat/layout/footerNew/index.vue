@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { NPopover, NTag, useMessage } from 'naive-ui'
-import { useUserStore } from '@/store'
+import { NPopover, useMessage } from 'naive-ui'
+import { useUserStore, useChatStore } from '@/store'
+import { conversationUpload } from '@/api/index'
 // import { computed } from 'vue'
 // import { ref } from 'vue'
 const userStore = useUserStore()
+const chatStore = useChatStore()
 const ms = useMessage()
 
 // 新建对话
@@ -17,6 +19,13 @@ function createQuestion() {
 function toggleButtonEvent() {
 	const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
 	toggleButton.click()
+}
+
+async function jarvisEvent() {
+	let res = await conversationUpload({
+		conversationId: chatStore.active
+	});
+	ms.success(res.msg)
 }
 
 function setOpenaiVersion() {
@@ -34,6 +43,9 @@ function setOpenaiVersion() {
 				</div>
 				<div class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent">
 					历史记录
+				</div>
+				<div class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent">
+					上传贾维斯
 				</div>
 			</div>
 			<div class="footer-right">

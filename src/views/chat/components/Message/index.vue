@@ -22,6 +22,7 @@ const emit = defineEmits<Emit>()
 interface Emit {
   (ev: 'ask', askMsg: string): void
   (ev: 'online', askMsg: string): void
+  (ev: 'jarvis', askMsg: string): void
 }
 
 
@@ -47,6 +48,11 @@ watch(() => props.isShow, (value) => {
       key: 'online',
       icon: iconRender({ icon: 'heroicons-solid:status-online' }),
     },
+    {
+      label: t('贾维斯'),
+      key: 'jarvis',
+      icon: iconRender({ icon: 'material-symbols:settings-backup-restore'  }),
+    },
   ] : []
 
 }, { immediate: true })
@@ -64,6 +70,9 @@ function handleSelect(key: string, askMsg: string) {
     case 'online':
       emit('online', askMsg)
       return;
+    case 'jarvis':
+      emit('jarvis', askMsg)
+      return;
 
   }
 }
@@ -76,7 +85,7 @@ function handleSelect(key: string, askMsg: string) {
     </div>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
       <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
-     {{ dateTime }}  <span v-if="chatStore.active">({{ chatStore.active }})  </span>
+        {{ dateTime }} <span v-if="chatStore.active">({{ chatStore.active }}) </span>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
@@ -98,8 +107,7 @@ function handleSelect(key: string, askMsg: string) {
 </template>
 
 <style lang="less" scoped>
-  
-  .text-xs{
-    color:var(--moss-text-time-color)
-  }
+.text-xs {
+  color: var(--moss-text-time-color)
+}
 </style>

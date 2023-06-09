@@ -64,9 +64,7 @@ function handleUpdateValue(chatmossTheme: string) {
     },
   })
 }
-function getNSwitchValue(): any {
-  return localStorage.getItem('chatmossTheme')
-}
+
 
 
 // 模型选择
@@ -84,9 +82,7 @@ function handleModeValue(chatmossMode: string) {
   ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
   localStorage.setItem('chatmossMode', chatmossMode)
 }
-function getNSwitchModeValue(): any {
-  return localStorage.getItem('chatmossMode')
-}
+
 </script>
 
 <template>

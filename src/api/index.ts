@@ -150,3 +150,9 @@ export function auth<T>() {
     data: {},
   })
 }
+export function conversationUpload<T>(data) {
+  return post<T>({
+    url: '/luomacode-api/conversation/upload',
+    data,
+  })
+}
