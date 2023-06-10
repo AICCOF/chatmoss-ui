@@ -2,6 +2,9 @@ import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axio
 import request from './axios'
 import { useAuthStore } from '@/store'
 import { showToast } from 'vant';
+import { useUserStore } from '@/store'
+import { sendToMsg } from '@/utils/vsCodeUtils'
+import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 export interface HttpOption {
   url: string
   data?: any
@@ -37,8 +40,23 @@ function http<T = any>(
       authStore.removeToken()
       window.location.reload()
     }
-
-    showToast(res.data.msg)
+    if ([204].includes(res.data.code)) {
+      const useAuthStore = useAuthStoreWithout()
+      const userStore = useUserStore()
+      const chatStore = useChatStore()
+      useAuthStore.setToken('')
+      sendToMsg('chatMossToken', '')
+      chatStore.clearList()
+      userStore.residueCountAPI()
+      showToast({
+        message:'登录已过期，请重新登录',
+        position: 'top',
+        duration: 6000
+      })
+      Promise.reject(res.data)
+    }else{
+      showToast(res.data.msg)
+    }
 
     return Promise.reject(res.data)
   }

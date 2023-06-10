@@ -156,7 +156,6 @@ export const useUserStore = defineStore('user-store', {
         else {
           if (getToken())
             this.isAuth = 3
-
           else
             this.isAuth = 1
         }
