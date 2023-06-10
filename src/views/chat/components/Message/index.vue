@@ -51,7 +51,7 @@ watch(() => props.isShow, (value) => {
     {
       label: t('贾维斯'),
       key: 'jarvis',
-      icon: iconRender({ icon: 'material-symbols:settings-backup-restore'  }),
+      icon: iconRender({ icon: 'icon-park-solid:brain'  }),
     },
   ] : []
 
@@ -79,7 +79,7 @@ function handleSelect(key: string, askMsg: string) {
 </script>
 
 <template>
-  <div class="flex w-full mb-6 overflow-hidden" :class="[{ 'flex-row-reverse': inversion }]">
+  <div class="flex w-full mb-4 overflow-hidden" :class="[{ 'flex-row-reverse': inversion }]">
     <div :class="[inversion ? 'ml-2' : 'mr-2']">
       <!-- <AvatarComponent :image="inversion" /> -->
     </div>

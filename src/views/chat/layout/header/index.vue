@@ -101,7 +101,7 @@ function shopEvent() {
   <header class="header-main">
     <div class="flex w-full header">
       <div class="header-left">
-        <div class="tip-text-content1">
+        <div class="tip-text-content1 cursor-pointer">
           <p v-if="useAuthStore.token">
             <span @click="loginEvent('exit')">退出登录</span>
           </p>
@@ -330,7 +330,7 @@ function shopEvent() {
 .chat-main {
   height: calc(100%);
   padding-top: 90px;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 .header-item-btn {

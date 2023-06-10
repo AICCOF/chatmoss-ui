@@ -105,7 +105,6 @@ const currentIndex = computed({
   },
 })
 watch(() => chatStore.getChatByUuid(), (...vals) => {
-  // <!-- console.log(vals) -->
   setTimeout(() => {
     scrollToBottom()
   }, 300)
@@ -171,7 +170,6 @@ function jarvisFn(askMsg: string) {
   onConversation(askMsg, { jarvis: 1 })
 }
 async function onConversation(askMsg?: string, opt?) {
-  //  console.log(userStore.residueCount, 500000, userStore.residueCount < 500000)
   if (userStore.residueCount < 200000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
     ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
     return
@@ -186,16 +184,7 @@ async function onConversation(askMsg?: string, opt?) {
     if (!res)
       return
   }
-  // if (!chatStore.getUuid) {
-  //   ms.warning('当前会话丢失,请新建会话或打开历史记录选择会话.')
-  //   return
-  // }
-  // if (!userStore.isAsk) {
-  //   ms.error('当前字数已用尽，请等待明日免费字符，或者在商店内购买字符使用，或者上传key使用')
-  //   return
-  // }
-  //  userStore.userInfo.residueCount <= 0
-
+  chatStore.clearQuestionMode()
 
   if (opt) {
     chatOptions = {
@@ -530,8 +519,8 @@ async function onSuccessAuth() {
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
         <applicationList v-if="userStore.isAuth === 2" />
-        <div v-show="!chatStore.loading" id="image-wrapper" class="w-full max-w-screen-xl m-auto flex items-center"
-          :class="[isMobile ? 'p-2' : 'p-4']" style="height: 100%;overflow: hidden">
+        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto flex items-center"
+          :class="[isMobile ? 'px-2' : 'px-4']" style="height: 100%;overflow: hidden">
           <template v-if="!dataSources.length">
             <div class="no-data-info  w-full">
               <!-- 应用介绍 -->

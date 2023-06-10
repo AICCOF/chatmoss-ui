@@ -21,6 +21,9 @@ export const useUserStore = defineStore('user-store', {
     appIdValue(state) {
       return state.appId || '1'
     },
+    isQuestionMode(state) {
+      return state.appIdValue === '2'
+    },
     getNotices(state) {
       return state.userInfo.notices
     },
@@ -172,10 +175,10 @@ export const useUserStore = defineStore('user-store', {
       this.setNotices(res.data)
     },
     async getActivityListAPI() {
-      if (getToken()){
+      if (getToken()) {
         const res = await getActivityList<any>()
         this.activityList = res.data || []
-      }  
+      }
       // console.error(res.data)
     },
     async getApplicationInstallListAPI() {

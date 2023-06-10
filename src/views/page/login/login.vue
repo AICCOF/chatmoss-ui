@@ -73,9 +73,9 @@ async function loginEvent() {
         <div class="input top"> <input type="text" v-model="loginForm.email" placeholder="请输入登录邮箱"></div>
         <div class="input"><input type="password" v-model="loginForm.password" placeholder="请输入密码"></div>
 
-        <div class="login" @click="loginEvent">登录</div>
-        <div class="register" @click="()=>{go({name:'register'})}">注册</div>
-         <div class="register" @click="() => { go({ name: 'forget' }) }">忘记密码</div>
+        <div class="login cursor-pointer" @click="loginEvent">登录</div>
+        <div class="register cursor-pointer" @click="()=>{go({name:'register'})}">注册</div>
+         <div class="register cursor-pointer" @click="() => { go({ name: 'forget' }) }">忘记密码</div>
       </div>
     </div>
   </Page>

@@ -97,11 +97,11 @@ function handleModeValue(chatmossMode: string) {
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <div v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn"
+          <div v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
             @click="() => { go({ name: 'feedback' }) }">
             问题反馈
           </div>
-          <div class="flex items-center btn" @click="() => { go({ name: 'login' }) }">
+          <div class="flex items-center btn cursor-pointer" @click="() => { go({ name: 'login' }) }">
             修改密码
             <SvgIcon icon="icon-park-outline:right" />
           </div>
@@ -120,7 +120,7 @@ function handleModeValue(chatmossMode: string) {
           </div>
         </div>
         <div class="flex mt-2 justify-between">
-          <input v-model="apiKey" class="mr-2 input" type="text" placeholder="请输入您的apiKey" />
+          <input v-model="apiKey" class="mr-2 input flex-1" type="text" placeholder="请输入您的apiKey" />
           <van-button class="btn-primary" size="small" @click="settingBtn">
             确定
           </van-button>
@@ -149,7 +149,7 @@ function handleModeValue(chatmossMode: string) {
             <div class="flex">
               <NSwitch v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
                 @update:value="handleUpdateValue" />
-              {{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}
+              <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
             </div>
           </div>
         </div>
@@ -160,7 +160,8 @@ function handleModeValue(chatmossMode: string) {
             <div class="flex">
               <NSwitch v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
                 @update:value="handleModeValue" />
-              {{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}
+              <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
+
             </div>
           </div>
         </div>
@@ -171,7 +172,7 @@ function handleModeValue(chatmossMode: string) {
           <div>字体大小设置</div>
         </div>
         <div class="flex mt-2 justify-between">
-          <input v-model="fontSizeNum" class="mr-2 input" type="text" placeholder="请输入字体设置比例" />
+          <input v-model="fontSizeNum" class="mr-2 input flex-1" type="text" placeholder="请输入字体设置比例" />
           <van-button class="btn-primary" size="small" @click="fontSizeNumBtn">
             确定
           </van-button>
@@ -192,8 +193,6 @@ function handleModeValue(chatmossMode: string) {
 </template>
 
 <style lang="less" scoped>
-
-
 .tip-text-input {
   font-size: 12px;
   margin-top: 5px;

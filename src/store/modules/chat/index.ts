@@ -184,12 +184,23 @@ export const useChatStore = defineStore('chat-store', {
     clearList() {
       this.chat = []
       // this.localChat = [];
-      if (this.localChat.length>0){
+      if (this.localChat.length > 0) {
         this.active = this.localChat[0].id
-      }else{
+      } else {
         this.active = null
       }
-     
+
+    },
+    clearQuestionMode() {
+      const userStore = useUserStore()
+      // console.log(userStore.appIdValue)
+      if (userStore.appIdValue !== '2') {
+        return;
+      }
+      const result = this.chat.find(item => item.id === this.active)
+      if (result) {
+        result.data = [];
+      }
     },
     async getConversationDetail() {
       if (!this.active)

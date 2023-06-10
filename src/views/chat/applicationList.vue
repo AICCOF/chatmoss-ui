@@ -22,7 +22,7 @@ function handleEdit() {
   enabled.value = true
 }
 function handleClick(row) {
-  console.log(userStore.appIdValue, row.appId)
+  
   if (!enabled.value && userStore.appIdValue !== row.appId) {
     if (row.isOpened === 0) {
       ms.info(row.notOpenReason || '暂未开放，敬请期待...')
@@ -137,18 +137,38 @@ function handleSave() {
 
 <style scoped lang="less">
 .wrap {
-  height: 95%;
+  height: 100%;
   width: 71px;
   border-right: 0.5px solid rgba(145, 158, 171, .16);
   border-bottom: 0.5px solid rgba(145, 158, 171, .16);
   box-sizing: border-box;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  display: flex;
+  flex-direction: column;
+
 
   .list {
     overflow: auto;
     // width: 71px;
     height: 80%;
+    flex:1;
+
+    &::-webkit-scrollbar {
+      width: 0px;
+      height: 0px;
+      /**/
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #bfbfbf;
+      border-radius: 10px;
+    }
 
     .img {
       margin: 0 auto;
@@ -207,7 +227,7 @@ function handleSave() {
   }
 
   .btns {
-    height: 20%;
+    // height:;
     // width: 71px;
     background-color: var(--moss-header-color);
     font-size: 24px;
@@ -215,6 +235,7 @@ function handleSave() {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+
     .btn {
       width: 100%;
       height: 45px;
@@ -227,10 +248,10 @@ function handleSave() {
         width: 26px;
         height: 26px;
       }
+
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1),
       inset 0px 1px 0px rgba(255, 255, 255, 0.05);
     }
   }
 
-}
-</style>
+}</style>

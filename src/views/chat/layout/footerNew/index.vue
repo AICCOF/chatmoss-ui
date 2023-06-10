@@ -38,14 +38,18 @@ function setOpenaiVersion() {
 	<div>
 		<footer class="footer-main">
 			<div class="footer-left">
-				<div class="footer-item footer-item-btn footer-item-btn1" @click="createQuestion">
-					新建会话
-				</div>
-				<div class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent">
-					历史记录
-				</div>
-				<div class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent">
-					上传贾维斯
+				<div class="div">
+					<div class="div-wrap">
+						<div class="footer-item footer-item-btn footer-item-btn1"  @click="createQuestion" v-if="!userStore.isQuestionMode">
+							新建会话
+						</div>
+						<div class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent" v-if="!userStore.isQuestionMode">
+							历史记录
+						</div>
+						<div class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent" v-if="!userStore.isQuestionMode">
+							上传贾维斯
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="footer-right">
@@ -83,6 +87,36 @@ function setOpenaiVersion() {
 	.footer-left {
 		width: 60%;
 		display: flex;
+
+		.div {
+			display: block;
+			overflow-x: auto;
+
+			&::-webkit-scrollbar {
+				width: 10px;
+				height: 5px;
+				/**/
+			}
+
+			&::-webkit-scrollbar-track {
+				background: #bfbfbf;
+				border-radius: 10px;
+			}
+
+			&::-webkit-scrollbar-thumb:hover {
+				background: #333;
+			}
+
+		
+
+			.div-wrap {
+				width: max-content;
+
+
+
+
+			}
+		}
 	}
 
 	.footer-right {
@@ -94,6 +128,7 @@ function setOpenaiVersion() {
 	.footer-item {
 		margin-right: 20px;
 		cursor: pointer;
+		display: inline-block;
 
 		&:active {
 			transform: scale(.96);
