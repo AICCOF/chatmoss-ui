@@ -153,6 +153,8 @@ function handleSave() {
     // width: 71px;
     height: 80%;
     flex:1;
+    background-color: var(--moss-header-color);
+
 
     &::-webkit-scrollbar {
       width: 0px;

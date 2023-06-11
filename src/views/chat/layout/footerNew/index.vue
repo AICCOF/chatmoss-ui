@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NPopover, useMessage } from 'naive-ui'
-import { useUserStore, useChatStore } from '@/store'
+import { useChatStore, useUserStore } from '@/store'
 import { conversationUpload } from '@/api/index'
 // import { computed } from 'vue'
 // import { ref } from 'vue'
@@ -10,65 +10,67 @@ const ms = useMessage()
 
 // 新建对话
 function createQuestion() {
-	const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-	questionBtnDom.click()
-	ms.success('新建会话成功，请提问~')
+  const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+  questionBtnDom.click()
+  ms.success('新建会话成功，请提问~')
 }
 
 // 历史记录
 function toggleButtonEvent() {
-	const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
-	toggleButton.click()
+  const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
+  toggleButton.click()
 }
 
 async function jarvisEvent() {
-	let res = await conversationUpload({
-		conversationId: chatStore.active
-	});
-	ms.success(res.msg)
+  const res = await conversationUpload({
+    conversationId: chatStore.active,
+  })
+  ms.success(res.msg)
 }
 
 function setOpenaiVersion() {
-	userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
-	ms.success('模型切换成功')
+  userStore.saveOpenaiVersion(userStore.getOpenaiVersion === '3.5' ? '4.0' : '3.5')
+  ms.success('模型切换成功')
 }
 </script>
 
 <template>
-	<div>
-		<footer class="footer-main">
-			<div class="footer-left">
-				<div class="div">
-					<div class="div-wrap">
-						<div class="footer-item footer-item-btn footer-item-btn1"  @click="createQuestion" v-if="!userStore.isQuestionMode">
-							新建会话
-						</div>
-						<div class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent" v-if="!userStore.isQuestionMode">
-							历史记录
-						</div>
-						<div class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent" v-if="!userStore.isQuestionMode">
-							上传贾维斯
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="footer-right">
-				<div class="footer-item" style="margin-right: 0px;">
-					<div class="header-right-item header-right-item-help">
-						<NPopover trigger="hover">
-							<template #trigger>
-								<div class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;"
-									@click="setOpenaiVersion">
-									GPT-{{ userStore.getOpenaiVersion }}
-								</div>
-							</template>
-							切换模型
-						</NPopover>
-					</div>
-				</div>
-			</div>
-		</footer>
-	</div>
+  <div>
+    <footer class="footer-main">
+      <div class="footer-left">
+        <div class="div">
+          <div class="div-wrap">
+            <div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1" @click="createQuestion">
+              新建会话
+            </div>
+            <div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2" @click="toggleButtonEvent">
+              历史记录
+            </div>
+            <div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent">
+              上传贾维斯
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-item" style="margin-right: 0px;">
+          <div class="header-right-item header-right-item-help">
+            <NPopover trigger="hover">
+              <template #trigger>
+                <div
+                  class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;"
+                  @click="setOpenaiVersion"
+                >
+                  GPT-{{ userStore.getOpenaiVersion }}
+                </div>
+              </template>
+              切换模型
+            </NPopover>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
 </template>
 
 <style lang="less" scoped>
@@ -107,13 +109,8 @@ function setOpenaiVersion() {
 				background: #333;
 			}
 
-		
-
 			.div-wrap {
 				width: max-content;
-
-
-
 
 			}
 		}
@@ -144,8 +141,10 @@ function setOpenaiVersion() {
 		background: var(--moss-bg-btn-color);
 		border-radius: 27px;
 		color: var(--moss-text-ask-color);
-		padding: 4px 10px;
-		margin-bottom: 11px;
+		padding: 2px 8px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		font-size: 12px;
 
 		&.model-version {
 			background-color: var(--moss-bg-ask-color);

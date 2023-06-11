@@ -137,8 +137,10 @@ function shopEvent() {
                 </template>
               </NButton>
             </template>
-            <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-              style="max-width: 250px">
+            <div
+              v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+              style="max-width: 250px"
+            >
               <div class="mr-4 " style="width:30px">
                 <img :src="item.icon" style="width:30px" class="circle" alt="">
               </div>
@@ -165,18 +167,17 @@ function shopEvent() {
           </NPopover>
         </div>
       </div>
-
     </div>
     <div class="flex w-full sub-header">
       <div class="header-left">
         <div class="header-left-item">
-          <span @click="shopEvent" class="shop">商城</span>
+          <span class="shop" @click="shopEvent">商城</span>
         </div>
         <div v-if="userStore.isAuth === 2" class="header-left-item">
-          <span @click="() => { go({ name: 'invite' }) }" class="invite">邀请得4.0</span>
+          <span class="invite" @click="() => { go({ name: 'invite' }) }">邀请得4.0</span>
         </div>
         <div v-if="userStore.isAuth === 2" class="header-left-item">
-          <span @click="() => { go({ name: 'sign' }) }" class="sign">签到</span>
+          <span class="sign" @click="() => { go({ name: 'sign' }) }">签到</span>
         </div>
       </div>
       <div class="header-right">
@@ -188,15 +189,18 @@ function shopEvent() {
           </p>
         </div> -->
         <div class="header-item-btn text-test text-test1">
-
           <!-- <div class="activity" v-if="useAuthStore.token">活动</div> -->
 
           <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
             <template #trigger>
-              <div class="money">余额</div>
+              <div class="money">
+                余额
+              </div>
             </template>
-            <div v-for="(row, i) of userStore.packageList" :key="i"
-              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
+            <div
+              v-for="(row, i) of userStore.packageList" :key="i"
+              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
+            >
               <div>
                 <div style="width:200px" class="flex justify-between">
                   <span class="mr-4">{{ row.title }}</span>
@@ -248,6 +252,7 @@ function shopEvent() {
   position: absolute;
   font-size: 14px;
   background-color:var(--moss-header-color);
+	// background-color: rgba(28, 28, 30, .1);
   color: var(--moss-text-blue-color);
   left: 0;
   top: 0;
@@ -321,7 +326,7 @@ function shopEvent() {
 }
 
 .sub-header {
-  border-top: 1px solid var(--moss-border-color);
+  border-top: 0.5px solid var(--moss-border-color);
   border-bottom: 0.5px solid var(--moss-border-color);
   padding: 0 16px;
   height: 45px;
@@ -359,8 +364,6 @@ function shopEvent() {
     padding-right: 12px;
   }
 }
-
-
 
 .pointer {
   cursor: pointer;

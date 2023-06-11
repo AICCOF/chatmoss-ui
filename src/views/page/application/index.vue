@@ -96,10 +96,10 @@ async function handleInstalled(row) {
         <van-sidebar v-if="flag" v-model="active" class="sidebar" @change="handleChange">
           <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
         </van-sidebar>
-        <div class="pt-1">
-          <div class="flex-1 w-full content px-8 pt-2">
+        <div class="pt-1 flex-1" style="overflow: hidden;">
+          <div class="w-full content px-8 pt-2 border-box">
             <div v-for="(item, i) of dataList" :key="i"
-              class="flex justify-between items-center  w-full flex-1 item mt-2">
+              class="flex justify-between items-center w-full flex-1 item mt-2">
               <div class="flex items-center flex-1">
                 <div class="mr-2">
                   <img :src="item.icon" class="img" alt="" style="">
@@ -183,6 +183,8 @@ async function handleInstalled(row) {
 .sidebar {
   height: calc(100vh - 200px);
   overflow-y: auto;
+  width: 64px;
+  flex: 0 0 64px;
   // background-color: white;
 }
 /* 隐藏滚动进度条 */
