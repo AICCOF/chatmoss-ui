@@ -181,7 +181,7 @@ async function handleInstalled(row) {
 }
 
 .sidebar {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 174px);
   overflow-y: auto;
   width: 64px;
   flex: 0 0 64px;
