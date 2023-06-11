@@ -81,7 +81,7 @@ async function handleInstalled(row) {
         </div>
       </div>
 
-      <div class="mt-1 flex items-center">
+      <div class="mt-2 flex items-center">
         <van-search v-model="value" class="flex-1 button-t1 overflow-hidden" placeholder="搜索应用" show-action
           :clearable="false" @search="getApplicationSearchAPI" style="border-radius: 40px;">
           <template #action>
@@ -92,7 +92,7 @@ async function handleInstalled(row) {
         </van-search>
       </div>
 
-      <div class="flex main">
+      <div class="flex main mt-2">
         <van-sidebar v-if="flag" v-model="active" class="sidebar" @change="handleChange">
           <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
         </van-sidebar>
@@ -140,7 +140,7 @@ async function handleInstalled(row) {
 
 <style lang="less">
 .van-sidebar-item {
-  background-color: white;
+  background-color: var(--moss-header-color);
 
   &.van-sidebar-item--select {
     background-color: var(--moss-bg-content-color);
@@ -164,7 +164,7 @@ async function handleInstalled(row) {
 }
 
 .btn {
-  background: #FFFFFF;
+  background: var(--moss-header-color);
   border: 1px solid #6B83FF;
   border-radius: 7px;
   color: #6B83FF;
@@ -181,22 +181,26 @@ async function handleInstalled(row) {
 }
 
 .sidebar {
-  height: calc(100vh - 150px);
+  height: calc(100vh - 200px);
   overflow-y: auto;
-  background-color: white;
+  // background-color: white;
 }
-
+/* 隐藏滚动进度条 */
+::-webkit-scrollbar {
+  display: none;
+}
 .item {
-  background: #FFFFFF;
+  background: var(--moss-header-color);
   border-radius: 15px;
   padding: 6px 20px;
   cursor: pointer;
   min-height: 7rem;
+  color: var(--moss-text);
   .img{
     width: 40px;
     height: 40px;
-    background: #FFFFFF;
-    border: 1px solid #E6E6E6;
+    background:  var(--moss-header-color);
+    border: 1px solid var(--moss-border-color);
     border-radius: 50%;
   }
 }

@@ -134,7 +134,7 @@ onMounted(async () => {
         <van-divider />
         <div class=" flex justify-between items-center">
           <div>应用名称</div>
-          <div class="flex-1">
+          <div class="flex-1" style="margin-left: 20px;">
             <input class="input" v-model="formValue.appName" placeholder="例如：智能翻译助手(限12字)" />
           </div>
         </div>
@@ -213,13 +213,15 @@ onMounted(async () => {
   margin-top: 10px;
   padding: 5px 10px;
   height: 100px;
-  background-color: #F7F8FC;
+  background-color:  var(--moss-bg-reply-color);
   border-radius: 8px;
 }
 
 .input {
-  padding: 0 10px;
-  text-align: right;
+  text-align: left;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color:  var(--moss-bg-reply-color);
   width: 100%;
 }
 

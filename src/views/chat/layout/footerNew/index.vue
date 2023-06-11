@@ -126,7 +126,7 @@ function setOpenaiVersion() {
 	}
 
 	.footer-item {
-		margin-right: 20px;
+		margin-right: 5px;
 		cursor: pointer;
 		display: inline-block;
 

@@ -87,7 +87,7 @@ async function handleEdit(row) {
   padding: 6px 20px;
   cursor: pointer;
   min-height: 7rem;
-  background: #FFFFFF;
+  background: var(--moss-header-color);
   border-radius: 8px;
   margin-top: 10px;
   img{
