@@ -146,6 +146,8 @@ function handleSave() {
   border-bottom-right-radius: 5px;
   display: flex;
   flex-direction: column;
+  padding-top: 90px;
+  background-color: var(--moss-header-color);
 
 
   .list {
@@ -234,6 +236,7 @@ function handleSave() {
     background-color: var(--moss-header-color);
     font-size: 24px;
     font-size: 24px;
+    padding-bottom: 40px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

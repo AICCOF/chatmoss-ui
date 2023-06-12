@@ -81,7 +81,7 @@ async function handleInstalled(row) {
         </div>
       </div>
 
-      <div class="mt-2 flex items-center">
+      <div class="mt-2 flex items-center m-auto mb-0" style="width:90%">
         <van-search v-model="value" class="flex-1 button-t1 overflow-hidden" placeholder="搜索应用" show-action
           :clearable="false" @search="getApplicationSearchAPI" style="border-radius: 40px;">
           <template #action>
@@ -92,23 +92,22 @@ async function handleInstalled(row) {
         </van-search>
       </div>
 
-      <div class="flex main mt-2">
+      <div class="flex main mt-0">
         <van-sidebar v-if="flag" v-model="active" class="sidebar" @change="handleChange">
           <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
         </van-sidebar>
-        <div class="pt-1 flex-1" style="overflow: hidden;">
-          <div class="w-full content px-8 pt-2 border-box">
-            <div v-for="(item, i) of dataList" :key="i"
-              class="flex justify-between items-center w-full flex-1 item mt-2">
+        <div class="pt-0 flex-1" style="overflow: hidden;">
+          <div class="w-full content px-8 pt-0 border-box">
+            <div v-for="(item, i) of dataList" :key="i" class="flex justify-between items-center w-full flex-1 item mt-2">
               <div class="flex items-center flex-1">
-                <div class="mr-2">
+                <div class="mr-2 none">
                   <img :src="item.icon" class="img" alt="" style="">
                 </div>
                 <div class="flex flex-1 w-full">
-                  <span class="mr-2 flex justify-center text-base text-center" style="width:30px">{{ i + 1 }}</span>
+                  <span class="mr-2 flex justify-center text-base text-center none" style="width:30px">{{ i + 1 }}</span>
                   <div class="w-full pr-4 flex-1">
                     <div class="flex  items-center w-full">
-                      <span class="text-base mr-4">{{ item.appName }}</span>
+                      <span class="text-base mr-4  item-min-width">{{ item.appName }}</span>
                       <span style="cursor: pointer;" @click="handleLike(item)">
                         <van-icon v-if="item.liked === 0" name="like-o" style="color:red;" />
                         <van-icon v-if="item.liked === 1" name="like" style="color:red;" /><span
@@ -116,7 +115,7 @@ async function handleInstalled(row) {
                           }}</span>
                       </span>
                     </div>
-                    <div class="text-sm">
+                    <div class="text-sm  item-desc-min-width">
                       {{ item.desc }}
                     </div>
                   </div>
@@ -187,10 +186,12 @@ async function handleInstalled(row) {
   flex: 0 0 64px;
   // background-color: white;
 }
+
 /* 隐藏滚动进度条 */
 ::-webkit-scrollbar {
   display: none;
 }
+
 .item {
   background: var(--moss-header-color);
   border-radius: 15px;
@@ -198,10 +199,11 @@ async function handleInstalled(row) {
   cursor: pointer;
   min-height: 7rem;
   color: var(--moss-text);
-  .img{
+
+  .img {
     width: 40px;
     height: 40px;
-    background:  var(--moss-header-color);
+    background: var(--moss-header-color);
     border: 1px solid var(--moss-border-color);
     border-radius: 50%;
   }

@@ -6,6 +6,8 @@ body,
 
 #app {
 	min-width: 320px;
+	max-width: 750px;
+	margin: 0 auto;
 }
 
 body {
@@ -27,6 +29,7 @@ body {
 	padding-bottom: 20px;
 	max-width: 750px;
 	margin: 0 auto;
+	background-color: var(--moss-bg-content-color);
 }
 
 .btns {
@@ -62,5 +65,24 @@ body {
 
 	.btn {
 		color: var(--moss-text-blue-color);
+	}
+}
+
+@media screen and(max-width: 400px) {
+	.none {
+		display: none !important;
+	}
+
+	.item-min-width {
+		width: 60px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.item-desc-min-width {
+			width: 100px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 	}
 }

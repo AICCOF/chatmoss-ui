@@ -101,12 +101,13 @@ function setOpenaiVersion() {
 			}
 
 			&::-webkit-scrollbar-track {
-				background: #bfbfbf;
+				background-color: var(--moss-border-color);
 				border-radius: 10px;
 			}
 
 			&::-webkit-scrollbar-thumb:hover {
-				background: #333;
+				background: var(--moss-text-time-color);
+				border-radius: 10px;
 			}
 
 			.div-wrap {

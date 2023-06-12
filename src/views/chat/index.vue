@@ -420,7 +420,7 @@ const wrapClass = computed(() => {
 
 const footerClass = computed(() => {
   // let classes = ['p-4', 'pt-0']
-  const classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'pt-0', 'overflow-hidden']
+  const classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'pt-0']
   return classes
 })
 
@@ -516,10 +516,10 @@ async function onSuccessAuth() {
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
-    <main class="flex-1 overflow-hidden">
+    <main class="flex flex-1 overflow-hidden">
+      <applicationList v-if="userStore.isAuth === 2" />
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
-        <applicationList v-if="userStore.isAuth === 2" />
-        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto flex items-center"
+        <div id="image-wrapper" class="w-full max-w-screen-xl m-auto flex items-center py-4"
           :class="[isMobile ? 'px-2' : 'px-4']" style="height: 100%;overflow: hidden">
           <template v-if="!dataSources.length">
             <div class="no-data-info  w-full">
@@ -560,34 +560,36 @@ async function onSuccessAuth() {
             </div>
           </template>
         </div>
+        <footer :class="footerClass">
+          <Footer />
+          <div class="w-full m-auto p-2">
+            <div class="moss-btns flex justify-between space-x-2 w-full">
+              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
+                autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
+                @keydown="handleEnter" />
+              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
+              <!-- MOSS字数 -->
+              <div class="btn-style">
+                <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+                  <template #icon>
+                    <span class="">
+                      <SvgIcon icon="ri:send-plane-fill" />
+                    </span>
+                  </template>
+                </NButton>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </main>
     <div v-if="!userStore.userInfo.user.authed" class="text-center">
       <!-- 通关ChatMoss使用教程，获得20w字符奖励 -->
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
-    <footer :class="footerClass">
-      <Footer />
-      <div class="w-full m-auto p-2">
-        <div class="moss-btns flex justify-between space-x-2 w-full">
-          <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input" autofocus
-            type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" />
-          <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
-            :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-            label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
-          <!-- MOSS字数 -->
-          <div class="btn-style">
-            <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
-              <template #icon>
-                <span class="">
-                  <SvgIcon icon="ri:send-plane-fill" />
-                </span>
-              </template>
-            </NButton>
-          </div>
-        </div>
-      </div>
-    </footer>
+
     <NModal v-model:show="showPaper" transform-origin="center">
       <NCard style="width:80%;max-width: 600px;" title="" :bordered="false" size="huge" role="dialog" aria-modal="true">
         <Paper v-model:sort="nowPaperIndex" :paper-list="paperList" @success="onSuccessAuth" />
@@ -861,6 +863,8 @@ async function onSuccessAuth() {
 
 #scrollRef {
   display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .left-btns {

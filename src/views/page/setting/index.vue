@@ -132,7 +132,7 @@ function handleModeValue(chatmossMode: string) {
             <div>OpenAI模型选择</div>
             <div>
               <NSelect v-model:value="modelValue" :options="options" class="select"
-                @change="(value) => { userStore.saveOpenaiVersion(value) }" />
+                @change="(value) => { userStore.saveOpenaiVersion(value) }" style="width:140px" />
             </div>
           </div>
           <div class="tip-text-input">
