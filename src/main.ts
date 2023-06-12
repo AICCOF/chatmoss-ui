@@ -14,13 +14,13 @@ import getDomainAPI from './api/getDomain'
 import VueTour from 'v3-tour'
 
 
-bootstrap()
-// getDomainAPI().then(() => {
-//   bootstrap()
-// }).catch(() => {
-//   // console.log(error)
-//   bootstrap()
-// })
+// bootstrap()
+getDomainAPI().then(() => {
+  bootstrap()
+}).catch(() => {
+  // console.log(error)
+  bootstrap()
+})
 
 async function bootstrap() {
   const app = createApp(App)
