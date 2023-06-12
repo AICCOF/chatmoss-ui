@@ -577,7 +577,7 @@ function handleMode() {
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
               <div class="btn-style btn-mode" @click="handleMode">
-                {{ userStore.toggleValue ? '普通模式' : '极速模式' }}
+                {{ userStore.toggleValue ? '普通模式' : '极简模式' }}
               </div>
               <div class="btn-style ">
                 <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
