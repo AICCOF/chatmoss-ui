@@ -98,145 +98,143 @@ function shopEvent() {
 </script>
 
 <template>
-  <header class="header-main">
-    <div class="flex w-full header">
-      <div class="header-left">
-        <div class="tip-text-content1 cursor-pointer">
-          <p v-if="useAuthStore.token">
-            <span @click="loginEvent('exit')">退出登录</span>
-          </p>
-          <p v-else>
-            <span @click="loginEvent('login')">登录/注册</span>
-          </p>
+  <transition name="fade">
+    <header class="header-main" v-if="userStore.toggleValue">
+      <div class="flex w-full header">
+        <div class="header-left">
+          <div class="tip-text-content1 cursor-pointer">
+            <p v-if="useAuthStore.token">
+              <span @click="loginEvent('exit')">退出登录</span>
+            </p>
+            <p v-else>
+              <span @click="loginEvent('login')">登录/注册</span>
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="header-right">
-        <div class="header-right-item">
-          <!-- 个人中心 -->
-          <NPopover trigger="hover">
-            <template #trigger>
-              <NButton quaternary circle size="tiny" @click="settingMainEvent">
-                <template #icon>
-                  <span class="">
-                    <SvgIcon icon="uil:setting" class="icon" />
-                  </span>
-                </template>
-              </NButton>
-            </template>
-            <span>设置中心</span>
-          </NPopover>
-        </div>
-        <div class="header-right-item">
-          <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
-            <template #trigger>
-              <NButton quaternary circle size="tiny">
-                <template #icon>
-                  <span class="">
-                    <SvgIcon icon="ph:bell" class="icon" />
-                  </span>
-                </template>
-              </NButton>
-            </template>
-            <div
-              v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-              style="max-width: 250px"
-            >
-              <div class="mr-4 " style="width:30px">
-                <img :src="item.icon" style="width:30px" class="circle" alt="">
+        <div class="header-right">
+          <div class="header-right-item">
+            <!-- 个人中心 -->
+            <NPopover trigger="hover">
+              <template #trigger>
+                <NButton quaternary circle size="tiny" @click="settingMainEvent">
+                  <template #icon>
+                    <span class="">
+                      <SvgIcon icon="uil:setting" class="icon" />
+                    </span>
+                  </template>
+                </NButton>
+              </template>
+              <span>设置中心</span>
+            </NPopover>
+          </div>
+          <div class="header-right-item">
+            <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
+              <template #trigger>
+                <NButton quaternary circle size="tiny">
+                  <template #icon>
+                    <span class="">
+                      <SvgIcon icon="ph:bell" class="icon" />
+                    </span>
+                  </template>
+                </NButton>
+              </template>
+              <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+                style="max-width: 250px">
+                <div class="mr-4 " style="width:30px">
+                  <img :src="item.icon" style="width:30px" class="circle" alt="">
+                </div>
+                <div class="flex-1">
+                  <div> {{ item.content }}</div>
+                  <div>{{ item.createTime }}</div>
+                </div>
               </div>
-              <div class="flex-1">
-                <div> {{ item.content }}</div>
-                <div>{{ item.createTime }}</div>
-              </div>
-            </div>
-          </NPopover>
-        </div>
+            </NPopover>
+          </div>
 
-        <div class="header-right-item header-right-item-help">
-          <NPopover trigger="hover">
-            <template #trigger>
-              <NButton quaternary circle size="tiny" @click="() => { go({ name: 'help' }) }">
-                <template #icon>
-                  <span class="">
-                    <SvgIcon icon="ph:question" class="icon" />
-                  </span>
-                </template>
-              </NButton>
-            </template>
-            <span>ChatMoss帮助中心</span>
-          </NPopover>
+          <div class="header-right-item header-right-item-help">
+            <NPopover trigger="hover">
+              <template #trigger>
+                <NButton quaternary circle size="tiny" @click="() => { go({ name: 'help' }) }">
+                  <template #icon>
+                    <span class="">
+                      <SvgIcon icon="ph:question" class="icon" />
+                    </span>
+                  </template>
+                </NButton>
+              </template>
+              <span>ChatMoss帮助中心</span>
+            </NPopover>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="flex w-full sub-header">
-      <div class="header-left">
-        <div class="header-left-item">
-          <span class="shop" @click="shopEvent">商城</span>
+      <div class="flex w-full sub-header">
+        <div class="header-left">
+          <div class="header-left-item">
+            <span class="shop" @click="shopEvent">商城</span>
+          </div>
+          <div v-if="userStore.isAuth === 2" class="header-left-item">
+            <span class="invite" @click="() => { go({ name: 'invite' }) }">邀请得4.0</span>
+          </div>
+          <div v-if="userStore.isAuth === 2" class="header-left-item">
+            <span class="sign" @click="() => { go({ name: 'sign' }) }">签到</span>
+          </div>
         </div>
-        <div v-if="userStore.isAuth === 2" class="header-left-item">
-          <span class="invite" @click="() => { go({ name: 'invite' }) }">邀请得4.0</span>
-        </div>
-        <div v-if="userStore.isAuth === 2" class="header-left-item">
-          <span class="sign" @click="() => { go({ name: 'sign' }) }">签到</span>
-        </div>
-      </div>
-      <div class="header-right">
-        <!-- <div class="tip-text-content">
+        <div class="header-right">
+          <!-- <div class="tip-text-content">
           <p v-if="useAuthStore.token" @click="getActivityListEvent">
             <NButton round secondary type="success" size="tiny" @click="clickActivity">
               活动
             </NButton>
           </p>
         </div> -->
-        <div class="header-item-btn text-test text-test1">
-          <!-- <div class="activity" v-if="useAuthStore.token">活动</div> -->
+          <div class="header-item-btn text-test text-test1">
+            <!-- <div class="activity" v-if="useAuthStore.token">活动</div> -->
 
-          <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
-            <template #trigger>
-              <div class="money">
-                余额
-              </div>
-            </template>
-            <div
-              v-for="(row, i) of userStore.packageList" :key="i"
-              class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
-            >
-              <div>
-                <div style="width:200px" class="flex justify-between">
-                  <span class="mr-4">{{ row.title }}</span>
-                  <span>可用次数：{{ row.timesResidue }}</span>
+            <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
+              <template #trigger>
+                <div class="money">
+                  余额
                 </div>
-              </div>
-              <div class="mt-2 ">
-                <div v-for="(item, i) of row.list" :key="i" class="">
-                  <div class="mt-1 flex justify-between">
-                    <span class="mr-1">{{ item.title }}</span>
+              </template>
+              <div v-for="(row, i) of userStore.packageList" :key="i"
+                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
+                <div>
+                  <div style="width:200px" class="flex justify-between">
+                    <span class="mr-4">{{ row.title }}</span>
+                    <span>可用次数：{{ row.timesResidue }}</span>
+                  </div>
+                </div>
+                <div class="mt-2 ">
+                  <div v-for="(item, i) of row.list" :key="i" class="">
+                    <div class="mt-1 flex justify-between">
+                      <span class="mr-1">{{ item.title }}</span>
 
-                    <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
-                      {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
-                    </NTag>
+                      <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
+                        {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
+                      </NTag>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
-              <div style="width:200px">
-                <span class="mr-4">字符数：{{ mossCount }}</span>
+              <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
+                <div style="width:200px">
+                  <span class="mr-4">字符数：{{ mossCount }}</span>
+                </div>
               </div>
-            </div>
-            <div class="flex  px-2 py-1  mt-2">
-              <NButton text color="#ff69b4" @click="handleClose">
-                +更多
-              </NButton>
-            </div>
-          </NPopover>
+              <div class="flex  px-2 py-1  mt-2">
+                <NButton text color="#ff69b4" @click="handleClose">
+                  +更多
+                </NButton>
+              </div>
+            </NPopover>
+          </div>
+          <activity v-model="modelValue" />
         </div>
-        <activity v-model="modelValue" />
       </div>
-    </div>
-    <activity v-model="modelValue" />
-  </header>
+      <activity v-model="modelValue" />
+    </header>
+  </transition>
 </template>
 
 <style lang="less">
@@ -251,8 +249,8 @@ function shopEvent() {
   z-index: 20;
   position: absolute;
   font-size: 14px;
-  background-color:var(--moss-header-color);
-	// background-color: rgba(28, 28, 30, .1);
+  background-color: var(--moss-header-color);
+  // background-color: rgba(28, 28, 30, .1);
   color: var(--moss-text-blue-color);
   left: 0;
   top: 0;
@@ -334,8 +332,12 @@ function shopEvent() {
 
 .chat-main {
   height: calc(100%);
-  padding-top: 90px;
+  padding-top: 0px;
   padding-bottom: 10px;
+  transition: all 0.3s;
+}
+.transition{
+  transition: all 0.3s;
 }
 
 .header-item-btn {

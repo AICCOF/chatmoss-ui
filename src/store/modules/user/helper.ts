@@ -74,7 +74,7 @@ export function getLocalState(): UserState {
     ...localSetting.userInfo,
   }
   // console.log(userInfo)
-  return { userInfo, activityList: [], appId: localSetting.appId }
+  return { userInfo, activityList: [], appId: localSetting.appId, toggle: localSetting.toggle }
 }
 
 export function setLocalState(setting: UserState): void {

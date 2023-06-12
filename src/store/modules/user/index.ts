@@ -18,6 +18,12 @@ export const useUserStore = defineStore('user-store', {
     }
   },
   getters: {
+    toggleValue(state) {
+      if (!state.toggle) {
+        return true;
+      }
+      return state.toggle === '0'
+    },
     appIdValue(state) {
       return state.appId || '1'
     },
@@ -129,6 +135,11 @@ export const useUserStore = defineStore('user-store', {
     },
   },
   actions: {
+    toggleMode() {
+      this.toggle = this.toggle === '0' ? "1" : '0'
+      // console.log(this.toggle)
+      this.recordState()
+    },
     async residueCountAPI() {
       try {
         const res = await residueCount<{

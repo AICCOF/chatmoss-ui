@@ -87,3 +87,30 @@ body {
 			white-space: nowrap;
 	}
 }
+
+// fade-enter-active,
+// .fade-leave-active {
+// 	transition: opacity .5s;
+// }
+
+.fade-enter-active {
+	animation: bounce-in .5s;
+	// transition: all 1s;
+}
+.fade-enter,
+.fade-leave-to{
+	opacity: 0;
+}
+.fade-leave-active {
+	animation: bounce-in .5s reverse;
+	// transition: all 1s;
+}
+
+@keyframes bounce-in {
+	0% {
+		opacity: 0;
+	}
+	100% {
+	  opacity: 1;
+	}
+}

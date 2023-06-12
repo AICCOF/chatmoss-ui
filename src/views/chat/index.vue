@@ -56,11 +56,6 @@ else {
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
 
-const isPlus = computed(() => {
-  // 暂时关闭plus逻辑，全部人都是plus会员
-  // !!userStore.userInfo.user.plusEndTime
-  return userStore.getOpenaiVersion
-})
 
 if (!localStorage.getItem('isCorrelation'))
   localStorage.setItem('isCorrelation', 'true')
@@ -512,13 +507,21 @@ async function onSuccessAuth() {
     }, 3000)
   }
 }
+function handleMode() {
+  userStore.toggleMode()
+}
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
+
     <main class="flex flex-1 overflow-hidden">
-      <applicationList v-if="userStore.isAuth === 2" />
-      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main">
+      <transition name="fade">
+        <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
+          :style="{ 'width': userStore.toggleValue ? '71px' : '1px' }" />
+      </transition>
+      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']">
         <div id="image-wrapper" class="w-full max-w-screen-xl m-auto flex items-center py-4"
           :class="[isMobile ? 'px-2' : 'px-4']" style="height: 100%;overflow: hidden">
           <template v-if="!dataSources.length">
@@ -561,7 +564,9 @@ async function onSuccessAuth() {
           </template>
         </div>
         <footer :class="footerClass">
-          <Footer />
+          <transition name="fade">
+            <Footer v-if="userStore.toggleValue" />
+          </transition>
           <div class="w-full m-auto p-2">
             <div class="moss-btns flex justify-between space-x-2 w-full">
               <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
@@ -571,7 +576,10 @@ async function onSuccessAuth() {
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
-              <div class="btn-style">
+              <div class="btn-style btn-mode" @click="handleMode">
+                {{ userStore.toggleValue ? '普通模式' : '极速模式' }}
+              </div>
+              <div class="btn-style ">
                 <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
                   <template #icon>
                     <span class="">
@@ -584,7 +592,9 @@ async function onSuccessAuth() {
           </div>
         </footer>
       </div>
+
     </main>
+
     <div v-if="!userStore.userInfo.user.authed" class="text-center">
       <!-- 通关ChatMoss使用教程，获得20w字符奖励 -->
       <span class="v-auth cursor-pointer" @click="startTutorial" />
@@ -602,6 +612,10 @@ async function onSuccessAuth() {
 <style lang="less" scoped>
 .chat-main {
   background-color: var(--moss-bg-content-color);
+}
+
+.p90 {
+  padding-top: 90px;
 }
 
 
@@ -757,6 +771,19 @@ async function onSuccessAuth() {
   right: 10px;
 }
 
+.btn-mode {
+  background-color: var(--moss-bg-ask-color);
+  border-radius: 3px;
+  color: var(--moss-text-ask-color);
+  padding: 1px 0px;
+  font-size: 12px;
+  // display: block;
+  right: 60px;
+  width: 60px;
+  line-height: 22px;
+}
+
+
 .btn-style button {
   width: 40px;
   // max-height: 54px;
@@ -771,31 +798,7 @@ async function onSuccessAuth() {
   white-space: nowrap;
 }
 
-.setting {
-  width: 100%;
-  padding: 0px 10px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 
-  .setting-main {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-
-    .setting-text {
-      color: #FF6666;
-      font-size: 10px;
-    }
-
-    .setting-btn {
-      width: 20px;
-      height: 20px;
-      margin-right: 2px;
-    }
-  }
-}
 
 .line {
   margin-top: 10px;
