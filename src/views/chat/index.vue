@@ -777,6 +777,7 @@ function handleMode() {
   color: var(--moss-text-ask-color);
   padding: 1px 0px;
   font-size: 12px;
+  cursor: pointer;
   // display: block;
   right: 60px;
   width: 60px;

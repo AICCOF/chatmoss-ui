@@ -49,10 +49,10 @@ function setOpenaiVersion() {
 								@click="toggleButtonEvent">
 								历史记录
 							</div>
-							<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2"
+							<!-- <div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2"
 								@click="jarvisEvent">
 								上传贾维斯
-							</div>
+							</div> -->
 						</div>
 					</div>
 				</div>

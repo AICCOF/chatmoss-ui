@@ -48,11 +48,11 @@ watch(() => props.isShow, (value) => {
       key: 'online',
       icon: iconRender({ icon: 'heroicons-solid:status-online' }),
     },
-    {
-      label: t('贾维斯'),
-      key: 'jarvis',
-      icon: iconRender({ icon: 'icon-park-solid:brain'  }),
-    },
+    // {
+    //   label: t('贾维斯'),
+    //   key: 'jarvis',
+    //   icon: iconRender({ icon: 'icon-park-solid:brain'  }),
+    // },
   ] : []
 
 }, { immediate: true })

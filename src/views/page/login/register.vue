@@ -235,8 +235,8 @@ async function loginEvent() {
           <span class='send' @click="() => { verifyFlag.showLogin = true }"> {{ buttonInfo.text }}</span>
         </div>
         <div class="input">
-          <span class='span'>邀请人邮箱</span>
-          <input type="text" v-model="registerForm.invite" placeholder="请输入验双方都可获得10w字符额度证码" :disabled="disAble" />
+          <span class='span'>邀请码</span>
+          <input type="text" v-model="registerForm.invite" placeholder="请输入邀请码（选填）" :disabled="disAble" />
         </div>
 
         <div v-if="verifyFlag.showLogin" class="input">
