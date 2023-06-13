@@ -6,7 +6,7 @@ body,
 
 #app {
 	min-width: 320px;
-  max-width: 100%;
+	max-width: 100%;
 	margin: 0 auto;
 	box-shadow: 0px 0px 20px #e5e8eb;
 }
@@ -80,11 +80,12 @@ body {
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+
 	.item-desc-min-width {
-			width: 100px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+		width: 100px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 }
 
@@ -97,10 +98,12 @@ body {
 	animation: bounce-in .5s;
 	// transition: all 1s;
 }
+
 .fade-enter,
-.fade-leave-to{
+.fade-leave-to {
 	opacity: 0;
 }
+
 .fade-leave-active {
 	animation: bounce-in .5s reverse;
 	// transition: all 1s;
@@ -110,7 +113,23 @@ body {
 	0% {
 		opacity: 0;
 	}
+
 	100% {
-	  opacity: 1;
+		opacity: 1;
+	}
+}
+
+.code-block-header {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 6px;
+
+	.code-block-header__copy {
+		cursor: pointer;
+		color: var(--moss-text-blue-color);
+
+		&:hover {
+			opacity: 0.7;
+		}
 	}
 }
