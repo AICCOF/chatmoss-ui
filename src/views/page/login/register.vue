@@ -1,18 +1,12 @@
 <script lang="ts" setup>
 import {
-  NButton,
-  NForm,
-  NFormItem,
-  NInput,
-  NTabPane,
-  NTabs,
   useMessage,
 } from 'naive-ui'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Page from '@/components/page/index.vue'
 import { useAuthStoreWithout, useChatStore } from '@/store'
-import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
+import { emailCode, forgetPwdEmailCode, login, register } from '@/api'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import dragVerifyImgChip from '@/components/dragVerifyImgChip.vue'
 import { staticData } from '@/store/static'
@@ -208,17 +202,19 @@ async function loginEvent() {
     </template>
 
     <div class="wrap-main">
-      <div class="title">欢迎来到Moss</div>
+      <div class="title">
+        欢迎来到ChatMoss
+      </div>
       <div class="content">
         <div class="input top">
-          <span class='span'>邮箱</span>
-          <input type="text" v-model="registerForm.email" placeholder="请输入邮箱" />
+          <span class="span">邮箱</span>
+          <input v-model="registerForm.email" type="text" placeholder="请输入邮箱">
         </div>
         <div class="input ">
-          <span class='span'>密码</span>
-          <input type="text" v-model="registerForm.password" placeholder="密码由字母、数字或下划线组成" />
+          <span class="span">密码</span>
+          <input v-model="registerForm.password" type="text" placeholder="密码由字母、数字或下划线组成">
         </div>
-        <!-- 
+        <!--
         <div class="input ">
           <span class='span'>昵称</span>
           <input type="text" v-model="loginForm.email" placeholder="请输入昵称" />
@@ -230,32 +226,36 @@ async function loginEvent() {
         </div> -->
 
         <div class="input ">
-          <span class='span'>邮箱验证码</span>
-          <input type="text" v-model="registerForm.emailCode" placeholder="请输入验证码" style="width:50%" />
-          <span class='send' @click="() => { verifyFlag.showLogin = true }"> {{ buttonInfo.text }}</span>
+          <span class="span">邮箱验证码</span>
+          <input v-model="registerForm.emailCode" type="text" placeholder="请输入验证码" style="width:50%">
+          <span class="send" @click="() => { verifyFlag.showLogin = true }"> {{ buttonInfo.text }}</span>
         </div>
         <div class="input">
-          <span class='span'>邀请码</span>
-          <input type="text" v-model="registerForm.invite" placeholder="请输入邀请码（选填）" :disabled="disAble" />
+          <span class="span">邀请码</span>
+          <input v-model="registerForm.invite" type="text" placeholder="请输入邀请码（选填）" :disabled="disAble">
         </div>
 
         <div v-if="verifyFlag.showLogin" class="input">
-          <span class='span'>滑块验证</span>
+          <span class="span">滑块验证</span>
           <div>
-            <dragVerifyImgChip ref="verifyImg" v-model:isPassing="verifyFlag.loginFlag" :imgsrc="imgsrc" show-refresh
+            <dragVerifyImgChip
+              ref="verifyImg" v-model:isPassing="verifyFlag.loginFlag" :imgsrc="imgsrc" show-refresh
               :bar-width="40" text="请按住滑块拖动" success-text="验证通过"
               handler-icon="material-symbols:keyboard-double-arrow-right" success-icon="clarity:success-standard-solid"
               refresh-icon="ic:twotone-refresh" @refresh="refresh('loginFlag')"
-              @passcallback="passcallback('loginFlag')" />
+              @passcallback="passcallback('loginFlag')"
+            />
           </div>
         </div>
 
-        <div class="register" @click="registerEvent">注册</div>
-
+        <div class="register" @click="registerEvent">
+          注册
+        </div>
       </div>
     </div>
   </Page>
 </template>
+
 <style scoped  lang="less">
 .register {
   text-align: center;
@@ -273,7 +273,7 @@ async function loginEvent() {
 }
 
 .wrap-main {
-  background-image: url('./../../../assets/bg.png');
+  background-image: url('https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/assets/bg.png');
   background-repeat: no-repeat;
   min-height: 100%;
   background-color: var(--moss-header-color);

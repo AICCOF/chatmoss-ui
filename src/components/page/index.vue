@@ -17,7 +17,7 @@
   // height: 40px;
   width: 100%;
   z-index: 100;
-  max-width: 750px;
+  max-width: 100%;
   // display: flex;
   // background-color: white;
   // align-items: center;

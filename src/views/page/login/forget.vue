@@ -5,9 +5,8 @@ import {
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Page from '@/components/page/index.vue'
-import { useAuthStoreWithout, useChatStore } from '@/store'
-import { emailCode, forgetPwdEmailCode, login, register, resetPwd } from '@/api'
-import { sendToMsg } from '@/utils/vsCodeUtils'
+import { useChatStore } from '@/store'
+import { emailCode, forgetPwdEmailCode, resetPwd } from '@/api'
 import dragVerifyImgChip from '@/components/dragVerifyImgChip.vue'
 import { staticData } from '@/store/static'
 import { useBack, useGo } from '@/utils/router'
@@ -177,7 +176,6 @@ async function forgetEvent() {
     message.info(error.msg, { duration: 5000 })
   }
 }
-
 </script>
 
 <template>
@@ -187,37 +185,48 @@ async function forgetEvent() {
     </template>
 
     <div class="wrap-main">
-      <div class="title">重置密码</div>
+      <div class="title">
+        重置密码
+      </div>
       <div class="content">
-        <div class="input top"> <input type="text" v-model="forgetForm.email" placeholder="请输入登录邮箱"></div>
+        <div class="input top">
+          <input v-model="forgetForm.email" type="text" placeholder="请输入登录邮箱">
+        </div>
 
         <div class="input1">
           <div class="flex-1">
-            <input type="password" v-model="forgetForm.emailCode" placeholder="请输入重置邮箱验证码">
+            <input v-model="forgetForm.emailCode" type="password" placeholder="请输入重置邮箱验证码">
           </div>
-          <div @click="() => verifyFlag.showForget = true" class="send">
+          <div class="send" @click="() => verifyFlag.showForget = true">
             {{ buttonInfo.text }}
           </div>
         </div>
 
-        <div class="input"><input type="password" v-model="forgetForm.password" placeholder="密码由字母、数字或下划线组成"></div>
+        <div class="input">
+          <input v-model="forgetForm.password" type="password" placeholder="密码由字母、数字或下划线组成">
+        </div>
 
-        <div v-if="verifyFlag.showForget" class='input1'>
+        <div v-if="verifyFlag.showForget" class="input1">
           <div>滑块验证</div>
           <div>
-            <dragVerifyImgChip ref="verifyImg1" v-model:isPassing="verifyFlag.forgetFlag" :imgsrc="imgsrc" show-refresh
+            <dragVerifyImgChip
+              ref="verifyImg1" v-model:isPassing="verifyFlag.forgetFlag" :imgsrc="imgsrc" show-refresh
               :bar-width="40" text="请按住滑块拖动" success-text="验证通过"
               handler-icon="material-symbols:keyboard-double-arrow-right" success-icon="clarity:success-standard-solid"
               refresh-icon="ic:twotone-refresh" @refresh="refresh('forgetFlag')"
-              @passcallback="passcallback('forgetFlag')" />
+              @passcallback="passcallback('forgetFlag')"
+            />
           </div>
         </div>
 
-        <div class="forget" @click="forgetEvent">重置密码</div>
+        <div class="forget" @click="forgetEvent">
+          重置密码
+        </div>
       </div>
     </div>
   </Page>
 </template>
+
 <style scoped  lang="less">
 .input1 {
   display: flex;
@@ -263,7 +272,7 @@ async function forgetEvent() {
 }
 
 .wrap-main {
-  background-image: url('./../../../assets/bg.png');
+  background-image: url('https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/assets/bg.png');
   background-repeat: no-repeat;
   min-height: 100%;
   background-color: var(--moss-header-color);

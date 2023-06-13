@@ -2,7 +2,7 @@
 import {
   useMessage,
 } from 'naive-ui'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import Page from '@/components/page/index.vue'
 import { useAuthStoreWithout, useChatStore } from '@/store'
@@ -23,7 +23,6 @@ function handleClick() {
 }
 
 const message = useMessage()
-
 
 const loginForm = reactive({
   email: '',
@@ -68,14 +67,26 @@ async function loginEvent() {
     </template>
 
     <div class="wrap-main">
-      <div class="title">欢迎来到Moss</div>
+      <div class="title">
+        欢迎来到ChatMoss
+      </div>
       <div class="content">
-        <div class="input top"> <input type="text" v-model="loginForm.email" placeholder="请输入登录邮箱"></div>
-        <div class="input"><input type="password" v-model="loginForm.password" placeholder="请输入密码"></div>
+        <div class="input top">
+          <input v-model="loginForm.email" type="text" placeholder="请输入登录邮箱">
+        </div>
+        <div class="input">
+          <input v-model="loginForm.password" type="password" placeholder="请输入密码">
+        </div>
 
-        <div class="login cursor-pointer" @click="loginEvent">登录</div>
-        <div class="register cursor-pointer" @click="()=>{go({name:'register'})}">注册</div>
-         <div class="register cursor-pointer" @click="() => { go({ name: 'forget' }) }">忘记密码</div>
+        <div class="login cursor-pointer" @click="loginEvent">
+          登录
+        </div>
+        <div class="register cursor-pointer" @click="() => { go({ name: 'register' }) }">
+          注册
+        </div>
+        <div class="register cursor-pointer" @click="() => { go({ name: 'forget' }) }">
+          忘记密码
+        </div>
       </div>
     </div>
   </Page>
@@ -103,7 +114,7 @@ async function loginEvent() {
 }
 
 .wrap-main {
-  background-image: url('./../../../assets/bg.png');
+  background-image: url('https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/assets/bg.png');
   background-repeat: no-repeat;
   min-height: 100%;
   background-color: var(--moss-header-color);

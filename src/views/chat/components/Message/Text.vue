@@ -91,5 +91,6 @@ defineExpose({ textRef })
 .text-right {
   background-color: var(--moss-bg-ask-color);
   color: var(--moss-text-ask-color);
+  text-align: left;
 }
 </style>
