@@ -8,7 +8,10 @@ import {
 // }))
 
 const { message } = createDiscreteApi(
-  ['message', 'dialog', 'notification', 'loadingBar'],
+  ['message'],
+  {
+    messageProviderProps:{max:1}
+  }
 )
 export function useCopyCode() {
   function copyCodeBlock() {
@@ -16,7 +19,7 @@ export function useCopyCode() {
     codeBlockWrapper.forEach((wrapper) => {
       const copyBtn = wrapper.querySelector('.code-block-header__copy')
       const codeBlock = wrapper.querySelector('.code-block-body')
-      // console.log(copyBtn, codeBlock)
+      console.log(copyBtn, codeBlock)
       if (copyBtn && codeBlock) {
         copyBtn.addEventListener('click', () => {
 
