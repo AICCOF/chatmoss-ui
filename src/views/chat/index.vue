@@ -573,7 +573,7 @@ function handleMode() {
         </div>
         <footer :class="footerClass">
           <transition name="fade">
-            <Footer v-if="userStore.toggleValue" />
+            <Footer />
           </transition>
           <div class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">

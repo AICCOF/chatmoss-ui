@@ -1,32 +1,30 @@
 <script setup lang='ts'>
 import { ref, watch } from 'vue'
-import { NDropdown, useMessage, NButton } from 'naive-ui'
+import { NButton, useMessage } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
 import TextComponent from './Text.vue'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
 import { t } from '@/locales'
 import { useChatStore } from '@/store'
+const props = defineProps<Props>()
+const emit = defineEmits<Emit>()
 const chatStore = useChatStore()
 interface Props {
   dateTime?: string
-  isShow: Boolean;
+  isShow: Boolean
   text?: string
-  askMsg: string;
+  askMsg: string
   inversion?: boolean
   error?: boolean
   loading?: boolean
-  id?: number;
+  id?: number
 }
-const emit = defineEmits<Emit>()
 interface Emit {
   (ev: 'ask', askMsg: string): void
   (ev: 'online', askMsg: string): void
   (ev: 'jarvis', askMsg: string): void
 }
-
-
-const props = defineProps<Props>()
 
 const Message = useMessage()
 
@@ -35,45 +33,43 @@ const { iconRender } = useIconRender()
 const textRef = ref<HTMLElement>()
 
 // console.error(props.isShow)
-let options: any[] = [];
+let options: any[] = []
 watch(() => props.isShow, (value) => {
-  options = value ? [
-    {
-      label: t('重新提问'),
-      key: 'ask',
-      icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
-    },
-    {
-      label: t('联网提问'),
-      key: 'online',
-      icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-    },
-    {
-      label: t('贾维斯'),
-      key: 'jarvis',
-      icon: iconRender({ icon: 'icon-park-solid:brain'  }),
-    },
-  ] : []
-
+  options = value
+    ? [
+        {
+          label: t('重新提问'),
+          key: 'ask',
+          icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
+        },
+        {
+          label: t('联网提问'),
+          key: 'online',
+          icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+        },
+        {
+          label: t('个人资料库提问'),
+          key: 'jarvis',
+          icon: iconRender({ icon: 'icon-park-solid:brain' }),
+        },
+      ]
+    : []
 }, { immediate: true })
-
 
 function handleSelect(key: string, askMsg: string) {
   switch (key) {
     case 'copyText':
       copyText({ text: props.text ?? '' })
       Message.success('已复制到剪切板')
-      return;
+      return
     case 'ask':
       emit('ask', askMsg)
-      return;
+      return
     case 'online':
       emit('online', askMsg)
-      return;
+      return
     case 'jarvis':
       emit('jarvis', askMsg)
-      return;
-
   }
 }
 </script>
@@ -88,19 +84,18 @@ function handleSelect(key: string, askMsg: string) {
         {{ dateTime }} <span v-if="chatStore.active">({{ chatStore.active }}) </span>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
-          @copy="handleSelect('copyText', '')" />
-
+        <TextComponent
+          ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
+          @copy="handleSelect('copyText', '')"
+        />
       </div>
-      <div class="flex mt-2 ml-2" v-if="!inversion">
-        <div class="mr-3" v-for="(option, i) in options" text :key="i">
+      <div v-if="!inversion" class="flex mt-2 ml-2">
+        <div v-for="(option, i) in options" :key="i" class="mr-3" text>
           <NButton text @click="handleSelect(option.key, askMsg)">
-            <component :is="option.icon"></component>
+            <component :is="option.icon" />
             <span class="ml-1">{{ option.label }}</span>
           </NButton>
-
         </div>
-
       </div>
     </div>
   </div>
