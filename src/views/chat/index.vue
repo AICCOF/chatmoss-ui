@@ -68,7 +68,7 @@ useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
-const { scrollRef, scrollToBottom } = useScroll()
+const { scrollRef, scrollToBottom, goToBottom } = useScroll()
 
 const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
@@ -100,7 +100,7 @@ const currentIndex = computed({
 })
 watch(() => chatStore.getChatByUuid(), (...vals) => {
   setTimeout(() => {
-    scrollToBottom()
+    goToBottom()
   }, 300)
 })
 
@@ -216,7 +216,7 @@ async function onConversation(askMsg?: string, opt?) {
     conversationOptions: null,
     requestOptions: { prompt: message, options: null },
   })
-  scrollToBottom()
+  goToBottom()
 
   loading.value = true
   prompt.value = ''
