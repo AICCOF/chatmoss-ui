@@ -8,8 +8,9 @@ import { localStorage } from '@/utils/storage/localStorage'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { SvgIcon } from '@/components/common'
+import { bindingStatus } from './../../../api/weixin'
 // let props = defineProps(['register'])
-const emits = defineEmits(['modifyPassword', 'register'])
+// const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
 const go = useGo()
 const userStore = useUserStore()
@@ -23,11 +24,17 @@ const nickname = computed(() => {
 
 onMounted(() => {
   updated()
+  bindingStatusAPI();
 })
 function updated() {
   userStore.residueCountAPI()
 }
+let bindInfo = ref({})
 
+async function bindingStatusAPI() {
+  let res = await bindingStatus();
+  bindInfo.value = res.data || {}
+}
 const choose = reactive({
   chatmossTheme: localStorage.getItem('chatmossTheme') || 'dark',
   chatmossMode: localStorage.getItem('chatmossMode') || 'normal',
@@ -80,6 +87,25 @@ function handleModeValue(chatmossMode: string) {
   ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
   localStorage.setItem('chatmossMode', chatmossMode)
 }
+function bindEvent(type, text) {
+  if (text) return;
+  if (type === 'email') {
+    go({
+      name: 'bindQQ',
+      query: {
+        type
+      }
+    })
+  } else {
+    go({
+      name: 'bindWechat',
+      query: {
+        type
+      }
+    })
+  }
+
+}
 </script>
 
 <template>
@@ -94,10 +120,8 @@ function handleModeValue(chatmossMode: string) {
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <div
-            v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
-            @click="() => { go({ name: 'feedback' }) }"
-          >
+          <div v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
+            @click="() => { go({ name: 'feedback' }) }">
             问题反馈
           </div>
           <div class="flex items-center btn cursor-pointer" @click="() => { go({ name: 'forget' }) }">
@@ -106,6 +130,30 @@ function handleModeValue(chatmossMode: string) {
           </div>
         </div>
       </div>
+      <div class="box flex items-center justify-between mt-3">
+        <div class="flex">
+          <span class="mr-4">邮箱：{{ bindInfo.email }}</span>
+        </div>
+        <div class="flex">
+          <div class="flex items-center btn cursor-pointer" @click="bindEvent('email', bindInfo.email)">
+            <span>{{ bindInfo.email ? '已绑定' : '绑定' }}</span>
+            <SvgIcon icon="icon-park-outline:right" />
+          </div>
+        </div>
+      </div>
+
+      <div class="box flex items-center justify-between mt-3">
+        <div class="flex">
+          <span class="mr-4">微信账号</span>
+        </div>
+        <div class="flex">
+          <div class="flex items-center btn cursor-pointer" @click="bindEvent('weChat', bindInfo.wechat)">
+            <span>{{ bindInfo.wechat ? '已绑定' : '绑定' }}</span>
+            <SvgIcon icon="icon-park-outline:right" />
+          </div>
+        </div>
+      </div>
+
 
       <div class="box mt-3">
         <div class="justify-between">
@@ -130,10 +178,8 @@ function handleModeValue(chatmossMode: string) {
           <div class="flex justify-between">
             <div>OpenAI模型选择</div>
             <div>
-              <NSelect
-                v-model:value="modelValue" :options="options" class="select"
-                style="width:140px" @change="(value) => { userStore.saveOpenaiVersion(value) }"
-              />
+              <NSelect v-model:value="modelValue" :options="options" class="select" style="width:140px"
+                @change="(value) => { userStore.saveOpenaiVersion(value) }" />
             </div>
           </div>
           <div class="tip-text-input">
@@ -148,10 +194,8 @@ function handleModeValue(chatmossMode: string) {
           <div class="flex justify-between items-center">
             <div> ChatMoss主题设定</div>
             <div class="flex">
-              <NSwitch
-                v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
-                @update:value="handleUpdateValue"
-              />
+              <NSwitch v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
+                @update:value="handleUpdateValue" />
               <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
             </div>
           </div>
@@ -161,10 +205,8 @@ function handleModeValue(chatmossMode: string) {
           <div class="flex justify-between items-center">
             <div> 回答模式</div>
             <div class="flex">
-              <NSwitch
-                v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
-                @update:value="handleModeValue"
-              />
+              <NSwitch v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
+                @update:value="handleModeValue" />
               <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
             </div>
           </div>

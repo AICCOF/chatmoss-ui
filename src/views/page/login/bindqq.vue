@@ -5,31 +5,47 @@ import {
 import { reactive, ref, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Page from '@/components/page/index.vue'
-import { useAuthStoreWithout, useChatStore } from '@/store'
-import { login } from '@/api'
-import { sendToMsg } from '@/utils/vsCodeUtils'
+// import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useBack, useGo } from '@/utils/router'
-import { getWechatLoginQrCode, getTokenByTicket } from './../../../api/weixin'
+import { bandingEmailCode, doBindingEmail } from './../../../api/weixin'
 // const props = defineProps(['tab'])
-const emit = defineEmits<Emit>()
+// const emit = defineEmits<Emit>()
 const router = useRouter()
 const back = useBack()
 const go = useGo()
-const chatStore = useChatStore()
-interface Emit {
-  (e: 'loginSuccess'): void
-}
-function handleClick() {
-  emit('loginSuccess')
-}
-let imgUrl = ref('')
-let type = ref(1)
 const message = useMessage()
 
+let time = null;
 const loginForm = reactive({
   email: '',
-  password: '',
+  emailCode: ''
 })
+const buttonInfo = reactive({
+  text: '发送验证码',
+  time: 0,
+})
+
+async function sendCode() {
+  const res = await bandingEmailCode<{ msg: string }>({
+    email: loginForm.email
+  })
+
+  buttonInfo.time = 60
+  timer = setInterval(() => {
+    if (buttonInfo.time == 0 && timer) {
+      clearInterval(timer)
+      buttonInfo.text = '发送验证码'
+      timer = null
+      return
+    }
+    buttonInfo.time--
+    buttonInfo.text = `${buttonInfo.time}s后，重新发送`
+  }, 1000)
+
+  message.info(res.data?.msg || '发送成功', { duration: 5000 })
+
+}
+
 function handleBack() {
   if (router.currentRoute.value.query && router.currentRoute.value.query.invite) {
     // console.log(router.currentRoute.value.query.invite)
@@ -45,96 +61,43 @@ function handleBack() {
   }
 }
 
-async function loginEvent() {
+async function bindEvent() {
   try {
-    const res = await login<any>(loginForm) as any
-    const authStore = useAuthStoreWithout()
 
-    authStore.setToken(res.loginToken)
-    chatStore.chatList()
-    handleBack()
-    handleClick()
-    sendToMsg('chatMossToken', res.loginToken)
+    let res = await doBindingEmail({
+      emailCode: loginForm.emailCode
+    });
+    message.info(res.msg, { duration: 5000 })
   }
   catch (error: any) {
     message.info(error.msg, { duration: 5000 })
   }
 }
 
-let time = null;
-getWechatLoginQrCodeAPI();
 
-async function getWechatLoginQrCodeAPI() {
-  clearInterval(time)
-  let res = await getWechatLoginQrCode()
-  imgUrl.value = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(res.data.ticket)
-  time = setInterval(() => {
-    getTokenByTicketAPI(res.data.ticket);
-  }, 2000)
-}
-async function getTokenByTicketAPI(ticket: string) {
-  let res = await getTokenByTicket({
-    ticket
-  })
-  if (res.data.status === 1) {
-    clearInterval(time)
-    const authStore = useAuthStoreWithout()
-    authStore.setToken(res.data.token)
-    // chatStore.chatList()
-    setTimeout(() => {
-      handleBack()
-      handleClick()
-    }, 2000);
-    sendToMsg('chatMossToken', res.data.token)
-  } else if (res.data.status === 2) {
-    clearInterval(time)
-    getWechatLoginQrCodeAPI();
-  }
-}
-onUnmounted(() => {
-  clearInterval(time)
-})
-function handleToggle() {
-  type.value = type.value === 1 ? 2 : 1
-}
 </script>
 
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="登录" left-text="返回" left-arrow @click-left="handleBack" />
+      <van-nav-bar title="绑定邮箱" left-text="返回" left-arrow @click-left="handleBack" />
     </template>
 
     <div class="wrap-main">
       <div class="title">
-        欢迎来到ChatMoss
+        绑定邮箱
       </div>
       <div class="content">
-        <div class="content-wrap " :class="[type === 2 ? 'bg' : '']">
-          <span class="tip" @click="handleToggle">
-            {{ type === 1 ? '使用账号密码登录' : '' }}
-          </span>
-          <div v-show="type === 1">
-            <div><img :src="imgUrl" v-if="imgUrl" class="code top" alt="" /></div>
-            <div class="text">微信提示：微信登录后绑定邮箱可实现账号互通</div>
-            <div class="bottom">登录即同意<span class="link">用户协议</span>和<span class="link">隐私条款</span></div>
+        <div style="padding-bottom: 40px;">
+          <div class="input">
+            <input v-model="loginForm.email" type="text" placeholder="请输入登录邮箱">
           </div>
-          <div v-show="type === 2" style="padding-bottom: 40px;">
-            <div class="input">
-              <input v-model="loginForm.email" type="text" placeholder="请输入登录邮箱">
-            </div>
-            <div class="input">
-              <input v-model="loginForm.password" type="password" placeholder="请输入密码">
-            </div>
-            <div class="login cursor-pointer" @click="loginEvent">
-              登录
-            </div>
-            <div class="register cursor-pointer" @click="() => { go({ name: 'register' }) }">
-              注册
-            </div>
-            <div class="register cursor-pointer" @click="() => { go({ name: 'forget' }) }">
-              忘记密码
-            </div>
+          <div class="input flex items-center">
+            <input v-model="loginForm.emailCode" type="text" class="flex-1" placeholder="请输入验证码">
+            <span class="send" @click="sendCode"> {{ buttonInfo.text }}</span>
+          </div>
+          <div class="login cursor-pointer" @click="bindEvent">
+            绑定邮箱
           </div>
         </div>
       </div>
@@ -250,15 +213,19 @@ function handleToggle() {
 
 .input {
   color: #9EA2B5;
-  margin-top: 20px;
+
   font-size: 14px;
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 20px;
+
+  border-bottom: 1px solid #E6E6E6;
 
   input {
+    height: 40px;
+    width: 100%;
     padding: 10px 0px;
     display: block;
-    margin: 0 auto;
-    width: 80%;
-    border-bottom: 1px solid #E6E6E6;
   }
 }
 

@@ -6,8 +6,10 @@ import { ChatLayout } from '@/views/chat/layout'
 import { PageLayout } from '@/views/page/layout'
 import chat from '@/views/chat/index.vue'
 import shop from '@/views/page/shop/index.vue'
-import login from '@/views/page/login/index.vue'
+// import login from '@/views/page/login/index.vue'
 import Login from '@/views/page/login/login.vue'
+import BindQQ from '@/views/page/login/bindqq.vue'
+import BindWechat from '@/views/page/login/bindWechat.vue'
 import register from '@/views/page/login/register.vue'
 import forget from '@/views/page/login/forget.vue'
 import setting from '@/views/page/setting/index.vue'
@@ -36,6 +38,16 @@ const routes: RouteRecordRaw[] = [
         path: 'login',
         name: 'login',
         component: Login,
+      },
+      {
+        path: 'bindWechat',
+        name: 'bindWechat',
+        component: BindWechat,
+      },
+      {
+        path: 'bindQQ',
+        name: 'bindQQ',
+        component: BindQQ,
       },
       {
         path: 'forget',

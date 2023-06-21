@@ -19,9 +19,35 @@ export function getWechatLoginQrCode<T>() {
   })
 }
 
-export function getTokenByTicket<T>() {
+export function getTokenByTicket<T>(data) {
   return get<T>({
     url: `/luomacode-api/user/getTokenByTicket`,
-    data: {},
+    data,
+  })
+}
+export function bindingStatus<T>(data = {}) {
+  return get<T>({
+    url: `/luomacode-api/binding/status`,
+    data,
+  })
+}
+
+export function bandingEmailCode<T>(data = {}) {
+  return get<T>({
+    url: `/luomacode-api/user/bandingEmailCode`,
+    data,
+  })
+}
+
+export function doBindingEmail<T>(data = {}) {
+  return get<T>({
+    url: `/luomacode-api/user/doBindingEmail`,
+    data,
+  })
+}
+export function getBindingWechatQrCode<T>(data = {}) {
+  return post<T>({
+    url: `/luomacode-api/binding/getBindingWechatQrCode`,
+    data,
   })
 }

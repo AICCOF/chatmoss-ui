@@ -49,12 +49,12 @@ function http<T = any>(
       chatStore.clearList()
       userStore.residueCountAPI()
       showToast({
-        message:'登录已过期，请重新登录',
+        message: '登录已过期，请重新登录',
         position: 'top',
         duration: 6000
       })
       Promise.reject(res.data)
-    }else{
+    } else {
       showToast(res.data.msg)
     }
 
@@ -62,6 +62,11 @@ function http<T = any>(
   }
 
   const failHandler = (error: Response<Error>) => {
+    let res = error.response.data;
+    if (res.code !== 0) {
+      showToast(res.msg)
+    }
+    
     afterRequest?.()
     throw new Error(error?.message || 'Error')
   }

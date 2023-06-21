@@ -214,16 +214,6 @@ async function loginEvent() {
           <span class="span">密码</span>
           <input v-model="registerForm.password" type="text" placeholder="密码由字母、数字或下划线组成">
         </div>
-        <!--
-        <div class="input ">
-          <span class='span'>昵称</span>
-          <input type="text" v-model="loginForm.email" placeholder="请输入昵称" />
-        </div> -->
-
-        <!-- <div class="input ">
-          <span class='span'>手机号</span>
-          <input type="text" v-model="loginForm.email" placeholder="请输入手机号" />
-        </div> -->
 
         <div class="input ">
           <span class="span">邮箱验证码</span>

@@ -192,11 +192,14 @@ export const useUserStore = defineStore('user-store', {
       // console.error(res.data)
     },
     async getApplicationInstallListAPI() {
-      const res = await getApplicationInstallList()
-      this.appList = res.data || {
-        installList: [],
-        systemList: [],
+      if (getToken()) {
+        const res = await getApplicationInstallList()
+        this.appList = res.data || {
+          installList: [],
+          systemList: [],
+        }
       }
+
     },
     updateUserInfo(userInfo: Partial<UserInfo>) {
       this.userInfo = { ...this.userInfo, ...userInfo }
