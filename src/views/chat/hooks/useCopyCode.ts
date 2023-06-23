@@ -34,7 +34,7 @@ export function useCopyCode() {
       }
 
       if (copyBtn && copyInsert) {
-        copyBtn.addEventListener('click', () => {
+        copyInsert.addEventListener('click', () => {
           sendToMsg('insertText', codeBlock.textContent) 
         })
       }
