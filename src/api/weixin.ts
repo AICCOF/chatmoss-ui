@@ -67,4 +67,12 @@ export function getModelList<T>(data = {}) {
   })
 }
 
+export function getBalanceInfo<T>(data = {}) {
+  return get<T>({
+    url: `/luomacode-api/user/getBalanceInfo`,
+    data,
+  })
+}
+
+
 

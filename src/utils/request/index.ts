@@ -48,6 +48,7 @@ function http<T = any>(
       sendToMsg('chatMossToken', '')
       chatStore.clearList()
       userStore.residueCountAPI()
+      userStore.getBalanceInfo()
       showToast({
         message: '登录已过期，请重新登录',
         position: 'top',

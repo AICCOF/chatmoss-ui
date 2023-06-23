@@ -25,7 +25,6 @@ const authStore = useAuthStoreWithout()
 const go = useGo()
 
 const userStore = useUserStore()
-const showModal = ref(false)
 const showPaper = ref(false)
 const appStore = useAppStore()
 
@@ -346,8 +345,6 @@ async function onConversation(askMsg?: string, opt?) {
     if (error.code === 204) {
       // error.msg
       ms.error(error.msg)
-      // 代表未登录
-      // showModal.value = true
     }
     // 答应其他信息
     const errorMessage = error.msg
@@ -501,6 +498,7 @@ onMounted(() => {
   chatStore.chatList()
   userStore.getActivityListAPI()
   userStore.residueCountAPI()
+  userStore.getBalanceInfo()
 })
 
 onUnmounted(() => {
@@ -524,8 +522,6 @@ async function startTutorial() {
     if (error.code === 204) {
       // error.msg
       ms.error('请登录后再开始进行通关认证')
-      // 代表未登录
-      showModal.value = true
       return
     }
     ms.error(error.msg || error.message)

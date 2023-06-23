@@ -37,12 +37,26 @@ function loginEvent(type: string) {
 }
 
 // moss数量
-const mossCount = computed(() => {
-  const residueCount = userStore.userInfo.residueCount * 10
-  return `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
+const residueCountPay = computed(() => {
+  if(userStore.balanceInfo){
+    const residueCount = userStore.balanceInfo.residueCountPay * 10
+    return `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
+  }
+  return ''
+  
+})
+const residueCountFree = computed(() => {
+  if (userStore.balanceInfo) {
+    const residueCountFree = userStore.balanceInfo.residueCountFree * 10
+    return `${residueCountFree > 10000 ? `${(Math.floor(residueCountFree / 100) / 100).toFixed(2)}w` : residueCountFree}字符`
+  }
+  return ''
 })
 function handleClose(row: any) {
-  shopEvent()
+  // shopEvent()
+  go({
+    name:"detailedRule"
+  })
 }
 
 watchEffect(() => {
@@ -190,7 +204,7 @@ function shopEvent() {
           <div class="header-item-btn text-test text-test1">
             <!-- <div class="activity" v-if="useAuthStore.token">活动</div> -->
 
-            <NPopover trigger="click" :duration="500" @update:show="() => userStore.residueCountAPI()">
+            <NPopover trigger="click" :duration="500" @update:show="() => userStore.getBalanceInfo()">
               <template #trigger>
                 <div class="money">
                   余额
@@ -199,32 +213,37 @@ function shopEvent() {
               <div v-for="(row, i) of userStore.packageList" :key="i"
                 class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
                 <div>
-                  <div style="width:200px" class="flex justify-between">
+                  <div  class="flex justify-between">
                     <span class="mr-4">{{ row.title }}</span>
                     <span>可用次数：{{ row.timesResidue }}</span>
                   </div>
                 </div>
-                <div class="mt-2 ">
+                <div class="mt-2" style="overflow-y: auto;max-height: 66px;">
                   <div v-for="(item, i) of row.list" :key="i" class="">
                     <div class="mt-1 flex justify-between">
-                      <span class="mr-1">{{ item.title }}</span>
-
+                      <span class="mr-1" v-if="item.payType===1">付费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
+                      <span class="mr-1" v-if="item.payType===0">免费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
                       <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
-                        {{ item.day === 0 ? "去购买" : `剩余${item.day}天` }}
+                        {{ item.residueDays === 0 ? "去购买" : `剩余${item.residueDays}天` }}
                       </NTag>
                     </div>
                   </div>
                 </div>
               </div>
 
+               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
+                  <div style="width:200px">
+                    <span class="mr-4">免费字符数：{{ residueCountFree }}</span>
+                  </div>
+                </div>
               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
                 <div style="width:200px">
-                  <span class="mr-4">字符数：{{ mossCount }}</span>
+                  <span class="mr-4">付费字符数：{{ residueCountPay }}</span>
                 </div>
               </div>
               <div class="flex  px-2 py-1  mt-2">
                 <NButton text color="#ff69b4" @click="handleClose">
-                  +更多
+                  +查看详细规则
                 </NButton>
               </div>
             </NPopover>
@@ -336,7 +355,8 @@ function shopEvent() {
   padding-bottom: 10px;
   transition: all 0.3s;
 }
-.transition{
+
+.transition {
   transition: all 0.3s;
 }
 

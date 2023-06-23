@@ -7,7 +7,7 @@ import { localStorage } from '@/utils/storage/localStorage'
 import type { Notice } from '@/store/modules/user/helper'
 import { getSystemNotice } from '@/api/personCenter'
 import { getApplicationInstallList } from '@/api/application'
-import { getModelList } from '@/api/weixin'
+import { getBalanceInfo, getModelList } from '@/api/weixin'
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
@@ -17,6 +17,7 @@ export const useUserStore = defineStore('user-store', {
       modeVersion: {},
       appList: {},
       notices: [],
+      balanceInfo: null,
       // useKey: '1',
       isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
@@ -50,14 +51,18 @@ export const useUserStore = defineStore('user-store', {
       return state.userInfo.openaiVersion == '4.0'
     },
     residueCount(state) {
-      return state.userInfo.residueCount * 10
+      if (state.balanceInfo) {
+        return (state.balanceInfo.residueCountFree + state.balanceInfo.residueCountPay) * 10
+      } else {
+        return 0
+      }
     },
     // state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
     isHighVersionMsg(state) {
-      if (!state.userInfo.timesInfo)
+      if (!state.balanceInfo)
         return true
 
-      return state.userInfo.timesInfo.timesResidue['4.0'] === 0
+      return state.balanceInfo.timesResidue['4.0'] === 0
     },
     isAsk(state) {
       // 未包月的情况
@@ -77,27 +82,19 @@ export const useUserStore = defineStore('user-store', {
       return true
     },
     packageList(state) {
-      if (!state.userInfo.timesInfo)
+      if (!state.balanceInfo)
         return []
 
       return [
         {
           title: '3.5套餐',
-          timesResidue: state.userInfo.timesInfo.timesResidue['3.5'],
-          list: [
-            { title: '基础套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1001'] },
-            { title: '高级套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1002'] },
-            { title: '顶级套餐', day: state.userInfo.timesInfo.dayResidue['3.5']['1003'] },
-          ],
+          timesResidue: state.balanceInfo.timesResidue['3.5'],
+          list: state.balanceInfo.orderResidue['3.5'],
         },
         {
           title: '4.0套餐',
-          timesResidue: state.userInfo.timesInfo.timesResidue['4.0'],
-          list: [
-            { title: '基础套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1004'] },
-            { title: '高级套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1005'] },
-            { title: '顶级套餐', day: state.userInfo.timesInfo.dayResidue['4.0']['1006'] },
-          ],
+          timesResidue: state.balanceInfo.timesResidue['4.0'],
+          list: state.balanceInfo.orderResidue['4.0'],
         },
       ]
     },
@@ -131,7 +128,11 @@ export const useUserStore = defineStore('user-store', {
     },
   },
   actions: {
-    closeKey(){
+    async getBalanceInfo() {
+      let res = await getBalanceInfo();
+      this.balanceInfo = res.data;
+    },
+    closeKey() {
       this.useKey = '0'
       // 
     },
@@ -210,7 +211,7 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo.openaiVersion = value.codeName
       this.recordState()
     },
-    toggleOpenaiVersion(){
+    toggleOpenaiVersion() {
       this.saveOpenaiVersion(this.modelList[1])
     },
     async getOpenaiList() {
