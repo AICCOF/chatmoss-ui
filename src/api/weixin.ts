@@ -33,7 +33,7 @@ export function bindingStatus<T>(data = {}) {
 }
 
 export function bandingEmailCode<T>(data = {}) {
-  return get<T>({
+  return post<T>({
     url: `/luomacode-api/user/bandingEmailCode`,
     data,
   })
@@ -48,6 +48,12 @@ export function doBindingEmail<T>(data = {}) {
 export function getBindingWechatQrCode<T>(data = {}) {
   return post<T>({
     url: `/luomacode-api/binding/getBindingWechatQrCode`,
+    data,
+  })
+}
+export function unbind<T>(data = {}) {
+  return post<T>({
+    url: `/luomacode-api/binding/unbind`,
     data,
   })
 }

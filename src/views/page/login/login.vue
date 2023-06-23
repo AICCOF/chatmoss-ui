@@ -62,6 +62,7 @@ async function loginEvent() {
 }
 
 let time = null;
+let count = 20;
 getWechatLoginQrCodeAPI();
 
 async function getWechatLoginQrCodeAPI() {
@@ -69,7 +70,13 @@ async function getWechatLoginQrCodeAPI() {
   let res = await getWechatLoginQrCode()
   imgUrl.value = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(res.data.ticket)
   time = setInterval(() => {
+    if(count<=0){
+      clearInterval(time)
+      count = 20;
+      getWechatLoginQrCodeAPI();
+    }
     getTokenByTicketAPI(res.data.ticket);
+    count--;
   }, 2000)
 }
 async function getTokenByTicketAPI(ticket: string) {

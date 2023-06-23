@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NDivider, NSelect, NSwitch, useMessage } from 'naive-ui'
+import { NDivider, NSelect, NSwitch, useMessage , useDialog } from 'naive-ui'
 import { computed, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import uni from '@dcloudio/uni-webview-js'
@@ -8,7 +8,7 @@ import { localStorage } from '@/utils/storage/localStorage'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { SvgIcon } from '@/components/common'
-import { bindingStatus } from './../../../api/weixin'
+import { bindingStatus, unbind } from './../../../api/weixin'
 // let props = defineProps(['register'])
 // const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
@@ -87,23 +87,48 @@ function handleModeValue(chatmossMode: string) {
   ms.info(chatmossMode === 'speciality' ? '专业模式开启' : '正常模式开启')
   localStorage.setItem('chatmossMode', chatmossMode)
 }
+
+const dialog = useDialog()
 function bindEvent(type, text) {
-  if (text) return;
-  if (type === 'email') {
-    go({
-      name: 'bindQQ',
-      query: {
-        type
-      }
+  // 解绑操作
+  if (text) { 
+    new Promise((resole, reject) => {
+      dialog.error({
+        title: '解绑',
+        content: '确认解绑？',
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: async () => {
+          let res = await  unbind({
+            type: type === 'email'? 1:0
+          })
+          ms.info(res.msg)
+          bindingStatusAPI();
+        },
+        onNegativeClick: () => {
+         
+        },
+      })
     })
+
   } else {
-    go({
-      name: 'bindWechat',
-      query: {
-        type
-      }
-    })
+    if (type === 'email') {
+      go({
+        name: 'bindQQ',
+        query: {
+          type
+        }
+      })
+    } else {
+      go({
+        name: 'bindWechat',
+        query: {
+          type
+        }
+      })
+    }
   }
+
 
 }
 </script>
@@ -135,8 +160,9 @@ function bindEvent(type, text) {
           <span class="mr-4">邮箱：{{ bindInfo.email }}</span>
         </div>
         <div class="flex">
-          <div class="flex items-center btn cursor-pointer" @click="bindEvent('email', bindInfo.email)">
-            <span>{{ bindInfo.email ? '已绑定' : '绑定' }}</span>
+          <div class="flex items-center btn cursor-pointer" @click="bindEvent('email', bindInfo.email)"
+            v-if="bindInfo.accountType === 0">
+            <span>{{ bindInfo.email ? '解绑' : '去绑定' }}</span>
             <SvgIcon icon="icon-park-outline:right" />
           </div>
         </div>
@@ -144,11 +170,12 @@ function bindEvent(type, text) {
 
       <div class="box flex items-center justify-between mt-3">
         <div class="flex">
-          <span class="mr-4">微信账号</span>
+          <span class="mr-4">微信账号:{{ bindInfo.wechat ? '已绑定' : '绑定' }}</span>
         </div>
         <div class="flex">
-          <div class="flex items-center btn cursor-pointer" @click="bindEvent('weChat', bindInfo.wechat)">
-            <span>{{ bindInfo.wechat ? '已绑定' : '绑定' }}</span>
+          <div class="flex items-center btn cursor-pointer" @click="bindEvent('weChat', bindInfo.wechat)"
+            v-if="bindInfo.accountType === 1">
+            <span>{{ bindInfo.wechat ? '解绑' : '去绑定' }}</span>
             <SvgIcon icon="icon-park-outline:right" />
           </div>
         </div>
