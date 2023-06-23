@@ -160,24 +160,24 @@ function bindEvent(type, text) {
           <span class="mr-4">邮箱：{{ bindInfo.email }}</span>
         </div>
         <div class="flex">
-          <div class="flex items-center btn cursor-pointer" @click="bindEvent('email', bindInfo.email)"
+          <!-- <div class="flex items-center btn cursor-pointer" @click="bindEvent('email', bindInfo.email)"
             v-if="bindInfo.accountType === 0">
             <span>{{ bindInfo.email ? '解绑' : '去绑定' }}</span>
             <SvgIcon icon="icon-park-outline:right" />
-          </div>
+          </div> -->
         </div>
       </div>
 
       <div class="box flex items-center justify-between mt-3">
         <div class="flex">
-          <span class="mr-4">微信账号:{{ bindInfo.wechat ? '已绑定' : '绑定' }}</span>
+          <span class="mr-4">微信账号:{{ bindInfo.wechat ? '已绑定' : '' }}</span>
         </div>
         <div class="flex">
-          <div class="flex items-center btn cursor-pointer" @click="bindEvent('weChat', bindInfo.wechat)"
+          <!-- <div class="flex items-center btn cursor-pointer" @click="bindEvent('weChat', bindInfo.wechat)"
             v-if="bindInfo.accountType === 1">
             <span>{{ bindInfo.wechat ? '解绑' : '去绑定' }}</span>
             <SvgIcon icon="icon-park-outline:right" />
-          </div>
+          </div> -->
         </div>
       </div>
 

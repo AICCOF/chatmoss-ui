@@ -3,6 +3,7 @@ import { copyText } from '@/utils/format'
 import {
   createDiscreteApi
 } from 'naive-ui'
+import { sendToMsg } from '@/utils/vsCodeUtils'
 // const configProviderPropsRef = computed<ConfigProviderProps>(() => ({
 //   theme: themeRef.value === 'light' ? lightTheme : darkTheme
 // }))
@@ -19,6 +20,7 @@ export function useCopyCode() {
     codeBlockWrapper.forEach((wrapper) => {
       const copyBtn = wrapper.querySelector('.code-block-header__copy')
       const codeBlock = wrapper.querySelector('.code-block-body')
+      const copyInsert = wrapper.querySelector('.code-block-header__insert')
       // console.log(copyBtn, codeBlock)
       if (copyBtn && codeBlock) {
         copyBtn.addEventListener('click', () => {
@@ -30,6 +32,13 @@ export function useCopyCode() {
           message.success('已复制到剪切板')
         })
       }
+
+      if (copyBtn && copyInsert) {
+        copyBtn.addEventListener('click', () => {
+          sendToMsg('insertText', codeBlock.textContent) 
+        })
+      }
+
     })
   }
 

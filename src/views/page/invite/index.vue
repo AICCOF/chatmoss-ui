@@ -3,34 +3,10 @@ import { useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from 'vue'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
-import { copyText } from '@/utils/format'
-import type { InviteRes } from '@/api/invite'
 import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
-const Message = useMessage()
-
-const info = ref<InviteRes>()
-
-const text = computed(() => {
-  return `ChatMoss 是由 GPT-4 驱动的人工智能助手，现在注册赠送你 100 个免费 GPT 次数，包括 GPT-4，GPT-3.5，应用市场等。 快点击链接领取吧：${location.origin}/#/page/login?invite=${info.value?.inviteCode}`
-})
-
-const text1 = computed(() => {
-  return `${location.origin}/#/page/login?invite=${info.value?.inviteCode}`
-})
-
-function handleSelect() {
-  copyText({ text: text.value })
-  Message.success('已复制链接')
-}
-
-// async function getInviteInfoAPI() {
-//   let res = await getInviteInfo<InviteRes>()
-//   info.value = res.data || {}
-// }
 
 onMounted(() => {
-  // getInviteInfoAPI();
 })
 const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?token=${getToken()}&time=${new Date().getTime()}`)
 </script>

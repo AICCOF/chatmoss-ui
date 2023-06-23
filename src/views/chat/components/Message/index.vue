@@ -26,8 +26,6 @@ interface Emit {
   (ev: 'jarvis', askMsg: string): void
 }
 
-const Message = useMessage()
-
 const { iconRender } = useIconRender()
 
 const textRef = ref<HTMLElement>()

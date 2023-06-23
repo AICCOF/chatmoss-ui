@@ -9,8 +9,10 @@ if (typeof acquireVsCodeApi !== 'undefined') {
     type: 'pageOver',
   })
 }
-
-export function sendToMsg(type:string,state:any){
+export function isVscode() {
+  return vscode;
+}
+export function sendToMsg(type: string, state: any) {
   if (vscode) {
     vscode.postMessage({
       type: type,
@@ -37,8 +39,8 @@ window.addEventListener('message', (event) => {
       break
   }
 })
-export default function vsCodeUtils(rec:Record<string,Function>) {
-  record = Object.assign(record,rec)
+export default function vsCodeUtils(rec: Record<string, Function>) {
+  record = Object.assign(record, rec)
 }
 
 

@@ -5,7 +5,7 @@ import mdKatex from '@traptitech/markdown-it-katex'
 import hljs from 'highlight.js'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
-
+import { isVscode } from '@/utils/vsCodeUtils'
 interface Props {
   inversion?: boolean
   error?: boolean
@@ -60,7 +60,11 @@ const handleDoubleClick = () => {
 }
 
 function highlightBlock(str: string, lang?: string) {
-  return `<pre class="code-block-wrapper"><div class="code-block-header"><span class="code-block-header__lang">${lang}</span><span class="code-block-header__copy">${t('chat.copyCode')}</span></div><code class="hljs code-block-body ${lang}">${str}</code></pre>`
+  return `<pre class="code-block-wrapper">
+    <div class="code-block-header">
+      <span class="code-block-header__lang">${lang}</span>
+      <div class='flex'>${isVscode()?'<span class="code-block-header__insert mr-2">插入代码</span>':''}<span class="code-block-header__copy">${t('chat.copyCode')}</span></div></div><code class="hljs code-block-body ${lang}">${str}</code>
+    </pre>`
 }
 
 defineExpose({ textRef })
