@@ -67,10 +67,13 @@ getWechatLoginQrCodeAPI();
 
 async function getWechatLoginQrCodeAPI() {
   clearInterval(time)
-  let res = await getWechatLoginQrCode()
+  // console.log(router.currentRoute.value.query.invite)
+  let res = await getWechatLoginQrCode({
+    inviteCode: router.currentRoute.value.query.invite
+  })
   imgUrl.value = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(res.data.ticket)
   time = setInterval(() => {
-    if(count<=0){
+    if (count <= 0) {
       clearInterval(time)
       count = 20;
       getWechatLoginQrCodeAPI();

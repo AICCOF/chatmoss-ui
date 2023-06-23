@@ -56,7 +56,7 @@ async function getTokenByTicketAPI() {
   if (res.data.wechat) {
     ms.info('绑定成功！！')
     clearInterval(time)
-    back();
+    handleBack();
   }
 }
 onUnmounted(() => {

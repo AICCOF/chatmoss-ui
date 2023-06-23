@@ -68,6 +68,7 @@ async function bindEvent() {
       emailCode: loginForm.emailCode
     });
     message.info(res.msg, { duration: 5000 })
+    handleBack();
   }
   catch (error: any) {
     message.info(error.msg, { duration: 5000 })

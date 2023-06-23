@@ -10,12 +10,10 @@ export interface InviteRes {
   "35TotalDays": number
 }
 
-export function getWechatLoginQrCode<T>() {
+export function getWechatLoginQrCode<T>(data) {
   return post<T>({
     url: `/luomacode-api/user/getWechatLoginQrCode`,
-    data: {
-      inviteCode:''
-    },
+    data,
   })
 }
 
@@ -40,7 +38,7 @@ export function bandingEmailCode<T>(data = {}) {
 }
 
 export function doBindingEmail<T>(data = {}) {
-  return get<T>({
+  return post<T>({
     url: `/luomacode-api/user/doBindingEmail`,
     data,
   })
