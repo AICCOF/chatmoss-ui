@@ -188,7 +188,6 @@ async function onConversation(askMsg?: string, opt?) {
       conversationId: chatStore.getUuid,
       openaiVersion: userStore.getOpenaiVersion,
       appId: userStore.appIdValue,
-      apiKey: localStorage.getItem('apiKey'),
       ...opt,
     }
   }
@@ -197,7 +196,6 @@ async function onConversation(askMsg?: string, opt?) {
       conversationId: chatStore.getUuid,
       appId: userStore.appIdValue,
       openaiVersion: userStore.getOpenaiVersion,
-      apiKey: userStore.useKey === '1' ? localStorage.getItem('apiKey') : "",
     }
   }
 
@@ -266,6 +264,7 @@ async function onConversation(askMsg?: string, opt?) {
         ...options,
         ...chatOptions,
       },
+      apiKey: userStore.useKey === '1' ? localStorage.getItem('apiKey') : "",
       signal: controller.signal,
       onDownloadProgress: ({ event }) => {
         const xhr = event.target
@@ -316,7 +315,32 @@ async function onConversation(askMsg?: string, opt?) {
         // on close
         userStore.toggleOpenaiVersion()
       });
-    } else {
+    } else if (error.msg === 'API KEY is invalid') {
+
+      if (getToken()) {
+        showConfirmDialog({
+          title: 'key失效',
+          message: '您当前设置的key不正确，或者key已经到期，目前ChatMoss 3.5 可免费使用，是否取消使用自己的key?',
+          confirmButtonText: '确定',
+          cancelButtonText: '知道了'
+        }).then(() => {
+          // on close
+          userStore.closeKey()
+        });
+      } else {
+        showConfirmDialog({
+          title: 'key失效',
+          message: '您当前设置的key不正确，或者key已经到期，目前ChatMoss 3.5登录后可免费使用，是否登录？',
+          confirmButtonText: '去登录',
+          cancelButtonText: '知道了'
+        }).then(() => {
+          // on close
+          userStore.closeKey()
+          go({
+            name:'login'
+          })
+        });
+      }
 
     }
     if (error.code === 204) {

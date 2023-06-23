@@ -131,6 +131,10 @@ export const useUserStore = defineStore('user-store', {
     },
   },
   actions: {
+    closeKey(){
+      this.useKey = '0'
+      // 
+    },
     toggleMode() {
       this.toggle = this.toggle === '0' ? "1" : '0'
       // console.log(this.toggle)
