@@ -22,6 +22,9 @@ import appList from '@/views/page/appList/index.vue'
 import createApp from '@/views/page/createApp/index.vue'
 import c404 from '@/views/exception/404/index.vue'
 import c500 from '@/views/exception/500/index.vue'
+import agreement from '@/views/page/agreement/index.vue'
+import detailedRule from '@/views/page/detailedRule/index.vue'
+import privacy from '@/views/page/privacy/index.vue'
 const routes: RouteRecordRaw[] = [
   {
     path: '/page',
@@ -29,6 +32,21 @@ const routes: RouteRecordRaw[] = [
     component: PageLayout,
     // redirect: '/page/shop',
     children: [
+      {
+        path: 'agreement',
+        name: 'agreement',
+        component: agreement,
+      },
+      {
+        path: 'privacy',
+        name: 'privacy',
+        component: privacy,
+      },
+      {
+        path: 'detailedRule',
+        name: 'detailedRule',
+        component: detailedRule,
+      },
       {
         path: 'shop',
         name: 'shop',

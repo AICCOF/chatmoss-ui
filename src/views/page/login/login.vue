@@ -125,9 +125,9 @@ function handleToggle() {
             {{ type === 1 ? '使用账号密码登录' : '' }}
           </span>
           <div v-show="type === 1">
-            <div><img :src="imgUrl" v-if="imgUrl" class="code top" alt="" /></div>
+            <div class="code top"><img :src="imgUrl" v-if="imgUrl"  alt="" /></div>
             <div class="text">微信提示：微信登录后绑定邮箱可实现账号互通</div>
-            <div class="bottom">登录即同意<span class="link">用户协议</span>和<span class="link">隐私条款</span></div>
+            <div class="bottom">登录即同意<span class="link" @click="() => { go({ name: 'agreement' }) }">用户协议</span>和<span class="link" @click="() => { go({ name: 'privacy' }) }">隐私条款</span></div>
           </div>
           <div v-show="type === 2" style="padding-bottom: 40px;">
             <div class="input">
@@ -253,6 +253,8 @@ function handleToggle() {
     width: 60%;
     max-width: 300px;
     max-height: 300px;
+    min-width: 200px;
+    min-height: 200px;;
     height: 60%;
     // width:;
   }

@@ -209,6 +209,9 @@ export const useUserStore = defineStore('user-store', {
       this.userInfo.openaiVersion = value
       this.recordState()
     },
+    getOpenaiList() {
+      // todo
+    },
     resetUserInfo() {
       this.userInfo = { ...defaultSetting().userInfo }
       this.recordState()
