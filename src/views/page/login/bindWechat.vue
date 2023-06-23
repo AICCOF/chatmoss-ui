@@ -44,7 +44,7 @@ async function getWechatLoginQrCodeAPI() {
   expire_seconds = res.data.expire_seconds;
   imgUrl.value = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(res.data.ticket)
   time = setInterval(() => {
-    expire_seconds = expire_seconds - 2;
+    expire_seconds = expire_seconds - 3;
     if (expire_seconds < 0) {
       getWechatLoginQrCodeAPI();
     }

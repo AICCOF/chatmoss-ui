@@ -62,7 +62,7 @@ async function loginEvent() {
 }
 
 let time = null;
-let count = 20;
+let expire_seconds = 0;
 getWechatLoginQrCodeAPI();
 
 async function getWechatLoginQrCodeAPI() {
@@ -72,14 +72,16 @@ async function getWechatLoginQrCodeAPI() {
     inviteCode: router.currentRoute.value.query.invite
   })
   imgUrl.value = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(res.data.ticket)
+  expire_seconds = res.data.expire_seconds;
   time = setInterval(() => {
-    if (count <= 0) {
+    expire_seconds = expire_seconds - 3;
+    console.log(expire_seconds)
+    if (expire_seconds <= 0) {
       clearInterval(time)
-      count = 20;
       getWechatLoginQrCodeAPI();
     }
     getTokenByTicketAPI(res.data.ticket);
-    count--;
+ 
   }, 2000)
 }
 async function getTokenByTicketAPI(ticket: string) {
@@ -94,7 +96,7 @@ async function getTokenByTicketAPI(ticket: string) {
     setTimeout(() => {
       handleBack()
       handleClick()
-    }, 2000);
+    }, 300);
     sendToMsg('chatMossToken', res.data.token)
   } else if (res.data.status === 2) {
     clearInterval(time)

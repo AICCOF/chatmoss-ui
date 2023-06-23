@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NDivider, NSelect, NSwitch, useMessage , useDialog } from 'naive-ui'
+import { NDivider, NSelect, NSwitch, useMessage, useDialog } from 'naive-ui'
 import { computed, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import uni from '@dcloudio/uni-webview-js'
@@ -40,7 +40,7 @@ const choose = reactive({
   chatmossMode: localStorage.getItem('chatmossMode') || 'normal',
 })
 defineExpose({ updated })
-
+userStore.getOpenaiList()
 const apiKey = ref(localStorage.getItem('apiKey') || '') as any
 function settingBtn() {
   if (apiKey.value === '' || apiKey.value.startsWith('sk-')) {
@@ -53,7 +53,7 @@ function settingBtn() {
   }
 }
 
-const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '100%') as any
+const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '85%') as any
 function fontSizeNumBtn() {
   localStorage.setItem('fontSizeNum', fontSizeNum.value.endsWith('%') ? fontSizeNum.value : `${fontSizeNum.value < 50 ? 50 : fontSizeNum.value}%`)
   const htmlDom = document.querySelector('html') as any
@@ -74,12 +74,9 @@ function handleUpdateValue(chatmossTheme: string) {
 
 // 模型选择
 // console.log(userStore.getOpenaiVersion)
-if (userStore.userInfo.fourSwitch !== 'ON')
-  userStore.saveOpenaiVersion('3.5')
+// if (userStore.userInfo.fourSwitch !== 'ON')
+//   userStore.saveOpenaiVersion('3.5')
 
-const modelValue = ref(userStore.getOpenaiVersion)
-
-const options = ref<any[]>(userStore.options)
 
 // 专业模式
 function handleModeValue(chatmossMode: string) {
@@ -88,10 +85,18 @@ function handleModeValue(chatmossMode: string) {
   localStorage.setItem('chatmossMode', chatmossMode)
 }
 
+const showPopover = ref(false);
+
+
+function setOpenaiVersion(action) {
+  userStore.saveOpenaiVersion(action)
+  ms.success('模型切换成功')
+}
+
 const dialog = useDialog()
 function bindEvent(type, text) {
   // 解绑操作
-  if (text) { 
+  if (text) {
     new Promise((resole, reject) => {
       dialog.error({
         title: '解绑',
@@ -99,14 +104,14 @@ function bindEvent(type, text) {
         positiveText: '确定',
         negativeText: '取消',
         onPositiveClick: async () => {
-          let res = await  unbind({
-            type: type === 'email'? 1:0
+          let res = await unbind({
+            type: type === 'email' ? 1 : 0
           })
           ms.info(res.msg)
           bindingStatusAPI();
         },
         onNegativeClick: () => {
-         
+
         },
       })
     })
@@ -199,14 +204,27 @@ function bindEvent(type, text) {
             确定
           </van-button>
         </div>
+        <div class="flex mt-2 justify-between mt-4 ml-4">
+          <van-radio-group v-model="userStore.useKey" direction="horizontal" @change="userStore.recordState">
+            <van-radio name="1">使用key</van-radio>
+            <van-radio name="0">不使用key</van-radio>
+          </van-radio-group>
+        </div>
 
         <van-divider />
         <div class="">
           <div class="flex justify-between">
             <div>OpenAI模型选择</div>
             <div>
-              <NSelect v-model:value="modelValue" :options="options" class="select" style="width:140px"
-                @change="(value) => { userStore.saveOpenaiVersion(value) }" />
+              <van-popover v-model:show="showPopover" :actions="userStore.getModelList" @select="setOpenaiVersion"
+                placement="left">
+                <template #reference>
+                  <div class="footer-item footer-item-btn footer-item-btn1 model-version " style="margin-right: 0px;">
+                    {{ userStore.getModeVersion.viewName }}
+                    <SvgIcon icon="icon-park-outline:right" class="icon" />
+                  </div>
+                </template>
+              </van-popover>
             </div>
           </div>
           <div class="tip-text-input">

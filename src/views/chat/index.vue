@@ -19,6 +19,7 @@ import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
+import { showConfirmDialog } from 'vant';
 
 const authStore = useAuthStoreWithout()
 const go = useGo()
@@ -76,6 +77,8 @@ const conversationList = computed(() =>
 )
 
 const userInputindex = ref<number>(0)
+userStore.getOpenaiList()
+
 const userInputList = computed(() => {
   const list = dataSources.value.filter((item) => {
     return !('loading' in item)
@@ -185,6 +188,7 @@ async function onConversation(askMsg?: string, opt?) {
       conversationId: chatStore.getUuid,
       openaiVersion: userStore.getOpenaiVersion,
       appId: userStore.appIdValue,
+      apiKey: localStorage.getItem('apiKey'),
       ...opt,
     }
   }
@@ -193,6 +197,7 @@ async function onConversation(askMsg?: string, opt?) {
       conversationId: chatStore.getUuid,
       appId: userStore.appIdValue,
       openaiVersion: userStore.getOpenaiVersion,
+      apiKey: userStore.useKey === '1' ? localStorage.getItem('apiKey') : "",
     }
   }
 
@@ -217,7 +222,6 @@ async function onConversation(askMsg?: string, opt?) {
     requestOptions: { prompt: message, options: null },
   })
   goToBottom()
-
   loading.value = true
   prompt.value = ''
 
@@ -267,7 +271,7 @@ async function onConversation(askMsg?: string, opt?) {
         const xhr = event.target
         // const { responseText } = xhr
         const chunk = xhr.responseText
-        // console.log(chunk,'chunk', xhr.responseText)
+        // console.log(unescape(xhr.responseText))
         try {
           // const data = JSON.parse(chunk)
           updateChat(chatStore.getUuid, dataSources.value.length - 1, {
@@ -300,7 +304,21 @@ async function onConversation(askMsg?: string, opt?) {
     scrollToBottom()
   }
   catch (error: any) {
-    ms.error(error.msg || error.message)
+    // ms.error(error.msg || error.message)
+
+    if (error.msg === '[OpenAI 当前对话上下文过长，请点击左下角新建问题按钮提问-（出现本条提示的原因是，3.5 上下文最多只有 4000token，4.0最多8000token，当前上下文已经超过最大token数量）]') {
+      showConfirmDialog({
+        title: '切换模型',
+        message: '您当前问题已经超过模型最大4k字符上下文，是否切换到16k上下文模型?',
+        confirmButtonText: '切换',
+        cancelButtonText: '不切换'
+      }).then(() => {
+        // on close
+        userStore.toggleOpenaiVersion()
+      });
+    } else {
+
+    }
     if (error.code === 204) {
       // error.msg
       ms.error(error.msg)
@@ -324,24 +342,24 @@ async function onConversation(askMsg?: string, opt?) {
 
     if (currentChat?.text && currentChat.text !== '') {
       updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-        text: `${currentChat.text}\n[${errorMessage}]`,
-        error: false,
+        text: `${errorMessage}`,
+        error: true,
         loading: false,
       })
       return
     }
 
-    updateChat(chatStore.getUuid, dataSources.value.length - 1, {
-      timestamp: new Date().getTime(),
-      createTime: new Date().toLocaleString(),
-      text: errorMessage,
-      inversion: false,
-      ast: message,
-      error: true,
-      loading: false,
-      conversationOptions: null,
-      requestOptions: { prompt: message, options: { ...options } },
-    })
+    // updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+    //   timestamp: new Date().getTime(),
+    //   createTime: new Date().toLocaleString(),
+    //   text: errorMessage,
+    //   inversion: false,
+    //   ast: message,
+    //   error: true,
+    //   loading: false,
+    //   conversationOptions: null,
+    //   requestOptions: { prompt: message, options: { ...options } },
+    // })
     scrollToBottom()
   }
   finally {
@@ -513,19 +531,13 @@ function handleMode() {
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
       <transition name="fade">
-        <applicationList
-          v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
-          :style="{ width: userStore.toggleValue ? '71px' : '1px' }"
-        />
+        <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
+          :style="{ width: userStore.toggleValue ? '71px' : '1px' }" />
       </transition>
-      <div
-        id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
-        :class="[userStore.toggleValue ? 'p90' : '']"
-      >
-        <div
-          id="image-wrapper" class="w-full max-w-screen-xl m-auto flex items-center py-4"
-          :class="[isMobile ? 'px-2' : 'px-4']" style="height: 100%;overflow: hidden"
-        >
+      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']">
+        <div id="image-wrapper" class="w-full m-auto flex items-center py-4" :class="[isMobile ? 'px-2' : 'px-4']"
+          style="height: 100%;overflow: hidden">
           <template v-if="!dataSources.length">
             <div class="no-data-info  w-full">
               <!-- 应用介绍 -->
@@ -533,40 +545,36 @@ function handleMode() {
                 应用使用说明：{{ userStore.currentApp.desc }}
               </div>
               <!-- 空态占位图 -->
-              <img
-                v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
-                alt="" @click="() => { go({ name: 'shop' }) }"
-              >
+              <img v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
+                alt="" @click="() => { go({ name: 'shop' }) }">
               <div v-else>
                 <!-- 后面期望这里跳转使用教程页面 -->
                 <div class="no-data-info-tip-title">
                   ChatMoss视频使用教程（新人必看）：
                 </div>
                 <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img
-                    style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt=""
-                  >
+                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
                 </a>
               </div>
             </div>
           </template>
           <template v-else>
             <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
-                :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn"
-                @online="onlineFn" @jarvis="jarvisFn"
-              />
+              <div id="data-wrapper">
+                <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                  :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
+                  :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn"
+                  @online="onlineFn" @jarvis="jarvisFn" />
 
-              <div class="sticky bottom-0 left-0 flex justify-center">
-                <NButton v-if="loading" type="warning" @click="handleStop">
-                  <template #icon>
-                    <SvgIcon icon="ri:stop-circle-line" />
-                  </template>
-                  正在响应
-                </NButton>
+                <div class="sticky bottom-0 left-0 flex justify-center">
+                  <NButton v-if="loading" type="warning" @click="handleStop">
+                    <template #icon>
+                      <SvgIcon icon="ri:stop-circle-line" />
+                    </template>
+                    正在响应
+                  </NButton>
+                </div>
               </div>
             </div>
           </template>
@@ -577,16 +585,12 @@ function handleMode() {
           </transition>
           <div class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput
-                v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
+              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter"
-              />
-              <NSelect
-                v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                @keydown="handleEnter" />
+              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-                label-field="key" @keydown="handleEnter" @input="handleSelectInput"
-              />
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
               <div class="btn-style btn-mode" @click="handleMode">
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}

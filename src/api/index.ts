@@ -25,15 +25,17 @@ export function fetchChatAPIProcess<T = any>(
     prompt: string
     options?: {}
     signal?: GenericAbortSignal
+    apiKey?:string;
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void
   },
 ) {
+  // localStorage.getItem('apiKey') ? localStorage.getItem('apiKey') : '',
   return post<T>({
     url: '/ask/',
     data: {
       prompt: params.prompt,
       options: params.options,
-      apiKey: localStorage.getItem('apiKey') ? localStorage.getItem('apiKey') : '',
+      apiKey: params.apiKey
     },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,

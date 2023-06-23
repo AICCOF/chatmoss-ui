@@ -14,6 +14,7 @@ const { message } = createDiscreteApi(
     messageProviderProps:{max:1}
   }
 )
+let timer = null;
 export function useCopyCode() {
   function copyCodeBlock() {
     const codeBlockWrapper = document.querySelectorAll('.code-block-wrapper')
@@ -30,6 +31,8 @@ export function useCopyCode() {
           else
             copyText({ text: codeBlock.textContent ?? '', origin: true })
           message.success('已复制到剪切板')
+
+          // clearTimeout(timer)
         })
       }
 

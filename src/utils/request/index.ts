@@ -57,7 +57,6 @@ function http<T = any>(
     } else {
       showToast(res.data.msg)
     }
-
     return Promise.reject(res.data)
   }
 

@@ -8,7 +8,7 @@ const back = useBack()
 
 onMounted(() => {
 })
-const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?time=${new Date().getTime()}`)
+const url = ref(`https://h5.aihao123.cn/pages/app/help/index.html?time=${new Date().getTime()}`)
 </script>
 
 <template>

@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import 'vant/lib/index.css'
 import 'v3-tour/dist/vue-tour.css'
 import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
-import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet, Divider, DropdownMenu, DropdownItem, Popover } from 'vant';
+import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet, Divider, DropdownMenu, DropdownItem, Popover, Checkbox, CheckboxGroup,RadioGroup, Radio } from 'vant';
 import App from './App.vue'
 import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
@@ -49,7 +49,10 @@ async function bootstrap() {
   app.use(DropdownMenu);
   app.use(DropdownItem);
   app.use(Popover);
-  
+  app.use(Checkbox);
+  app.use(CheckboxGroup);
+  app.use(Radio);
+  app.use(RadioGroup);
 
   setupAssets()
 

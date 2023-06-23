@@ -62,6 +62,12 @@ function handleSelect(key: string, askMsg: string) {
       return
     case 'ask':
       emit('ask', askMsg)
+      //   domtoimage.toPng(document.getElementById('data-wrapper')).then(function (screenshot) {
+      //   // 创建一个新的窗口或标签页来显示截图结果
+      //   console.log(screenshot)
+      // }).catch(function (error) {
+      //   console.error('截图失败:', error);
+      // });
       return
     case 'online':
       emit('online', askMsg)

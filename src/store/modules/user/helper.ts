@@ -46,6 +46,7 @@ export interface UserState {
     isSelf: boolean;
     url: string
   }[]
+  useKey: string;
 }
 
 export function defaultSetting(): UserState {
@@ -62,8 +63,9 @@ export function defaultSetting(): UserState {
       isFinishGuide: false,
       notices: [],
       user: { nickname: '', email: '', plusEndTime: undefined },
-     
+
     },
+    useKey: '1',
     activityList: [],
   }
 }
@@ -73,8 +75,8 @@ export function getLocalState(): UserState {
     ...defaultSetting().userInfo,
     ...localSetting.userInfo,
   }
-  // console.log(userInfo)
-  return { userInfo, activityList: [], appId: localSetting.appId, toggle: localSetting.toggle }
+  // console.log(defaultSetting)
+  return { userInfo, activityList: [], appId: localSetting.appId, toggle: localSetting.toggle, useKey: localSetting.useKey || '1' }
 }
 
 export function setLocalState(setting: UserState): void {

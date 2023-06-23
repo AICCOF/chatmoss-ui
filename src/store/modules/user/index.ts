@@ -7,13 +7,17 @@ import { localStorage } from '@/utils/storage/localStorage'
 import type { Notice } from '@/store/modules/user/helper'
 import { getSystemNotice } from '@/api/personCenter'
 import { getApplicationInstallList } from '@/api/application'
+import { getModelList } from '@/api/weixin'
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
       ...getLocalState(),
       centerPicUrl: '',
+      modelList: [],
+      modeVersion: {},
       appList: {},
       notices: [],
+      // useKey: '1',
       isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
   },
@@ -33,8 +37,14 @@ export const useUserStore = defineStore('user-store', {
     getNotices(state) {
       return state.userInfo.notices
     },
+    getModelList(state) {
+      return state.modelList || []
+    },
     getOpenaiVersion(state) {
       return state.userInfo.openaiVersion
+    },
+    getModeVersion(state) {
+      return state.modeVersion || {}
     },
     isHighVersion(state) {
       return state.userInfo.openaiVersion == '4.0'
@@ -43,20 +53,6 @@ export const useUserStore = defineStore('user-store', {
       return state.userInfo.residueCount * 10
     },
     // state.userInfo.fourSwitch !== 'ON' || !!localStorage.getItem('apiKey')
-    options(state) {
-      return [
-        {
-          label: 'ChatGPT3.5',
-          value: '3.5',
-          disabled: false,
-        },
-        {
-          label: 'ChatGPT4.0',
-          value: '4.0',
-          disabled: false,
-        },
-      ]
-    },
     isHighVersionMsg(state) {
       if (!state.userInfo.timesInfo)
         return true
@@ -206,11 +202,37 @@ export const useUserStore = defineStore('user-store', {
       this.recordState()
     },
     saveOpenaiVersion(value: string) {
-      this.userInfo.openaiVersion = value
+      this.modeVersion = value
+      this.userInfo.openaiVersion = value.codeName
       this.recordState()
     },
-    getOpenaiList() {
+    toggleOpenaiVersion(){
+      this.saveOpenaiVersion(this.modelList[1])
+    },
+    async getOpenaiList() {
       // todo
+      let res = await getModelList()
+      this.modelList = (res.data || []).map((row) => {
+        return {
+          ...row,
+          text: row.viewName
+        }
+      })
+      //判断选中
+      if (this.userInfo.openaiVersion) {
+        const index = this.modelList.findIndex(item => item.codeName === this.userInfo.openaiVersion)
+        if (index !== -1) {
+          this.modeVersion = this.modelList[index]
+          this.userInfo.openaiVersion = this.modelList[index].codeName
+        } else {
+          this.modeVersion = this.modelList[0]
+          this.userInfo.openaiVersion = this.modelList[0].codeName
+        }
+      } else {
+        this.modeVersion = this.modelList[0]
+        this.userInfo.openaiVersion = this.modelList[0].codeName
+      }
+      this.recordState()
     },
     resetUserInfo() {
       this.userInfo = { ...defaultSetting().userInfo }

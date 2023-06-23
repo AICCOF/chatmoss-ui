@@ -30,19 +30,12 @@ async function jarvisEvent() {
 }
 
 function setOpenaiVersion(action) {
-	userStore.saveOpenaiVersion(action.text)
+	userStore.saveOpenaiVersion(action)
 	ms.success('模型切换成功')
 }
 
 const showPopover = ref(false);
 
-// 通过 actions 属性来定义菜单选项
-const actions = [
-	{ text: 'GPT-3.5-4k' },
-	{ text: 'GPT-3.5-16k' },
-	{ text: 'GPT-4.0-8k' },
-];
-// const onSelect = (action) => showToast(action.text);
 </script>
 
 <template>
@@ -70,10 +63,10 @@ const actions = [
 				<div class="footer-item" style="margin-right: 0px;">
 					<div class="header-right-item header-right-item-help">
 
-						<van-popover v-model:show="showPopover" :actions="actions" @select="setOpenaiVersion" placement="left" >
+						<van-popover v-model:show="showPopover" :actions="userStore.getModelList" @select="setOpenaiVersion" placement="left" >
 							<template #reference>
 								<div class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;">
-									{{ userStore.getOpenaiVersion }}
+									{{ userStore.getModeVersion.viewName }}
 								</div>
 							</template>
 						</van-popover>

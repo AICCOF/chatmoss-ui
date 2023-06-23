@@ -1,3 +1,4 @@
+import { getToken } from '@/store/modules/auth/helper'
 import post, { deleteRequest, get } from '@/utils/request'
 
 
@@ -24,10 +25,14 @@ export function getTokenByTicket<T>(data) {
   })
 }
 export function bindingStatus<T>(data = {}) {
-  return get<T>({
-    url: `/luomacode-api/binding/status`,
-    data,
-  })
+  if(getToken()){
+    return get<T>({
+      url: `/luomacode-api/binding/status`,
+      data,
+    })
+  }else{
+    return Promise.reject()
+  }
 }
 
 export function bandingEmailCode<T>(data = {}) {
@@ -55,3 +60,11 @@ export function unbind<T>(data = {}) {
     data,
   })
 }
+export function getModelList<T>(data = {}) {
+  return get<T>({
+    url: `/luomacode-api/outer/model/list`,
+    data,
+  })
+}
+
+
