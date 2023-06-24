@@ -39,11 +39,6 @@ async function toMossEvent() {
     ms.error(error.msg, { duration: 5000 })
   }
 }
-function buyEvent(item: any) {
-  shopModal.value = true
-  shopData.value = item
-}
-
 const exchangeMossCode = ref('')
 
 const dialog = useDialog()
@@ -71,6 +66,7 @@ async function exchangeMossEvent() {
     },
   })
 }
+// border: 1px solid rgb(224, 224, 230)
 </script>
 
 <template>
@@ -84,7 +80,7 @@ async function exchangeMossEvent() {
           兑换码（登录后才能兑换哦~）
         </div>
         <div class="flex">
-          <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的兑换码" />
+          <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的兑换码"  style="border: 1px solid rgb(224, 224, 230)"/>
           <NButton type="primary" ghost @click="toMossEvent">
             确定
           </NButton>
@@ -97,7 +93,7 @@ async function exchangeMossEvent() {
           字符兑换次数（老用户使用）
         </div>
         <div class="flex">
-          <NSelect v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2" placeholder="请输入您的兑换码" />
+          <NSelect v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2" placeholder="请输入您的兑换码" style="border: 1px solid rgb(224, 224, 230)"/>
           <NButton type="primary" ghost @click="exchangeMossEvent">
             确定
           </NButton>

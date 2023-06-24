@@ -432,17 +432,22 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     updateChatSomeByUuid(id: number, index: number, chat: Partial<Chat.Chat>) {
+      let chatList = this.chat;
+      if (verify(id)){
+        // updateChatSomeByUuid
+        chatList = this.localChat
+      }
       if (!id || id === 0) {
-        if (this.chat.length) {
-          this.chat[0].data[index] = { ...this.chat[0].data[index], ...chat }
+        if (chatList.length) {
+          chatList[0].data[index] = { ...chatList[0].data[index], ...chat }
           this.recordState()
         }
         return
       }
 
-      const chatIndex = this.chat.findIndex(item => item.id === id)
+      const chatIndex = chatList.findIndex(item => item.id === id)
       if (chatIndex !== -1) {
-        this.chat[chatIndex].data[index] = { ...this.chat[chatIndex].data[index], ...chat }
+        chatList[chatIndex].data[index] = { ...chatList[chatIndex].data[index], ...chat }
         this.recordState()
       }
     },
