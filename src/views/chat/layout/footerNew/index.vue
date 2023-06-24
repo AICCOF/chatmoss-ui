@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NPopover, useMessage } from 'naive-ui'
+import { NPopover, useMessage, NTooltip, NPopselect } from 'naive-ui'
 import { useChatStore, useUserStore } from '@/store'
 import { conversationUpload } from '@/api/index'
 // import { computed } from 'vue'
@@ -62,14 +62,25 @@ const showPopover = ref(false);
 			<div class="footer-right">
 				<div class="footer-item" style="margin-right: 0px;">
 					<div class="header-right-item header-right-item-help">
-
-						<van-popover v-model:show="showPopover" :actions="userStore.getModelList" @select="setOpenaiVersion" placement="left" >
-							<template #reference>
-								<div class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;">
+						<n-popover trigger="hover" placement="left">
+							<template #trigger>
+								<div class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;" v-if="userStore.getModeVersion">
 									{{ userStore.getModeVersion.viewName }}
 								</div>
 							</template>
-						</van-popover>
+							<div>
+								<div v-for="(item, i) of userStore.getModelList" :key="i"
+								class="model-item"
+									:class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)">
+									<n-popover trigger="hover" placement="left" style="width: max-content;">
+									<div class="flex">解释：{{ item.desc }}</div>
+										<template #trigger>
+											<div class="cursor">{{ item.viewName }}</div>
+										</template>
+									</n-popover>
+								</div>
+							</div>
+						</n-popover>
 					</div>
 				</div>
 			</div>
@@ -78,6 +89,15 @@ const showPopover = ref(false);
 </template>
 
 <style lang="less" scoped>
+
+.model-item{
+	padding:3px 5px;
+	cursor: pointer;
+}
+.line {
+	border-bottom: 0.5px solid #3a3a3c;
+}
+
 .footer-main {
 	width: 100%;
 	min-width: 250px;

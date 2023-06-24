@@ -38,19 +38,19 @@ function loginEvent(type: string) {
 
 // moss数量
 const residueCountPay = computed(() => {
-  if(userStore.balanceInfo){
+  if(userStore.balanceInfo && userStore.balanceInfo.residueCountPay){
     const residueCount = userStore.balanceInfo.residueCountPay * 10
     return `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
   }
-  return ''
+  return '0'
   
 })
 const residueCountFree = computed(() => {
-  if (userStore.balanceInfo) {
+  if (userStore.balanceInfo && userStore.balanceInfo.residueCountFree) {
     const residueCountFree = userStore.balanceInfo.residueCountFree * 10
     return `${residueCountFree > 10000 ? `${(Math.floor(residueCountFree / 100) / 100).toFixed(2)}w` : residueCountFree}字符`
   }
-  return ''
+  return '0'
 })
 function handleClose(row: any) {
   // shopEvent()

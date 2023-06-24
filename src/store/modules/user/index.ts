@@ -82,21 +82,27 @@ export const useUserStore = defineStore('user-store', {
       return true
     },
     packageList(state) {
+      let arr =[];
       if (!state.balanceInfo)
         return []
-
-      return [
-        {
+      
+      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5']){
+        arr.push({
           title: '3.5套餐',
           timesResidue: state.balanceInfo.timesResidue['3.5'],
           list: state.balanceInfo.orderResidue['3.5'],
-        },
-        {
+        })
+      }
+
+      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['4.0']) {
+        arr.push({
           title: '4.0套餐',
           timesResidue: state.balanceInfo.timesResidue['4.0'],
           list: state.balanceInfo.orderResidue['4.0'],
-        },
-      ]
+        })
+      }
+
+      return arr
     },
     activities(state) {
       return state.activityList

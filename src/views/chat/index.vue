@@ -304,7 +304,7 @@ async function onConversation(askMsg?: string, opt?) {
   catch (error: any) {
     // ms.error(error.msg || error.message)
 
-    if (error.msg === '[OpenAI 当前对话上下文过长，请点击左下角新建问题按钮提问-（出现本条提示的原因是，3.5 上下文最多只有 4000token，4.0最多8000token，当前上下文已经超过最大token数量）]') {
+    if (error.code === 10000) {
       showConfirmDialog({
         title: '切换模型',
         message: '您当前问题已经超过模型最大4k字符上下文，是否切换到16k上下文模型?',
@@ -314,7 +314,7 @@ async function onConversation(askMsg?: string, opt?) {
         // on close
         userStore.toggleOpenaiVersion()
       });
-    } else if (error.msg === 'API KEY is invalid') {
+    } else if (error.code === 10001) {
 
       if (getToken()) {
         showConfirmDialog({
