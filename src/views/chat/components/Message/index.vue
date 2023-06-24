@@ -95,7 +95,7 @@ function handleSelect(key: string, askMsg: string) {
         {{ dateTime }} <span v-if="chatStore.active">({{ chatStore.active }}) </span>
       </p>
       <p class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']" v-if="!inversion && viewMsg">
-        <span>提问消耗：{{ viewMsg }} </span>
+        <span>{{ viewMsg }} </span>
         <span>(模式：{{ questionMode }}) </span>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">

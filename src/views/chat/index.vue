@@ -173,10 +173,10 @@ async function onConversation(askMsg?: string, opt?) {
     ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
     return
   }
-  if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('请先去设置中心移除key再使用4.0进行提问')
-    return
-  }
+  // if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
+  //   ms.error('请先去设置中心移除key再使用4.0进行提问')
+  //   return
+  // }
 
   if (chatStore.isLimit && userStore.isHighVersion && userStore.isHighVersionMsg) {
     const res = await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0')
@@ -391,8 +391,7 @@ async function onConversation(askMsg?: string, opt?) {
       conversationId:chatStore.getUuid
     }).then(res=>{
         updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-        viewMsg: res.data.viewMsg,
-        questionMode: res.data.questionMode
+          mossReduceInfo: res.data
       })
     })
    
@@ -596,7 +595,7 @@ function handleMode() {
               <div id="data-wrapper">
                 <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                   :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
-                  :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn" :viewMsg="item.viewMsg" :questionMode="item.questionMode"
+                  :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn" :viewMsg="item.mossReduceInfo?.viewMsg" :questionMode="item.mossReduceInfo?.questionMode"
                   @online="onlineFn" @jarvis="jarvisFn" />
 
                 <div class="sticky bottom-0 left-0 flex justify-center">
