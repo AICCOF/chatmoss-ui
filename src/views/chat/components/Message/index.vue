@@ -19,6 +19,8 @@ interface Props {
   error?: boolean
   loading?: boolean
   id?: number
+  viewMsg?: string
+  questionMode?: string;
 }
 interface Emit {
   (ev: 'ask', askMsg: string): void
@@ -27,7 +29,7 @@ interface Emit {
 }
 
 const { iconRender } = useIconRender()
-
+const ms = useMessage()
 const textRef = ref<HTMLElement>()
 
 // console.error(props.isShow)
@@ -35,30 +37,35 @@ let options: any[] = []
 watch(() => props.isShow, (value) => {
   options = value
     ? [
-        {
-          label: t('重新提问'),
-          key: 'ask',
-          icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
-        },
-        {
-          label: t('联网提问'),
-          key: 'online',
-          icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-        },
-        {
-          label: t('个人资料库提问'),
-          key: 'jarvis',
-          icon: iconRender({ icon: 'icon-park-solid:brain' }),
-        },
-      ]
+      {
+        label: t('复制'),
+        key: 'copyText',
+        icon: iconRender({ icon: 'ph:copy' }),
+      },
+      {
+        label: t('重新提问'),
+        key: 'ask',
+        icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
+      },
+      {
+        label: t('联网提问'),
+        key: 'online',
+        icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+      },
+      {
+        label: t('个人资料库提问'),
+        key: 'jarvis',
+        icon: iconRender({ icon: 'icon-park-solid:brain' }),
+      },
+    ]
     : []
 }, { immediate: true })
 
 function handleSelect(key: string, askMsg: string) {
   switch (key) {
     case 'copyText':
-      // copyText({ text: props.text ?? '' })
-      // Message.success('已复制到剪切板')
+      copyText({ text: props.text ?? '' })
+      ms.success('已复制到剪切板')
       return
     case 'ask':
       emit('ask', askMsg)
@@ -87,11 +94,13 @@ function handleSelect(key: string, askMsg: string) {
       <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
         {{ dateTime }} <span v-if="chatStore.active">({{ chatStore.active }}) </span>
       </p>
+      <p class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']" v-if="!inversion && viewMsg">
+        <span>提问消耗：{{ viewMsg }} </span>
+        <span>(模式：{{ questionMode }}) </span>
+      </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent
-          ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
-          @copy="handleSelect('copyText', '')"
-        />
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
+          @copy="handleSelect('copyText', '')" />
       </div>
       <div v-if="!inversion" class="flex mt-2 ml-2">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>

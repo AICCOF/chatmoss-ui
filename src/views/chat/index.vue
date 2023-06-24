@@ -20,6 +20,9 @@ import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 import { showConfirmDialog } from 'vant';
+import { getLatestCharReduceInfo } from './../../api/weixin'
+
+
 
 const authStore = useAuthStoreWithout()
 const go = useGo()
@@ -384,6 +387,15 @@ async function onConversation(askMsg?: string, opt?) {
     scrollToBottom()
   }
   finally {
+    getLatestCharReduceInfo({
+      conversationId:chatStore.getUuid
+    }).then(res=>{
+        updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+        viewMsg: res.data.viewMsg,
+        questionMode: res.data.questionMode
+      })
+    })
+   
     loading.value = false
     userStore.residueCountAPI()
   }
@@ -584,7 +596,7 @@ function handleMode() {
               <div id="data-wrapper">
                 <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                   :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
-                  :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn"
+                  :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading" @ask="askFn" :viewMsg="item.viewMsg" :questionMode="item.questionMode"
                   @online="onlineFn" @jarvis="jarvisFn" />
 
                 <div class="sticky bottom-0 left-0 flex justify-center">

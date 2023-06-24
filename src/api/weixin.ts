@@ -74,5 +74,12 @@ export function getBalanceInfo<T>(data = {}) {
   })
 }
 
+export function getLatestCharReduceInfo<T>(data = {}) {
+  // return Promise.resolve();
+  return get<T>({
+    url: `/luomacode-api/chat/getLatestCharReduceInfo`,
+    data,
+  })
+}
 
 
