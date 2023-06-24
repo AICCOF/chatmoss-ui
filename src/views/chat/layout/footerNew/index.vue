@@ -1,95 +1,103 @@
 <script lang="ts" setup>
-import { NPopover, useMessage, NTooltip, NPopselect } from 'naive-ui'
+import { NPopover, useMessage } from 'naive-ui'
+import { ref } from 'vue'
 import { useChatStore, useUserStore } from '@/store'
 import { conversationUpload } from '@/api/index'
 // import { computed } from 'vue'
-import { ref } from 'vue'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const ms = useMessage()
 
 // 新建对话
 function createQuestion() {
-	const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-	questionBtnDom.click()
-	ms.success('新建会话成功，请提问~')
+  const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+  questionBtnDom.click()
+  ms.success('新建会话成功，请提问~')
 }
 
 // 历史记录
 function toggleButtonEvent() {
-	const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
-	toggleButton.click()
+  const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
+  toggleButton.click()
 }
 
 async function jarvisEvent() {
-	ms.success('上传中，请稍等，大概5~20秒上传完成')
-	const res = await conversationUpload({
-		conversationId: chatStore.active,
-	})
-	ms.success(res.msg)
+  ms.success('上传中，请稍等，大概5~20秒上传完成')
+  const res = await conversationUpload({
+    conversationId: chatStore.active,
+  })
+  ms.success(res.msg)
 }
 
 function setOpenaiVersion(action) {
-	userStore.saveOpenaiVersion(action)
-	ms.success('模型切换成功')
+  userStore.saveOpenaiVersion(action)
+  ms.success('模型切换成功')
 }
 
-const showPopover = ref(false);
-
+const showPopover = ref(false)
 </script>
 
 <template>
-	<div>
-		<footer class="footer-main">
-			<div class="footer-left">
-				<div class="div">
-					<div class="div-wrap">
-						<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1"
-							@click="createQuestion">
-							新建会话
-						</div>
-						<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2"
-							@click="toggleButtonEvent">
-							历史记录
-						</div>
-						<div v-if="userStore.toggleValue && !userStore.isQuestionMode"
+  <div>
+    <footer class="footer-main">
+      <div class="footer-left">
+        <div class="div">
+          <div class="div-wrap">
+            <div
+              v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1"
+              @click="createQuestion"
+            >
+              新建会话
+            </div>
+            <div
+              v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2"
+              @click="toggleButtonEvent"
+            >
+              历史记录
+            </div>
+            <!-- <div v-if="userStore.toggleValue && !userStore.isQuestionMode"
 							class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent">
 							对话上传个人资料库
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="footer-right">
-				<div class="footer-item" style="margin-right: 0px;">
-					<div class="header-right-item header-right-item-help">
-						<n-popover trigger="hover" placement="left">
-							<template #trigger>
-								<div class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;" v-if="userStore.getModeVersion">
-									{{ userStore.getModeVersion.viewName }}
-								</div>
-							</template>
-							<div>
-								<div v-for="(item, i) of userStore.getModelList" :key="i"
-								class="model-item"
-									:class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)">
-									<n-popover trigger="hover" placement="left" style="width: max-content;">
-									<div class="flex">解释：{{ item.desc }}</div>
-										<template #trigger>
-											<div class="cursor">{{ item.viewName }}</div>
-										</template>
-									</n-popover>
-								</div>
-							</div>
-						</n-popover>
-					</div>
-				</div>
-			</div>
-		</footer>
-	</div>
+						</div> -->
+          </div>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-item" style="margin-right: 0px;">
+          <div class="header-right-item header-right-item-help">
+            <NPopover trigger="hover" placement="left">
+              <template #trigger>
+                <div v-if="userStore.getModeVersion" class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;">
+                  {{ userStore.getModeVersion.viewName }}
+                </div>
+              </template>
+              <div>
+                <div
+                  v-for="(item, i) of userStore.getModelList" :key="i"
+                  class="model-item"
+                  :class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)"
+                >
+                  <NPopover trigger="hover" placement="left" style="width: max-content;">
+                    <div class="flex">
+                      解释：{{ item.desc }}
+                    </div>
+                    <template #trigger>
+                      <div class="cursor">
+                        {{ item.viewName }}
+                      </div>
+                    </template>
+                  </NPopover>
+                </div>
+              </div>
+            </NPopover>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
 </template>
 
 <style lang="less" scoped>
-
 .model-item{
 	padding:3px 5px;
 	cursor: pointer;

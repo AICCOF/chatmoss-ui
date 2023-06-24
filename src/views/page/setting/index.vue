@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { NDivider, NSelect, NSwitch, useMessage, useDialog } from 'naive-ui'
+import { NDivider, NSwitch, useDialog, useMessage } from 'naive-ui'
 import { computed, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
 import uni from '@dcloudio/uni-webview-js'
+import { bindingStatus, unbind } from './../../../api/weixin'
 import { useAppStore, useUserStore } from '@/store'
 import { localStorage } from '@/utils/storage/localStorage'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { SvgIcon } from '@/components/common'
-import { bindingStatus, unbind } from './../../../api/weixin'
 // let props = defineProps(['register'])
 // const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
@@ -24,15 +24,15 @@ const nickname = computed(() => {
 
 onMounted(() => {
   updated()
-  bindingStatusAPI();
+  bindingStatusAPI()
 })
 function updated() {
   userStore.residueCountAPI()
 }
-let bindInfo = ref({})
+const bindInfo = ref({})
 
 async function bindingStatusAPI() {
-  let res = await bindingStatus();
+  const res = await bindingStatus()
   bindInfo.value = res.data || {}
 }
 const choose = reactive({
@@ -77,7 +77,6 @@ function handleUpdateValue(chatmossTheme: string) {
 // if (userStore.userInfo.fourSwitch !== 'ON')
 //   userStore.saveOpenaiVersion('3.5')
 
-
 // 专业模式
 function handleModeValue(chatmossMode: string) {
   // 专业模式 speciality | 正常模式 normal
@@ -85,8 +84,7 @@ function handleModeValue(chatmossMode: string) {
   localStorage.setItem('chatmossMode', chatmossMode)
 }
 
-const showPopover = ref(false);
-
+const showPopover = ref(false)
 
 function setOpenaiVersion(action) {
   userStore.saveOpenaiVersion(action)
@@ -104,37 +102,36 @@ function bindEvent(type, text) {
         positiveText: '确定',
         negativeText: '取消',
         onPositiveClick: async () => {
-          let res = await unbind({
-            type: type === 'email' ? 1 : 0
+          const res = await unbind({
+            type: type === 'email' ? 1 : 0,
           })
           ms.info(res.msg)
-          bindingStatusAPI();
+          bindingStatusAPI()
         },
         onNegativeClick: () => {
 
         },
       })
     })
-
-  } else {
+  }
+  else {
     if (type === 'email') {
       go({
         name: 'bindQQ',
         query: {
-          type
-        }
+          type,
+        },
       })
-    } else {
+    }
+    else {
       go({
         name: 'bindWechat',
         query: {
-          type
-        }
+          type,
+        },
       })
     }
   }
-
-
 }
 </script>
 
@@ -150,8 +147,10 @@ function bindEvent(type, text) {
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <div v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
-            @click="() => { go({ name: 'feedback' }) }">
+          <div
+            v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
+            @click="() => { go({ name: 'feedback' }) }"
+          >
             问题反馈
           </div>
           <div class="flex items-center btn cursor-pointer" @click="() => { go({ name: 'forget' }) }">
@@ -186,7 +185,6 @@ function bindEvent(type, text) {
         </div>
       </div>
 
-
       <div class="box mt-3">
         <div class="justify-between">
           <div>ApiKeys设置</div>
@@ -195,7 +193,7 @@ function bindEvent(type, text) {
           </div>
           <div class="tip-text-input">
             可以点击这个网址进行检查：
-            <a style="color: #0099FF;" href="http://open.aihao123.cn/" target="_blank">http://open.aihao123.cn/</a>
+            <a style="color: #0099FF;" href="https://open.aihao123.cn/" target="_blank">https://open.aihao123.cn/</a>
           </div>
         </div>
         <div class="flex mt-2 justify-between">
@@ -206,8 +204,12 @@ function bindEvent(type, text) {
         </div>
         <div class="flex mt-2 justify-between mt-4 ml-4">
           <van-radio-group v-model="userStore.useKey" direction="horizontal" @change="userStore.recordState">
-            <van-radio name="1">使用key</van-radio>
-            <van-radio name="0">不使用key</van-radio>
+            <van-radio name="1">
+              使用key
+            </van-radio>
+            <van-radio name="0">
+              不使用key
+            </van-radio>
           </van-radio-group>
         </div>
 
@@ -216,8 +218,10 @@ function bindEvent(type, text) {
           <div class="flex justify-between">
             <div>OpenAI模型选择</div>
             <div>
-              <van-popover v-model:show="showPopover" :actions="userStore.getModelList" @select="setOpenaiVersion"
-                placement="left">
+              <van-popover
+                v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
+                @select="setOpenaiVersion"
+              >
                 <template #reference>
                   <div class="footer-item footer-item-btn footer-item-btn1 model-version " style="margin-right: 0px;">
                     {{ userStore.getModeVersion.viewName }}
@@ -239,8 +243,10 @@ function bindEvent(type, text) {
           <div class="flex justify-between items-center">
             <div> ChatMoss主题设定</div>
             <div class="flex">
-              <NSwitch v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
-                @update:value="handleUpdateValue" />
+              <NSwitch
+                v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
+                @update:value="handleUpdateValue"
+              />
               <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
             </div>
           </div>
@@ -250,8 +256,10 @@ function bindEvent(type, text) {
           <div class="flex justify-between items-center">
             <div> 回答模式</div>
             <div class="flex">
-              <NSwitch v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
-                @update:value="handleModeValue" />
+              <NSwitch
+                v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
+                @update:value="handleModeValue"
+              />
               <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
             </div>
           </div>

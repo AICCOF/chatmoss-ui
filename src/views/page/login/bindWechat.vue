@@ -2,13 +2,11 @@
 import {
   useMessage,
 } from 'naive-ui'
-import { ref, onUnmounted } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { bindingStatus, getBindingWechatQrCode } from './../../../api/weixin'
 import Page from '@/components/page/index.vue'
-import { useAuthStoreWithout, useChatStore } from '@/store'
-import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useBack, useGo } from '@/utils/router'
-import { getBindingWechatQrCode, bindingStatus } from './../../../api/weixin'
 // const props = defineProps(['tab'])
 const emit = defineEmits<Emit>()
 const router = useRouter()
@@ -18,7 +16,7 @@ const ms = useMessage()
 interface Emit {
   (e: 'loginSuccess'): void
 }
-let imgUrl = ref('')
+const imgUrl = ref('')
 function handleBack() {
   if (router.currentRoute.value.query && router.currentRoute.value.query.invite) {
     // console.log(router.currentRoute.value.query.invite)
@@ -34,35 +32,34 @@ function handleBack() {
   }
 }
 
-let time = null;
-let expire_seconds = 0;
-getWechatLoginQrCodeAPI();
+let time = null
+let expire_seconds = 0
+getWechatLoginQrCodeAPI()
 
 async function getWechatLoginQrCodeAPI() {
   clearInterval(time)
-  let res = await getBindingWechatQrCode()
-  expire_seconds = res.data.expire_seconds;
-  imgUrl.value = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(res.data.ticket)
+  const res = await getBindingWechatQrCode()
+  expire_seconds = res.data.expire_seconds
+  imgUrl.value = `https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=${encodeURI(res.data.ticket)}`
   time = setInterval(() => {
-    expire_seconds = expire_seconds - 3;
-    if (expire_seconds < 0) {
-      getWechatLoginQrCodeAPI();
-    }
-    getTokenByTicketAPI();
+    expire_seconds = expire_seconds - 3
+    if (expire_seconds < 0)
+      getWechatLoginQrCodeAPI()
+
+    getTokenByTicketAPI()
   }, 2000)
 }
 async function getTokenByTicketAPI() {
-  let res = await bindingStatus()
+  const res = await bindingStatus()
   if (res.data.wechat) {
     ms.info('绑定成功！！')
     clearInterval(time)
-    handleBack();
+    handleBack()
   }
 }
 onUnmounted(() => {
   clearInterval(time)
 })
-
 </script>
 
 <template>
@@ -78,9 +75,13 @@ onUnmounted(() => {
       <div class="content">
         <div class="content-wrap">
           <div>
-            <div><img :src="imgUrl" v-if="imgUrl" class="code top" alt="" /></div>
-            <div class="text">微信提示：微信登录后绑定邮箱可实现账号互通</div>
-            <div class="bottom">登录即同意<span class="link">用户协议</span>和<span class="link">隐私条款</span></div>
+            <div><img v-if="imgUrl" :src="imgUrl" class="code top" alt=""></div>
+            <div class="text">
+              👉 微信扫码关注公众号进行登录（微信和邮箱账号暂不互通）
+            </div>
+            <!-- <div class="bottom">
+              登录即同意<span class="link">用户协议</span>和<span class="link">隐私条款</span>
+            </div> -->
           </div>
         </div>
       </div>

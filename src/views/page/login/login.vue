@@ -2,14 +2,14 @@
 import {
   useMessage,
 } from 'naive-ui'
-import { reactive, ref, onUnmounted } from 'vue'
+import { onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { getTokenByTicket, getWechatLoginQrCode } from './../../../api/weixin'
 import Page from '@/components/page/index.vue'
 import { useAuthStoreWithout, useChatStore } from '@/store'
 import { login } from '@/api'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useBack, useGo } from '@/utils/router'
-import { getWechatLoginQrCode, getTokenByTicket } from './../../../api/weixin'
 // const props = defineProps(['tab'])
 const emit = defineEmits<Emit>()
 const router = useRouter()
@@ -22,8 +22,8 @@ interface Emit {
 function handleClick() {
   emit('loginSuccess')
 }
-let imgUrl = ref('')
-let type = ref(1)
+const imgUrl = ref('')
+const type = ref(1)
 const message = useMessage()
 
 const loginForm = reactive({
@@ -61,32 +61,31 @@ async function loginEvent() {
   }
 }
 
-let time = null;
-let expire_seconds = 0;
-getWechatLoginQrCodeAPI();
+let time = null
+let expire_seconds = 0
+getWechatLoginQrCodeAPI()
 
 async function getWechatLoginQrCodeAPI() {
   clearInterval(time)
   // console.log(router.currentRoute.value.query.invite)
-  let res = await getWechatLoginQrCode({
-    inviteCode: router.currentRoute.value.query.invite
+  const res = await getWechatLoginQrCode({
+    inviteCode: router.currentRoute.value.query.invite,
   })
-  imgUrl.value = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(res.data.ticket)
-  expire_seconds = res.data.expire_seconds;
+  imgUrl.value = `https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=${encodeURI(res.data.ticket)}`
+  expire_seconds = res.data.expire_seconds
   time = setInterval(() => {
-    expire_seconds = expire_seconds - 3;
+    expire_seconds = expire_seconds - 3
     console.log(expire_seconds)
     if (expire_seconds <= 0) {
       clearInterval(time)
-      getWechatLoginQrCodeAPI();
+      getWechatLoginQrCodeAPI()
     }
-    getTokenByTicketAPI(res.data.ticket);
- 
+    getTokenByTicketAPI(res.data.ticket)
   }, 2000)
 }
 async function getTokenByTicketAPI(ticket: string) {
-  let res = await getTokenByTicket({
-    ticket
+  const res = await getTokenByTicket({
+    ticket,
   })
   if (res.data.status === 1) {
     clearInterval(time)
@@ -96,11 +95,12 @@ async function getTokenByTicketAPI(ticket: string) {
     setTimeout(() => {
       handleBack()
       handleClick()
-    }, 300);
+    }, 300)
     sendToMsg('chatMossToken', res.data.token)
-  } else if (res.data.status === 2) {
+  }
+  else if (res.data.status === 2) {
     clearInterval(time)
-    getWechatLoginQrCodeAPI();
+    getWechatLoginQrCodeAPI()
   }
 }
 onUnmounted(() => {
@@ -127,9 +127,18 @@ function handleToggle() {
             {{ type === 1 ? '使用账号密码登录' : '' }}
           </span>
           <div v-show="type === 1">
-            <div class="code top"><img :src="imgUrl" v-if="imgUrl"  alt="" /></div>
-            <div class="text">微信提示：微信登录后绑定邮箱可实现账号互通</div>
-            <div class="bottom">登录即同意<span class="link" @click="() => { go({ name: 'agreement' }) }">用户协议</span>和<span class="link" @click="() => { go({ name: 'privacy' }) }">隐私条款</span></div>
+            <div class="text">
+              👉 微信扫码关注公众号进行登录
+            </div>
+            <div class="text">
+              注意：微信和邮箱账号暂不互通
+            </div>
+            <div class="code top">
+              <img v-if="imgUrl" :src="imgUrl" alt="">
+            </div>
+            <!-- <div class="bottom">
+              登录即同意<span class="link" @click="() => { go({ name: 'agreement' }) }">用户协议</span>和<span class="link" @click="() => { go({ name: 'privacy' }) }">隐私条款</span>
+            </div> -->
           </div>
           <div v-show="type === 2" style="padding-bottom: 40px;">
             <div class="input">

@@ -38,12 +38,11 @@ function loginEvent(type: string) {
 
 // moss数量
 const residueCountPay = computed(() => {
-  if(userStore.balanceInfo && userStore.balanceInfo.residueCountPay){
+  if (userStore.balanceInfo && userStore.balanceInfo.residueCountPay) {
     const residueCount = userStore.balanceInfo.residueCountPay * 10
     return `${residueCount > 10000 ? `${(Math.floor(residueCount / 100) / 100).toFixed(2)}w` : residueCount}字符`
   }
   return '0'
-  
 })
 const residueCountFree = computed(() => {
   if (userStore.balanceInfo && userStore.balanceInfo.residueCountFree) {
@@ -52,10 +51,10 @@ const residueCountFree = computed(() => {
   }
   return '0'
 })
-function handleClose(row: any) {
+function handleClose(goName: any) {
   // shopEvent()
   go({
-    name:"detailedRule"
+    name: goName || 'shop',
   })
 }
 
@@ -113,7 +112,7 @@ function shopEvent() {
 
 <template>
   <transition name="fade">
-    <header class="header-main" v-if="userStore.toggleValue">
+    <header v-if="userStore.toggleValue" class="header-main">
       <div class="flex w-full header">
         <div class="header-left">
           <div class="tip-text-content1 cursor-pointer">
@@ -152,8 +151,10 @@ function shopEvent() {
                   </template>
                 </NButton>
               </template>
-              <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-                style="max-width: 250px">
+              <div
+                v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
+                style="max-width: 250px"
+              >
                 <div class="mr-4 " style="width:30px">
                   <img :src="item.icon" style="width:30px" class="circle" alt="">
                 </div>
@@ -210,10 +211,12 @@ function shopEvent() {
                   余额
                 </div>
               </template>
-              <div v-for="(row, i) of userStore.packageList" :key="i"
-                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
+              <div
+                v-for="(row, i) of userStore.packageList" :key="i"
+                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
+              >
                 <div>
-                  <div  class="flex justify-between">
+                  <div class="flex justify-between">
                     <span class="mr-4">{{ row.title }}</span>
                     <span>可用次数：{{ row.timesResidue }}</span>
                   </div>
@@ -221,9 +224,9 @@ function shopEvent() {
                 <div class="mt-2" style="overflow-y: auto;max-height: 66px;">
                   <div v-for="(item, i) of row.list" :key="i" class="">
                     <div class="mt-1 flex justify-between">
-                      <span class="mr-1" v-if="item.payType===1">付费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
-                      <span class="mr-1" v-if="item.payType===0">免费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
-                      <NTag style="cursor: pointer;" type="success" size="small" round @click="handleClose(row)">
+                      <span v-if="item.payType === 1" class="mr-1">付费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
+                      <span v-if="item.payType === 0" class="mr-1">免费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
+                      <NTag style="cursor: pointer;" type="success" size="small" round>
                         {{ item.residueDays === 0 ? "去购买" : `剩余${item.residueDays}天` }}
                       </NTag>
                     </div>
@@ -231,19 +234,22 @@ function shopEvent() {
                 </div>
               </div>
 
-               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
-                  <div style="width:200px">
-                    <span class="mr-4">免费字符数：{{ residueCountFree }}</span>
-                  </div>
+              <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
+                <div style="width:200px">
+                  <span class="mr-4">免费字符数：{{ residueCountFree }}</span>
                 </div>
+              </div>
               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
                 <div style="width:200px">
                   <span class="mr-4">付费字符数：{{ residueCountPay }}</span>
                 </div>
               </div>
               <div class="flex  px-2 py-1  mt-2">
-                <NButton text color="#ff69b4" @click="handleClose">
-                  +查看详细规则
+                <NButton style="margin-right: 20px;" text color="#ff69b4" @click="handleClose('shop')">
+                  -> 去购买
+                </NButton>
+                <NButton text color="#ff69b4" @click="handleClose('detailedRule')">
+                  余额使用规则
                 </NButton>
               </div>
             </NPopover>
