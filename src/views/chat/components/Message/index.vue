@@ -64,8 +64,8 @@ watch(() => props.isShow, (value) => {
 function handleSelect(key: string, askMsg: string) {
   switch (key) {
     case 'copyText':
-      copyText({ text: props.text ?? '' })
-      ms.success('已复制到剪切板')
+      // copyText({ text: props.text ?? '' })
+      // ms.success('已复制到剪切板')
       return
     case 'ask':
       emit('ask', askMsg)
