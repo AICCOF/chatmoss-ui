@@ -44,14 +44,16 @@ module.exports = {
 					'--moss-text-ask-color': '#FFFFFF',
 					'--moss-text-time-color': '#9EA2B5',
 					'--moss-border-color': '#E6E6E6',
-					'--moss-text': "#45485C"
+					'--moss-text': "#45485C",
+					// "--n-border": '1px solid red'
 				},
 				'.dark': {
 					'--moss-header-color': '#2B2D31',
 					// '--moss-bg-color': '#313338',
 					"--moss-bg-content-color": "#313338",
 					'--moss-bg-reply-color': '#FFFFFF10',
-					'--moss-text': "#9EA2B5"
+					'--moss-text': "#9EA2B5",
+					
 				},
 			});
 		},

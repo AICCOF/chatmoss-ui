@@ -148,7 +148,7 @@ async function bindEvent() {
   // padding:40px 20px;
   overflow: hidden;
   padding-top: 40px;
-  padding-bottom: 30px;
+
 
   .tip {
     height: 40px;

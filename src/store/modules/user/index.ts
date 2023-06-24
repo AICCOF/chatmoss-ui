@@ -88,7 +88,7 @@ export const useUserStore = defineStore('user-store', {
       
       if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5']){
         arr.push({
-          title: '3.5套餐',
+          title: 'GPT3.5-16k套餐',
           timesResidue: state.balanceInfo.timesResidue['3.5'],
           list: state.balanceInfo.orderResidue['3.5'],
         })
@@ -96,7 +96,7 @@ export const useUserStore = defineStore('user-store', {
 
       if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['4.0']) {
         arr.push({
-          title: '4.0套餐',
+          title: 'GPT4.0-8k套餐',
           timesResidue: state.balanceInfo.timesResidue['4.0'],
           list: state.balanceInfo.orderResidue['4.0'],
         })

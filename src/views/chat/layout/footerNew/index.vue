@@ -7,6 +7,8 @@ import { conversationUpload } from '@/api/index'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const ms = useMessage()
+const popoverDom = ref()
+
 
 // 新建对话
 function createQuestion() {
@@ -31,10 +33,11 @@ async function jarvisEvent() {
 
 function setOpenaiVersion(action) {
   userStore.saveOpenaiVersion(action)
+	popoverDom.value.setShow(false)
   ms.success('模型切换成功')
 }
 
-const showPopover = ref(false)
+// const showPopover = ref(false)
 </script>
 
 <template>
@@ -63,11 +66,11 @@ const showPopover = ref(false)
         </div>
       </div>
       <div class="footer-right">
-        <div class="footer-item" style="margin-right: 0px;">
+        <div class="footer-item">
           <div class="header-right-item header-right-item-help">
-            <NPopover trigger="hover" placement="left">
+            <NPopover trigger="hover" placement="left" ref="popoverDom">
               <template #trigger>
-                <div v-if="userStore.getModeVersion" class="footer-item footer-item-btn footer-item-btn1 model-version" style="margin-right: 0px;">
+                <div v-if="userStore.getModeVersion" class="footer-item footer-item-btn footer-item-btn1 model-version">
                   {{ userStore.getModeVersion.viewName }}
                 </div>
               </template>
@@ -119,7 +122,7 @@ const showPopover = ref(false)
 	z-index: 20;
 
 	.footer-left {
-		width: 60%;
+		width: 40%;
 		display: flex;
 
 		.div {
@@ -150,7 +153,7 @@ const showPopover = ref(false)
 	}
 
 	.footer-right {
-		width: 40%;
+		width: 60%;
 		display: flex;
 		justify-content: flex-end;
 	}

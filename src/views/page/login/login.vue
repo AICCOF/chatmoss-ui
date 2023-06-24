@@ -92,6 +92,8 @@ async function getTokenByTicketAPI(ticket: string) {
     const authStore = useAuthStoreWithout()
     authStore.setToken(res.data.token)
     // chatStore.chatList()
+    message.info('扫码登录成功，现在可以返回继续使用啦～')
+  
     setTimeout(() => {
       handleBack()
       handleClick()
@@ -205,6 +207,7 @@ function handleToggle() {
   // padding:40px 20px;
   overflow: hidden;
   padding-top: 40px;
+  padding-bottom: 30px;
 
   .tip {
     height: 40px;
