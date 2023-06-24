@@ -64,8 +64,8 @@ watch(() => props.isShow, (value) => {
 function handleSelect(key: string, askMsg: string) {
   switch (key) {
     case 'copyText':
-      // copyText({ text: props.text ?? '' })
-      // ms.success('已复制到剪切板')
+      copyText({ text: props.text ?? '' })
+      ms.success('已复制到剪切板')
       return
     case 'ask':
       emit('ask', askMsg)
@@ -101,7 +101,6 @@ function handleSelect(key: string, askMsg: string) {
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent
           ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
-          @copy="handleSelect('copyText', '')"
         />
       </div>
       <div v-if="!inversion" class="flex mt-2 ml-2">
