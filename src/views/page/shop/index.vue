@@ -14,7 +14,7 @@ const url = ref(`https://h5.aihao123.cn/pages/app/store/index.html?token=${getTo
 // const personCenter = ref(ShopInfo)
 const ms = useMessage()
 const userStore = useUserStore()
-const activeName = ref('')
+// const activeName = ref('')
 const back = useBack()
 // 兑换字符数
 const toMossCode = ref('')
@@ -80,7 +80,8 @@ async function exchangeMossEvent() {
           兑换码（登录后才能兑换哦~）
         </div>
         <div class="flex">
-          <NInput v-model:value="toMossCode" class="mr-2" type="text" placeholder="请输入您的兑换码"  style="border: 1px solid rgb(224, 224, 230)"/>
+          <NInput v-model:value="toMossCode" class="mr-2 avf" type="text" placeholder="请输入您的兑换码"
+            style="--n-placeholder-color: #999;--n-text-color: #000;" />
           <NButton type="primary" ghost @click="toMossEvent">
             确定
           </NButton>
@@ -93,7 +94,8 @@ async function exchangeMossEvent() {
           字符兑换次数（老用户使用）
         </div>
         <div class="flex">
-          <NSelect v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2" placeholder="请输入您的兑换码" style="border: 1px solid rgb(224, 224, 230)"/>
+          <NSelect v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2 avf" placeholder="请输入您的兑换码"
+            style="--n-text-color: #000;" />
           <NButton type="primary" ghost @click="exchangeMossEvent">
             确定
           </NButton>
@@ -104,10 +106,8 @@ async function exchangeMossEvent() {
 
     <!-- 购买字符数 -->
     <NModal v-model:show="shopModal">
-      <NCard
-        style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
-        :mask-closable="true"
-      >
+      <NCard style="width: 400px" :title="shopData.title" size="huge" role="dialog" aria-modal="true"
+        :mask-closable="true">
         <div class="tip-text-input2">
           支付宝扫码购买（暂不支持微信）
         </div>
@@ -119,13 +119,26 @@ async function exchangeMossEvent() {
     </NModal>
   </Page>
 </template>
+<style lang="less">
+.avf {
+  .n-base-selection .n-base-selection-label .n-base-selection-input {
+    --n-text-color: #333;
+  }
+}
+</style>
 
 <style scoped lang="less">
+.avf {
+  border: 1px solid rgb(224, 224, 230);
+  
+}
+
 .meal-main {
   height: 7rem;
   flex: 1;
   min-width: 6rem;
 }
+
 .title-h1 {
   margin: 10px 0px;
   color: #FF6666;
@@ -164,9 +177,9 @@ async function exchangeMossEvent() {
 }
 
 .shop-main {
-	height: calc(100vh - 250px);
-	padding: 0 15px;
-	padding-top: 10px;
-	padding-bottom: 20px;
+  height: calc(100vh - 250px);
+  padding: 0 15px;
+  padding-top: 10px;
+  padding-bottom: 20px;
 }
 </style>
