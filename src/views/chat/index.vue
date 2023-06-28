@@ -270,7 +270,7 @@ async function onConversation(askMsg?: string, opt?) {
         const xhr = event.target
         // const { responseText } = xhr
         const chunk = xhr.responseText
-        // console.log(unescape(xhr.responseText))
+        // console.log(chunk)
         try {
           // const data = JSON.parse(chunk)
           updateChat(chatStore.getUuid, dataSources.value.length - 1, {
@@ -366,47 +366,28 @@ async function onConversation(askMsg?: string, opt?) {
       scrollToBottom()
       return
     }
-
-    // const currentChat = getChatByUuidAndIndex(
-    //   chatStore.getUuid,
-    //   dataSources.value.length - 1,
-    // )
-
-    // if (currentChat?.text && currentChat.text !== '') {
-      
-    // }
+    console.log('errorMessage',errorMessage)
     updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-      text: `${errorMessage}`,
+      text: `${errorMessage||'已取消'}`,
       error: true,
       loading: false,
     })
     return
-
-    // updateChat(chatStore.getUuid, dataSources.value.length - 1, {
-    //   timestamp: new Date().getTime(),
-    //   createTime: new Date().toLocaleString(),
-    //   text: errorMessage,
-    //   inversion: false,
-    //   ast: message,
-    //   error: true,
-    //   loading: false,
-    //   conversationOptions: null,
-    //   requestOptions: { prompt: message, options: { ...options } },
-    // })
-    scrollToBottom()
   }
   finally {
     setTimeout(() => {
-      getLatestCharReduceInfo({
-        conversationId: chatStore.getUuid,
-      }).then((res) => {
-        updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-          mossReduceInfo: res.data,
+      if (loading.value) {
+        getLatestCharReduceInfo({
+          conversationId: chatStore.getUuid,
+        }).then((res) => {
+          updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+            mossReduceInfo: res.data,
+          })
         })
-      })
 
-      loading.value = false
-      userStore.residueCountAPI()
+        loading.value = false
+        userStore.residueCountAPI()
+      }
     }, 2000);
   }
 }
