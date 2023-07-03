@@ -22,6 +22,12 @@ import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 
+import { useRouter } from 'vue-router'
+const router = useRouter();
+
+const hidden = computed(()=>{
+  return router.currentRoute.value.query.hiddenInput ==='1'
+})
 const authStore = useAuthStoreWithout()
 const go = useGo()
 
@@ -549,6 +555,7 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
+// window.handleMode = handleMode;
 </script>
 
 <template>
@@ -618,7 +625,7 @@ function handleMode() {
           <transition name="fade">
             <Footer />
           </transition>
-          <div class="w-full m-auto p-2" style="padding-bottom: 0px;">
+          <div class="w-full m-auto p-2" v-show="!hidden" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
               <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
