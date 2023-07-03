@@ -9,11 +9,9 @@ const chatStore = useChatStore()
 const ms = useMessage()
 const popoverDom = ref()
 
-import { useRouter } from 'vue-router'
-const router = useRouter();
 
 const hidden = computed(() => {
-	return router.currentRoute.value.query.hiddenInput === '1'
+	return location.search.indexOf('hiddenInput')
 })
 
 // 新建对话

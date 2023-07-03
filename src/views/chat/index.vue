@@ -22,11 +22,8 @@ import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 
-import { useRouter } from 'vue-router'
-const router = useRouter();
-
-const hidden = computed(()=>{
-  return router.currentRoute.value.query.hiddenInput ==='1'
+const hidden = computed(() => {
+	return location.search.indexOf('hiddenInput')
 })
 const authStore = useAuthStoreWithout()
 const go = useGo()

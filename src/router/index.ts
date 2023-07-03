@@ -128,7 +128,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/chat/:uuid?',
         name: 'Chat',
-        component: chat,
+        component: chat
       },
     ],
   },
