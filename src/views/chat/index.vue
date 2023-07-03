@@ -23,8 +23,9 @@ import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 
 const hidden = computed(() => {
-  return location.search.indexOf('hiddenInput') >= -1
+  return location.search.indexOf('hiddenInput') > -1
 })
+// console.log(hidden)
 const authStore = useAuthStoreWithout()
 const go = useGo()
 

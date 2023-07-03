@@ -11,7 +11,7 @@ const popoverDom = ref()
 
 
 const hidden = computed(() => {
-	return location.search.indexOf('hiddenInput') >= -1
+	return location.search.indexOf('hiddenInput') > -1
 })
 
 // 新建对话
