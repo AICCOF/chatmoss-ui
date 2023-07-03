@@ -23,7 +23,7 @@ import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 
 const hidden = computed(() => {
-	return location.search.indexOf('hiddenInput')
+  return location.search.indexOf('hiddenInput') >= -1
 })
 const authStore = useAuthStoreWithout()
 const go = useGo()
@@ -369,9 +369,9 @@ async function onConversation(askMsg?: string, opt?) {
       scrollToBottom()
       return
     }
-    console.log('errorMessage',errorMessage)
+    console.log('errorMessage', errorMessage)
     updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-      text: `${errorMessage||'已取消'}`,
+      text: `${errorMessage || '已取消'}`,
       error: true,
       loading: false,
     })
