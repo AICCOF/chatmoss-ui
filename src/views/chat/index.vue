@@ -391,6 +391,7 @@ async function onConversation(askMsg?: string, opt?) {
     }, 2000);
   }
 }
+window.onConversation = onConversation
 
 const handleSelectInput = (event: any) => {
   prompt.value = event.data
