@@ -22,6 +22,10 @@ import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 
+const hidden = computed(() => {
+  return location.search.indexOf('hiddenInput') > -1
+})
+// console.log(hidden)
 const authStore = useAuthStoreWithout()
 const go = useGo()
 
@@ -366,9 +370,9 @@ async function onConversation(askMsg?: string, opt?) {
       scrollToBottom()
       return
     }
-    console.log('errorMessage',errorMessage)
+    console.log('errorMessage', errorMessage)
     updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-      text: `${errorMessage||'已取消'}`,
+      text: `${errorMessage || '已取消'}`,
       error: true,
       loading: false,
     })
@@ -391,6 +395,7 @@ async function onConversation(askMsg?: string, opt?) {
     }, 2000);
   }
 }
+window.onConversation = onConversation
 
 const handleSelectInput = (event: any) => {
   prompt.value = event.data
@@ -548,6 +553,7 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
+// window.handleMode = handleMode;
 </script>
 
 <template>
@@ -617,7 +623,7 @@ function handleMode() {
           <transition name="fade">
             <Footer />
           </transition>
-          <div class="w-full m-auto p-2" style="padding-bottom: 0px;">
+          <div class="w-full m-auto p-2" v-show="!hidden" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
               <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
