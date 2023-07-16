@@ -1,5 +1,5 @@
 <template>
-  <div v-if="userStore.currentApp" class="no-data-info-text text-left">
+  <div v-if="userStore.currentApp" class="no-data-info-text text-left notice">
     <div class="flex">
       <div>
         <img :src="userStore.currentApp.iconUrl" alt="" style="width:60px;height:60px">
@@ -19,7 +19,12 @@
 import {useUserStore } from '@/store'
 const userStore = useUserStore()
 </script>
-<style lang="less" scoped >
+<style lang="less" scoped>
+
+.notice{
+  // max-width: 800px;
+  margin: 0 auto;
+}
 .guideMsg {
   text-align: left;
   display: inline-block;
