@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useMessage } from 'naive-ui'
+import {  useMessage } from 'naive-ui'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationLike, getApplicationList, getApplicationSearch, getApplicationTypeList } from '@/api/application'
+import { useScrollToBottom } from '@/utils/usePullDownRefresh'
+import {  onMounted } from 'vue';
 const ms = useMessage()
 const back = useBack()
 const go = useGo()
@@ -12,17 +14,45 @@ const flag = ref(true)
 const active = ref(0)
 const typeList = ref('')
 const dataList = ref([])
-
+let currentAppType: string;
+const element = ref();
+let parmas = {
+  appType: '',
+  pageNum: 1,
+  pageSize: 20,
+}
+let stop = false;
 async function getApplicationListAPI(appType) {
-  const res = await getApplicationList({
-    appType,
-    pageNum: 1,
-    pageSize: 1000,
-  })
-  dataList.value = res.rows || []
+  if (currentAppType != appType) {
+    currentAppType = appType
+    parmas = {
+      appType,
+      pageNum: 1,
+      pageSize: 20,
+    }
+    const res = await getApplicationList(parmas)
+    dataList.value = res.rows || []
+    stop = false;
+  } else {
+    if(stop) return ;
+    parmas.pageNum++;
+    const res = await getApplicationList(parmas)
+    dataList.value = [...dataList.value, ...res.rows] || []
+     if (res.rows.length != parmas.pageSize) {
+      stop = true;
+    }
+  }
 }
 
-async function getApplicationSearchAPI(appType) {
+onMounted(()=>{
+  useScrollToBottom(element, async () => {
+    getApplicationListAPI(currentAppType)
+  });
+
+})
+
+
+async function getApplicationSearchAPI() {
   if (value.value) {
     const res = await getApplicationSearch(value.value)
     dataList.value = res.rows || []
@@ -97,7 +127,7 @@ async function handleInstalled(row) {
           <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
         </van-sidebar>
         <div class="pt-0 flex-1" style="overflow: hidden;">
-          <div class="w-full content px-8 pt-0 border-box">
+          <div class="w-full content px-8 pt-0 border-box" ref="element">
             <div v-for="(item, i) of dataList" :key="i" class="flex justify-between items-center w-full flex-1 item mt-2">
               <div class="flex items-center flex-1">
                 <div class="mr-2 none">

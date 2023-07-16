@@ -14,7 +14,8 @@ let title = ref('')
 const formValue = ref({
   iconUrl: '',
   share: 1,
-  contextEnabled: 1
+  contextEnabled: 1,
+  guideMsg:''
 })
 let rules = {
   iconId: {
@@ -146,13 +147,20 @@ onMounted(async () => {
           </div>
         </div>
         <van-divider />
-         <div class="">
-            <div>指令</div>
+        <div class="">
+          <div>指令</div>
+          <div class="flex-1">
+            <textarea class="textarea" type="textarea" v-model="formValue.promot" placeholder="例如：智能翻译助手智能翻译助手" />
+          </div>
+        </div>
+         <van-divider />
+          <div class="">
+            <div>引导语(非必填)</div>
             <div class="flex-1">
-              <textarea class="textarea" type="textarea" v-model="formValue.promot" placeholder="例如：智能翻译助手智能翻译助手" />
+              <textarea class="textarea" type="textarea" v-model="formValue.guideMsg" placeholder="例如：请输入你想翻译的语言" />
             </div>
           </div>
-          <van-divider />
+        <van-divider />
         <div class="flex justify-between items-center">
           <div>应用类型</div>
           <div class="">
@@ -195,7 +203,6 @@ onMounted(async () => {
 </template>
 
 <style scoped lang="less">
-
 .save {
   text-align: center;
   width: 80%;
@@ -213,7 +220,7 @@ onMounted(async () => {
   margin-top: 10px;
   padding: 5px 10px;
   height: 100px;
-  background-color:  var(--moss-bg-reply-color);
+  background-color: var(--moss-bg-reply-color);
   border-radius: 8px;
 }
 
@@ -221,7 +228,7 @@ onMounted(async () => {
   text-align: left;
   padding: 5px 10px;
   border-radius: 8px;
-  background-color:  var(--moss-bg-reply-color);
+  background-color: var(--moss-bg-reply-color);
   width: 100%;
 }
 

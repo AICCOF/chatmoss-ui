@@ -2,7 +2,8 @@ import post, { get, put } from '@/utils/request'
 
 export interface ApplicationListRequest {
   pageSize: number
-  pageNum: 1
+  pageNum: number
+  appType?:string
 }
 
 export function getApplicationList<T>(data: ApplicationListRequest) {

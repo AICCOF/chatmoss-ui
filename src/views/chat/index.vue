@@ -15,6 +15,7 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
 import { auth, fetchChatAPIProcess, paper } from '@/api'
 import Paper from '@/views/paper/index.vue'
+import applicationIntro from './application_intro.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
@@ -565,14 +566,14 @@ function handleMode() {
       </transition>
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
         :class="[userStore.toggleValue ? 'p90' : '']">
-        <div id="image-wrapper" class="w-full m-auto flex items-center py-4" :class="[isMobile ? 'px-2' : 'px-4']"
+        <div id="image-wrapper" class="w-full m-auto items-center py-4" :class="[isMobile ? 'px-2' : 'px-4']"
           style="height: 100%;overflow: hidden">
+
+
           <template v-if="!dataSources.length">
             <div class="no-data-info  w-full">
               <!-- 应用介绍 -->
-              <div v-if="userStore.currentApp" class="no-data-info-text">
-                应用使用说明：{{ userStore.currentApp.desc }}
-              </div>
+              <applicationIntro></applicationIntro>
               <!-- 空态占位图 -->
               <div v-if="authStore.token && userStore.centerPicUrl">
                 <div class="no-data-info-tip-title">
@@ -583,10 +584,6 @@ function handleMode() {
                     src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
                 </a>
               </div>
-              <!-- <img
-                v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
-                alt="" @click="() => { go({ name: 'shop' }) }"
-              > -->
               <div v-else>
                 <!-- 后面期望这里跳转使用教程页面 -->
                 <div class="no-data-info-tip-title">
@@ -601,6 +598,7 @@ function handleMode() {
           <template v-else>
             <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
               <div id="data-wrapper">
+                <applicationIntro></applicationIntro>
                 <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
                   :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                   :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading"
@@ -665,6 +663,16 @@ function handleMode() {
 </template>
 
 <style lang="less" scoped>
+.guideMsg {
+  text-align: left;
+  display: inline-block;
+  border-radius: 60px;
+  margin-top: 10px;
+  background-color: var(--moss-bg-reply-color);
+  color: var(--moss-text-time-color);
+  padding: 4px 10px;
+}
+
 .chat-main {
   background-color: var(--moss-bg-content-color);
 }
@@ -697,7 +705,7 @@ function handleMode() {
 
   .no-data-info-text {
     width: 100%;
-    text-align: center;
+    // text-align: center;
     font-size: 14px;
     color: var(--moss-text-time-color);
     position: absolute;
