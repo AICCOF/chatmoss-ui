@@ -10,9 +10,9 @@
       </div>
     </div>
     <van-divider />
-    <div class="text-sm text-left">{{ userStore.currentApp.detailInfo || 'detailInfo' }}</div>
+    <div class="text-sm text-left" v-if="userStore.currentApp.detailInfo">{{ userStore.currentApp.detailInfo}}</div>
 
-    <div class="text-sm text-left guideMsg">{{ userStore.currentApp.guideMsg || 'guideMsg' }}</div>
+    <div class="text-sm text-left guideMsg" v-if="userStore.currentApp.guideMsg">{{ userStore.currentApp.guideMsg}}</div>
   </div>
 </template>
 <script setup lang='ts'>
