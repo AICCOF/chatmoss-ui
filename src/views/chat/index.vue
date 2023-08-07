@@ -561,7 +561,7 @@ function handleMode() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
-      <transition name="fade">
+      <transition name="fade1">
         <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
           :style="{ width: userStore.toggleValue ? '71px' : '1px' }" />
       </transition>
@@ -619,7 +619,7 @@ function handleMode() {
           </template>
         </div>
         <footer :class="footerClass">
-          <transition name="fade">
+          <transition name="fade1">
             <Footer />
           </transition>
           <div class="w-full m-auto p-2" v-show="!hidden" style="padding-bottom: 0px;">

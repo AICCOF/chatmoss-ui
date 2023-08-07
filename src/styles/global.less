@@ -89,23 +89,23 @@ body {
 	}
 }
 
-// fade-enter-active,
-// .fade-leave-active {
-// 	transition: opacity .5s;
-// }
+fade1-enter-active,
+.fade1-leave-active {
+	transition: opacity .3s;
+}
 
-.fade-enter-active {
-	animation: bounce-in .5s;
+.fade1-enter-active {
+	animation: bounce-in .3s;
 	// transition: all 1s;
 }
 
-.fade-enter,
-.fade-leave-to {
+.fade1-enter,
+.fade1-leave-to {
 	opacity: 0;
 }
 
-.fade-leave-active {
-	animation: bounce-in .5s reverse;
+.fade1-leave-active {
+	animation: bounce-in .3s reverse;
 	// transition: all 1s;
 }
 
@@ -167,4 +167,18 @@ body {
 
 ::-webkit-scrollbar {
 	display: none;
+}
+
+
+.flex-center{
+	display: flex;
+	align-items: center;
+}
+
+.self-model {
+	 overflow: hidden;
+	 border-radius: 16px;
+	.ant-modal-body {
+		padding: 0;
+	}
 }

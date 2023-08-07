@@ -111,7 +111,7 @@ function shopEvent() {
 </script>
 
 <template>
-  <transition name="fade">
+  <transition name="fade1">
     <header v-if="userStore.toggleValue" class="header-main">
       <div class="flex w-full header">
         <div class="header-left">
@@ -151,16 +151,38 @@ function shopEvent() {
                   </template>
                 </NButton>
               </template>
-              <div
-                v-for="(item, index) of userStore.getNotices" :key="index" class="notice flex items-center mt-2"
-                style="max-width: 250px"
-              >
-                <div class="mr-4 " style="width:30px">
-                  <img :src="item.icon" style="width:30px" class="circle" alt="">
-                </div>
-                <div class="flex-1">
-                  <div> {{ item.content }}</div>
-                  <div>{{ item.createTime }}</div>
+            <div style="width: 370px; max-height: 648px; overflow: auto">
+                <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice">
+                  <div class="flex-center" style="justify-content: space-between">
+                    <div
+                      style="color: var(--n-text-color);; font-size: 16px; font-weight: 600; line-height: 22px"
+                      >{{ item.createTime }}</div
+                    >
+                    <div
+                      v-if="item.content.length > 96"
+                      style="color: var(--moss-text); font-size: 12px"
+                      class="cursor-pointer"
+                      @click="() => (item.unfold = !item.unfold)"
+                    >
+                      <div v-if="!item.unfold" class="flex-center">
+                        <SvgIcon icon="ant-design:down-outlined" class="icon"></SvgIcon>
+                        <span style="margin-left: 10px">展开</span>
+                      </div>
+
+                      <div v-if="item.unfold" class="flex-center">
+                        <SvgIcon icon="ant-design:up-outlined" class="icon"></SvgIcon>
+                        <span style="margin-left: 10px">收起</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div
+                      class="content"
+                      :class="[item.content.length > 96 && !item.unfold ? 'line' : '']"
+                    >
+                      {{ item.content }}</div
+                    >
+                  </div>
                 </div>
               </div>
             </NPopover>
@@ -263,6 +285,33 @@ function shopEvent() {
 </template>
 
 <style lang="less">
+  .notice {
+    padding: 12px 13px;
+
+    &:hover {
+      border-radius: 8px;
+      background: var(--moss-bg-content-color);;
+    }
+
+    .content {
+      display: -webkit-box;
+      margin-top: 12px;
+      overflow: hidden;
+      color: var(--moss-text);
+      font-size: 14px;
+      text-align: justify;
+      text-overflow: ellipsis;
+      -webkit-box-orient: vertical;
+
+      &.line {
+        -webkit-line-clamp: 4; /* 显示3行 */
+      }
+    }
+  }
+
+   
+  
+
 .header-main {
   width: 100%;
   min-width: 250px;
