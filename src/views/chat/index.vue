@@ -312,14 +312,15 @@ async function onConversation(askMsg?: string, opt?) {
 
     if (error.code === 10000) {
       showConfirmDialog({
-        title: '切换模型',
-        message: '您当前问题已经超过模型最大4k字符上下文，是否切换到16k上下文模型?',
-        confirmButtonText: '切换',
-        cancelButtonText: '不切换',
+        title: '问题',
+        message: '您当前问题已经超过模型最大上下文，是否新建问题解决此问题',
+        confirmButtonText: '新建问题',
+        cancelButtonText: '取消',
       }).then(() => {
         // on close
-        userStore.toggleOpenaiVersion()
-      })
+        // userStore.toggleOpenaiVersion();
+        chatStore.createChat();
+      });
     }
     else if (error.code === 10001) {
       if (getToken()) {

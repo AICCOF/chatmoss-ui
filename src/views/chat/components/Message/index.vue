@@ -37,27 +37,27 @@ let options: any[] = []
 watch(() => props.isShow, (value) => {
   options = value
     ? [
-        {
-          label: t('复制'),
-          key: 'copyText',
-          icon: iconRender({ icon: 'ph:copy' }),
-        },
-        {
-          label: t('重新提问'),
-          key: 'ask',
-          icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
-        },
-        {
-          label: t('联网提问'),
-          key: 'online',
-          icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-        },
+      {
+        label: t('复制'),
+        key: 'copyText',
+        icon: iconRender({ icon: 'ph:copy' }),
+      },
+      {
+        label: t('重新提问'),
+        key: 'ask',
+        icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
+      },
+      {
+        label: t('联网提问'),
+        key: 'online',
+        icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+      },
       // {
       //   label: t('个人资料库提问'),
       //   key: 'jarvis',
       //   icon: iconRender({ icon: 'icon-park-solid:brain' }),
       // },
-      ]
+    ]
     : []
 }, { immediate: true })
 
@@ -86,7 +86,7 @@ function handleSelect(key: string, askMsg: string) {
 </script>
 
 <template>
-  <div class="flex w-full mb-4 overflow-hidden" :class="[{ 'flex-row-reverse': inversion }]">
+  <div class="flex w-full mb-4 overflow-hidden info" :class="[{ 'flex-row-reverse': inversion }]">
     <div :class="[inversion ? 'ml-2' : 'mr-2']">
       <!-- <AvatarComponent :image="inversion" /> -->
     </div>
@@ -97,15 +97,14 @@ function handleSelect(key: string, askMsg: string) {
       <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ viewMsg }} </span>
         <span>(模式：{{ questionMode }}) </span>
+        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-purple-color);" target="_blank">查看token计算规则</a>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent
-          ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading"
-        />
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" />
       </div>
-      <div v-if="!inversion" class="flex mt-2 ml-2">
+      <div v-if="!inversion" class="flex mt-2 ml-2 btns">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
-          <NButton text @click="handleSelect(option.key, askMsg)">
+          <NButton class="btn" text @click="handleSelect(option.key, askMsg)">
             <component :is="option.icon" />
             <span class="ml-1">{{ option.label }}</span>
           </NButton>
@@ -119,4 +118,21 @@ function handleSelect(key: string, askMsg: string) {
 .text-xs {
   color: var(--moss-text-time-color)
 }
+  .info {
+    // padding: 0 48px;
+    // padding-right: 114px;
+    // transition: 1s all;
+    // color: #86909c;
+
+    .btns {
+      transition: 0.5s all;
+      opacity: 0;
+    }
+
+    &:hover {
+      .btns {
+        opacity: 1;
+      }
+    }
+  }
 </style>
