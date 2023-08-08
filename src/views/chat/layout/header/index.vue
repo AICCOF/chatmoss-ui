@@ -246,8 +246,8 @@ function shopEvent() {
                 <div class="mt-2" style="overflow-y: auto;max-height: 66px;">
                   <div v-for="(item, i) of row.list" :key="i" class="">
                     <div class="mt-1 flex justify-between">
-                      <span v-if="item.payType === 1" class="mr-1">付费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
-                      <span v-if="item.payType === 0" class="mr-1">免费：{{ item.totalTimes }}次；使用：{{ item.totalTimes - item.residueTimes }}次</span>
+                      <span v-if="item.payType === 1" class="mr-1">付费：{{ item.totalTimes }}次；使用：{{ item.usedTimes }}次</span>
+                      <span v-if="item.payType === 0" class="mr-1">免费：{{ item.totalTimes }}次；使用：{{ item.usedTimes }}次</span>
                       <NTag style="cursor: pointer;" type="success" size="small" round>
                         {{ item.residueDays === 0 ? "去购买" : `剩余${item.residueDays}天` }}
                       </NTag>
