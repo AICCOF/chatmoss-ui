@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { showConfirmDialog } from 'vant'
+import { Modal } from 'ant-design-vue'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -9,22 +10,21 @@ import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
 import applicationList from './applicationList.vue'
 import Footer from './layout/footerNew/index.vue'
-import { getLatestCharReduceInfo } from './../../api/weixin'
+import applicationIntro from './application_intro.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
 import { auth, fetchChatAPIProcess, paper } from '@/api'
 import Paper from '@/views/paper/index.vue'
-import applicationIntro from './application_intro.vue'
 import { t } from '@/locales'
 import selectOption from '@/assets/chatmossGroup.json'
 import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
-import { getLatestCharTwoReduceInfo, conversationReport } from '@/api/weixin';
+import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
 const hidden = computed(() => {
-  return location.search.indexOf('hiddenInput') > -1
+  return location.search.includes('hiddenInput')
 })
 // console.log(hidden)
 const authStore = useAuthStoreWithout()
@@ -38,7 +38,6 @@ const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const NInputRef = ref<HTMLInputElement | null>(null)
 const NSelectRef = ref<HTMLInputElement | null>(null)
-import { Modal } from 'ant-design-vue';
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
@@ -175,7 +174,7 @@ function jarvisFn(askMsg: string) {
 function reportCallback(row: any) {
   Modal.confirm({
     title: '举报',
-    content: '发现当前回答内容，不符合正确社会价值观，是否进行举报删除操作',
+    content: '当前回答内容您是否觉得不符合正确社会价值观，是否进行举报，我们将对这条内容进行删除处理，感谢您的反馈',
     okText: '确定删除',
     okType: 'danger',
     cancelText: '取消',
@@ -184,14 +183,14 @@ function reportCallback(row: any) {
       const res = await conversationReport({
         conversationId: row.conversationId,
         id: row.id,
-      });
-      ms.success('举报成功');
-      row.text = res.msg || '内容不符合平台生成规定，已被清理';
+      })
+      ms.success('举报成功')
+      row.text = res.msg || '内容不符合平台生成规定，已被清理'
     },
     onCancel() {
-      console.log('Cancel');
+      console.log('Cancel')
     },
-  });
+  })
 }
 
 async function onConversation(askMsg?: string, opt?) {
@@ -330,24 +329,24 @@ async function onConversation(askMsg?: string, opt?) {
         getLatestCharTwoReduceInfo({
           conversationId: chatStore.getUuid,
         }).then((res) => {
-          console.log(res);
+          console.log(res)
           updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
             mossReduceInfo: res.data[0],
             conversationId: chatStore.getUuid,
             id: res.data[0].id,
-          });
+          })
 
           updateChatSome(chatStore.getUuid, dataSources.value.length - 2, {
             mossReduceInfo: res.data[1],
             conversationId: chatStore.getUuid,
             id: res.data[1].id,
-          });
-        });
+          })
+        })
 
-        loading.value = false;
-        userStore.residueCountAPI();
+        loading.value = false
+        userStore.residueCountAPI()
       }
-    }, 2000);
+    }, 2000)
 
     scrollToBottom()
   }
@@ -363,8 +362,8 @@ async function onConversation(askMsg?: string, opt?) {
       }).then(() => {
         // on close
         // userStore.toggleOpenaiVersion();
-        chatStore.createChat();
-      });
+        chatStore.createChat()
+      })
     }
     else if (error.code === 10001) {
       if (getToken()) {
@@ -392,7 +391,8 @@ async function onConversation(askMsg?: string, opt?) {
           })
         })
       }
-    } else if (error.code === 20000) {
+    }
+    else if (error.code === 20000) {
       showConfirmDialog({
         title: '字符已用尽',
         message: '试用字符已经用尽，目前ChatMoss 3.5登录后可免费使用，是否登录',
@@ -402,7 +402,7 @@ async function onConversation(askMsg?: string, opt?) {
         // on close
         // userStore.toggleOpenaiVersion()
         go({
-          name: 'login'
+          name: 'login',
         })
       })
     }
@@ -422,9 +422,7 @@ async function onConversation(askMsg?: string, opt?) {
       error: true,
       loading: false,
     })
-    return
   }
-
 }
 window.onConversation = onConversation
 
@@ -596,14 +594,13 @@ function handleMode() {
       </transition>
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
         :class="[userStore.toggleValue ? 'p90' : '']">
-        <div id="image-wrapper" class="w-full m-auto items-center py-4" :class="[isMobile ? 'px-2' : 'px-4']"
+        <div id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
           style="height: 100%;overflow: hidden">
-
-
-          <template v-if="!dataSources.length">
-            <div class="no-data-info  w-full">
+          <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
+            <applicationIntro />
+            <div class="no-data-info w-full" v-if="!dataSources.length">
               <!-- 应用介绍 -->
-              <applicationIntro></applicationIntro>
+
               <!-- 空态占位图 -->
               <div v-if="authStore.token && userStore.centerPicUrl">
                 <div class="no-data-info-tip-title">
@@ -624,35 +621,31 @@ function handleMode() {
                   @click="() => { go({ name: 'login' }) }">
               </div>
             </div>
-          </template>
-          <template v-else>
-            <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
-              <div id="data-wrapper">
-                <applicationIntro></applicationIntro>
-                <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
-                  :info="item"
-                  :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
-                  :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading"
-                  :view-msg="item.mossReduceInfo?.viewMsg" :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn"
-                  @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
+            <div id="data-wrapper" v-else>
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+                :info="item"
+                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
+                :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading"
+                :view-msg="item.mossReduceInfo?.viewMsg" :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn"
+                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
 
-                <div class="sticky bottom-0 left-0 flex justify-center">
-                  <NButton v-if="loading" type="warning" @click="handleStop">
-                    <template #icon>
-                      <SvgIcon icon="ri:stop-circle-line" />
-                    </template>
-                    正在响应
-                  </NButton>
-                </div>
+              <div class="sticky bottom-0 left-0 flex justify-center">
+                <NButton v-if="loading" type="warning" @click="handleStop">
+                  <template #icon>
+                    <SvgIcon icon="ri:stop-circle-line" />
+                  </template>
+                  正在响应
+                </NButton>
               </div>
             </div>
-          </template>
+          </div>
+
         </div>
         <footer :class="footerClass">
           <transition name="fade1">
             <Footer />
           </transition>
-          <div class="w-full m-auto p-2" v-show="!hidden" style="padding-bottom: 0px;">
+          <div v-show="!hidden" class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
               <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
@@ -717,9 +710,11 @@ function handleMode() {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 0;
 
-  .no-data-info-tip-title {
+   .no-data-info-tip-title {
     font-size: 14px;
     color: #FF6666;
     margin-bottom: 10px;
@@ -739,7 +734,7 @@ function handleMode() {
     // text-align: center;
     font-size: 14px;
     color: var(--moss-text-time-color);
-    position: absolute;
+    // position: absolute;
     font-size: 12px;
     top: 30px;
   }

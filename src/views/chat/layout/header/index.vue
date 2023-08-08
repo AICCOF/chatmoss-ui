@@ -151,13 +151,14 @@ function shopEvent() {
                   </template>
                 </NButton>
               </template>
-            <div style="width: 370px; max-height: 648px; overflow: auto">
+              <div style="width: 370px; max-height: 648px; overflow: auto">
                 <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice">
                   <div class="flex-center" style="justify-content: space-between">
                     <div
                       style="color: var(--n-text-color);; font-size: 16px; font-weight: 600; line-height: 22px"
-                      >{{ item.createTime }}</div
                     >
+                      {{ item.createTime }}
+                    </div>
                     <div
                       v-if="item.content.length > 96"
                       style="color: var(--moss-text); font-size: 12px"
@@ -165,12 +166,12 @@ function shopEvent() {
                       @click="() => (item.unfold = !item.unfold)"
                     >
                       <div v-if="!item.unfold" class="flex-center">
-                        <SvgIcon icon="ant-design:down-outlined" class="icon"></SvgIcon>
+                        <SvgIcon icon="ant-design:down-outlined" class="icon" />
                         <span style="margin-left: 10px">展开</span>
                       </div>
 
                       <div v-if="item.unfold" class="flex-center">
-                        <SvgIcon icon="ant-design:up-outlined" class="icon"></SvgIcon>
+                        <SvgIcon icon="ant-design:up-outlined" class="icon" />
                         <span style="margin-left: 10px">收起</span>
                       </div>
                     </div>
@@ -180,8 +181,8 @@ function shopEvent() {
                       class="content"
                       :class="[item.content.length > 96 && !item.unfold ? 'line' : '']"
                     >
-                      {{ item.content }}</div
-                    >
+                      {{ item.content }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -286,12 +287,10 @@ function shopEvent() {
 
 <style lang="less">
   .notice {
-    padding: 12px 13px;
-
-    &:hover {
-      border-radius: 8px;
-      background: var(--moss-bg-content-color);;
-    }
+		background-color: var(--moss-tip-bg-color);
+  	border-radius: 10px;
+    padding: 20px;
+		margin-bottom: 10px;
 
     .content {
       display: -webkit-box;
@@ -308,9 +307,6 @@ function shopEvent() {
       }
     }
   }
-
-   
-  
 
 .header-main {
   width: 100%;

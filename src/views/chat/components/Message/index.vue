@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { NButton, useMessage } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
+import dayjs from 'dayjs'
 import TextComponent from './Text.vue'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
@@ -11,25 +12,24 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 const chatStore = useChatStore()
 interface Props {
-  dateTime?: number;
-  isShow: Boolean;
-  text?: string;
-  askMsg: string;
-  inversion?: boolean;
-  error?: boolean;
-  loading?: boolean;
-  id?: number;
-  viewMsg?: string;
-  questionMode?: string;
-  info: Object;
+  dateTime?: number
+  isShow: Boolean
+  text?: string
+  askMsg: string
+  inversion?: boolean
+  error?: boolean
+  loading?: boolean
+  id?: number
+  viewMsg?: string
+  questionMode?: string
+  info: Object
 }
 interface Emit {
   (ev: 'ask', askMsg: string): void
   (ev: 'online', askMsg: string): void
   (ev: 'jarvis', askMsg: string): void
-  (ev: 'report', askMsg: Object): void;
+  (ev: 'report', askMsg: Object): void
 }
-import dayjs from 'dayjs';
 const { iconRender } = useIconRender()
 const ms = useMessage()
 const textRef = ref<HTMLElement>()
@@ -62,7 +62,7 @@ watch(
       {
         label: '重新提问',
         key: 'ask',
-         icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
+        icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
       },
       {
         label: '联网提问',
@@ -75,40 +75,40 @@ watch(
       //   key: 'jarvis',
       //   icon: iconRender({ icon: 'icon-park-solid:brain' }),
       // },
-    ];
+    ]
     if (value.id) {
       options.push({
         label: '举报',
         key: 'report',
         icon: iconRender({ icon: 'octicon:report-16' }),
-      });
+      })
     }
   },
   { immediate: true },
-);
+)
 
 function handleSelect(key: string, askMsg: string) {
   switch (key) {
     case 'copyText':
-      copyText({ text: props.text ?? '' });
-      ms.success('已复制到剪切板');
-      break;
+      copyText({ text: props.text ?? '' })
+      ms.success('已复制到剪切板')
+      break
     case 'ask':
-      emit('ask', askMsg);
-      break;
+      emit('ask', askMsg)
+      break
     case 'online':
-      emit('online', askMsg);
-      break;
+      emit('online', askMsg)
+      break
     case 'jarvis':
-      emit('jarvis', askMsg);
-      break;
+      emit('jarvis', askMsg)
+      break
     case 'report':
-      emit('report', props.info);
+      emit('report', props.info)
       // reportCallback();
-      break;
+      break
     default:
       // 执行一些操作
-      break;
+      break
   }
 }
 </script>
@@ -120,13 +120,15 @@ function handleSelect(key: string, askMsg: string) {
     </div>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
       <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
-      {{ dayjs(dateTime).format('MM月DD天 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
+        {{ dayjs(dateTime).format('MM月DD天 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
       </p>
       <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ viewMsg }} </span>
         <span>(模式：{{ questionMode }}) </span>
-        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
-          target="_blank">查看token计算规则</a>
+        <a
+          href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank"
+        >查看字符计算器</a>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" />
