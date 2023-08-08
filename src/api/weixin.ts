@@ -81,5 +81,19 @@ export function getLatestCharReduceInfo<T>(data = {}) {
     data,
   })
 }
+export function getLatestCharTwoReduceInfo<T>(data = {}) {
+  // return Promise.resolve();
+  return get<T>({
+    url: `/luomacode-api/chat/getLatestCharTwoReduceInfo`,
+    data,
+  });
+}
 
+export function conversationReport<T>(data = {}) {
+  // return Promise.resolve();
+  return post<T>({
+    url: `/luomacode-api/conversation/report`,
+    data,
+  });
+}
 

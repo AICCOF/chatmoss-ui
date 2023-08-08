@@ -85,7 +85,13 @@ export const useUserStore = defineStore('user-store', {
       let arr =[];
       if (!state.balanceInfo)
         return []
-      
+      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5-4k']) {
+        arr.push({
+          title: 'GPT3.5-4k套餐',
+          timesResidue: state.balanceInfo.timesResidue['3.5-4k'],
+          list: state.balanceInfo.orderResidue['3.5-4k'],
+        })
+      }
       if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5']){
         arr.push({
           title: 'GPT3.5-16k套餐',

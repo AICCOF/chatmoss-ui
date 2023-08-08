@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { NDivider, NSwitch, useDialog, useMessage } from 'naive-ui'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { NDivider, NSwitch,  } from 'naive-ui'
+import { computed, onMounted, reactive, ref , nextTick } from 'vue'
 // import dayjs from 'dayjs'
+import { message as ms, Modal } from 'ant-design-vue';
 import uni from '@dcloudio/uni-webview-js'
 import { bindingStatus, unbind } from './../../../api/weixin'
 import { useAppStore, useUserStore } from '@/store'
@@ -9,13 +10,14 @@ import { localStorage } from '@/utils/storage/localStorage'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { SvgIcon } from '@/components/common'
+import { accountClose } from '@/api/account';
 // let props = defineProps(['register'])
 // const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
 const go = useGo()
 const userStore = useUserStore()
-
-const ms = useMessage()
+import {  useRouter } from 'vue-router';
+const router = useRouter();
 const appStore = useAppStore()
 
 const nickname = computed(() => {
@@ -71,11 +73,32 @@ function handleUpdateValue(chatmossTheme: string) {
     },
   })
 }
-
-// 模型选择
-// console.log(userStore.getOpenaiVersion)
-// if (userStore.userInfo.fourSwitch !== 'ON')
-//   userStore.saveOpenaiVersion('3.5')
+const open = ref(false);
+const secondsToGo = ref(10);
+let interval: any;
+function handleClose() {
+  clearInterval(interval);
+}
+function handleLogout() {
+  open.value = true;
+  secondsToGo.value = 10;
+  interval = setInterval(() => {
+    secondsToGo.value -= 1;
+    if (secondsToGo.value <= 0) {
+     secondsToGo.value = 0;
+      clearInterval(interval);
+    }
+  }, 1000);
+}
+async function handleConfirm() {
+  if (secondsToGo.value === 0) {
+    await accountClose();
+    ms.info('注销成功');
+    localStorage.clear();
+    await nextTick();
+    back();
+  }
+}
 
 // 专业模式
 function handleModeValue(chatmossMode: string) {
@@ -91,48 +114,7 @@ function setOpenaiVersion(action) {
   ms.success('模型切换成功')
 }
 
-const dialog = useDialog()
-function bindEvent(type, text) {
-  // 解绑操作
-  if (text) {
-    new Promise((resole, reject) => {
-      dialog.error({
-        title: '解绑',
-        content: '确认解绑？',
-        positiveText: '确定',
-        negativeText: '取消',
-        onPositiveClick: async () => {
-          const res = await unbind({
-            type: type === 'email' ? 1 : 0,
-          })
-          ms.info(res.msg)
-          bindingStatusAPI()
-        },
-        onNegativeClick: () => {
 
-        },
-      })
-    })
-  }
-  else {
-    if (type === 'email') {
-      go({
-        name: 'bindQQ',
-        query: {
-          type,
-        },
-      })
-    }
-    else {
-      go({
-        name: 'bindWechat',
-        query: {
-          type,
-        },
-      })
-    }
-  }
-}
 </script>
 
 <template>
@@ -147,10 +129,8 @@ function bindEvent(type, text) {
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <div
-            v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
-            @click="() => { go({ name: 'feedback' }) }"
-          >
+          <div v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
+            @click="() => { go({ name: 'feedback' }) }">
             问题反馈
           </div>
           <div class="flex items-center btn cursor-pointer" @click="() => { go({ name: 'forget' }) }">
@@ -218,10 +198,8 @@ function bindEvent(type, text) {
           <div class="flex justify-between">
             <div>OpenAI模型选择</div>
             <div>
-              <van-popover
-                v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
-                @select="setOpenaiVersion"
-              >
+              <van-popover v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
+                @select="setOpenaiVersion">
                 <template #reference>
                   <div class="footer-item footer-item-btn footer-item-btn1 model-version " style="margin-right: 0px;">
                     {{ userStore.getModeVersion.viewName }}
@@ -243,10 +221,8 @@ function bindEvent(type, text) {
           <div class="flex justify-between items-center">
             <div> ChatMoss主题设定</div>
             <div class="flex">
-              <NSwitch
-                v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
-                @update:value="handleUpdateValue"
-              />
+              <NSwitch v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
+                @update:value="handleUpdateValue" />
               <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
             </div>
           </div>
@@ -256,16 +232,29 @@ function bindEvent(type, text) {
           <div class="flex justify-between items-center">
             <div> 回答模式</div>
             <div class="flex">
-              <NSwitch
-                v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
-                @update:value="handleModeValue"
-              />
+              <NSwitch v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
+                @update:value="handleModeValue" />
               <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
             </div>
           </div>
         </div>
 
         <van-divider />
+
+        <div class="justify-between">
+          <div>注销</div>
+        </div>
+        <div class="flex mt-2 justify-between">
+
+          <div style="margin-top: 10px;  font-size: 12px">
+            注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
+          </div>
+
+          <van-button class="btn-primary" size="small"  @click="handleLogout">
+            注销
+          </van-button>
+        </div>
+        <NDivider />
 
         <div class="justify-between">
           <div>字体大小设置</div>
@@ -288,10 +277,97 @@ function bindEvent(type, text) {
         </div>
       </div>
     </div>
+
+       <Modal
+        v-model:visible="open"
+        :title="null"
+        :footer="null"
+        centered
+        class="self-model"
+        style="width: fit-content"
+        @cancel="handleClose"
+      >
+        <div
+          style="width: 410px; height: 310px; overflow: hidden; border-radius: 16px; background: #fff"
+        >
+          <div
+            style="
+            width: 410px;
+            height: 70px;
+            background: linear-gradient(90deg, #756df2 0%, #756df2 100%);
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 70px;
+            text-align: center;
+          "
+            >注销账号</div
+          >
+          <div
+            class=""
+            style="
+            box-sizing: border-box;
+            margin-top: 50px;
+            padding: 0 27px;
+            color: #1c212a;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 22px;
+          "
+          >
+            是否注销账号，注销账号之后，账号数据将会被全部清空，不可恢复，账号也不可重新注册
+          </div>
+
+          <div
+            class="flex-center justify-between"
+            style="box-sizing: border-box; margin-top: 50px; padding: 0 27px"
+          >
+            <div
+              class="btn-confirm"
+              :class="[secondsToGo === 0 ? 'active' : '']"
+              @click="handleConfirm"
+              >确认<span v-if="secondsToGo > 0">（{{ secondsToGo }}）</span></div
+            >
+            <div
+              style="
+              width: 170px;
+              height: 54px;
+              border-radius: 8px;
+              background: #605dff;
+              color: #fff;
+              font-size: 18px;
+              font-weight: 500;
+              line-height: 54px;
+              text-align: center;
+            "
+              @click="() => (open = false)"
+              >取消</div
+            >
+          </div>
+        </div>
+      </Modal>
   </Page>
 </template>
 
 <style lang="less" scoped>
+
+  .btn-confirm {
+    width: 170px;
+    height: 54px;
+    border: 1px solid #cdcdcd;
+    border-radius: 8px;
+    background: #fff;
+    color: #cdcdcd;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 54px;
+    text-align: center;
+
+    &.active {
+      color: #1d2129;
+    }
+  }
+
 .tip-text-input {
   font-size: 12px;
   margin-top: 5px;

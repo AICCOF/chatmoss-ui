@@ -5,82 +5,110 @@ import { NButton, useMessage } from 'naive-ui'
 import TextComponent from './Text.vue'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
-import { t } from '@/locales'
+// import { t } from '@/locales'
 import { useChatStore } from '@/store'
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 const chatStore = useChatStore()
 interface Props {
-  dateTime?: string
-  isShow: Boolean
-  text?: string
-  askMsg: string
-  inversion?: boolean
-  error?: boolean
-  loading?: boolean
-  id?: number
-  viewMsg?: string
-  questionMode?: string
+  dateTime?: number;
+  isShow: Boolean;
+  text?: string;
+  askMsg: string;
+  inversion?: boolean;
+  error?: boolean;
+  loading?: boolean;
+  id?: number;
+  viewMsg?: string;
+  questionMode?: string;
+  info: Object;
 }
 interface Emit {
   (ev: 'ask', askMsg: string): void
   (ev: 'online', askMsg: string): void
   (ev: 'jarvis', askMsg: string): void
+  (ev: 'report', askMsg: Object): void;
 }
-
+import dayjs from 'dayjs';
 const { iconRender } = useIconRender()
 const ms = useMessage()
 const textRef = ref<HTMLElement>()
 
 // console.error(props.isShow)
-let options: any[] = []
-watch(() => props.isShow, (value) => {
-  options = value
-    ? [
+let options: any[] = [{
+  label: '复制',
+  key: 'copyText',
+  icon: iconRender({ icon: 'ph:copy' }),
+},
+{
+  label: '重新提问',
+  key: 'ask',
+  icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
+},
+{
+  label: '联网提问',
+  key: 'online',
+  icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+}]
+watch(
+  () => props.info,
+  (value) => {
+    options = [
       {
-        label: t('复制'),
+        label: '复制',
         key: 'copyText',
         icon: iconRender({ icon: 'ph:copy' }),
       },
       {
-        label: t('重新提问'),
+        label: '重新提问',
         key: 'ask',
-        icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
+         icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
       },
       {
-        label: t('联网提问'),
+        label: '联网提问',
         key: 'online',
         icon: iconRender({ icon: 'heroicons-solid:status-online' }),
       },
+
       // {
       //   label: t('个人资料库提问'),
       //   key: 'jarvis',
       //   icon: iconRender({ icon: 'icon-park-solid:brain' }),
       // },
-    ]
-    : []
-}, { immediate: true })
+    ];
+    if (value.id) {
+      options.push({
+        label: '举报',
+        key: 'report',
+        icon: iconRender({ icon: 'octicon:report-16' }),
+      });
+    }
+  },
+  { immediate: true },
+);
 
 function handleSelect(key: string, askMsg: string) {
   switch (key) {
     case 'copyText':
-      copyText({ text: props.text ?? '' })
-      ms.success('已复制到剪切板')
-      return
+      copyText({ text: props.text ?? '' });
+      ms.success('已复制到剪切板');
+      break;
     case 'ask':
-      emit('ask', askMsg)
-      //   domtoimage.toPng(document.getElementById('data-wrapper')).then(function (screenshot) {
-      //   // 创建一个新的窗口或标签页来显示截图结果
-      //   console.log(screenshot)
-      // }).catch(function (error) {
-      //   console.error('截图失败:', error);
-      // });
-      return
+      emit('ask', askMsg);
+      break;
     case 'online':
-      emit('online', askMsg)
-      return
+      emit('online', askMsg);
+      break;
     case 'jarvis':
-      emit('jarvis', askMsg)
+      emit('jarvis', askMsg);
+      break;
+    case 'report':
+      emit('report', props.info);
+      // reportCallback();
+      break;
+    default:
+      // 执行一些操作
+      break;
   }
 }
 </script>
@@ -92,17 +120,18 @@ function handleSelect(key: string, askMsg: string) {
     </div>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
       <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
-        {{ dateTime }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
+      {{ dayjs(dateTime).format('MM月DD天 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
       </p>
       <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ viewMsg }} </span>
         <span>(模式：{{ questionMode }}) </span>
-        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-purple-color);" target="_blank">查看token计算规则</a>
+        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank">查看token计算规则</a>
       </p>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" />
       </div>
-      <div v-if="!inversion" class="flex mt-2 ml-2 btns">
+      <div class="flex mt-2 ml-2 btns">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
           <NButton class="btn" text @click="handleSelect(option.key, askMsg)">
             <component :is="option.icon" />
@@ -118,21 +147,22 @@ function handleSelect(key: string, askMsg: string) {
 .text-xs {
   color: var(--moss-text-time-color)
 }
-  .info {
-    // padding: 0 48px;
-    // padding-right: 114px;
-    // transition: 1s all;
-    // color: #86909c;
 
+.info {
+  // padding: 0 48px;
+  // padding-right: 114px;
+  // transition: 1s all;
+  // color: #86909c;
+
+  .btns {
+    transition: 0.5s all;
+    opacity: 0;
+  }
+
+  &:hover {
     .btns {
-      transition: 0.5s all;
-      opacity: 0;
-    }
-
-    &:hover {
-      .btns {
-        opacity: 1;
-      }
+      opacity: 1;
     }
   }
+}
 </style>

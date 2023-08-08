@@ -4,8 +4,8 @@
       <van-nav-bar title="" left-text="返回" left-arrow @click-left="back" />
     </template>
     <div class="flex" style="
-     width: 490px;
-        margin: 0 auto;
+      min-width:375px;
+      margin: 0 auto;
       flex-direction: column;
       margin:0 auto;
       overflow: hidden;
@@ -32,7 +32,7 @@
           <div class="title-h1"> 字符兑换次数（老用户使用） </div>
           <div class="flex">
             <Select v-model="exchangeMossCode" :options="exchangeOptions" class="mr-2 avf exchange"
-              placeholder="请输入您的兑换码" />
+              placeholder="请选择兑换码" />
             <div class="btn-exchange" @click="exchangeMossEvent"> 兑换 </div>
           </div>
         </div>
@@ -356,7 +356,8 @@ async function exchangeMossEvent() {
 }
 
 .exchange {
-  width: 321px;
+  // width: 321px;
+  width: 100%;
   height: 40px;
 
   // padding: 10px 0;
@@ -373,12 +374,13 @@ async function exchangeMossEvent() {
   // display: flex;
   // align-items: center;
   // justify-content: space-between;
-  width: 432px;
+  // min-width: 432px;
   height: 181px;
   padding: 20px 0;
   border-bottom: 1px solid #e2e2e2;
   color: #1c212a;
   font-size: 14px;
+  margin: 0 auto;
 }
 
 .tip-text-input1 {
@@ -497,7 +499,7 @@ async function exchangeMossEvent() {
 
 .input {
   box-sizing: border-box;
-  width: 321px;
+  // width: 321px;
   height: 40px;
   padding: 10px 24px;
   border: 1px solid #cdcdcd;

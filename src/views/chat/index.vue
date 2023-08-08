@@ -22,7 +22,7 @@ import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
-
+import { getLatestCharTwoReduceInfo, conversationReport } from '@/api/weixin';
 const hidden = computed(() => {
   return location.search.indexOf('hiddenInput') > -1
 })
@@ -38,7 +38,7 @@ const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const NInputRef = ref<HTMLInputElement | null>(null)
 const NSelectRef = ref<HTMLInputElement | null>(null)
-
+import { Modal } from 'ant-design-vue';
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
@@ -171,11 +171,30 @@ function onlineFn(askMsg: string) {
 function jarvisFn(askMsg: string) {
   onConversation(askMsg, { jarvis: 1 })
 }
+
+function reportCallback(row: any) {
+  Modal.confirm({
+    title: '举报',
+    content: '发现当前回答内容，不符合正确社会价值观，是否进行举报删除操作',
+    okText: '确定删除',
+    okType: 'danger',
+    cancelText: '取消',
+    async onOk() {
+      // console.log('OK');
+      const res = await conversationReport({
+        conversationId: row.conversationId,
+        id: row.id,
+      });
+      ms.success('举报成功');
+      row.text = res.msg || '内容不符合平台生成规定，已被清理';
+    },
+    onCancel() {
+      console.log('Cancel');
+    },
+  });
+}
+
 async function onConversation(askMsg?: string, opt?) {
-  if (userStore.residueCount < 200000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
-    return
-  }
   // if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
   //   ms.error('请先去设置中心移除key再使用4.0进行提问')
   //   return
@@ -305,6 +324,31 @@ async function onConversation(askMsg?: string, opt?) {
       ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
 
     addTextNum(texts.length)
+
+    setTimeout(() => {
+      if (loading.value) {
+        getLatestCharTwoReduceInfo({
+          conversationId: chatStore.getUuid,
+        }).then((res) => {
+          console.log(res);
+          updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+            mossReduceInfo: res.data[0],
+            conversationId: chatStore.getUuid,
+            id: res.data[0].id,
+          });
+
+          updateChatSome(chatStore.getUuid, dataSources.value.length - 2, {
+            mossReduceInfo: res.data[1],
+            conversationId: chatStore.getUuid,
+            id: res.data[1].id,
+          });
+        });
+
+        loading.value = false;
+        userStore.residueCountAPI();
+      }
+    }, 2000);
+
     scrollToBottom()
   }
   catch (error: any) {
@@ -380,22 +424,7 @@ async function onConversation(askMsg?: string, opt?) {
     })
     return
   }
-  finally {
-    setTimeout(() => {
-      if (loading.value) {
-        getLatestCharReduceInfo({
-          conversationId: chatStore.getUuid,
-        }).then((res) => {
-          updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-            mossReduceInfo: res.data,
-          })
-        })
 
-        loading.value = false
-        userStore.residueCountAPI()
-      }
-    }, 2000);
-  }
 }
 window.onConversation = onConversation
 
@@ -600,11 +629,12 @@ function handleMode() {
             <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
               <div id="data-wrapper">
                 <applicationIntro></applicationIntro>
-                <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
+                <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+                  :info="item"
                   :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                   :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading"
                   :view-msg="item.mossReduceInfo?.viewMsg" :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn"
-                  @online="onlineFn" @jarvis="jarvisFn" />
+                  @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
 
                 <div class="sticky bottom-0 left-0 flex justify-center">
                   <NButton v-if="loading" type="warning" @click="handleStop">
