@@ -112,6 +112,7 @@ function handleTabs(i) {
 }
 
 async function toMossEvent() {
+  console.log('toMossCode', toMossCode.value)
   if (toMossCode.value === '') {
     message.error('请输入字符包兑换码，字符包点击下面继续购买，感谢您的支持')
     return
@@ -175,7 +176,7 @@ async function exchangeMossEvent() {
             兑换码（登录后才能兑换哦~）
           </div>
           <div class="flex">
-            <Input v-model="toMossCode" class="mr-2 input" type="text" placeholder="请输入您的兑换码" style="" />
+            <Input v-model:value="toMossCode" class="mr-2 input" type="text" placeholder="请输入您的兑换码" style="" />
             <div class="btn-exchange" @click="toMossEvent">
               兑换
             </div>
@@ -188,7 +189,7 @@ async function exchangeMossEvent() {
           </div>
           <div class="flex">
             <Select
-              v-model="exchangeMossCode" :options="exchangeOptions" class="mr-2 avf exchange"
+              v-model:value="exchangeMossCode" :options="exchangeOptions" class="mr-2 avf exchange"
               placeholder="请选择兑换码"
             />
             <div class="btn-exchange" @click="exchangeMossEvent">

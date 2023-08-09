@@ -129,7 +129,7 @@ function shopEvent() {
             <!-- 个人中心 -->
             <NPopover trigger="hover">
               <template #trigger>
-                <NButton quaternary circle size="tiny" @click="settingMainEvent">
+                <NButton quaternary circle size="tiny">
                   <template #icon>
                     <span class="">
                       <SvgIcon icon="uil:setting" class="icon" />
@@ -138,6 +138,23 @@ function shopEvent() {
                 </NButton>
               </template>
               <span>设置中心</span>
+            </NPopover>
+          </div>
+          <div class="header-right-item">
+            <!-- 在线客服 -->
+            <NPopover trigger="hover">
+              <template #trigger>
+                <a href="https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true" target="_blank">
+                  <NButton quaternary circle size="tiny">
+                    <template #icon>
+                      <span class="">
+                        <SvgIcon icon="uil:selfie" class="icon" />
+                      </span>
+                    </template>
+                  </NButton>
+                </a>
+              </template>
+              <span>在线客服</span>
             </NPopover>
           </div>
           <div class="header-right-item">
@@ -188,7 +205,6 @@ function shopEvent() {
               </div>
             </NPopover>
           </div>
-
           <div class="header-right-item header-right-item-help">
             <NPopover trigger="hover">
               <template #trigger>

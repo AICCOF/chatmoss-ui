@@ -120,7 +120,7 @@ function handleSelect(key: string, askMsg: string) {
     </div>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
       <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
-        {{ dayjs(dateTime).format('MM月DD天 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
+        {{ dayjs(dateTime).format('MM月DD日 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
       </p>
       <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ viewMsg }} </span>
