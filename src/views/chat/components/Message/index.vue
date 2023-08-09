@@ -88,6 +88,7 @@ watch(
 )
 
 function handleSelect(key: string, askMsg: string) {
+
   switch (key) {
     case 'copyText':
       copyText({ text: props.text ?? '' })
@@ -135,7 +136,7 @@ function handleSelect(key: string, askMsg: string) {
       </div>
       <div class="flex mt-2 ml-2 btns">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
-          <NButton class="btn" text @click="handleSelect(option.key, askMsg)">
+          <NButton class="btn" text @click="handleSelect(option.key, askMsg || text)">
             <component :is="option.icon" />
             <span class="ml-1">{{ option.label }}</span>
           </NButton>

@@ -24,6 +24,7 @@ export function usePullDownRefresh(element, callback) {
 }
 
 export function useScrollToBottom(element, callback) {
+
   const isScrolling = ref(false);
   const handleScroll = () => {
     if (!isScrolling.value && element.value.scrollTop + element.value.clientHeight >= element.value.scrollHeight) {
@@ -33,9 +34,8 @@ export function useScrollToBottom(element, callback) {
       });
     }
   };
-  onMounted(() => {
-    element.value && element.value.addEventListener('scroll', handleScroll);
-  });
+  element.value && element.value.addEventListener('scroll', handleScroll);
+
   onUnmounted(() => {
     element.value && element.value.removeEventListener('scroll', handleScroll);
   });

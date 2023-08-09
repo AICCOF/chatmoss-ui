@@ -343,7 +343,7 @@ async function onConversation(askMsg?: string, opt?) {
           })
         })
 
-        loading.value = false
+
         userStore.residueCountAPI()
       }
     }, 2000)
@@ -422,6 +422,8 @@ async function onConversation(askMsg?: string, opt?) {
       error: true,
       loading: false,
     })
+  } finally {
+    loading.value = false
   }
 }
 window.onConversation = onConversation
@@ -714,7 +716,7 @@ function handleMode() {
   left: 0;
   top: 0;
 
-   .no-data-info-tip-title {
+  .no-data-info-tip-title {
     font-size: 14px;
     color: #FF6666;
     margin-bottom: 10px;

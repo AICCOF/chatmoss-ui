@@ -33,6 +33,9 @@ async function getApplicationListAPI(appType) {
     const res = await getApplicationList(parmas)
     dataList.value = res.rows || []
     stop = false;
+     if (res.rows.length != parmas.pageSize) {
+      stop = true;
+    }
   } else {
     if(stop) return ;
     parmas.pageNum++;
