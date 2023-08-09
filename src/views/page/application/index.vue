@@ -46,11 +46,11 @@ async function getApplicationListAPI(appType) {
     }
   }
 }
-
+useScrollToBottom(element, async () => {
+  getApplicationListAPI(currentAppType)
+});
 onMounted(()=>{
-  useScrollToBottom(element, async () => {
-    getApplicationListAPI(currentAppType)
-  });
+ 
 
 })
 

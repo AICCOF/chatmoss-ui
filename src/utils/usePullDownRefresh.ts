@@ -27,6 +27,7 @@ export function useScrollToBottom(element, callback) {
 
   const isScrolling = ref(false);
   const handleScroll = () => {
+    console.log(222)
     if (!isScrolling.value && element.value.scrollTop + element.value.clientHeight >= element.value.scrollHeight) {
       isScrolling.value = true;
       callback().then(() => {
@@ -34,8 +35,9 @@ export function useScrollToBottom(element, callback) {
       });
     }
   };
-  element.value && element.value.addEventListener('scroll', handleScroll);
-
+  onMounted(() => {
+    element.value && element.value.addEventListener('scroll', handleScroll);
+  });
   onUnmounted(() => {
     element.value && element.value.removeEventListener('scroll', handleScroll);
   });
