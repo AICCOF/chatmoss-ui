@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import {  useMessage } from 'naive-ui'
+import { useMessage } from 'naive-ui'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationLike, getApplicationList, getApplicationSearch, getApplicationTypeList } from '@/api/application'
 import { useScrollToBottom } from '@/utils/usePullDownRefresh'
-import {  onMounted } from 'vue';
+import { onMounted } from 'vue';
+import { Spin } from 'ant-design-vue';
 const ms = useMessage()
 const back = useBack()
 const go = useGo()
@@ -16,6 +17,7 @@ const typeList = ref('')
 const dataList = ref([])
 let currentAppType: string;
 const element = ref();
+const spinning = ref<boolean>(false);
 let parmas = {
   appType: '',
   pageNum: 1,
@@ -30,18 +32,22 @@ async function getApplicationListAPI(appType) {
       pageNum: 1,
       pageSize: 20,
     }
+    spinning.value = true;
     const res = await getApplicationList(parmas)
     dataList.value = res.rows || []
+    spinning.value = false;
     stop = false;
-     if (res.rows.length != parmas.pageSize) {
+    if (res.rows.length != parmas.pageSize) {
       stop = true;
     }
   } else {
-    if(stop) return ;
+    if (stop) return;
     parmas.pageNum++;
+    spinning.value = true;
     const res = await getApplicationList(parmas)
+    spinning.value = false;
     dataList.value = [...dataList.value, ...res.rows] || []
-     if (res.rows.length != parmas.pageSize) {
+    if (res.rows.length != parmas.pageSize) {
       stop = true;
     }
   }
@@ -49,10 +55,12 @@ async function getApplicationListAPI(appType) {
 useScrollToBottom(element, async () => {
   getApplicationListAPI(currentAppType)
 });
-onMounted(()=>{
- 
+onMounted(() => {
+
 
 })
+
+
 
 
 async function getApplicationSearchAPI() {
@@ -130,7 +138,9 @@ async function handleInstalled(row) {
           <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
         </van-sidebar>
         <div class="pt-0 flex-1" style="overflow: hidden;">
+
           <div class="w-full content px-8 pt-0 border-box" ref="element">
+
             <div v-for="(item, i) of dataList" :key="i" class="flex justify-between items-center w-full flex-1 item mt-2">
               <div class="flex items-center flex-1">
                 <div class="mr-2 none">
@@ -163,7 +173,12 @@ async function handleInstalled(row) {
                 </div>
               </div>
             </div>
+            <div class="flex-center justify-center" style="margin-top:40px;">
+              <Spin :spinning="spinning"></Spin>
+            </div>
+
           </div>
+
         </div>
       </div>
     </div>

@@ -342,8 +342,6 @@ async function onConversation(askMsg?: string, opt?) {
             id: res.data[1].id,
           })
         })
-
-
         userStore.residueCountAPI()
       }
     }, 2000)
