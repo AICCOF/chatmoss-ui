@@ -182,3 +182,25 @@ fade1-enter-active,
 		padding: 0;
 	}
 }
+
+.loading {
+	width: 16px;
+	height: 16px;
+	margin-right: 6px;
+	animation: spin 2s linear infinite;
+	/* 使用 @keyframes 动画 */
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+p{
+	margin-bottom: 0 !important;
+}

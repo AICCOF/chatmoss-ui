@@ -2,12 +2,15 @@
 import { ref, watch } from 'vue'
 import { NButton, useMessage } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
+import { CaretRightOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs'
 import TextComponent from './Text.vue'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
 // import { t } from '@/locales'
 import { useChatStore } from '@/store'
+// Spin
+import { Spin, Collapse, CollapsePanel } from 'ant-design-vue'
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 const chatStore = useChatStore()
@@ -15,7 +18,8 @@ interface Props {
   dateTime?: number
   isShow: Boolean
   text?: string
-  askMsg: string
+  askMsg: any;
+  isEnd: Boolean;
   inversion?: boolean
   error?: boolean
   loading?: boolean
@@ -112,6 +116,7 @@ function handleSelect(key: string, askMsg: string) {
       break
   }
 }
+const activeKey = ref(['0']);
 </script>
 
 <template>
@@ -126,11 +131,32 @@ function handleSelect(key: string, askMsg: string) {
       <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ viewMsg }} </span>
         <span>(模式：{{ questionMode }}) </span>
-        <a
-          href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
-          target="_blank"
-        >查看字符计算器</a>
+        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank">查看字符计算器</a>
       </p>
+      <Collapse v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
+        :bordered="false" class="my-collapse" expand-icon-position="right">
+        <template #expandIcon="{ isActive }">
+          <caret-right-outlined :rotate="isActive ? 90 : 0" />
+        </template>
+        <CollapsePanel key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
+          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'">
+          <template #header>
+            <div class="flex-center" style="width: 100%">
+              {{
+                info.pluginInfo['pluginId']
+                ? chatStore.pluginMap[info.pluginInfo['pluginId']].name
+                : ''
+              }}
+              <div v-if="chatStore.plugState === 1 && isEnd">
+                <span class="plug-in-loading">执行中...</span>
+                <Spin :spinning="true" size="small" />
+              </div>
+            </div>
+          </template>
+          <p>{{ info.pluginInfo.pluginMessage }}</p>
+        </CollapsePanel>
+      </Collapse>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" />
       </div>

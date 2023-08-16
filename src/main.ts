@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import 'ant-design-vue/dist/antd.css';
+
 import 'vant/lib/index.css'
 import 'v3-tour/dist/vue-tour.css'
 import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
@@ -13,7 +13,7 @@ import { setupRouter } from './router'
 
 import getDomainAPI from './api/getDomain'
 import VueTour from 'v3-tour'
-
+import 'ant-design-vue/dist/antd.css';
 
 // bootstrap()
 getDomainAPI().then(() => {

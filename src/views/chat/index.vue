@@ -23,6 +23,7 @@ import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
+import { checkPlugin, execPlugin } from '@/api/plugin';
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
 })
@@ -266,7 +267,8 @@ async function onConversation(askMsg?: string, opt?) {
     requestOptions: { prompt: message, options: { ...options } },
   })
   scrollToBottom()
-
+  const selectPlugin = chatStore.getSelectPluginInfo;
+  const pluginId = selectPlugin?.pluginId; // 插件ID
   try {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
     console.log('chatMossPiecesNumber', chatMossPiecesNumber)
@@ -280,6 +282,89 @@ async function onConversation(askMsg?: string, opt?) {
       texts = `${texts} 请详细回答`
 
     // texts = compressCode(texts)
+    let execPluginResponse: any = {};
+    let pluginObj = {};
+    if (selectPlugin && chatStore.getSelectPluginInfo?.select) {
+      /**
+       * 执行插件逻辑
+       */
+      chatStore.setPlugState(0);
+
+      const response = await checkPlugin({
+        pluginId,
+        messages: [
+          {
+            role: 'user',
+            content: texts,
+          },
+        ],
+      });
+      console.log('1.判断是否执行插件', response.checkPluginInfo.function_call);
+      const fn = response.checkPluginInfo.function_call;
+
+      // console.log(response.checkPluginInfo.content);
+      // if (response.checkPluginInfo.content) {
+      //   // ms.warning(response.checkPluginInfo.content);
+      //   texts = `请直接输出后面的内容： ${response.checkPluginInfo.content}`;
+      // }
+
+      // 执行插件内容
+      if (fn) {
+        pluginObj = {
+          pluginId,
+        };
+        updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: false,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: '',
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        });
+        // 插件展示状态：0 没执行，1 执行中，2 执行完成
+        chatStore.setPlugState(1);
+        console.log('2.插件可执行：', JSON.parse(fn.arguments));
+
+        // 执行内容
+        execPluginResponse = await execPlugin({
+          pluginId,
+          args: JSON.parse(fn.arguments),
+        });
+        console.log('3.插件执行结果：', execPluginResponse.pluginStr);
+
+        texts = `${texts}\n|$moss${JSON.stringify(pluginObj)}$moss|${execPluginResponse.pluginStr ? execPluginResponse.pluginStr : ''
+          }`;
+
+        updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: false,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: execPluginResponse.pluginStr,
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        });
+      }
+    }
 
     const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
@@ -304,6 +389,11 @@ async function onConversation(askMsg?: string, opt?) {
             ast: message,
             error: false,
             loading: false,
+              pluginInfo: {
+              ast: message,
+              pluginMessage: execPluginResponse.pluginStr,
+              ...pluginObj,
+            },
             conversationOptions: {
               conversationId: chatStore.getUuid,
             },
@@ -324,27 +414,7 @@ async function onConversation(askMsg?: string, opt?) {
 
     addTextNum(texts.length)
 
-    setTimeout(() => {
-      if (loading.value) {
-        getLatestCharTwoReduceInfo({
-          conversationId: chatStore.getUuid,
-        }).then((res) => {
-          console.log(res)
-          updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-            mossReduceInfo: res.data[0],
-            conversationId: chatStore.getUuid,
-            id: res.data[0].id,
-          })
 
-          updateChatSome(chatStore.getUuid, dataSources.value.length - 2, {
-            mossReduceInfo: res.data[1],
-            conversationId: chatStore.getUuid,
-            id: res.data[1].id,
-          })
-        })
-        userStore.residueCountAPI()
-      }
-    }, 2000)
 
     scrollToBottom()
   }
@@ -421,7 +491,37 @@ async function onConversation(askMsg?: string, opt?) {
       loading: false,
     })
   } finally {
-    loading.value = false
+    if (chatStore.plugState === 1) chatStore.setPlugState(2); // 插件结束状态
+    setTimeout(() => {
+      if (loading.value) {
+        getLatestCharTwoReduceInfo({
+          conversationId: chatStore.getUuid,
+        }).then((res) => {
+          console.log(res);
+          updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+            mossReduceInfo: {
+              id: res.data[0].id,
+            },
+            conversationId: chatStore.getUuid,
+            id: res.data[0].id,
+          });
+
+          updateChatSome(chatStore.getUuid, dataSources.value.length - 2, {
+            mossReduceInfo: {
+              ...res.data[1],
+              questionMode: res.data[0].questionMode,
+              viewMsg: res.data[0].viewMsg,
+            },
+            conversationId: chatStore.getUuid,
+            id: res.data[1].id,
+          });
+        });
+
+        userStore.residueCountAPI();
+        loading.value = false;
+      }
+    }, 2000);
+
   }
 }
 window.onConversation = onConversation
@@ -582,7 +682,7 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
-// window.handleMode = handleMode;
+
 </script>
 
 <template>
@@ -625,9 +725,10 @@ function handleMode() {
               <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                 :info="item"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
-                :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading"
-                :view-msg="item.mossReduceInfo?.viewMsg" :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn"
-                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
+                :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
+                :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
+                :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn" @online="onlineFn" @jarvis="jarvisFn"
+                @report="reportCallback" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">

@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@ant-design/icons-vue':
+    specifier: ^6.1.0
+    version: 6.1.0(vue@3.2.47)
   '@dcloudio/uni-webview-js':
     specifier: ^0.0.3
     version: 0.0.3

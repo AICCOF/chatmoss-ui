@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import { useChatStore, useUserStore } from '@/store'
 import { conversationUpload } from '@/api/index'
 import { computed } from 'vue'
+import { Popover, Switch } from 'ant-design-vue'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const ms = useMessage()
@@ -45,6 +46,20 @@ function handleMode() {
 	userStore.toggleMode()
 }
 // const showPopover = ref(false)
+
+// 当某个滑块被选中时，将其他滑块设为未选中状态
+const handleSwitchChange = (selectedItem) => {
+	chatStore.setPlugin(selectedItem);
+	if (selectedItem.select) {
+		chatStore.pluginList.forEach((item) => {
+			if (item !== selectedItem) {
+				item.select = false;
+			}
+		});
+	}
+};
+// 获取选中的插件信息
+chatStore.getPlugin();
 </script>
 
 <template>
@@ -53,6 +68,7 @@ function handleMode() {
 			<div class="footer-left">
 				<div class="div">
 					<div class="div-wrap">
+
 						<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1"
 							@click="createQuestion">
 							新建会话
@@ -61,6 +77,29 @@ function handleMode() {
 							@click="toggleButtonEvent">
 							历史记录
 						</div>
+						<Popover title="" trigger="hover" overlay-class-name="ant-popover-my">
+							<template #content>
+								<div style="padding: 12px">
+									<div v-for="(item, index) in chatStore.pluginList" :key="index" class="plugin-item">
+										<img class="plugin-item-icon" :src="item.icon" alt="" />
+										<div class="plugin-item-info">
+											<div class="plugin-item-name">{{ item.name }}</div>
+											<div class="plugin-item-description">{{ item.description }}</div>
+										</div>
+										<Switch v-model:checked="item.select" @change="handleSwitchChange(item)" />
+									</div>
+								</div>
+							</template>
+							<div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin" style="">
+								<img src="@/assets/icon/icon-plugin.png" style="width: 12px; 
+									height: 12px;
+									margin-right: 8px;display: inline-block;" />
+								<span class="align-text-top">插件</span>
+							</div>
+							<div class="inline-block align-middle" v-if="chatStore.getSelectPluginInfo?.select">
+								<img class="plugin-main-select-icon" :src="chatStore.getSelectPluginInfo['icon']" alt="" />
+							</div>
+						</Popover>
 						<!-- <div v-if="userStore.toggleValue && !userStore.isQuestionMode"
 							class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent">
 							对话上传个人资料库
@@ -104,6 +143,65 @@ function handleMode() {
 </template>
 
 <style lang="less" scoped>
+  .plugin-main-select-icon {
+      width: 16px;
+      height: 16px;
+      margin-left: 6px;
+    }
+.plugin-item {
+	display: flex;
+	align-items: center;
+	width: 304px;
+	height: 62px;
+	margin-bottom: 12px;
+	padding: 12px;
+	border-radius: 8px;
+
+	&:hover {
+		background-color: #f2f3f5;
+	}
+
+	.plugin-item-icon {
+		width: 30px;
+		height: 30px;
+		margin-right: 10px;
+	}
+
+	.plugin-item-info {
+		// display: flex;
+		width: 180px;
+		height: 44px;
+		margin-right: 10px;
+
+		.plugin-item-name {
+			width: 180px;
+			height: 22px;
+			margin-bottom: 4px;
+			overflow: hidden;
+			color: #1d2129;
+			font-family: PingFangSC-Regular, 'PingFang SC';
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 22px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.plugin-item-description {
+			width: 180px;
+			height: 17px;
+			overflow: hidden;
+			color: #86909c;
+			font-family: PingFangSC-Regular, 'PingFang SC';
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 17px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+}
+
 .model-item {
 	padding: 3px 5px;
 	cursor: pointer;

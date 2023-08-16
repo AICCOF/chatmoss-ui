@@ -132,7 +132,7 @@ function shopEvent() {
                 <NButton quaternary circle size="tiny">
                   <template #icon>
                     <span class="">
-                      <SvgIcon icon="uil:setting" class="icon" />
+                      <SvgIcon icon="uil:setting" class="icon" @click="settingMainEvent" />
                     </span>
                   </template>
                 </NButton>
@@ -171,17 +171,11 @@ function shopEvent() {
               <div style="width: 370px; max-height: 648px; overflow: auto">
                 <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice">
                   <div class="flex-center" style="justify-content: space-between">
-                    <div
-                      style="color: var(--n-text-color);; font-size: 16px; font-weight: 600; line-height: 22px"
-                    >
+                    <div style="color: var(--n-text-color);; font-size: 16px; font-weight: 600; line-height: 22px">
                       {{ item.createTime }}
                     </div>
-                    <div
-                      v-if="item.content.length > 96"
-                      style="color: var(--moss-text); font-size: 12px"
-                      class="cursor-pointer"
-                      @click="() => (item.unfold = !item.unfold)"
-                    >
+                    <div v-if="item.content.length > 96" style="color: var(--moss-text); font-size: 12px"
+                      class="cursor-pointer" @click="() => (item.unfold = !item.unfold)">
                       <div v-if="!item.unfold" class="flex-center">
                         <SvgIcon icon="ant-design:down-outlined" class="icon" />
                         <span style="margin-left: 10px">展开</span>
@@ -194,10 +188,7 @@ function shopEvent() {
                     </div>
                   </div>
                   <div class="flex-1">
-                    <div
-                      class="content"
-                      :class="[item.content.length > 96 && !item.unfold ? 'line' : '']"
-                    >
+                    <div class="content" :class="[item.content.length > 96 && !item.unfold ? 'line' : '']">
                       {{ item.content }}
                     </div>
                   </div>
@@ -250,10 +241,8 @@ function shopEvent() {
                   余额
                 </div>
               </template>
-              <div
-                v-for="(row, i) of userStore.packageList" :key="i"
-                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
-              >
+              <div v-for="(row, i) of userStore.packageList" :key="i"
+                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
                 <div>
                   <div class="flex justify-between">
                     <span class="mr-4">{{ row.title }}</span>
@@ -263,8 +252,10 @@ function shopEvent() {
                 <div class="mt-2" style="overflow-y: auto;max-height: 66px;">
                   <div v-for="(item, i) of row.list" :key="i" class="">
                     <div class="mt-1 flex justify-between">
-                      <span v-if="item.payType === 1" class="mr-1">付费：{{ item.totalTimes }}次；使用：{{ item.usedTimes }}次</span>
-                      <span v-if="item.payType === 0" class="mr-1">免费：{{ item.totalTimes }}次；使用：{{ item.usedTimes }}次</span>
+                      <span v-if="item.payType === 1" class="mr-1">付费：{{ item.totalTimes }}次；使用：{{ item.usedTimes
+                      }}次</span>
+                      <span v-if="item.payType === 0" class="mr-1">免费：{{ item.totalTimes }}次；使用：{{ item.usedTimes
+                      }}次</span>
                       <NTag style="cursor: pointer;" type="success" size="small" round>
                         {{ item.residueDays === 0 ? "去购买" : `剩余${item.residueDays}天` }}
                       </NTag>
@@ -302,27 +293,28 @@ function shopEvent() {
 </template>
 
 <style lang="less">
-  .notice {
-		background-color: var(--moss-tip-bg-color);
-  	border-radius: 10px;
-    padding: 20px;
-		margin-bottom: 10px;
+.notice {
+  background-color: var(--moss-tip-bg-color);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 10px;
 
-    .content {
-      display: -webkit-box;
-      margin-top: 12px;
-      overflow: hidden;
-      color: var(--moss-text);
-      font-size: 14px;
-      text-align: justify;
-      text-overflow: ellipsis;
-      -webkit-box-orient: vertical;
+  .content {
+    display: -webkit-box;
+    margin-top: 12px;
+    overflow: hidden;
+    color: var(--moss-text);
+    font-size: 14px;
+    text-align: justify;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
 
-      &.line {
-        -webkit-line-clamp: 4; /* 显示3行 */
-      }
+    &.line {
+      -webkit-line-clamp: 4;
+      /* 显示3行 */
     }
   }
+}
 
 .header-main {
   width: 100%;

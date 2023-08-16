@@ -35,11 +35,13 @@
     "tauri-build": "yarn tauri build"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
     "@dcloudio/uni-webview-js": "^0.0.3",
     "@tauri-apps/api": "^1.2.0",
     "@traptitech/markdown-it-katex": "^3.6.0",
     "@vitejs/plugin-legacy": "^4.0.1",
     "@vueuse/core": "^9.13.0",
+    "ant-design-vue": "~3.2.20",
     "dayjs": "^1.11.7",
     "highlight.js": "^11.7.0",
     "html2canvas": "^1.4.1",
@@ -55,8 +57,7 @@
     "vue-drag-verify2": "^1.2.0",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6",
-    "vuedraggable": "^4.1.0",
-    "ant-design-vue": "~3.2.20"
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@actions/github": "^5.1.1",

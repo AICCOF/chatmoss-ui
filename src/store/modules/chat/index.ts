@@ -5,6 +5,7 @@ import { getToken } from '../auth/helper'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteBatchConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
 import { useUserStore } from '@/store'
+import { getPlugin } from '@/api/plugin';
 
 const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
@@ -19,14 +20,29 @@ export function verify(id: any) {
 export const useChatStore = defineStore('chat-store', {
   state: () => {
     return {
+      pluginList: [],
+      currentPlugin: {},
+      plugState: 0,
       ...getLocalState(),
       chat: [],
       searchMsg: '',
       deleteIds: [],
       loading: false,
+   
     }
   },
   getters: {
+    pluginMap() {
+      const map = {};
+      for (let index = 0; index < this.pluginList.length; index++) {
+        const element = this.pluginList[index];
+        map[element.pluginId] = element;
+      }
+      return map;
+    },
+    getSelectPluginInfo(state) {
+      return state.currentPlugin.pluginId ? state.currentPlugin : null;
+    },
     textLength() {
       const dataSources = this.getChatByUuid() as any[]
       // console.log(dataSources, 'textLength')
@@ -132,6 +148,25 @@ export const useChatStore = defineStore('chat-store', {
   },
 
   actions: {
+    async getPlugin() {
+      const info = await getPlugin({});
+      console.log('pluginList', info);
+      info.pluginList.map((item) => {
+        if (this.currentPlugin.pluginId === item.pluginId && this.currentPlugin.select) {
+          item.select = true;
+        } else {
+          item.select = false;
+        }
+      });
+      this.pluginList = info.pluginList;
+    },
+    setPlugState(value: number) {
+      this.plugState = value;
+    },
+    setPlugin(row) {
+      this.currentPlugin = row;
+      this.recordState();
+    },
     async createChat(title?: string) {
       const token = getToken()
       if (token)
@@ -212,18 +247,74 @@ export const useChatStore = defineStore('chat-store', {
         try {
           const res = await getConversationDetail({ conversationId: this.active, pageSize: 200 })
           const rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
-          result.data.push(...rows.map((row: any, i: number, array: any[]) => {
-            let ast = ''
-            if (row.content.startsWith('1:') && array[i - 1])
-              ast = array[i - 1].content.slice(2)
+          let preObj = {}; // 处理用插件提问题的情况
+          result.data.push(
+            ...rows.map((row: any, i: number, array: any[]) => {
+              if (row.content.startsWith('0:')) {
+                // content": "0:北京市明天的天气\n|$moss{"name:":"1"}$moss|根据提供的数据，查询天气信息，并格式化输出
 
-            return {
-              ...row,
-              ast,
-              inversion: !!row.content.startsWith('0:'),
-              text: row.content.slice(2),
-            }
-          }))
+                // .match(/\|\$moss(.*?)\$moss\|/,'')
+                const text = row.content.slice(2);
+                // 尝试是不是用插件提问，如果使用插件提问，需要提取出来插件的信息，并把他存储下来，提供给下一条回答的信息。
+                const matchText = text.match(/\|\$moss(.*?)\$moss\|/, '');
+                // console.log(matchText, 'matchText');
+                let pluginInfo = [text];
+                let json = {};
+                if (matchText) {
+                  pluginInfo = text.split(matchText[0]);
+                  try {
+                    json = JSON.parse(matchText[1]);
+                  } catch (error) {
+                    console.error('error', error);
+                  }
+                }
+                // let ast = array[i - 1].content.slice(2);
+                preObj = {
+                  ...row,
+                  ast: pluginInfo[0] ?? '',
+                  pluginInfo: {
+                    ast: pluginInfo[0] ?? '',
+                    pluginMessage: pluginInfo[1] ?? '',
+                    ...json,
+                  },
+                  inversion: !!row.content.startsWith('0:'),
+                  text: pluginInfo[0] ?? '',
+                };
+                return {
+                  ...row,
+                  ast: pluginInfo[0] ?? '',
+                  pluginInfo: {
+                    ast: pluginInfo[0] ?? '',
+                    pluginMessage: pluginInfo[1] ?? '',
+                    ...json,
+                  },
+                  inversion: !!row.content.startsWith('0:'),
+                  text: pluginInfo[0] ?? '',
+                };
+              }
+              // 处理回答
+              if (row.content.startsWith('1:') && array[i - 1]) {
+                // content": "1:北京市明天的天气\n$moss|根据提供的数据，查询天气信息，并格式化输出
+                const text = row.content.slice(2);
+                // console.log(array[i - 1], i);
+                return {
+                  ...row,
+                  ast: preObj.ask,
+                  pluginInfo: preObj.pluginInfo,
+                  inversion: !!row.content.startsWith('0:'),
+                  text,
+                };
+              } else {
+                const text = row.content.slice(2);
+                return {
+                  ast: text,
+                  ...row,
+                  inversion: !!row.content.startsWith('0:'),
+                  text,
+                };
+              }
+            }),
+          );
         } catch (error) {
 
         } finally {
