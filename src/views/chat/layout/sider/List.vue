@@ -64,7 +64,7 @@ function isActive(id: any) {
              {{ row.title }}
           </div>
           <div v-for="(item, index) of row.data" :key="index" class="group">
-            <a
+            <div
               class="question-list relative flex items-center gap-3 px-3 py-3 mt-1 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
               :class="isActive(item.id) && ['border-[#00CCFF]', 'bg-neutral-100', 'text-[#0099FF]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]', 'pr-14']"
               @click="handleSelect(item)"
@@ -103,7 +103,7 @@ function isActive(id: any) {
                   </div>
                 </template>
               </div>
-            </a>
+            </div>
           </div>
         </div>
         </n-checkbox-group>

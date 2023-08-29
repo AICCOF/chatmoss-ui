@@ -8,6 +8,7 @@ import { t } from '@/locales'
 import { isVscode } from '@/utils/vsCodeUtils'
 import * as IncrementalDOM from 'incremental-dom'
 import MarkdownItIncrementalDOM from 'markdown-it-incremental-dom'
+import { SvgIcon } from '@/components/common'
 interface Props {
   inversion?: boolean
   error?: boolean
@@ -88,9 +89,12 @@ defineExpose({ textRef })
 <template>
   <div class="" :class="wrapClass">
     <template v-if="loading">
-      <img src="@/assets/icon/icon-loading.png" class="loading" />
+      <!-- <img src="@/assets/icon/icon-loading.png" class="loading" /> -->
+      <!-- nonicons:loading-16 -->
+      <SvgIcon icon="nonicons:loading-16" class="loading" style="color:#6388FF"/>
     </template>
     <template v-if="!loading">
+      
       <div ref="textRef" class="leading-relaxed break-words" @dblclick="handleDoubleClick">
         <div v-if="!inversion" class="markdown-body" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />

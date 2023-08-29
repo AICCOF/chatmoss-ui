@@ -5,6 +5,8 @@ type ScrollElement = HTMLDivElement | null
 
 interface ScrollReturn {
   scrollRef: Ref<ScrollElement>
+  isBottom: Ref<boolean>
+  isTop: Ref<boolean>
   scrollToBottom: () => Promise<void>
   scrollToTop: () => Promise<void>
   goToBottom: () => Promise<void>
@@ -13,14 +15,20 @@ interface ScrollReturn {
 export function useScroll(): ScrollReturn {
   const scrollRef = ref<ScrollElement>(null)
   const isBottom = ref(false)
+  const isTop = ref(false)
   // console.log(scrollRef.value)
   watch(() => scrollRef.value, (...args) => {
     if (scrollRef.value) {
       scrollRef.value.addEventListener('scroll', async () => {
+        if (scrollRef.value.scrollTop < 20) {
+          isTop.value = true;
+        } else {
+          isTop.value = false;
+        }
         if (scrollRef.value.scrollHeight - 10 < (scrollRef.value.scrollTop + scrollRef.value.clientHeight)) {
           //到达底了
           isBottom.value = true;
-        }else{
+        } else {
           isBottom.value = false;
         }
       })
@@ -47,6 +55,8 @@ export function useScroll(): ScrollReturn {
   }
 
   return {
+    isBottom,
+    isTop,
     scrollRef,
     scrollToBottom,
     scrollToTop,

@@ -78,7 +78,7 @@ useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
-const { scrollRef, scrollToBottom, goToBottom, scrollToTop } = useScroll()
+const { scrollRef, scrollToBottom, goToBottom, scrollToTop, isTop, isBottom } = useScroll()
 
 const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
@@ -730,12 +730,17 @@ function handleMode() {
 
           <div ref="scrollRef" id="scrollRef1" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
-            <div class="icon-top" style="bottom: 200px;" @click="scrollToTop">
-              <SvgIcon icon="grommet-icons:link-top" />
-            </div>
-            <div class="icon-top" @click="goToBottom">
-              <SvgIcon icon="grommet-icons:link-bottom" />
-            </div>
+            <transition name="fade1">
+              <div class="icon-top" v-if="isBottom" style="" @click="scrollToTop">
+                <SvgIcon icon="grommet-icons:link-top" />
+              </div>
+            </transition>
+
+            <transition name="fade1">
+              <div class="icon-top" v-if="isTop" @click="goToBottom">
+                <SvgIcon icon="grommet-icons:link-bottom" />
+              </div>
+            </transition>
 
             <div v-if="!dataSources.length" class="no-data-info w-full">
               <!-- 应用介绍 -->
@@ -797,7 +802,9 @@ function handleMode() {
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
               </div>
               <div class="btn-style ">
-                <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+                <NButton id="ask-question"
+                  style="background-color: var(--moss-bg-ask-color);border-radius: 3px;color: var(--moss-text-ask-color);"
+                  type="primary" :disabled="buttonDisabled" @click="handleSubmit">
                   <template #icon>
                     <span class="">
                       <SvgIcon icon="ri:send-plane-fill" />
