@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { showConfirmDialog } from 'vant'
-import { Modal, BackTop } from 'ant-design-vue'
+import { Modal } from 'ant-design-vue'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -78,7 +78,7 @@ useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
-const { scrollRef, scrollToBottom, goToBottom, scrollToTop, isTop, isBottom } = useScroll()
+const { scrollRef, scrollToBottom, goToBottom, scrollToTop, isTop, isEnd, resetValue } = useScroll()
 
 const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
@@ -494,9 +494,8 @@ async function onConversation(askMsg?: string, opt?) {
     }
   }
   finally {
-    if (chatStore.plugState === 1) {
+    if (chatStore.plugState === 1)
       chatStore.setPlugState(2) // 插件结束状态
-    }
 
     setTimeout(() => {
       // 问答结束后2s,去服务端拿结果。
@@ -713,31 +712,36 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
-
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
       <transition name="fade1">
-        <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
-          :style="{ width: userStore.toggleValue ? '71px' : '1px' }" />
+        <applicationList
+          v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
+          :style="{ width: userStore.toggleValue ? '71px' : '1px' }"
+        />
       </transition>
-      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
-        :class="[userStore.toggleValue ? 'p90' : '']">
-        <div id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
-          style="height: 100%;overflow: hidden">
-
-          <div ref="scrollRef" id="scrollRef1" style="width:100%;max-height:100%;overflow:auto">
+      <div
+        id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']"
+      >
+        <div
+          id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
+          style="height: 100%;overflow: hidden"
+        >
+          <div id="scrollRef1" ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
             <transition name="fade1">
-              <div class="icon-top" v-if="isBottom" style="" @click="scrollToTop">
+             
+              <div v-if="isEnd" class="icon-top" style="" @click="scrollToTop">
                 <SvgIcon icon="grommet-icons:link-top" />
               </div>
             </transition>
 
             <transition name="fade1">
-              <div class="icon-top" v-if="isTop" @click="goToBottom">
+              <div v-if="isTop" class="icon-top" @click="goToBottom">
                 <SvgIcon icon="grommet-icons:link-bottom" />
               </div>
             </transition>
@@ -751,8 +755,10 @@ function handleMode() {
                   ChatMoss使用教程（推荐必看）：
                 </div>
                 <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
+                  <img
+                    style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt=""
+                  >
                 </a>
               </div>
               <div v-else>
@@ -760,21 +766,25 @@ function handleMode() {
                 <div class="no-data-info-tip-title">
                   无需注册即可登录ChatMoss
                 </div>
-                <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                <img
+                  style="cursor: pointer; border-radius: 10px;" width="320" height="240"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/xsjc1.png" alt=""
-                  @click="() => { go({ name: 'login' }) }">
+                  @click="() => { go({ name: 'login' }) }"
+                >
               </div>
             </div>
             <div v-else id="data-wrapper">
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                 :info="item"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
                 :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn" @online="onlineFn" @jarvis="jarvisFn"
-                @report="reportCallback" />
+                @report="reportCallback"
+              />
 
-              <div class="sticky bottom-0 left-0 flex justify-center">
+              <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
                   <template #icon>
                     <SvgIcon icon="ri:stop-circle-line" />
@@ -791,20 +801,26 @@ function handleMode() {
           </transition>
           <div v-show="!hidden" class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
+              <NInput
+                v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter" />
-              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                @keydown="handleEnter"
+              />
+              <NSelect
+                v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput"
+              />
               <!-- MOSS字数 -->
               <div class="btn-style btn-mode" @click="handleMode">
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
               </div>
               <div class="btn-style ">
-                <NButton id="ask-question"
+                <NButton
+                  id="ask-question"
                   style="background-color: var(--moss-bg-ask-color);border-radius: 3px;color: var(--moss-text-ask-color);"
-                  type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+                  type="primary" :disabled="buttonDisabled" @click="handleSubmit"
+                >
                   <template #icon>
                     <span class="">
                       <SvgIcon icon="ri:send-plane-fill" />
@@ -849,10 +865,11 @@ function handleMode() {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+	opacity: 0.9;
 
   &:hover {
     // background-color: #00000040;
-    opacity: 0.8;
+    opacity: 1;
   }
 }
 
@@ -1011,8 +1028,8 @@ function handleMode() {
 #scrollRef1 {
 
   &::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
     border-radius: 10px;
     // background: #bfbfbf;
     // background-color: red;
@@ -1021,14 +1038,12 @@ function handleMode() {
   }
 
   &::-webkit-scrollbar-track {
-    // background-color: var(--moss-border-color);
-    // background: transparent;
     border-radius: 10px;
-    // background-color: var(--van-blue);
+    background-color: #2c2c2c;
   }
 
   &::-webkit-scrollbar-thumb {
-    // background: #f5f5f5;
+    background: #939393;
     border-radius: 10px;
   }
 
@@ -1037,7 +1052,6 @@ function handleMode() {
     border-radius: 10px;
   }
 }
-
 
 .moss-btns {
   position: relative;
@@ -1186,5 +1200,13 @@ function handleMode() {
     width: 250px !important;
     height: 166px !important;
   }
+}
+
+.respondingBtn {
+	.n-button {
+		background-color:#6388FF !important;
+		// border: 1px solid #6388FF !important;
+		color: #fff !important;
+	}
 }
 </style>

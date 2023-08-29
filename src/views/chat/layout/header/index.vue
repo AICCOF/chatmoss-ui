@@ -168,7 +168,7 @@ function shopEvent() {
                   </template>
                 </NButton>
               </template>
-              <div style="width: 300px; max-height: 648px; overflow: auto">
+              <div style="width: 300px; max-height: 648px;">
                 <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice">
                   <div class="flex-center" style="justify-content: space-between">
                     <div style="color: var(--n-text-color);; font-size: 16px; font-weight: 600; line-height: 22px">
