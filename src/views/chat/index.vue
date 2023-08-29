@@ -78,7 +78,7 @@ useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
-const { scrollRef, scrollToBottom, goToBottom } = useScroll()
+const { scrollRef, scrollToBottom, goToBottom, scrollToTop } = useScroll()
 
 const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
@@ -733,7 +733,12 @@ function handleTarget(e) {
 
           <div ref="scrollRef" id="scrollRef1" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
-        
+            <div class="icon-top" style="bottom: 200px;" @click="scrollToTop">
+              <SvgIcon icon="icon-park:to-top" />
+            </div>
+            <div class="icon-top" @click="goToBottom">
+              <SvgIcon icon="icon-park:to-bottom" />
+            </div>
 
             <div v-if="!dataSources.length" class="no-data-info w-full">
               <!-- 应用介绍 -->
@@ -824,6 +829,26 @@ function handleTarget(e) {
 </template>
 
 <style lang="less" scoped>
+.icon-top {
+  border-radius: 50%;
+  overflow: hidden;
+  position: fixed;
+  z-index: 100;
+  background-color: #00000020;
+  right: 30px;
+  bottom: 150px;
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: #00000040;
+  }
+}
+
 .guideMsg {
   text-align: left;
   display: inline-block;
@@ -976,10 +1001,34 @@ function handleTarget(e) {
   border: 0px;
 }
 
-/* 隐藏滚动进度条 */
-::-webkit-scrollbar {
-  display: none;
+#scrollRef1 {
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 5px;
+    border-radius: 10px;
+    // background: #bfbfbf;
+    // background-color: red;
+    /**/
+  }
+
+  &::-webkit-scrollbar-track {
+    // background-color: var(--moss-border-color);
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    // background: #f5f5f5;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    // background: var(--moss-text-time-color);
+    border-radius: 10px;
+  }
 }
+
 
 .moss-btns {
   position: relative;

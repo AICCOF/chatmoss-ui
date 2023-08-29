@@ -15,8 +15,6 @@ export function useScroll(): ScrollReturn {
   const isBottom = ref(false)
   // console.log(scrollRef.value)
   watch(() => scrollRef.value, (...args) => {
-
-
     if (scrollRef.value) {
       scrollRef.value.addEventListener('scroll', async () => {
         if (scrollRef.value.scrollHeight - 10 < (scrollRef.value.scrollTop + scrollRef.value.clientHeight)) {
