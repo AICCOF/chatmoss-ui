@@ -848,6 +848,7 @@ function handleMode() {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 
   &:hover {
     // background-color: #00000040;
@@ -1010,18 +1011,20 @@ function handleMode() {
 #scrollRef1 {
 
   &::-webkit-scrollbar {
-    width: 10px;
+    width: 5px;
     height: 5px;
     border-radius: 10px;
     // background: #bfbfbf;
     // background-color: red;
+
     /**/
   }
 
   &::-webkit-scrollbar-track {
     // background-color: var(--moss-border-color);
-    background: transparent;
+    // background: transparent;
     border-radius: 10px;
+    // background-color: var(--van-blue);
   }
 
   &::-webkit-scrollbar-thumb {
