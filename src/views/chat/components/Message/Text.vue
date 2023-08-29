@@ -50,6 +50,7 @@ const wrapClass = computed(() => {
 
 const text = computed(() => {
   const value = props.text ?? ''
+  // console.log(mdi.render(value).split('\n'))
   if (!props.inversion)
     return mdi.render(value)
   return value

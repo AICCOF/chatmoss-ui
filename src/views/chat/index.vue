@@ -380,7 +380,7 @@ async function onConversation(askMsg?: string, opt?) {
         const xhr = event.target
         // const { responseText } = xhr
         const chunk = xhr.responseText
-        // console.log(chunk)
+
         try {
           // const data = JSON.parse(chunk)
           updateChat(chatStore.getUuid, dataSources.value.length - 1, {
@@ -713,10 +713,7 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
-function handleTarget(e) {
-  console.log(e)
-  return window.document.querySelector('#scrollRef1') as HTMLElement
-}
+
 </script>
 
 <template>
@@ -734,10 +731,10 @@ function handleTarget(e) {
           <div ref="scrollRef" id="scrollRef1" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
             <div class="icon-top" style="bottom: 200px;" @click="scrollToTop">
-              <SvgIcon icon="icon-park:to-top" />
+              <SvgIcon icon="grommet-icons:link-top" />
             </div>
             <div class="icon-top" @click="goToBottom">
-              <SvgIcon icon="icon-park:to-bottom" />
+              <SvgIcon icon="grommet-icons:link-bottom" />
             </div>
 
             <div v-if="!dataSources.length" class="no-data-info w-full">
@@ -834,7 +831,8 @@ function handleTarget(e) {
   overflow: hidden;
   position: fixed;
   z-index: 100;
-  background-color: #00000020;
+  background-color: var(--moss-bg-reply-color);
+  color: var(--moss-text-reply-color);
   right: 30px;
   bottom: 150px;
   font-size: 20px;
@@ -845,7 +843,8 @@ function handleTarget(e) {
   align-items: center;
 
   &:hover {
-    background-color: #00000040;
+    // background-color: #00000040;
+    opacity: 0.8;
   }
 }
 
