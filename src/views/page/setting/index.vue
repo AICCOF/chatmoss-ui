@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { NDivider, NSwitch,  } from 'naive-ui'
-import { computed, onMounted, reactive, ref , nextTick } from 'vue'
+import { NDivider, NSwitch } from 'naive-ui'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
-import { message as ms, Modal } from 'ant-design-vue';
+import { Modal, message as ms } from 'ant-design-vue'
 import uni from '@dcloudio/uni-webview-js'
-import { bindingStatus, unbind } from './../../../api/weixin'
+import { useRouter } from 'vue-router'
+import { bindingStatus } from './../../../api/weixin'
 import { useAppStore, useUserStore } from '@/store'
 import { localStorage } from '@/utils/storage/localStorage'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { SvgIcon } from '@/components/common'
-import { accountClose } from '@/api/account';
+import { accountClose } from '@/api/account'
 // let props = defineProps(['register'])
 // const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
 const go = useGo()
 const userStore = useUserStore()
-import {  useRouter } from 'vue-router';
-const router = useRouter();
+const router = useRouter()
 const appStore = useAppStore()
 
 const nickname = computed(() => {
@@ -55,9 +55,26 @@ function settingBtn() {
   }
 }
 
-const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '85%') as any
+const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '90%') as any
 function fontSizeNumBtn() {
-  localStorage.setItem('fontSizeNum', fontSizeNum.value.endsWith('%') ? fontSizeNum.value : `${fontSizeNum.value < 50 ? 50 : fontSizeNum.value}%`)
+  // 获取用户输入的字体大小值
+  const userInput = fontSizeNum.value.trim()
+
+  // 提取输入中的数值部分
+  let fontSizeValue = parseFloat(userInput)
+  if (isNaN(fontSizeValue)) {
+    // 如果输入不是有效的数值，则默认使用最小值
+    fontSizeValue = 65
+  }
+
+  // 确保字体大小在范围内
+  fontSizeValue = Math.max(65, Math.min(150, fontSizeValue))
+
+  // 格式化为百分比形式
+  const formattedValue = `${fontSizeValue}%`
+
+  // 将值存储到 localStorage
+  localStorage.setItem('fontSizeNum', formattedValue)
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
@@ -73,30 +90,30 @@ function handleUpdateValue(chatmossTheme: string) {
     },
   })
 }
-const open = ref(false);
-const secondsToGo = ref(10);
-let interval: any;
+const open = ref(false)
+const secondsToGo = ref(10)
+let interval: any
 function handleClose() {
-  clearInterval(interval);
+  clearInterval(interval)
 }
 function handleLogout() {
-  open.value = true;
-  secondsToGo.value = 10;
+  open.value = true
+  secondsToGo.value = 10
   interval = setInterval(() => {
-    secondsToGo.value -= 1;
+    secondsToGo.value -= 1
     if (secondsToGo.value <= 0) {
-     secondsToGo.value = 0;
-      clearInterval(interval);
+      secondsToGo.value = 0
+      clearInterval(interval)
     }
-  }, 1000);
+  }, 1000)
 }
 async function handleConfirm() {
   if (secondsToGo.value === 0) {
-    await accountClose();
-    ms.info('注销成功');
-    localStorage.clear();
-    await nextTick();
-    back();
+    await accountClose()
+    ms.info('注销成功')
+    localStorage.clear()
+    await nextTick()
+    back()
   }
 }
 
@@ -113,8 +130,6 @@ function setOpenaiVersion(action) {
   userStore.saveOpenaiVersion(action)
   ms.success('模型切换成功')
 }
-
-
 </script>
 
 <template>
@@ -129,8 +144,10 @@ function setOpenaiVersion(action) {
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <div v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
-            @click="() => { go({ name: 'feedback' }) }">
+          <div
+            v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
+            @click="() => { go({ name: 'feedback' }) }"
+          >
             问题反馈
           </div>
           <div class="flex items-center btn cursor-pointer" @click="() => { go({ name: 'forget' }) }">
@@ -198,8 +215,10 @@ function setOpenaiVersion(action) {
           <div class="flex justify-between">
             <div>OpenAI模型选择</div>
             <div>
-              <van-popover v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
-                @select="setOpenaiVersion">
+              <van-popover
+                v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
+                @select="setOpenaiVersion"
+              >
                 <template #reference>
                   <div class="footer-item footer-item-btn footer-item-btn1 model-version " style="margin-right: 0px;">
                     {{ userStore.getModeVersion.viewName }}
@@ -221,8 +240,10 @@ function setOpenaiVersion(action) {
           <div class="flex justify-between items-center">
             <div> ChatMoss主题设定</div>
             <div class="flex">
-              <NSwitch v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
-                @update:value="handleUpdateValue" />
+              <NSwitch
+                v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
+                @update:value="handleUpdateValue"
+              />
               <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
             </div>
           </div>
@@ -232,8 +253,10 @@ function setOpenaiVersion(action) {
           <div class="flex justify-between items-center">
             <div> 回答模式</div>
             <div class="flex">
-              <NSwitch v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
-                @update:value="handleModeValue" />
+              <NSwitch
+                v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
+                @update:value="handleModeValue"
+              />
               <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
             </div>
           </div>
@@ -245,12 +268,11 @@ function setOpenaiVersion(action) {
           <div>注销</div>
         </div>
         <div class="flex mt-2 justify-between">
-
           <div style="margin-top: 10px;  font-size: 12px">
             注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
           </div>
 
-          <van-button class="btn-primary" size="small"  @click="handleLogout">
+          <van-button class="btn-primary" size="small" @click="handleLogout">
             注销
           </van-button>
         </div>
@@ -278,20 +300,20 @@ function setOpenaiVersion(action) {
       </div>
     </div>
 
-       <Modal
-        v-model:visible="open"
-        :title="null"
-        :footer="null"
-        centered
-        class="self-model"
-        style="width: fit-content"
-        @cancel="handleClose"
+    <Modal
+      v-model:visible="open"
+      :title="null"
+      :footer="null"
+      centered
+      class="self-model"
+      style="width: fit-content"
+      @cancel="handleClose"
+    >
+      <div
+        style="width: 410px; height: 310px; overflow: hidden; border-radius: 16px; background: #fff"
       >
         <div
-          style="width: 410px; height: 310px; overflow: hidden; border-radius: 16px; background: #fff"
-        >
-          <div
-            style="
+          style="
             width: 410px;
             height: 70px;
             background: linear-gradient(90deg, #756df2 0%, #756df2 100%);
@@ -301,11 +323,12 @@ function setOpenaiVersion(action) {
             line-height: 70px;
             text-align: center;
           "
-            >注销账号</div
-          >
-          <div
-            class=""
-            style="
+        >
+          注销账号
+        </div>
+        <div
+          class=""
+          style="
             box-sizing: border-box;
             margin-top: 50px;
             padding: 0 27px;
@@ -314,22 +337,23 @@ function setOpenaiVersion(action) {
             font-weight: 500;
             line-height: 22px;
           "
-          >
-            是否注销账号，注销账号之后，账号数据将会被全部清空，不可恢复，账号也不可重新注册
-          </div>
+        >
+          是否注销账号，注销账号之后，账号数据将会被全部清空，不可恢复，账号也不可重新注册
+        </div>
 
+        <div
+          class="flex-center justify-between"
+          style="box-sizing: border-box; margin-top: 50px; padding: 0 27px"
+        >
           <div
-            class="flex-center justify-between"
-            style="box-sizing: border-box; margin-top: 50px; padding: 0 27px"
+            class="btn-confirm"
+            :class="[secondsToGo === 0 ? 'active' : '']"
+            @click="handleConfirm"
           >
-            <div
-              class="btn-confirm"
-              :class="[secondsToGo === 0 ? 'active' : '']"
-              @click="handleConfirm"
-              >确认<span v-if="secondsToGo > 0">（{{ secondsToGo }}）</span></div
-            >
-            <div
-              style="
+            确认<span v-if="secondsToGo > 0">（{{ secondsToGo }}）</span>
+          </div>
+          <div
+            style="
               width: 170px;
               height: 54px;
               border-radius: 8px;
@@ -340,18 +364,18 @@ function setOpenaiVersion(action) {
               line-height: 54px;
               text-align: center;
             "
-              @click="() => (open = false)"
-              >取消</div
-            >
+            @click="() => (open = false)"
+          >
+            取消
           </div>
         </div>
-      </Modal>
+      </div>
+    </Modal>
   </Page>
 </template>
 
 <style lang="less" scoped>
-
-  .btn-confirm {
+.btn-confirm {
     width: 170px;
     height: 54px;
     border: 1px solid #cdcdcd;

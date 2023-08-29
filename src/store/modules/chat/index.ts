@@ -5,7 +5,7 @@ import { getToken } from '../auth/helper'
 import { getLocalState, setLocalState } from './helper'
 import { addConversation, deleteBatchConversation, deleteConversation, editConversation, getConversationDetail, getConversationList } from '@/api/conversation'
 import { useUserStore } from '@/store'
-import { getPlugin } from '@/api/plugin';
+import { getPlugin } from '@/api/plugin'
 
 const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar'],
@@ -28,20 +28,20 @@ export const useChatStore = defineStore('chat-store', {
       searchMsg: '',
       deleteIds: [],
       loading: false,
-   
+
     }
   },
   getters: {
     pluginMap() {
-      const map = {};
+      const map = {}
       for (let index = 0; index < this.pluginList.length; index++) {
-        const element = this.pluginList[index];
-        map[element.pluginId] = element;
+        const element = this.pluginList[index]
+        map[element.pluginId] = element
       }
-      return map;
+      return map
     },
     getSelectPluginInfo(state) {
-      return state.currentPlugin.pluginId ? state.currentPlugin : null;
+      return state.currentPlugin.pluginId ? state.currentPlugin : null
     },
     textLength() {
       const dataSources = this.getChatByUuid() as any[]
@@ -65,39 +65,38 @@ export const useChatStore = defineStore('chat-store', {
     chatsCollect(state: Chat.ChatState) {
       const chat: Chat.ChatInfo[] = this.chat
       const localChat: Chat.ChatInfo[] = this.localChat
-      if (getToken()) {
+      if (getToken())
         return [...chat.filter(row => row.title.includes(state.searchMsg))]
-      } else {
-        return [...localChat.filter(row => row.title.includes(state.searchMsg))]
-      }
 
+      else
+        return [...localChat.filter(row => row.title.includes(state.searchMsg))]
     },
     sortTimeChat() {
       const timeList: {
         title: string
         data: Chat.ChatState[]
       }[] = [
-          {
-            title: '今天',
-            data: [],
-          },
-          {
-            title: '昨天',
-            data: [],
-          },
-          {
-            title: '三天前',
-            data: [],
-          },
-          {
-            title: '七天前',
-            data: [],
-          },
-          {
-            title: '一个月前',
-            data: [],
-          },
-        ]
+        {
+          title: '今天',
+          data: [],
+        },
+        {
+          title: '昨天',
+          data: [],
+        },
+        {
+          title: '三天前',
+          data: [],
+        },
+        {
+          title: '七天前',
+          data: [],
+        },
+        {
+          title: '一个月前',
+          data: [],
+        },
+      ]
       this.chatsCollect.forEach((row) => {
         const timestamp = row.timestamp
         if (timestamp >= dayjs().startOf('day').valueOf())
@@ -132,40 +131,41 @@ export const useChatStore = defineStore('chat-store', {
         const active = state.active as any
         if (!active)
           return []
-        if (verify(state.active))
-          return (state.localChat.find(item => item.id === state.active)?.data ?? [])
+        if (verify(state.active)) { return (state.localChat.find(item => item.id === state.active)?.data ?? []) }
 
         else
-          // console.log(state.chat)
+        // console.log(state.chat)
+        {
           return (state.chat.find(item => item.id === state.active)?.data ?? []).sort((a, b) => {
-            if (a.id && b.id) {
+            if (a.id && b.id)
               return a.id - b.id
-            }
+
             return a.timestamp - b.timestamp
           })
+        }
       }
     },
   },
 
   actions: {
     async getPlugin() {
-      const info = await getPlugin({});
-      console.log('pluginList', info);
+      const info = await getPlugin({})
+      console.log('pluginList', info)
       info.pluginList.map((item) => {
-        if (this.currentPlugin.pluginId === item.pluginId && this.currentPlugin.select) {
-          item.select = true;
-        } else {
-          item.select = false;
-        }
-      });
-      this.pluginList = info.pluginList;
+        if (this.currentPlugin.pluginId === item.pluginId && this.currentPlugin.select)
+          item.select = true
+
+        else
+          item.select = false
+      })
+      this.pluginList = info.pluginList
     },
     setPlugState(value: number) {
-      this.plugState = value;
+      this.plugState = value
     },
     setPlugin(row) {
-      this.currentPlugin = row;
-      this.recordState();
+      this.currentPlugin = row
+      this.recordState()
     },
     async createChat(title?: string) {
       const token = getToken()
@@ -179,7 +179,7 @@ export const useChatStore = defineStore('chat-store', {
       try {
         const res = await addConversation({
           title: title || '新建问题',
-          appId: userStore.appIdValue
+          appId: userStore.appIdValue,
         })
         this.active = res.msg as number
         this.chat.unshift(res.list[0])
@@ -206,12 +206,12 @@ export const useChatStore = defineStore('chat-store', {
     async chatList() {
       if (getToken()) {
         const userStore = useUserStore()
-        this.active = null;
+        this.active = null
         const res = await getConversationList({
-          appId: userStore.appIdValue
+          appId: userStore.appIdValue,
         })
         this.chat = res.list || []
-        this.active = this.chat[0] ? this.chat[0].id : null;
+        this.active = this.chat[0] ? this.chat[0].id : null
         // console.log(res.list[0].id)
         this.getConversationDetail()
       }
@@ -219,23 +219,21 @@ export const useChatStore = defineStore('chat-store', {
     clearList() {
       this.chat = []
       // this.localChat = [];
-      if (this.localChat.length > 0) {
+      if (this.localChat.length > 0)
         this.active = this.localChat[0].id
-      } else {
-        this.active = null
-      }
 
+      else
+        this.active = null
     },
     clearQuestionMode() {
       const userStore = useUserStore()
       // console.log(userStore.appIdValue)
-      if (userStore.appIdValue !== '2') {
-        return;
-      }
+      if (userStore.appIdValue !== '2')
+        return
+
       const result = this.chat.find(item => item.id === this.active)
-      if (result) {
-        result.data = [];
-      }
+      if (result)
+        result.data = []
     },
     async getConversationDetail() {
       if (!this.active)
@@ -243,29 +241,30 @@ export const useChatStore = defineStore('chat-store', {
       const result = this.chat.find(item => item.id === this.active)
       if (result && !result.data) {
         result.data = []
-        this.loading = true;
+        this.loading = true
         try {
           const res = await getConversationDetail({ conversationId: this.active, pageSize: 200 })
           const rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
-          let preObj = {}; // 处理用插件提问题的情况
+          let preObj = {} // 处理用插件提问题的情况
           result.data.push(
             ...rows.map((row: any, i: number, array: any[]) => {
               if (row.content.startsWith('0:')) {
                 // content": "0:北京市明天的天气\n|$moss{"name:":"1"}$moss|根据提供的数据，查询天气信息，并格式化输出
 
                 // .match(/\|\$moss(.*?)\$moss\|/,'')
-                const text = row.content.slice(2);
+                const text = row.content.slice(2)
                 // 尝试是不是用插件提问，如果使用插件提问，需要提取出来插件的信息，并把他存储下来，提供给下一条回答的信息。
-                const matchText = text.match(/\|\$moss(.*?)\$moss\|/, '');
+                const matchText = text.match(/\|\$moss(.*?)\$moss\|/, '')
                 // console.log(matchText, 'matchText');
-                let pluginInfo = [text];
-                let json = {};
+                let pluginInfo = [text]
+                let json = {}
                 if (matchText) {
-                  pluginInfo = text.split(matchText[0]);
+                  pluginInfo = text.split(matchText[0])
                   try {
-                    json = JSON.parse(matchText[1]);
-                  } catch (error) {
-                    console.error('error', error);
+                    json = JSON.parse(matchText[1])
+                  }
+                  catch (error) {
+                    console.error('error', error)
                   }
                 }
                 // let ast = array[i - 1].content.slice(2);
@@ -279,7 +278,7 @@ export const useChatStore = defineStore('chat-store', {
                   },
                   inversion: !!row.content.startsWith('0:'),
                   text: pluginInfo[0] ?? '',
-                };
+                }
                 return {
                   ...row,
                   ast: pluginInfo[0] ?? '',
@@ -290,12 +289,12 @@ export const useChatStore = defineStore('chat-store', {
                   },
                   inversion: !!row.content.startsWith('0:'),
                   text: pluginInfo[0] ?? '',
-                };
+                }
               }
               // 处理回答
               if (row.content.startsWith('1:') && array[i - 1]) {
                 // content": "1:北京市明天的天气\n$moss|根据提供的数据，查询天气信息，并格式化输出
-                const text = row.content.slice(2);
+                const text = row.content.slice(2)
                 // console.log(array[i - 1], i);
                 return {
                   ...row,
@@ -303,21 +302,24 @@ export const useChatStore = defineStore('chat-store', {
                   pluginInfo: preObj.pluginInfo,
                   inversion: !!row.content.startsWith('0:'),
                   text,
-                };
-              } else {
-                const text = row.content.slice(2);
+                }
+              }
+              else {
+                const text = row.content.slice(2)
                 return {
                   ast: text,
                   ...row,
                   inversion: !!row.content.startsWith('0:'),
                   text,
-                };
+                }
               }
             }),
-          );
-        } catch (error) {
+          )
+        }
+        catch (error) {
 
-        } finally {
+        }
+        finally {
           this.loading = false
         }
       }
@@ -523,8 +525,8 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     updateChatSomeByUuid(id: number, index: number, chat: Partial<Chat.Chat>) {
-      let chatList = this.chat;
-      if (verify(id)){
+      let chatList = this.chat
+      if (verify(id)) {
         // updateChatSomeByUuid
         chatList = this.localChat
       }

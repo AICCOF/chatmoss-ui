@@ -7,13 +7,13 @@ const userStore = useUserStore()
   <div v-if="userStore.currentApp" class="no-data-info-text text-left notice">
     <div class="flex">
       <div>
-        <img :src="userStore.currentApp.iconUrl" alt="" style="width:50px;height:50px;margin-right: 10px;">
+        <img :src="userStore.currentApp.iconUrl" alt="" style="min-width:44px;height:44px;margin-right: 4px;">
       </div>
       <div class="pl-2 text-left main-center">
-        <div class="text-xl">
+        <div class="text-sm" style="font-weight: 600;">
           {{ userStore.currentApp.appName }}
         </div>
-        <div class="text-sm">
+        <div class="text-sm" style="opacity: .8; margin-top: 2px;">
           {{ userStore.currentApp.desc }}
         </div>
       </div>

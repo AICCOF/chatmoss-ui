@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useMessage } from 'naive-ui'
+import { Spin } from 'ant-design-vue'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationLike, getApplicationList, getApplicationSearch, getApplicationTypeList } from '@/api/application'
 import { useScrollToBottom } from '@/utils/usePullDownRefresh'
-import { onMounted } from 'vue';
-import { Spin } from 'ant-design-vue';
 const ms = useMessage()
 const back = useBack()
 const go = useGo()
@@ -15,15 +14,15 @@ const flag = ref(true)
 const active = ref(0)
 const typeList = ref('')
 const dataList = ref([])
-let currentAppType: string;
-const element = ref();
-const spinning = ref<boolean>(false);
+let currentAppType: string
+const element = ref()
+const spinning = ref<boolean>(false)
 let parmas = {
   appType: '',
   pageNum: 1,
   pageSize: 20,
 }
-let stop = false;
+let stop = false
 async function getApplicationListAPI(appType) {
   if (currentAppType != appType) {
     currentAppType = appType
@@ -32,36 +31,32 @@ async function getApplicationListAPI(appType) {
       pageNum: 1,
       pageSize: 20,
     }
-    spinning.value = true;
+    spinning.value = true
     const res = await getApplicationList(parmas)
     dataList.value = res.rows || []
-    spinning.value = false;
-    stop = false;
-    if (res.rows.length != parmas.pageSize) {
-      stop = true;
-    }
-  } else {
-    if (stop) return;
-    parmas.pageNum++;
-    spinning.value = true;
+    spinning.value = false
+    stop = false
+    if (res.rows.length != parmas.pageSize)
+      stop = true
+  }
+  else {
+    if (stop)
+      return
+    parmas.pageNum++
+    spinning.value = true
     const res = await getApplicationList(parmas)
-    spinning.value = false;
+    spinning.value = false
     dataList.value = [...dataList.value, ...res.rows] || []
-    if (res.rows.length != parmas.pageSize) {
-      stop = true;
-    }
+    if (res.rows.length != parmas.pageSize)
+      stop = true
   }
 }
 useScrollToBottom(element, async () => {
   getApplicationListAPI(currentAppType)
-});
+})
 onMounted(() => {
 
-
 })
-
-
-
 
 async function getApplicationSearchAPI() {
   if (value.value) {
@@ -123,8 +118,10 @@ async function handleInstalled(row) {
       </div>
 
       <div class="mt-2 flex items-center m-auto mb-0" style="width:90%">
-        <van-search v-model="value" class="flex-1 button-t1 overflow-hidden" placeholder="搜索应用" show-action
-          :clearable="false" @search="getApplicationSearchAPI" style="border-radius: 40px;">
+        <van-search
+          v-model="value" class="flex-1 button-t1 overflow-hidden" placeholder="搜索应用" show-action
+          :clearable="false" style="border-radius: 40px;" @search="getApplicationSearchAPI"
+        >
           <template #action>
             <!-- <van-button size="small" type="primary" @click="getApplicationSearchAPI">
               搜索
@@ -138,9 +135,7 @@ async function handleInstalled(row) {
           <van-sidebar-item v-for="(row, i) of typeList" :key="i" :title="row.typeName" />
         </van-sidebar>
         <div class="pt-0 flex-1" style="overflow: hidden;">
-
-          <div class="w-full content px-8 pt-0 border-box" ref="element">
-
+          <div ref="element" class="w-full content px-8 pt-0 border-box">
             <div v-for="(item, i) of dataList" :key="i" class="flex justify-between items-center w-full flex-1 item mt-2">
               <div class="flex items-center flex-1">
                 <div class="mr-2 none">
@@ -154,8 +149,9 @@ async function handleInstalled(row) {
                       <span style="cursor: pointer;" @click="handleLike(item)">
                         <van-icon v-if="item.liked === 0" name="like-o" style="color:red;" />
                         <van-icon v-if="item.liked === 1" name="like" style="color:red;" /><span
-                          style="margin-left: 4px;">{{ item.likeCountStr
-                          }}</span>
+                          style="margin-left: 4px;"
+                        >{{ item.likeCountStr
+                        }}</span>
                       </span>
                     </div>
                     <div class="text-sm  item-desc-min-width">
@@ -165,20 +161,18 @@ async function handleInstalled(row) {
                 </div>
               </div>
               <div @click="handleInstalled(item)">
-                <div class="btns normal" v-if="item.installed === 0">
+                <div v-if="item.installed === 0" class="btns normal">
                   安装
                 </div>
-                <div class="btns danger" v-if="item.installed === 1">
+                <div v-if="item.installed === 1" class="btns danger">
                   卸载
                 </div>
               </div>
             </div>
             <div class="flex-center justify-center" style="margin-top:40px;">
-              <Spin :spinning="spinning"></Spin>
+              <Spin :spinning="spinning" />
             </div>
-
           </div>
-
         </div>
       </div>
     </div>
@@ -200,8 +194,6 @@ async function handleInstalled(row) {
   background-color: var(--moss-bg-content-color);
 }
 
-
-
 .wrap-main {
   min-height: 100%;
   // background-color: var(--moss-header-color);
@@ -221,14 +213,13 @@ async function handleInstalled(row) {
   line-height: 40px;
 }
 
-
 .content {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 165px);
   overflow-y: auto;
 }
 
 .sidebar {
-  height: calc(100vh - 174px);
+  height: calc(100vh - 170px);
   overflow-y: auto;
   width: 64px;
   flex: 0 0 64px;
@@ -256,7 +247,6 @@ async function handleInstalled(row) {
     border-radius: 50%;
   }
 }
-
 
 /deep/ .van-search__action {
   margin-top: -10px;

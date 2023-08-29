@@ -22,7 +22,6 @@ function handleEdit() {
   enabled.value = true
 }
 function handleClick(row) {
-  
   if (!enabled.value && userStore.appIdValue !== row.appId) {
     if (row.isOpened === 0) {
       ms.info(row.notOpenReason || '暂未开放，敬请期待...')
@@ -78,12 +77,15 @@ function handleSave() {
 <template>
   <div class="wrap">
     <div class="list">
-      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
-
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <div>
               <NPopover trigger="hover">
                 <template #trigger>
@@ -93,16 +95,22 @@ function handleSave() {
                 <span>{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span">{{ element.appName.length > 5 ? element.appName.slice(0, 5) :
-              element.appName }}</div>
+            <div class="span">
+              {{ element.appName.length > 5 ? element.appName.slice(0, 5)
+                : element.appName }}
+            </div>
           </div>
         </template>
       </draggable>
-      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element, index }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <span v-if="enabled" class="close" @click="handleDelete(element, index)">
               <van-icon class="close-icon" name="cross" />
             </span>
@@ -115,8 +123,10 @@ function handleSave() {
                 <span>{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span">{{ element.appName.length > 5 ? element.appName.slice(0, 5) :
-              element.appName }}</div>
+            <div class="span">
+              {{ element.appName.length > 5 ? element.appName.slice(0, 5)
+                : element.appName }}
+            </div>
           </div>
         </template>
       </draggable>
@@ -134,7 +144,6 @@ function handleSave() {
   </div>
 </template>
 
-
 <style scoped lang="less">
 .wrap {
   height: 100%;
@@ -149,14 +158,12 @@ function handleSave() {
   padding-top: 90px;
   background-color: var(--moss-header-color);
 
-
   .list {
     overflow: auto;
     // width: 71px;
     height: 80%;
     flex:1;
     background-color: var(--moss-header-color);
-
 
     &::-webkit-scrollbar {
       width: 0px;
@@ -236,7 +243,7 @@ function handleSave() {
     background-color: var(--moss-header-color);
     font-size: 24px;
     font-size: 24px;
-    padding-bottom: 40px;
+    padding-bottom: 10px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -259,4 +266,5 @@ function handleSave() {
     }
   }
 
-}</style>
+}
+</style>

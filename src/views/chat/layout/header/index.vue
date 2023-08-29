@@ -168,14 +168,16 @@ function shopEvent() {
                   </template>
                 </NButton>
               </template>
-              <div style="width: 370px; max-height: 648px; overflow: auto">
+              <div style="width: 300px; max-height: 648px; overflow: auto">
                 <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice">
                   <div class="flex-center" style="justify-content: space-between">
                     <div style="color: var(--n-text-color);; font-size: 16px; font-weight: 600; line-height: 22px">
                       {{ item.createTime }}
                     </div>
-                    <div v-if="item.content.length > 96" style="color: var(--moss-text); font-size: 12px"
-                      class="cursor-pointer" @click="() => (item.unfold = !item.unfold)">
+                    <div
+                      v-if="item.content.length > 96" style="color: var(--moss-text); font-size: 12px"
+                      class="cursor-pointer" @click="() => (item.unfold = !item.unfold)"
+                    >
                       <div v-if="!item.unfold" class="flex-center">
                         <SvgIcon icon="ant-design:down-outlined" class="icon" />
                         <span style="margin-left: 10px">展开</span>
@@ -241,8 +243,10 @@ function shopEvent() {
                   余额
                 </div>
               </template>
-              <div v-for="(row, i) of userStore.packageList" :key="i"
-                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
+              <div
+                v-for="(row, i) of userStore.packageList" :key="i"
+                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
+              >
                 <div>
                   <div class="flex justify-between">
                     <span class="mr-4">{{ row.title }}</span>
@@ -296,7 +300,7 @@ function shopEvent() {
 .notice {
   background-color: var(--moss-tip-bg-color);
   border-radius: 10px;
-  padding: 20px;
+  padding: 10px;
   margin-bottom: 10px;
 
   .content {

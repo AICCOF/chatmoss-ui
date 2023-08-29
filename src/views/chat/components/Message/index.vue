@@ -2,15 +2,15 @@
 import { ref, watch } from 'vue'
 import { NButton, useMessage } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
-import { CaretRightOutlined } from '@ant-design/icons-vue';
+import { CaretRightOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
+import { Collapse, CollapsePanel, Spin } from 'ant-design-vue'
 import TextComponent from './Text.vue'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
 // import { t } from '@/locales'
 import { useChatStore } from '@/store'
 // Spin
-import { Spin, Collapse, CollapsePanel } from 'ant-design-vue'
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 const chatStore = useChatStore()
@@ -18,8 +18,8 @@ interface Props {
   dateTime?: number
   isShow: Boolean
   text?: string
-  askMsg: any;
-  isEnd: Boolean;
+  askMsg: any
+  isEnd: Boolean
   inversion?: boolean
   error?: boolean
   loading?: boolean
@@ -49,11 +49,12 @@ let options: any[] = [{
   key: 'ask',
   icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
 },
-{
-  label: '联网提问',
-  key: 'online',
-  icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-}]
+// {
+//   label: '联网提问',
+//   key: 'online',
+//   icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+// }
+]
 watch(
   () => props.info,
   (value) => {
@@ -68,11 +69,11 @@ watch(
         key: 'ask',
         icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
       },
-      {
-        label: '联网提问',
-        key: 'online',
-        icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-      },
+      // {
+      //   label: '联网提问',
+      //   key: 'online',
+      //   icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+      // },
 
       // {
       //   label: t('个人资料库提问'),
@@ -92,7 +93,6 @@ watch(
 )
 
 function handleSelect(key: string, askMsg: string) {
-
   switch (key) {
     case 'copyText':
       copyText({ text: props.text ?? '' })
@@ -116,7 +116,7 @@ function handleSelect(key: string, askMsg: string) {
       break
   }
 }
-const activeKey = ref(['0']);
+const activeKey = ref(['0'])
 </script>
 
 <template>
@@ -131,25 +131,36 @@ const activeKey = ref(['0']);
       <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ viewMsg }} </span>
         <span>(模式：{{ questionMode }}) </span>
-        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
-          target="_blank">查看字符计算器</a>
+        <a
+          href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank"
+        >查看字符计算器</a>
       </p>
-      <Collapse v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
-        :bordered="false" class="my-collapse" expand-icon-position="right">
+      <Collapse
+        v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
+        :bordered="false" class="my-collapse" expand-icon-position="right"
+      >
         <template #expandIcon="{ isActive }">
-          <caret-right-outlined :rotate="isActive ? 90 : 0" />
+          <CaretRightOutlined :rotate="isActive ? 90 : 0" />
         </template>
-        <CollapsePanel key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
-          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'">
+        <CollapsePanel
+          key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
+          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'"
+        >
           <template #header>
-            <div class="flex-center" style="width: 100%">
-              {{
-                info.pluginInfo['pluginId']
-                ? chatStore.pluginMap[info.pluginInfo['pluginId']].name
-                : ''
-              }}
+            <div v-if="info.pluginInfo.pluginId" class="flex-center" style="width: 100%">
+              <img style="width: 16px; height: 16px; margin-right: 10px;" :src="chatStore.pluginMap[info.pluginInfo.pluginId].icon" alt="">
+              <div>
+                {{
+                  info.pluginInfo.pluginId
+                    ? chatStore.pluginMap[info.pluginInfo.pluginId].name
+                    : ''
+                }}
+              </div>
               <div v-if="chatStore.plugState === 1 && isEnd">
-                <span class="plug-in-loading">执行中...</span>
+                <span class="plug-in-loading" style="margin-right: 10px; margin-left: 4px;">
+                  {{ info.pluginInfo.pluginMessage ? ' 解析数据中...' : ' 请求数据中...' }}
+                </span>
                 <Spin :spinning="true" size="small" />
               </div>
             </div>
@@ -193,5 +204,28 @@ const activeKey = ref(['0']);
       opacity: 1;
     }
   }
+}
+</style>
+
+<style lang="less">
+.ant-collapse-borderless {
+	background-color: #fff0 !important;
+	.ant-collapse-header {
+		color: var(--moss-text) !important;
+    background: var(--moss-tip-bg-color);
+    border-radius: 10px !important;
+    margin-top: 12px;
+		opacity: 1;
+	}
+}
+
+.ant-collapse-item {
+	border: none !important;
+}
+
+.ant-collapse-content-box {
+	background-color: #000;
+	color: #fff;
+	padding-top: 16px !important;
 }
 </style>

@@ -23,7 +23,7 @@ import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
-import { checkPlugin, execPlugin } from '@/api/plugin';
+import { checkPlugin, execPlugin } from '@/api/plugin'
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
 })
@@ -53,11 +53,15 @@ if (!localStorage.getItem('chatmossMode'))
 
 // 字体初始化
 if (!localStorage.getItem('fontSizeNum')) {
-  localStorage.setItem('fontSizeNum', '100%')
+  localStorage.setItem('fontSizeNum', '90%')
 }
 else {
-  const fontSizeNumNew: any = localStorage.getItem('fontSizeNum')
-  localStorage.setItem('fontSizeNum', fontSizeNumNew.endsWith('%') ? fontSizeNumNew : `${fontSizeNumNew < 50 ? 50 : fontSizeNumNew}%`)
+  const fontSizeNumNew: any = localStorage.getItem('fontSizeNum') || '90%' // 默认值为 90%
+  let parsedFontSize = parseFloat(fontSizeNumNew)
+  if (isNaN(parsedFontSize))
+    parsedFontSize = 65 // 默认最小值
+  parsedFontSize = Math.max(65, Math.min(150, parsedFontSize)) // 范围限制
+  localStorage.setItem('fontSizeNum', `${parsedFontSize}%`)
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
@@ -267,8 +271,8 @@ async function onConversation(askMsg?: string, opt?) {
     requestOptions: { prompt: message, options: { ...options } },
   })
   scrollToBottom()
-  const selectPlugin = chatStore.getSelectPluginInfo;
-  const pluginId = selectPlugin?.pluginId; // 插件ID
+  const selectPlugin = chatStore.getSelectPluginInfo
+  const pluginId = selectPlugin?.pluginId // 插件ID
   try {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
     console.log('chatMossPiecesNumber', chatMossPiecesNumber)
@@ -282,25 +286,29 @@ async function onConversation(askMsg?: string, opt?) {
       texts = `${texts} 请详细回答`
 
     // texts = compressCode(texts)
-    let execPluginResponse: any = {};
-    let pluginObj = {};
-    if (selectPlugin && chatStore.getSelectPluginInfo?.select) {
+    let execPluginResponse: any = {}
+    let pluginObj = {}
+    const isPlugin = checkValues()
+    if (selectPlugin && chatStore.getSelectPluginInfo?.select && !isPlugin)
+      ms.error('温馨提示，因为成本问题，插件功能只有3.5月卡以上付费用户才可使用，所以本次回答并未调用插件功能~如购买月卡后还有此提示，请重新登录后即可~')
+
+    if (selectPlugin && chatStore.getSelectPluginInfo?.select && isPlugin) {
       /**
        * 执行插件逻辑
        */
-      chatStore.setPlugState(0);
-
+      chatStore.setPlugState(0)
       const response = await checkPlugin({
         pluginId,
+        tags: userStore.userInfo.tags,
         messages: [
           {
             role: 'user',
             content: texts,
           },
         ],
-      });
-      console.log('1.判断是否执行插件', response.checkPluginInfo.function_call);
-      const fn = response.checkPluginInfo.function_call;
+      })
+      // console.log('1.判断是否执行插件', response.checkPluginInfo.function_call)
+      const fn = response.checkPluginInfo.function_call
 
       // console.log(response.checkPluginInfo.content);
       // if (response.checkPluginInfo.content) {
@@ -312,7 +320,7 @@ async function onConversation(askMsg?: string, opt?) {
       if (fn) {
         pluginObj = {
           pluginId,
-        };
+        }
         updateChat(chatStore.getUuid, dataSources.value.length - 1, {
           timestamp: new Date().getTime(),
           createTime: new Date().toLocaleString(),
@@ -330,20 +338,20 @@ async function onConversation(askMsg?: string, opt?) {
             conversationId: chatStore.getUuid,
           },
           requestOptions: { prompt: message, options: { ...options } },
-        });
+        })
         // 插件展示状态：0 没执行，1 执行中，2 执行完成
-        chatStore.setPlugState(1);
-        console.log('2.插件可执行：', JSON.parse(fn.arguments));
+        chatStore.setPlugState(1)
+        // console.log('2.插件可执行：', JSON.parse(fn.arguments))
 
         // 执行内容
         execPluginResponse = await execPlugin({
           pluginId,
           args: JSON.parse(fn.arguments),
-        });
-        console.log('3.插件执行结果：', execPluginResponse.pluginStr);
+        })
+        // console.log('3.插件执行结果：', execPluginResponse.pluginStr)
 
         texts = `${texts}\n|$moss${JSON.stringify(pluginObj)}$moss|${execPluginResponse.pluginStr ? execPluginResponse.pluginStr : ''
-          }`;
+          }`
 
         updateChat(chatStore.getUuid, dataSources.value.length - 1, {
           timestamp: new Date().getTime(),
@@ -362,7 +370,7 @@ async function onConversation(askMsg?: string, opt?) {
             conversationId: chatStore.getUuid,
           },
           requestOptions: { prompt: message, options: { ...options } },
-        });
+        })
       }
     }
 
@@ -389,7 +397,7 @@ async function onConversation(askMsg?: string, opt?) {
             ast: message,
             error: false,
             loading: false,
-              pluginInfo: {
+            pluginInfo: {
               ast: message,
               pluginMessage: execPluginResponse.pluginStr,
               ...pluginObj,
@@ -413,8 +421,6 @@ async function onConversation(askMsg?: string, opt?) {
       ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
 
     addTextNum(texts.length)
-
-
 
     scrollToBottom()
   }
@@ -485,26 +491,30 @@ async function onConversation(askMsg?: string, opt?) {
       return
     }
     console.log('errorMessage', errorMessage)
-    updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-      text: `${errorMessage || '已取消'}`,
-      error: true,
-      loading: false,
-    })
-  } finally {
-    if (chatStore.plugState === 1) chatStore.setPlugState(2); // 插件结束状态
+    if (errorMessage !== undefined) {
+      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+        text: `${errorMessage || '已取消'}`,
+        error: true,
+        loading: false,
+      })
+    }
+  }
+  finally {
+    if (chatStore.plugState === 1)
+      chatStore.setPlugState(2) // 插件结束状态
     setTimeout(() => {
       if (loading.value) {
         getLatestCharTwoReduceInfo({
           conversationId: chatStore.getUuid,
         }).then((res) => {
-          console.log(res);
+          console.log(res)
           updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
             mossReduceInfo: {
               id: res.data[0].id,
             },
             conversationId: chatStore.getUuid,
             id: res.data[0].id,
-          });
+          })
 
           updateChatSome(chatStore.getUuid, dataSources.value.length - 2, {
             mossReduceInfo: {
@@ -514,16 +524,38 @@ async function onConversation(askMsg?: string, opt?) {
             },
             conversationId: chatStore.getUuid,
             id: res.data[1].id,
-          });
-        });
+          })
+        })
 
-        userStore.residueCountAPI();
-        loading.value = false;
+        userStore.residueCountAPI()
+        loading.value = false
       }
-    }, 2000);
-
+    }, 2000)
   }
 }
+
+/**
+ * 是否执行插件
+ */
+function checkValues() {
+  const arr = userStore.userInfo.tags
+  // 检查 arr 是否是 null 或 undefined
+  if (arr == null || !Array.isArray(arr))
+    return false
+
+  for (const item of arr) {
+    // 检查 item 是否是 null 或 undefined
+    if (item == null || typeof item !== 'object')
+      continue
+
+    // 检查 item.name 是否是 null 或 undefined
+    if (item.name != null)
+      return true
+  }
+
+  return false
+}
+
 window.onConversation = onConversation
 
 const handleSelectInput = (event: any) => {
@@ -682,23 +714,28 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
-
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
       <transition name="fade1">
-        <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
-          :style="{ width: userStore.toggleValue ? '71px' : '1px' }" />
+        <applicationList
+          v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
+          :style="{ width: userStore.toggleValue ? '71px' : '1px' }"
+        />
       </transition>
-      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
-        :class="[userStore.toggleValue ? 'p90' : '']">
-        <div id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
-          style="height: 100%;overflow: hidden">
+      <div
+        id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']"
+      >
+        <div
+          id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
+          style="height: 100%;overflow: hidden"
+        >
           <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
-            <div class="no-data-info w-full" v-if="!dataSources.length">
+            <div v-if="!dataSources.length" class="no-data-info w-full">
               <!-- 应用介绍 -->
 
               <!-- 空态占位图 -->
@@ -707,8 +744,10 @@ function handleMode() {
                   ChatMoss使用教程（推荐必看）：
                 </div>
                 <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
+                  <img
+                    style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt=""
+                  >
                 </a>
               </div>
               <div v-else>
@@ -716,19 +755,23 @@ function handleMode() {
                 <div class="no-data-info-tip-title">
                   无需注册即可登录ChatMoss
                 </div>
-                <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                <img
+                  style="cursor: pointer; border-radius: 10px;" width="320" height="240"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/xsjc1.png" alt=""
-                  @click="() => { go({ name: 'login' }) }">
+                  @click="() => { go({ name: 'login' }) }"
+                >
               </div>
             </div>
-            <div id="data-wrapper" v-else>
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+            <div v-else id="data-wrapper">
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                 :info="item"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
                 :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn" @online="onlineFn" @jarvis="jarvisFn"
-                @report="reportCallback" />
+                @report="reportCallback"
+              />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -740,7 +783,6 @@ function handleMode() {
               </div>
             </div>
           </div>
-
         </div>
         <footer :class="footerClass">
           <transition name="fade1">
@@ -748,12 +790,16 @@ function handleMode() {
           </transition>
           <div v-show="!hidden" class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
+              <NInput
+                v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter" />
-              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                @keydown="handleEnter"
+              />
+              <NSelect
+                v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput"
+              />
               <!-- MOSS字数 -->
               <div class="btn-style btn-mode" @click="handleMode">
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
