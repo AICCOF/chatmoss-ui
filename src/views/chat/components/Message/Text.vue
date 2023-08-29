@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import MarkdownIt from 'markdown-it'
 import mdKatex from '@traptitech/markdown-it-katex'
 import hljs from 'highlight.js'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
 import { isVscode } from '@/utils/vsCodeUtils'
+import * as IncrementalDOM from 'incremental-dom'
+import MarkdownItIncrementalDOM from 'markdown-it-incremental-dom'
 interface Props {
   inversion?: boolean
   error?: boolean
@@ -34,7 +36,7 @@ const mdi = new MarkdownIt({
     return highlightBlock(hljs.highlightAuto(code).value, '')
   },
 })
-
+mdi.use(MarkdownItIncrementalDOM, IncrementalDOM)
 mdi.use(mdKatex, { blockClass: 'katexmath-block rounded-md p-[10px]', errorColor: ' #cc0000' })
 
 const wrapClass = computed(() => {
@@ -46,6 +48,18 @@ const wrapClass = computed(() => {
     props.inversion ? 'text-right' : 'text-left',
     { 'text-red-500': props.error },
   ]
+})
+onMounted(() => {
+  watch(() => props.text, () => {
+    let dom = textRef.value?.querySelector('.markdown-body')
+    if (dom) {
+      IncrementalDOM.patch(
+        dom,
+        mdi.renderToIncrementalDOM(props.text)
+      )
+    }
+
+  }, { immediate: true })
 })
 
 const text = computed(() => {
@@ -64,7 +78,7 @@ function highlightBlock(str: string, lang?: string) {
   return `<pre class="code-block-wrapper">
     <div class="code-block-header">
       <span class="code-block-header__lang">${lang}</span>
-      <div class='flex'>${isVscode()?'<span class="code-block-header__insert mr-2">插入代码</span>':''}<span class="code-block-header__copy">${t('chat.copyCode')}</span></div></div><code class="hljs code-block-body ${lang}">${str}</code>
+      <div class='flex'>${isVscode() ? '<span class="code-block-header__insert mr-2">插入代码</span>' : ''}<span class="code-block-header__copy">${t('chat.copyCode')}</span></div></div><code class="hljs code-block-body ${lang}">${str}</code>
     </pre>`
 }
 
@@ -74,11 +88,11 @@ defineExpose({ textRef })
 <template>
   <div class="" :class="wrapClass">
     <template v-if="loading">
-        <img src="@/assets/icon/icon-loading.png" class="loading" />
+      <img src="@/assets/icon/icon-loading.png" class="loading" />
     </template>
     <template v-if="!loading">
       <div ref="textRef" class="leading-relaxed break-words" @dblclick="handleDoubleClick">
-        <div v-if="!inversion" class="markdown-body" v-html="text" />
+        <div v-if="!inversion" class="markdown-body" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>
     </template>
