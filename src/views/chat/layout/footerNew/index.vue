@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NPopover, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
-import { Popover, Switch } from 'ant-design-vue'
+import { Popover, Switch ,Button} from 'ant-design-vue'
 import { useChatStore, useUserStore } from '@/store'
 import { conversationUpload } from '@/api/index'
 const userStore = useUserStore()
@@ -85,7 +85,7 @@ chatStore.getPlugin()
                     target="_blank"
                   >
                     <div class="plugin-btn">
-                      <a-button type="primary">提交插件反馈</a-button>
+                      <button type="primary">提交插件反馈</button>
 
                     </div>
                   </a>

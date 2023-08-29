@@ -11,6 +11,9 @@ declare namespace Chat {
 		pluginInfo?:Record<string,any>
 		conversationOptions?: ConversationRequest | null
 		requestOptions: { prompt: string; options?: ConversationRequest | null }
+		mossReduceInfo?: Record<string, any>
+		conversationId?:any;
+		id?:any
 	}
 	interface ChatInfo{
 		data: Chat[],

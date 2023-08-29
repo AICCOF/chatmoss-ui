@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { showConfirmDialog } from 'vant'
-import { Modal } from 'ant-design-vue'
+import { Modal, BackTop } from 'ant-design-vue'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -117,7 +117,7 @@ watch(() => chatStore.getChatByUuid(), (...vals) => {
 })
 
 function handleSubmit() {
-  userStore.residueCountAPI()
+  // userStore.residueCountAPI()
   onConversation()
 }
 
@@ -310,12 +310,6 @@ async function onConversation(askMsg?: string, opt?) {
       // console.log('1.判断是否执行插件', response.checkPluginInfo.function_call)
       const fn = response.checkPluginInfo.function_call
 
-      // console.log(response.checkPluginInfo.content);
-      // if (response.checkPluginInfo.content) {
-      //   // ms.warning(response.checkPluginInfo.content);
-      //   texts = `请直接输出后面的内容： ${response.checkPluginInfo.content}`;
-      // }
-
       // 执行插件内容
       if (fn) {
         pluginObj = {
@@ -500,9 +494,12 @@ async function onConversation(askMsg?: string, opt?) {
     }
   }
   finally {
-    if (chatStore.plugState === 1)
+    if (chatStore.plugState === 1) {
       chatStore.setPlugState(2) // 插件结束状态
+    }
+
     setTimeout(() => {
+      // 问答结束后2s,去服务端拿结果。
       if (loading.value) {
         getLatestCharTwoReduceInfo({
           conversationId: chatStore.getUuid,
@@ -511,6 +508,8 @@ async function onConversation(askMsg?: string, opt?) {
           updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
             mossReduceInfo: {
               id: res.data[0].id,
+              questionMode: res.data[0].questionMode,
+              viewMsg: res.data[0].viewMsg,
             },
             conversationId: chatStore.getUuid,
             id: res.data[0].id,
@@ -714,27 +713,28 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
+function handleTarget(e) {
+  console.log(e)
+  return window.document.querySelector('#scrollRef1') as HTMLElement
+}
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
       <transition name="fade1">
-        <applicationList
-          v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
-          :style="{ width: userStore.toggleValue ? '71px' : '1px' }"
-        />
+        <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
+          :style="{ width: userStore.toggleValue ? '71px' : '1px' }" />
       </transition>
-      <div
-        id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
-        :class="[userStore.toggleValue ? 'p90' : '']"
-      >
-        <div
-          id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
-          style="height: 100%;overflow: hidden"
-        >
-          <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
+      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']">
+        <div id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
+          style="height: 100%;overflow: hidden">
+
+          <div ref="scrollRef" id="scrollRef1" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
+        
+
             <div v-if="!dataSources.length" class="no-data-info w-full">
               <!-- 应用介绍 -->
 
@@ -744,10 +744,8 @@ function handleMode() {
                   ChatMoss使用教程（推荐必看）：
                 </div>
                 <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img
-                    style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt=""
-                  >
+                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
                 </a>
               </div>
               <div v-else>
@@ -755,23 +753,19 @@ function handleMode() {
                 <div class="no-data-info-tip-title">
                   无需注册即可登录ChatMoss
                 </div>
-                <img
-                  style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/xsjc1.png" alt=""
-                  @click="() => { go({ name: 'login' }) }"
-                >
+                  @click="() => { go({ name: 'login' }) }">
               </div>
             </div>
             <div v-else id="data-wrapper">
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                 :info="item"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
                 :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn" @online="onlineFn" @jarvis="jarvisFn"
-                @report="reportCallback"
-              />
+                @report="reportCallback" />
 
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -790,16 +784,12 @@ function handleMode() {
           </transition>
           <div v-show="!hidden" class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput
-                v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
+              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter"
-              />
-              <NSelect
-                v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                @keydown="handleEnter" />
+              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-                label-field="key" @keydown="handleEnter" @input="handleSelectInput"
-              />
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
               <div class="btn-style btn-mode" @click="handleMode">
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}

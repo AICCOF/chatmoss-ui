@@ -8,6 +8,7 @@ import type { Notice } from '@/store/modules/user/helper'
 import { getSystemNotice } from '@/api/personCenter'
 import { getApplicationInstallList } from '@/api/application'
 import { getBalanceInfo, getModelList } from '@/api/weixin'
+
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
@@ -172,6 +173,8 @@ export const useUserStore = defineStore('user-store', {
           ...this.userInfo, ...res.data,
         }
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
+    
+       
         if (res.data && res.data.user) {
           this.centerPicUrl = res.data.centerPicUrl
           this.userInfo.user.authed = false

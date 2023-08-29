@@ -73,7 +73,7 @@ defineExpose({ textRef })
 <template>
   <div class="" :class="wrapClass">
     <template v-if="loading">
-        <img src="@/assets/icon/icon-loading2.png" class="loading" />
+        <img src="@/assets/icon/icon-loading.png" class="loading" />
     </template>
     <template v-if="!loading">
       <div ref="textRef" class="leading-relaxed break-words" @dblclick="handleDoubleClick">
