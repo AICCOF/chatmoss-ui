@@ -6,7 +6,7 @@ import { NPopover, useMessage } from 'naive-ui'
 import { useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationSort } from '@/api/application'
 import { useChatStore, useUserStore } from '@/store'
-
+import { SvgIcon } from '@/components/common'
 const ms = useMessage()
 
 const go = useGo()
@@ -76,7 +76,7 @@ function handleSave() {
 
 <template>
   <div class="wrap">
-    <div class="list">
+    <div class="list" style="width: 100px;">    
       <draggable
         :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
         ghost-class="ghost"
@@ -159,6 +159,7 @@ function handleSave() {
   background-color: var(--moss-header-color);
 
   .list {
+    position: relative;
     overflow: auto;
     // width: 71px;
     height: 80%;

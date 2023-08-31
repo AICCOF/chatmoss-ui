@@ -19,6 +19,7 @@ export const useUserStore = defineStore('user-store', {
       appList: {},
       notices: [],
       balanceInfo: null,
+      sliderToggle: false,
       // useKey: '1',
       isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
@@ -141,6 +142,7 @@ export const useUserStore = defineStore('user-store', {
     },
   },
   actions: {
+    
     async getBalanceInfo() {
       let res = await getBalanceInfo();
       this.balanceInfo = res.data;
@@ -148,6 +150,9 @@ export const useUserStore = defineStore('user-store', {
     closeKey() {
       this.useKey = '0'
       // 
+    },
+    sliderToggleMode(){
+      this.sliderToggle = !this.sliderToggle
     },
     toggleMode() {
       this.toggle = this.toggle === '0' ? "1" : '0'

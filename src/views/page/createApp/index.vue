@@ -168,7 +168,7 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <div class="box mt-4">
+      <!-- <div class="box mt-4">
         <div class=" flex justify-between items-center">
           <div>发布商店</div>
           <div class="">
@@ -183,7 +183,7 @@ onMounted(async () => {
           </div>
         </div>
 
-      </div>
+      </div> -->
       <div class="save" @click="handleValidateButtonClick">保存</div>
 
     </div>
