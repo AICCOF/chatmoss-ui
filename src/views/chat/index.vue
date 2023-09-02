@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { showConfirmDialog } from 'vant'
-import { Modal, Button } from 'ant-design-vue'
+import { Modal } from 'ant-design-vue'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -78,7 +78,7 @@ useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
-const { scrollRef, scrollToBottom, goToBottom, scrollToTop, isTop, isEnd, resetValue } = useScroll()
+const { scrollRef, scrollToBottom, goToBottom, scrollToTop, isTop, isEnd } = useScroll()
 
 const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
@@ -164,8 +164,12 @@ let chatOptions: Record<string, any> = {
   conversationId: chatStore.getUuid,
   openaiVersion: userStore.getOpenaiVersion,
 }
-function askFn(askMsg: string) {
-  onConversation(askMsg, {})
+function askFn(askMsg: string, replayMsgId: string, position) {
+  onConversation(askMsg, {
+    replay: 1,
+    replayMsgId,
+    position
+  })
 }
 function onlineFn(askMsg: string) {
   // console.log(askMsg, 1)
@@ -199,10 +203,7 @@ function reportCallback(row: any) {
 }
 
 async function onConversation(askMsg?: string, opt?) {
-  // if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
-  //   ms.error('请先去设置中心移除key再使用4.0进行提问')
-  //   return
-  // }
+
 
   if (chatStore.isLimit && userStore.isHighVersion && userStore.isHighVersionMsg) {
     const res = await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0')
@@ -236,7 +237,274 @@ async function onConversation(askMsg?: string, opt?) {
     return
 
   controller = new AbortController()
+  if (opt && opt.replay) {
+    // 重复提问
+    await replayQuestions(message, opt)
+  } else {
+    await newQuestions(message)
+  }
+}
+async function replayQuestions(message, opt) {
 
+  let options: Chat.ConversationRequest = {}
+  const lastContext
+    = conversationList.value[conversationList.value.length - 1]
+      ?.conversationOptions
+  loading.value = true
+  if (lastContext)
+    options = { ...lastContext }
+  let contentList = []
+  let row = getChatByUuidAndIndex(chatStore.getUuid, opt.position);
+  if (row) {
+    contentList = row.contentList || [];
+  }
+
+  contentList.push('')
+  updateChat(chatStore.getUuid, opt.position, {
+    ...row,
+    timestamp: new Date().getTime(),
+    createTime: new Date().toLocaleString(),
+    contentList,
+    loading: true,
+
+  })
+  //  console.log(opt.position, getChatByUuidAndIndex(chatStore.getUuid, opt.position))
+  //  return ;
+  const selectPlugin = chatStore.getSelectPluginInfo
+  const pluginId = selectPlugin?.pluginId // 插件ID
+  try {
+    const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
+    console.log('chatMossPiecesNumber', chatMossPiecesNumber)
+    // 在这里拼接用户所有的上下文
+    let texts = message
+    const token = getToken()
+    if (!token && verify(chatStore.getUuid))
+      texts = dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n')
+
+    if (localStorage.getItem('chatmossMode') === 'speciality')
+      texts = `${texts} 请详细回答`
+
+    // texts = compressCode(texts)
+    let execPluginResponse: any = {}
+    let pluginObj = {}
+    const isPlugin = checkValues()
+    if (selectPlugin && chatStore.getSelectPluginInfo?.select && !isPlugin)
+      ms.error('温馨提示，因为成本问题，插件功能只有3.5月卡以上付费用户才可使用，所以本次回答并未调用插件功能~如购买月卡后还有此提示，请重新登录后即可~')
+
+    if (selectPlugin && chatStore.getSelectPluginInfo?.select && isPlugin) {
+      /**
+       * 执行插件逻辑
+       */
+      chatStore.setPlugState(0)
+      const response = await checkPlugin({
+        pluginId,
+        tags: userStore.userInfo.tags,
+        messages: [
+          {
+            role: 'user',
+            content: texts,
+          },
+        ],
+      })
+      // console.log('1.判断是否执行插件', response.checkPluginInfo.function_call)
+      const fn = response.checkPluginInfo.function_call
+
+      // 执行插件内容
+      if (fn) {
+        pluginObj = {
+          pluginId,
+        }
+        updateChat(chatStore.getUuid, opt.position, {
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          contentList,
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: true,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: '',
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        })
+        // 插件展示状态：0 没执行，1 执行中，2 执行完成
+        chatStore.setPlugState(1)
+        // console.log('2.插件可执行：', JSON.parse(fn.arguments))
+
+        // 执行内容
+        execPluginResponse = await execPlugin({
+          pluginId,
+          args: JSON.parse(fn.arguments),
+        })
+        // console.log('3.插件执行结果：', execPluginResponse.pluginStr)
+
+        texts = `${texts}\n|$moss${JSON.stringify(pluginObj)}$moss|${execPluginResponse.pluginStr ? execPluginResponse.pluginStr : ''
+          }`
+
+        updateChat(chatStore.getUuid, opt.position, {
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          contentList,
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: true,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: execPluginResponse.pluginStr,
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        })
+      }
+    }
+
+    const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
+      prompt: texts,
+      options: {
+        ...options,
+        ...chatOptions,
+      },
+      apiKey: userStore.useKey === '1' ? localStorage.getItem('apiKey') : '',
+      signal: controller.signal,
+      onDownloadProgress: ({ event }) => {
+        const xhr = event.target
+        // const { responseText } = xhr
+        const chunk = xhr.responseText
+        contentList[contentList.length - 1] = chunk;
+
+        try {
+          // const data = JSON.parse(chunk)
+          updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+            timestamp: new Date().getTime(),
+            createTime: new Date().toLocaleString(),
+            text: chunk ?? '',
+            contentList,
+            inversion: false,
+            ast: message,
+            error: false,
+            loading: false,
+            pluginInfo: {
+              ast: message,
+              pluginMessage: execPluginResponse.pluginStr,
+              ...pluginObj,
+            },
+            conversationOptions: {
+              conversationId: chatStore.getUuid,
+            },
+            requestOptions: { prompt: message, options: { ...options } },
+          })
+          scrollToBottom()
+        }
+        catch (error) {
+          //
+        }
+      },
+    })
+
+    // 超出token提示
+    const tip1 = data as any as string
+    if (engList.includes(tip1))
+      ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
+
+    addTextNum(texts.length)
+
+    scrollToBottom()
+  }
+  catch (error: any) {
+    // ms.error(error.msg || error.message)
+
+    if (error.code === 10000) {
+      showConfirmDialog({
+        title: '问题',
+        message: '您当前问题已经超过模型最大上下文，是否新建问题解决此问题',
+        confirmButtonText: '新建问题',
+        cancelButtonText: '取消',
+      }).then(() => {
+        // on close
+        // userStore.toggleOpenaiVersion();
+        chatStore.createChat()
+      })
+    }
+    else if (error.code === 10001) {
+      if (getToken()) {
+        showConfirmDialog({
+          title: 'key失效',
+          message: '您当前设置的key不正确，或者key已经到期，目前ChatMoss 3.5 可免费使用，是否取消使用自己的key?',
+          confirmButtonText: '确定',
+          cancelButtonText: '知道了',
+        }).then(() => {
+          // on close
+          userStore.closeKey()
+        })
+      }
+      else {
+        showConfirmDialog({
+          title: 'key失效',
+          message: '您当前设置的key不正确，或者key已经到期，目前ChatMoss 3.5登录后可免费使用，是否登录？',
+          confirmButtonText: '去登录',
+          cancelButtonText: '知道了',
+        }).then(() => {
+          // on close
+          userStore.closeKey()
+          go({
+            name: 'login',
+          })
+        })
+      }
+    }
+    else if (error.code === 20000) {
+      showConfirmDialog({
+        title: '字符已用尽',
+        message: '试用字符已经用尽，目前ChatMoss 3.5登录后可免费使用，是否登录',
+        confirmButtonText: '去登录',
+        cancelButtonText: '知道了',
+      }).then(() => {
+        // on close
+        // userStore.toggleOpenaiVersion()
+        go({
+          name: 'login',
+        })
+      })
+    }
+
+    // 答应其他信息
+    const errorMessage = error.msg
+    if (error.message === 'canceled') {
+      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+        loading: false,
+      })
+      scrollToBottom()
+      return
+    }
+    console.log('errorMessage', errorMessage)
+    if (errorMessage !== undefined) {
+      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+        text: `${errorMessage || '已取消'}`,
+        error: true,
+        loading: false,
+      })
+    }
+  } finally {
+    if (chatStore.plugState === 1)
+      chatStore.setPlugState(2) // 插件结束状态
+
+    loading.value = false;
+  }
+}
+
+
+async function newQuestions(message) {
   await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
     createTime: new Date().toLocaleString(),
@@ -250,6 +518,7 @@ async function onConversation(askMsg?: string, opt?) {
   goToBottom()
   loading.value = true
   prompt.value = ''
+  let contentList = []
 
   let options: Chat.ConversationRequest = {}
   const lastContext
@@ -319,6 +588,7 @@ async function onConversation(askMsg?: string, opt?) {
           timestamp: new Date().getTime(),
           createTime: new Date().toLocaleString(),
           text: '',
+          contentList,
           inversion: false,
           ast: message,
           error: false,
@@ -380,7 +650,8 @@ async function onConversation(askMsg?: string, opt?) {
         const xhr = event.target
         // const { responseText } = xhr
         const chunk = xhr.responseText
-
+        contentList[0] = chunk;
+        // console.log(contentList)
         try {
           // const data = JSON.parse(chunk)
           updateChat(chatStore.getUuid, dataSources.value.length - 1, {
@@ -389,6 +660,7 @@ async function onConversation(askMsg?: string, opt?) {
             text: chunk ?? '',
             inversion: false,
             ast: message,
+            contentList,
             error: false,
             loading: false,
             pluginInfo: {
@@ -503,7 +775,6 @@ async function onConversation(askMsg?: string, opt?) {
         getLatestCharTwoReduceInfo({
           conversationId: chatStore.getUuid,
         }).then((res) => {
-          console.log(res)
           updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
             mossReduceInfo: {
               id: res.data[0].id,
@@ -717,16 +988,17 @@ function handleMode() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
-      <div class="relative transition" :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '100px' : '0px' }">
+      <div class="relative transition"
+        :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '100px' : '0px' }">
         <div v-show="userStore.toggleValue"
-          class="absolute w-[30px] h-[30px] rounded-full -right-[18px] top-1/2 overflow bg-[#ffffff33] z-40 text-[24px] flex items-center justify-center"
+          class="absolute w-[30px] h-[30px] rounded-full -right-[18px] top-1/2 overflow bg-[#00000033] text-[#fff] dark:bg-[#ffffff33] z-40 text-[24px] flex items-center justify-center"
           @click="userStore.sliderToggleMode">
           <SvgIcon icon="formkit:left" v-if="userStore.sliderToggle" />
           <SvgIcon icon="formkit:right" v-if="!userStore.sliderToggle" />
         </div>
         <transition name="fade1">
-          <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue && userStore.sliderToggle" class="transition"
-            :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '100px' : '0px' }" />
+          <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue && userStore.sliderToggle"
+            class="transition" :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '100px' : '0px' }" />
         </transition>
       </div>
 
@@ -778,8 +1050,8 @@ function handleMode() {
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
-                :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn" @online="onlineFn" @jarvis="jarvisFn"
-                @report="reportCallback" />
+                :question-mode="item.mossReduceInfo?.questionMode" @ask="(...args) => askFn(...args, index)"
+                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
 
               <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" @click="handleStop">

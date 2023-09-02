@@ -76,7 +76,7 @@ function handleSave() {
 
 <template>
   <div class="wrap">
-    <div class="list" style="width: 100px;">    
+    <div class="list" >    
       <draggable
         :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
         ghost-class="ghost"
@@ -95,7 +95,7 @@ function handleSave() {
                 <span>{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span">
+            <div class="span whitespace-nowrap">
               {{ element.appName.length > 5 ? element.appName.slice(0, 5)
                 : element.appName }}
             </div>
@@ -120,10 +120,10 @@ function handleSave() {
                   <img :src="element.iconUrl" alt="">
                   <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt=""> -->
                 </template>
-                <span>{{ element.appName }}</span>
+                <span class="">{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span">
+            <div class="span whitespace-nowrap">
               {{ element.appName.length > 5 ? element.appName.slice(0, 5)
                 : element.appName }}
             </div>

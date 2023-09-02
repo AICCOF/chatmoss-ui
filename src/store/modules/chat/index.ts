@@ -246,17 +246,27 @@ export const useChatStore = defineStore('chat-store', {
           const res = await getConversationDetail({ conversationId: this.active, pageSize: 200 })
           const rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
           let preObj = {} // 处理用插件提问题的情况
+          console.log(rows)
           result.data.push(
             ...rows.map((row: any, i: number, array: any[]) => {
+              if (row.contentList && typeof row.contentList === 'string') {
+                row.contentList = JSON.parse(row.contentList)
+
+                row.contentList = row.contentList.map((content)=>{
+                  return content.slice(2)
+                })
+              }
+
+
               if (row.content.startsWith('0:')) {
                 // content": "0:北京市明天的天气\n|$moss{"name:":"1"}$moss|根据提供的数据，查询天气信息，并格式化输出
-
                 // .match(/\|\$moss(.*?)\$moss\|/,'')
                 const text = row.content.slice(2)
                 // 尝试是不是用插件提问，如果使用插件提问，需要提取出来插件的信息，并把他存储下来，提供给下一条回答的信息。
                 const matchText = text.match(/\|\$moss(.*?)\$moss\|/, '')
-                // console.log(matchText, 'matchText');
+
                 let pluginInfo = [text]
+                console.log(pluginInfo[0])
                 let json = {}
                 if (matchText) {
                   pluginInfo = text.split(matchText[0])
@@ -295,10 +305,10 @@ export const useChatStore = defineStore('chat-store', {
               if (row.content.startsWith('1:') && array[i - 1]) {
                 // content": "1:北京市明天的天气\n$moss|根据提供的数据，查询天气信息，并格式化输出
                 const text = row.content.slice(2)
-                // console.log(array[i - 1], i);
+                // console.log(preObj,'ask');
                 return {
                   ...row,
-                  ast: preObj.ask,
+                  ast: preObj.ast,
                   pluginInfo: preObj.pluginInfo,
                   inversion: !!row.content.startsWith('0:'),
                   text,

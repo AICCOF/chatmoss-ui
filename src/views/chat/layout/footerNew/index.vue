@@ -1,174 +1,199 @@
 <script lang="ts" setup>
 import { NPopover, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
-import { Popover, Switch ,Button} from 'ant-design-vue'
+import { Popover, Switch, Button } from 'ant-design-vue'
 import { useChatStore, useUserStore } from '@/store'
 import { conversationUpload } from '@/api/index'
+import { updateAppConfig } from '@/api/application'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const ms = useMessage()
 const popoverDom = ref()
 
 const hidden = computed(() => {
-  return location.search.includes('hiddenInput')
+	return location.search.includes('hiddenInput')
 })
 
 // 新建对话
 function createQuestion() {
-  const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-  questionBtnDom.click()
-  ms.success('新建会话成功，请提问~')
+	const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+	questionBtnDom.click()
+	ms.success('新建会话成功，请提问~')
 }
 
 // 历史记录
 function toggleButtonEvent() {
-  const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
-  toggleButton.click()
+	const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
+	toggleButton.click()
 }
 
 async function jarvisEvent() {
-  ms.success('上传中，请稍等，大概5~20秒上传完成')
-  const res = await conversationUpload({
-    conversationId: chatStore.active,
-  })
-  ms.success(res.msg)
+	ms.success('上传中，请稍等，大概5~20秒上传完成')
+	const res = await conversationUpload({
+		conversationId: chatStore.active,
+	})
+	ms.success(res.msg)
 }
 
 function setOpenaiVersion(action) {
-  userStore.saveOpenaiVersion(action)
-  popoverDom.value.setShow(false)
-  ms.success('模型切换成功')
+	userStore.saveOpenaiVersion(action)
+	popoverDom.value.setShow(false)
+	ms.success('模型切换成功')
 }
 
 function handleMode() {
-  userStore.toggleMode()
+	userStore.toggleMode()
 }
 // const showPopover = ref(false)
 
 // 当某个滑块被选中时，将其他滑块设为未选中状态
 const handleSwitchChange = (selectedItem) => {
-  chatStore.setPlugin(selectedItem)
-  if (selectedItem.select) {
-    chatStore.pluginList.forEach((item) => {
-      if (item !== selectedItem)
-        item.select = false
-    })
-  }
+	chatStore.setPlugin(selectedItem)
+	if (selectedItem.select) {
+		chatStore.pluginList.forEach((item) => {
+			if (item !== selectedItem)
+				item.select = false
+		})
+	}
 }
 // 获取选中的插件信息
 chatStore.getPlugin()
+
+function handleParamConfigs(item, row) {
+	item.choiceSelect = row.id;
+	updateAppConfig({
+		appId: userStore.appIdValue,
+		choiceConfigList: userStore.currentApp.paramConfigs.map((row) => {
+			return { paramName: row.name, "choice": row.choiceSelect }
+		})
+	});
+}
 </script>
 
 <template>
-  <div>
-    <footer class="footer-main">
-      <div class="footer-left">
-        <div class="div">
-          <div class="div-wrap">
-            <div
-              v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1"
-              @click="createQuestion"
-            >
-              新建会话
-            </div>
-            <div
-              v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2"
-              @click="toggleButtonEvent"
-            >
-              历史记录
-            </div>
-            <Popover title="" trigger="hover" overlay-class-name="ant-popover-my">
-              <template #content>
-                <div style="padding: 8px">
-                  <a
-                    href="https://chatmoss.feishu.cn/share/base/form/shrcngN778J03PwR7b8z7Puge0f"
-                    target="_blank"
-                  >
-                    <div class="plugin-btn">
-                      <button type="primary">提交插件反馈</button>
+	<div>
+		<footer class="">
+			<div v-if="userStore.currentApp && userStore.currentApp.paramConfigs" class="flex">
+				<Popover v-for="(item, ii) of userStore.currentApp.paramConfigs" title="" trigger="hover" ::key="ii"
+					overlay-class-name="ant-popover-my">
+					<template #content>
+						<div class="text-center" style="padding: 8px;min-width: 100px">
+							<div v-for="(row, i) of item.choices" class="py-1 px-2 cursor-pointer hover:bg-[#00000040] rounded-lg"
+								:key="i" @click="handleParamConfigs(item, row)">
+								{{ item.name }}:{{ row.value }}
+							</div>
+						</div>
+					</template>
+					<div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin ml-2">
+						{{ item.name }}:{{ item.choicesMap[item.choiceSelect].value }}
+					</div>
+				</Popover>
 
-                    </div>
-                  </a>
-                  <div v-for="(item, index) in chatStore.pluginList" :key="index" class="plugin-item">
-                    <img class="plugin-item-icon" :src="item.icon" alt="">
-                    <div class="plugin-item-info">
-                      <div class="plugin-item-name">
-                        {{ item.name }}
-                      </div>
-                      <div class="plugin-item-description">
-                        {{ item.description }}
-                      </div>
-                    </div>
-                    <Switch v-model:checked="item.select" @change="handleSwitchChange(item)" />
-                  </div>
-                  <div v-if="chatStore.pluginList.length === 0">
-                    暂无插件
-                  </div>
-                </div>
-              </template>
-              <div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin" style="">
-                插件系统
-                <!-- <img
+
+			</div>
+
+			<div class="footer-main">
+				<div class="footer-left">
+					<div class="div">
+						<div class="div-wrap">
+							<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1"
+								@click="createQuestion">
+								新建会话
+							</div>
+							<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2"
+								@click="toggleButtonEvent">
+								历史记录
+							</div>
+							<Popover title="" trigger="hover" overlay-class-name="ant-popover-my">
+								<template #content>
+									<div style="padding: 8px">
+										<a href="https://chatmoss.feishu.cn/share/base/form/shrcngN778J03PwR7b8z7Puge0f" target="_blank">
+											<div class="plugin-btn">
+												<button type="primary">提交插件反馈</button>
+
+											</div>
+										</a>
+										<div v-for="(item, index) in chatStore.pluginList" :key="index" class="plugin-item">
+											<img class="plugin-item-icon" :src="item.icon" alt="">
+											<div class="plugin-item-info">
+												<div class="plugin-item-name">
+													{{ item.name }}
+												</div>
+												<div class="plugin-item-description">
+													{{ item.description }}
+												</div>
+											</div>
+											<Switch v-model:checked="item.select" @change="handleSwitchChange(item)" />
+										</div>
+										<div v-if="chatStore.pluginList.length === 0">
+											暂无插件
+										</div>
+									</div>
+								</template>
+								<div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin" style="">
+									插件系统
+									<!-- <img
                   src="@/assets/icon/icon-plugin.png" style="width: 12px;
 									height: 12px;
 									margin-right: 8px;display: inline-block;"
                 > -->
-                <!-- <span class="align-text-top">插件</span> -->
-              </div>
-              <div class="inline-block align-middle">
-                <img v-if="chatStore.getSelectPluginInfo?.select" class="plugin-main-select-icon" :src="chatStore.getSelectPluginInfo.icon" alt="">
-              </div>
-            </Popover>
-            <!-- <div v-if="userStore.toggleValue && !userStore.isQuestionMode"
+									<!-- <span class="align-text-top">插件</span> -->
+								</div>
+								<div class="inline-block align-middle">
+									<img v-if="chatStore.getSelectPluginInfo?.select" class="plugin-main-select-icon"
+										:src="chatStore.getSelectPluginInfo.icon" alt="">
+								</div>
+							</Popover>
+							<!-- <div v-if="userStore.toggleValue && !userStore.isQuestionMode"
 							class="footer-item footer-item-btn footer-item-btn2" @click="jarvisEvent">
 							对话上传个人资料库
 						</div> -->
-          </div>
-        </div>
-      </div>
-      <div class="footer-right">
-        <div v-if="hidden" class="footer-item footer-item-btn footer-item-btn1 model-version" @click="handleMode">
-          {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
-        </div>
-        <div class="footer-item">
-          <div class="header-right-item header-right-item-help">
-            <NPopover ref="popoverDom" trigger="hover" placement="left">
-              <template #trigger>
-                <div v-if="userStore.getModeVersion" class="footer-item footer-item-btn footer-item-btn1 model-version">
-                  {{ userStore.getModeVersion.viewName }}
-                </div>
-              </template>
-              <div>
-                <div
-                  v-for="(item, i) of userStore.getModelList" :key="i" class="model-item"
-                  :class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)"
-                >
-                  <NPopover trigger="hover" placement="left" style="width: max-content;">
-                    <div class="flex">
-                      解释：{{ item.desc }}
-                    </div>
-                    <template #trigger>
-                      <div class="cursor">
-                        {{ item.viewName }}
-                      </div>
-                    </template>
-                  </NPopover>
-                </div>
-              </div>
-            </NPopover>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </div>
+						</div>
+					</div>
+				</div>
+				<div class="footer-right">
+					<div v-if="hidden" class="footer-item footer-item-btn footer-item-btn1 model-version" @click="handleMode">
+						{{ userStore.toggleValue ? '正常模式' : '极简模式' }}
+					</div>
+					<div class="footer-item">
+						<div class="header-right-item header-right-item-help">
+							<NPopover ref="popoverDom" trigger="hover" placement="left">
+								<template #trigger>
+									<div v-if="userStore.getModeVersion" class="footer-item footer-item-btn footer-item-btn1 model-version">
+										{{ userStore.getModeVersion.viewName }}
+									</div>
+								</template>
+								<div>
+									<div v-for="(item, i) of userStore.getModelList" :key="i" class="model-item"
+										:class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)">
+										<NPopover trigger="hover" placement="left" style="width: max-content;">
+											<div class="flex">
+												解释：{{ item.desc }}
+											</div>
+											<template #trigger>
+												<div class="cursor">
+													{{ item.viewName }}
+												</div>
+											</template>
+										</NPopover>
+									</div>
+								</div>
+							</NPopover>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
 </template>
 
 <style lang="less" scoped>
-  .plugin-main-select-icon {
-      width: 16px;
-      height: 16px;
-      margin-left: 6px;
-    }
+.plugin-main-select-icon {
+	width: 16px;
+	height: 16px;
+	margin-left: 6px;
+}
+
 .plugin-item {
 	display: flex;
 	align-items: center;
@@ -335,7 +360,7 @@ chatStore.getPlugin()
 	width: 284px;
 	margin: 0 auto;
 	margin-bottom: 20px;
-  margin-top: 14px;
+	margin-top: 14px;
 	text-align: center;
 	border-radius: 20px;
 	border: 1px solid #000;
@@ -348,11 +373,13 @@ chatStore.getPlugin()
 .van-overlay {
 	z-index: 1000;
 }
+
 .ant-popover-inner-content {
 	padding: 0px !important;
 	max-height: 340px !important;
-  overflow: scroll !important;
+	overflow: auto !important;
 }
+
 .ant-popover-inner {
 	border-radius: 8px !important;
 }

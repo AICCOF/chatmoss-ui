@@ -9,11 +9,11 @@ import { isVscode } from '@/utils/vsCodeUtils'
 import * as IncrementalDOM from 'incremental-dom'
 import MarkdownItIncrementalDOM from 'markdown-it-incremental-dom'
 import { SvgIcon } from '@/components/common'
-import { Pagination } from 'ant-design-vue'
 interface Props {
   inversion?: boolean
   error?: boolean
   text?: string
+  info: any;
   loading?: boolean
 }
 interface Emit {
@@ -51,13 +51,38 @@ const wrapClass = computed(() => {
     { 'text-red-500': props.error },
   ]
 })
+let textInfo = ref('')
+let currentPage = ref(1)
+function handleChange(page) {
+  // console.log(page)
+  textInfo.value = props.info.contentList[page - 1]
+}
+
 onMounted(() => {
+
+  watch(() => props.info, () => {
+  
+    if (props.info && props.info.contentList && !props.info.contentList[props.info.contentList.length - 1]) {
+      currentPage.value = props.info.contentList.length
+    
+    }
+
+      if (props.info && props.info.contentList && props.info.contentList[props.info.contentList.length - 1]) {
+        textInfo.value = props.info.contentList[props.info.contentList.length - 1];
+    }
+  }, { immediate: true, deep: true })
+
   watch(() => props.text, () => {
+    textInfo.value = props.text;
+  }, { immediate: true })
+
+  watch(() => textInfo.value, () => {
     let dom = textRef.value?.querySelector('.markdown-body')
+    // console.log(textInfo.value,dom)
     if (dom) {
       IncrementalDOM.patch(
         dom,
-        mdi.renderToIncrementalDOM(props.text)
+        mdi.renderToIncrementalDOM(textInfo.value)
       )
     }
 
@@ -65,7 +90,7 @@ onMounted(() => {
 })
 
 const text = computed(() => {
-  const value = props.text ?? ''
+  const value = textInfo.value ?? ''
   // console.log(mdi.render(value).split('\n'))
   if (!props.inversion)
     return mdi.render(value)
@@ -83,10 +108,7 @@ function highlightBlock(str: string, lang?: string) {
       <div class='flex'>${isVscode() ? '<span class="code-block-header__insert mr-2">插入代码</span>' : ''}<span class="code-block-header__copy">${t('chat.copyCode')}</span></div></div><code class="hljs code-block-body ${lang}">${str}</code>
     </pre>`
 }
-function handleChange(page) {
-  console.log(page)
-}
-let currentPage = ref(1)
+
 defineExpose({ textRef })
 </script>
 
@@ -104,8 +126,9 @@ defineExpose({ textRef })
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>
     </template>
-    <div style="width: 100px;" v-if="!inversion">
-      <van-pagination v-model="currentPage" :show-prev-button="false" :page-count="5" mode="simple" class="my-pagination" @change="handleChange">
+    <div style="width: 100px;" v-if="!inversion && info.contentList && info.contentList.length > 1">
+      <van-pagination v-model="currentPage" :show-prev-button="false" :page-count="info.contentList.length" mode="simple"
+        class="my-pagination" @change="handleChange">
         <template #prev-text>
           <van-icon name="arrow-left" />
         </template>

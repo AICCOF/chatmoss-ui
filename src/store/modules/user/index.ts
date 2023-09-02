@@ -84,7 +84,7 @@ export const useUserStore = defineStore('user-store', {
       return true
     },
     packageList(state) {
-      let arr =[];
+      let arr = [];
       if (!state.balanceInfo)
         return []
       if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5-4k']) {
@@ -94,7 +94,7 @@ export const useUserStore = defineStore('user-store', {
           list: state.balanceInfo.orderResidue['3.5-4k'],
         })
       }
-      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5']){
+      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5']) {
         arr.push({
           title: 'GPT3.5-16k套餐',
           timesResidue: state.balanceInfo.timesResidue['3.5'],
@@ -142,7 +142,6 @@ export const useUserStore = defineStore('user-store', {
     },
   },
   actions: {
-    
     async getBalanceInfo() {
       let res = await getBalanceInfo();
       this.balanceInfo = res.data;
@@ -151,7 +150,7 @@ export const useUserStore = defineStore('user-store', {
       this.useKey = '0'
       // 
     },
-    sliderToggleMode(){
+    sliderToggleMode() {
       this.sliderToggle = !this.sliderToggle
     },
     toggleMode() {
@@ -178,8 +177,8 @@ export const useUserStore = defineStore('user-store', {
           ...this.userInfo, ...res.data,
         }
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
-    
-       
+
+
         if (res.data && res.data.user) {
           this.centerPicUrl = res.data.centerPicUrl
           this.userInfo.user.authed = false
@@ -215,6 +214,43 @@ export const useUserStore = defineStore('user-store', {
     async getApplicationInstallListAPI() {
       if (getToken()) {
         const res = await getApplicationInstallList()
+
+        res.data.installList.map((row => {
+          if (row.paramConfigs) {
+
+            row.paramConfigs.map(row => {
+              row.choicesMap = {};
+              if (!row.choiceSelect) {
+                row.choiceSelect = row.defaultChoice
+              }
+              row.choices.map(data => {
+                row.choicesMap[data.id] = data
+              })
+            })
+          }
+
+          return {
+            ...row
+          }
+        }))
+
+        res.data.systemList.map((row => {
+          if (row.paramConfigs) {
+            row.paramConfigs.map(row => {
+              row.choicesMap = {};
+              if (!row.choiceSelect) {
+                row.choiceSelect = row.defaultChoice
+              }
+              row.choices.map(data => {
+                row.choicesMap[data.id] = data
+              })
+            })
+          }
+
+          return {
+            ...row
+          }
+        }))
         this.appList = res.data || {
           installList: [],
           systemList: [],

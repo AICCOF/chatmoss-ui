@@ -6,6 +6,7 @@ import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationLike, getApplicationList, getApplicationSearch, getApplicationTypeList } from '@/api/application'
 import { useScrollToBottom } from '@/utils/usePullDownRefresh'
+import { showImagePreview } from 'vant';
 const ms = useMessage()
 const back = useBack()
 const go = useGo()
@@ -100,6 +101,16 @@ async function handleInstalled(row) {
   })
   row.installed = row.installed === 0 ? 1 : 0
 }
+
+async function  handlePreImg(row) {
+  if(row.images&& row.images.length>0){
+    showImagePreview({
+      images: row.images,
+      closeable: true,
+    });
+  }
+  
+}
 </script>
 
 <template>
@@ -136,7 +147,7 @@ async function handleInstalled(row) {
         </van-sidebar>
         <div class="pt-0 flex-1" style="overflow: hidden;">
           <div ref="element" class="w-full content px-8 pt-0 border-box">
-            <div v-for="(item, i) of dataList" :key="i" class="flex justify-between items-center w-full flex-1 item mt-2">
+            <div v-for="(item, i) of dataList" :key="i" class="flex justify-between items-center w-full flex-1 item mt-2" @click="handlePreImg(item)">
               <div class="flex items-center flex-1">
                 <div class="mr-2 none">
                   <img :src="item.icon" class="img" alt="" style="">
@@ -160,7 +171,7 @@ async function handleInstalled(row) {
                   </div>
                 </div>
               </div>
-              <div @click="handleInstalled(item)">
+              <div @click.stop="handleInstalled(item)">
                 <div v-if="item.installed === 0" class="btns normal">
                   安装
                 </div>

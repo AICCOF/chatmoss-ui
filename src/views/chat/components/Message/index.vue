@@ -49,11 +49,11 @@ let options: any[] = [{
   key: 'ask',
   icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
 },
-// {
-//   label: '联网提问',
-//   key: 'online',
-//   icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-// }
+  // {
+  //   label: '联网提问',
+  //   key: 'online',
+  //   icon: iconRender({ icon: 'heroicons-solid:status-online' }),
+  // }
 ]
 watch(
   () => props.info,
@@ -64,23 +64,14 @@ watch(
         key: 'copyText',
         icon: iconRender({ icon: 'ph:copy' }),
       },
-      {
+
+    ]
+    if (!props.inversion)
+      options.push({
         label: '重新提问',
         key: 'ask',
         icon: iconRender({ icon: 'material-symbols:settings-backup-restore' }),
-      },
-      // {
-      //   label: '联网提问',
-      //   key: 'online',
-      //   icon: iconRender({ icon: 'heroicons-solid:status-online' }),
-      // },
-
-      // {
-      //   label: t('个人资料库提问'),
-      //   key: 'jarvis',
-      //   icon: iconRender({ icon: 'icon-park-solid:brain' }),
-      // },
-    ]
+      })
     if (value.id) {
       options.push({
         label: '举报',
@@ -99,7 +90,8 @@ function handleSelect(key: string, askMsg: string) {
       ms.success('已复制到剪切板')
       break
     case 'ask':
-      emit('ask', askMsg)
+      console.log(props.info, askMsg)
+      emit('ask', askMsg, props.info.id)
       break
     case 'online':
       emit('online', askMsg)
@@ -131,30 +123,25 @@ const activeKey = ref(['0'])
       <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ viewMsg }} </span>
         <span>(模式：{{ questionMode }}) </span>
-        <a
-          href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
-          target="_blank"
-        >查看字符计算器</a>
+        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank">查看字符计算器</a>
       </p>
-      <Collapse
-        v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
-        :bordered="false" class="my-collapse" expand-icon-position="right"
-      >
+      <Collapse v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
+        :bordered="false" class="my-collapse" expand-icon-position="right">
         <template #expandIcon="{ isActive }">
           <CaretRightOutlined :rotate="isActive ? 90 : 0" />
         </template>
-        <CollapsePanel
-          key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
-          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'"
-        >
+        <CollapsePanel key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
+          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'">
           <template #header>
             <div v-if="info.pluginInfo.pluginId" class="flex-center" style="width: 100%">
-              <img style="width: 16px; height: 16px; margin-right: 10px;" :src="chatStore.pluginMap[info.pluginInfo.pluginId].icon" alt="">
+              <img style="width: 16px; height: 16px; margin-right: 10px;"
+                :src="chatStore.pluginMap[info.pluginInfo.pluginId].icon" alt="">
               <div>
                 {{
                   info.pluginInfo.pluginId
-                    ? chatStore.pluginMap[info.pluginInfo.pluginId].name
-                    : ''
+                  ? chatStore.pluginMap[info.pluginInfo.pluginId].name
+                  : ''
                 }}
               </div>
               <div v-if="chatStore.plugState === 1 && isEnd">
@@ -169,9 +156,9 @@ const activeKey = ref(['0'])
         </CollapsePanel>
       </Collapse>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" />
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :info="props.info" :loading="loading" />
       </div>
-      <div class="flex mt-2 ml-2 btns">
+      <div class="flex mt-2 ml-2 btns " :class="[inversion?'justify-end':'justify-start']">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
           <NButton class="btn" text @click="handleSelect(option.key, askMsg || text)">
             <component :is="option.icon" />
@@ -196,7 +183,7 @@ const activeKey = ref(['0'])
 
   .btns {
     transition: 0.5s all;
-    opacity: 0;
+    opacity: 1;
   }
 
   &:hover {
@@ -209,23 +196,24 @@ const activeKey = ref(['0'])
 
 <style lang="less">
 .ant-collapse-borderless {
-	background-color: #fff0 !important;
-	.ant-collapse-header {
-		color: var(--moss-text) !important;
+  background-color: #fff0 !important;
+
+  .ant-collapse-header {
+    color: var(--moss-text) !important;
     background: var(--moss-tip-bg-color);
     border-radius: 10px !important;
     margin-top: 12px;
-		opacity: 1;
-	}
+    opacity: 1;
+  }
 }
 
 .ant-collapse-item {
-	border: none !important;
+  border: none !important;
 }
 
 .ant-collapse-content-box {
-	background-color: #000;
-	color: #fff;
-	padding-top: 16px !important;
+  background-color: #000;
+  color: #fff;
+  padding-top: 16px !important;
 }
 </style>

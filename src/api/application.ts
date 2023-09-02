@@ -110,3 +110,9 @@ export function getApplicationLike<T>(data) {
     data,
   })
 }
+export function updateAppConfig<T>(data) {
+  return post<T>({
+    url: '/luomacode-api/application/install/updateAppConfig',
+    data,
+  })
+}
