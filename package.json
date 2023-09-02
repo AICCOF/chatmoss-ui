@@ -39,6 +39,7 @@
     "@dcloudio/uni-webview-js": "^0.0.3",
     "@tauri-apps/api": "^1.2.0",
     "@traptitech/markdown-it-katex": "^3.6.0",
+    "@vant/touch-emulator": "^1.4.0",
     "@vitejs/plugin-legacy": "^4.0.1",
     "@vueuse/core": "^9.13.0",
     "ant-design-vue": "~3.2.20",

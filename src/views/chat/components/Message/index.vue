@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref, watch,computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { NButton, useMessage } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
 import { CaretRightOutlined } from '@ant-design/icons-vue'
@@ -111,11 +111,16 @@ function handleSelect(key: string, askMsg: string) {
 }
 const activeKey = ref(['0'])
 let currentPage = ref(1)
-let message = computed(()=>{
-  if(props.info && props.info.mossReduceInfoList){
-    return props.info.mossReduceInfoList[currentPage.value-1].viewMsg
+let message = computed(() => {
+  if (props.info && props.info.mossReduceInfoList) {
+    if(props.info.mossReduceInfoList[currentPage.value - 1]){
+      return props.info.mossReduceInfoList[currentPage.value - 1].viewMsg
+    }else{
+      return null
+    }
+    
   }
-  return  props.viewMsg
+  return props.viewMsg
 })
 // console.log(props.info.mossReduceInfoList ,'Props.info1')
 </script>
@@ -165,9 +170,10 @@ let message = computed(()=>{
         </CollapsePanel>
       </Collapse>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :info="props.info" :loading="loading" v-model="currentPage" />
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :info="props.info"
+          :loading="loading" v-model="currentPage" />
       </div>
-      <div class="flex mt-2 ml-2 btns " :class="[inversion?'justify-end':'justify-start']">
+      <div class="flex mt-2 ml-2 btns " :class="[inversion ? 'justify-end' : 'justify-start']">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
           <NButton class="btn" text @click="handleSelect(option.key, askMsg || text)">
             <component :is="option.icon" />

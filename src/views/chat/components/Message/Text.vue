@@ -67,7 +67,8 @@ onMounted(() => {
 
     if (props.info && props.info.contentList && !props.info.contentList[props.info.contentList.length - 1]) {
       currentPage.value = props.info.contentList.length
-
+      emit('update:modelValue',   currentPage.value)
+  
     }
 
     if (props.info && props.info.contentList && props.info.contentList[props.info.contentList.length - 1]) {
