@@ -315,6 +315,7 @@ async function replayQuestions(message, opt) {
           pluginId,
         }
         updateChat(chatStore.getUuid, opt.position, {
+          ...row,
           timestamp: new Date().getTime(),
           createTime: new Date().toLocaleString(),
           text: '',
@@ -348,6 +349,7 @@ async function replayQuestions(message, opt) {
           }`
 
         updateChat(chatStore.getUuid, opt.position, {
+          ...row,
           timestamp: new Date().getTime(),
           createTime: new Date().toLocaleString(),
           text: '',
@@ -385,7 +387,8 @@ async function replayQuestions(message, opt) {
 
         try {
           // const data = JSON.parse(chunk)
-          updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+          updateChat(chatStore.getUuid, opt.position, {
+            ...row,
             timestamp: new Date().getTime(),
             createTime: new Date().toLocaleString(),
             text: chunk ?? '',
@@ -499,7 +502,22 @@ async function replayQuestions(message, opt) {
     if (chatStore.plugState === 1)
       chatStore.setPlugState(2) // 插件结束状态
 
-    loading.value = false;
+    setTimeout(() => {
+      // 问答结束后2s,去服务端拿结果。
+      if (loading.value && !verify(chatStore.getUuid)) {
+        getLatestCharTwoReduceInfo({
+          conversationId: chatStore.getUuid,
+        }).then((res) => {
+          row.mossReduceInfoList.push(res.data[0])
+          updateChat(chatStore.getUuid, opt.position, {
+            ...row,
+          })
+        })
+
+        userStore.residueCountAPI()
+        loading.value = false
+      }
+    }, 2000)
   }
 }
 
@@ -781,6 +799,7 @@ async function newQuestions(message) {
               questionMode: res.data[0].questionMode,
               viewMsg: res.data[0].viewMsg,
             },
+            mossReduceInfoList: [res.data[0]],
             conversationId: chatStore.getUuid,
             id: res.data[0].id,
           })

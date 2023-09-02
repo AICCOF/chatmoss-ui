@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref, watch } from 'vue'
+import { ref, watch,computed } from 'vue'
 import { NButton, useMessage } from 'naive-ui'
 // import AvatarComponent from './Avatar.vue'
 import { CaretRightOutlined } from '@ant-design/icons-vue'
@@ -10,6 +10,7 @@ import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
 // import { t } from '@/locales'
 import { useChatStore } from '@/store'
+import { getToken } from '@/store/modules/auth/helper'
 // Spin
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
@@ -66,7 +67,7 @@ watch(
       },
 
     ]
-    if (!props.inversion)
+    if (!props.inversion && getToken())
       options.push({
         label: '重新提问',
         key: 'ask',
@@ -90,7 +91,7 @@ function handleSelect(key: string, askMsg: string) {
       ms.success('已复制到剪切板')
       break
     case 'ask':
-      console.log(props.info, askMsg)
+      // console.log(props.info, askMsg)
       emit('ask', askMsg, props.info.id)
       break
     case 'online':
@@ -109,6 +110,14 @@ function handleSelect(key: string, askMsg: string) {
   }
 }
 const activeKey = ref(['0'])
+let currentPage = ref(1)
+let message = computed(()=>{
+  if(props.info && props.info.mossReduceInfoList){
+    return props.info.mossReduceInfoList[currentPage.value-1].viewMsg
+  }
+  return  props.viewMsg
+})
+// console.log(props.info.mossReduceInfoList ,'Props.info1')
 </script>
 
 <template>
@@ -120,8 +129,8 @@ const activeKey = ref(['0'])
       <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
         {{ dayjs(dateTime).format('MM月DD日 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
       </p>
-      <p v-if="!inversion && viewMsg" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
-        <span>{{ viewMsg }} </span>
+      <p v-if="!inversion && message" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
+        <span>{{ message }} </span>
         <span>(模式：{{ questionMode }}) </span>
         <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
           target="_blank">查看字符计算器</a>
@@ -156,7 +165,7 @@ const activeKey = ref(['0'])
         </CollapsePanel>
       </Collapse>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :info="props.info" :loading="loading" />
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :info="props.info" :loading="loading" v-model="currentPage" />
       </div>
       <div class="flex mt-2 ml-2 btns " :class="[inversion?'justify-end':'justify-start']">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>

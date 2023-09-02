@@ -14,10 +14,12 @@ interface Props {
   error?: boolean
   text?: string
   info: any;
-  loading?: boolean
+  loading?: boolean,
+  modelValue: Number;
 }
 interface Emit {
   (e: 'copy'): void
+  (e: 'update:modelValue'): void
 }
 
 const props = defineProps<Props>()
@@ -52,28 +54,30 @@ const wrapClass = computed(() => {
   ]
 })
 let textInfo = ref('')
-let currentPage = ref(1)
+// let currentPage = ref(1)
 function handleChange(page) {
   // console.log(page)
   textInfo.value = props.info.contentList[page - 1]
+  emit('update:modelValue', page)
 }
 
 onMounted(() => {
 
   watch(() => props.info, () => {
-  
+
     if (props.info && props.info.contentList && !props.info.contentList[props.info.contentList.length - 1]) {
       currentPage.value = props.info.contentList.length
-    
+
     }
 
-      if (props.info && props.info.contentList && props.info.contentList[props.info.contentList.length - 1]) {
-        textInfo.value = props.info.contentList[props.info.contentList.length - 1];
+    if (props.info && props.info.contentList && props.info.contentList[props.info.contentList.length - 1]) {
+      
+      textInfo.value = props.info.contentList[props.info.contentList.length - 1];
     }
   }, { immediate: true, deep: true })
 
   watch(() => props.text, () => {
-    textInfo.value = props.text;
+    // textInfo.value = props.text;
   }, { immediate: true })
 
   watch(() => textInfo.value, () => {
@@ -90,7 +94,7 @@ onMounted(() => {
 })
 
 const text = computed(() => {
-  const value = textInfo.value ?? ''
+  const value = props.text ?? ''
   // console.log(mdi.render(value).split('\n'))
   if (!props.inversion)
     return mdi.render(value)
@@ -108,7 +112,8 @@ function highlightBlock(str: string, lang?: string) {
       <div class='flex'>${isVscode() ? '<span class="code-block-header__insert mr-2">插入代码</span>' : ''}<span class="code-block-header__copy">${t('chat.copyCode')}</span></div></div><code class="hljs code-block-body ${lang}">${str}</code>
     </pre>`
 }
-
+// console.log(props, 'props.value')
+let currentPage = ref(props.modelValue)
 defineExpose({ textRef })
 </script>
 

@@ -249,14 +249,13 @@ export const useChatStore = defineStore('chat-store', {
           console.log(rows)
           result.data.push(
             ...rows.map((row: any, i: number, array: any[]) => {
-              if (row.contentList && typeof row.contentList === 'string') {
-                row.contentList = JSON.parse(row.contentList)
-
-                row.contentList = row.contentList.map((content)=>{
+              if (row.contentList) {
+                // row.contentList = JSON.parse(row.contentList)  
+                row.contentList = row.contentList.map((content) => {
                   return content.slice(2)
                 })
               }
-
+            
 
               if (row.content.startsWith('0:')) {
                 // content": "0:北京市明天的天气\n|$moss{"name:":"1"}$moss|根据提供的数据，查询天气信息，并格式化输出
@@ -327,7 +326,7 @@ export const useChatStore = defineStore('chat-store', {
           )
         }
         catch (error) {
-
+          console.log(error)
         }
         finally {
           this.loading = false
