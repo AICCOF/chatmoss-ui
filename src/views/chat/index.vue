@@ -499,7 +499,7 @@ async function onConversation(askMsg?: string, opt?) {
 
     setTimeout(() => {
       // 问答结束后2s,去服务端拿结果。
-      if (loading.value) {
+      if (loading.value && !verify(chatStore.getUuid)) {
         getLatestCharTwoReduceInfo({
           conversationId: chatStore.getUuid,
         }).then((res) => {

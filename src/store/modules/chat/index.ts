@@ -76,27 +76,27 @@ export const useChatStore = defineStore('chat-store', {
         title: string
         data: Chat.ChatState[]
       }[] = [
-        {
-          title: '今天',
-          data: [],
-        },
-        {
-          title: '昨天',
-          data: [],
-        },
-        {
-          title: '三天前',
-          data: [],
-        },
-        {
-          title: '七天前',
-          data: [],
-        },
-        {
-          title: '一个月前',
-          data: [],
-        },
-      ]
+          {
+            title: '今天',
+            data: [],
+          },
+          {
+            title: '昨天',
+            data: [],
+          },
+          {
+            title: '三天前',
+            data: [],
+          },
+          {
+            title: '七天前',
+            data: [],
+          },
+          {
+            title: '一个月前',
+            data: [],
+          },
+        ]
       this.chatsCollect.forEach((row) => {
         const timestamp = row.timestamp
         if (timestamp >= dayjs().startOf('day').valueOf())
@@ -448,8 +448,11 @@ export const useChatStore = defineStore('chat-store', {
     },
     async addLocalChat(id: number, chat: Chat.Chat) {
       if (!id || id === 0) {
-        if (this.localChat.length === 0)
+        if (this.localChat.length === 0) {
           await this.createLocalChat(chat.text)
+        } else {
+          this.active = this.localChat[0].id
+        }
       }
       const result = this.localChat.find(item => item.id === this.active)
       if (result) {
