@@ -1,6 +1,16 @@
 <script setup lang='ts'>
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
+import { showImagePreview } from 'vant';
+async function handlePreImg(row) {
+  if (row.images && row.images.length > 0) {
+    showImagePreview({
+      images: row.images,
+      closeable: true,
+    });
+  }
+
+}
 </script>
 
 <template>
@@ -18,7 +28,7 @@ const userStore = useUserStore()
             {{ userStore.currentApp.desc }}
           </div>
         </div>
-        <button class="tip-btn">
+        <button class="tip-btn" v-if="userStore.currentApp.images && userStore.currentApp.images.length>0" @click="handlePreImg(userStore.currentApp)">
           使用说明
         </button>
       </div>

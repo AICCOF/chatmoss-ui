@@ -110,15 +110,15 @@ function handleSelect(key: string, askMsg: string) {
   }
 }
 const activeKey = ref(['0'])
-let currentPage = ref(1)
+let currentPage = ref(props.info.contentList ? props.info.contentList.length : 1)
 let message = computed(() => {
   if (props.info && props.info.mossReduceInfoList) {
-    if(props.info.mossReduceInfoList[currentPage.value - 1]){
+    if (props.info.mossReduceInfoList[currentPage.value - 1]) {
       return props.info.mossReduceInfoList[currentPage.value - 1].viewMsg
-    }else{
+    } else {
       return null
     }
-    
+
   }
   return props.viewMsg
 })
@@ -134,12 +134,7 @@ let message = computed(() => {
       <p class="text-xs" :class="[inversion ? 'text-right' : 'text-left']">
         {{ dayjs(dateTime).format('MM月DD日 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
       </p>
-      <p v-if="!inversion && message" class="text-xs mt-1" :class="[inversion ? 'text-right' : 'text-left']">
-        <span>{{ message }} </span>
-        <span>(模式：{{ questionMode }}) </span>
-        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
-          target="_blank">查看字符计算器</a>
-      </p>
+
       <Collapse v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
         :bordered="false" class="my-collapse" expand-icon-position="right">
         <template #expandIcon="{ isActive }">
@@ -173,6 +168,12 @@ let message = computed(() => {
         <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :info="props.info"
           :loading="loading" v-model="currentPage" />
       </div>
+      <p v-if="!inversion && message" class="text-xs mt-1 btns" :class="[inversion ? 'text-right' : 'text-left']">
+        <span>{{ message }} </span>
+        <span>(模式：{{ questionMode }}) </span>
+        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank">查看字符计算器</a>
+      </p>
       <div class="flex mt-2 ml-2 btns " :class="[inversion ? 'justify-end' : 'justify-start']">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
           <NButton class="btn" text @click="handleSelect(option.key, askMsg || text)">
@@ -198,7 +199,7 @@ let message = computed(() => {
 
   .btns {
     transition: 0.5s all;
-    opacity: 1;
+    opacity: 0;
   }
 
   &:hover {

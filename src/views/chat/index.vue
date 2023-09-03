@@ -24,6 +24,7 @@ import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
 import { checkPlugin, execPlugin } from '@/api/plugin'
+
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
 })
@@ -999,6 +1000,8 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
+
+
 </script>
 
 <template>
@@ -1046,7 +1049,7 @@ function handleMode() {
               </div>
             </transition>
 
-            <div v-if="!dataSources.length" class="no-data-info w-full">
+            <div v-if="!dataSources.length && (userStore.currentApp && !userStore.currentApp.guideMsg) " class="no-data-info w-full">
               <!-- 应用介绍 -->
 
               <!-- 空态占位图 -->
