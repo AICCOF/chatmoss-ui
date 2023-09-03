@@ -5,7 +5,7 @@ const userStore = useUserStore()
 
 <template>
   <div>
-    <div v-if="userStore.currentApp" class="no-data-info-text text-left notice">
+    <div v-if="userStore.currentApp" style="position: relative;" class="no-data-info-text text-left notice">
       <div class="flex">
         <div>
           <img :src="userStore.currentApp.iconUrl" alt="" style="min-width:44px;height:44px;margin-right: 4px;">
@@ -18,10 +18,15 @@ const userStore = useUserStore()
             {{ userStore.currentApp.desc }}
           </div>
         </div>
+        <button class="tip-btn">
+          使用说明
+        </button>
       </div>
     </div>
-    <div v-if="userStore.currentApp && userStore.currentApp.guideMsg"
-      class="no-data-info-text text-left notice inline-block">
+    <div
+      v-if="userStore.currentApp && userStore.currentApp.guideMsg"
+      class="no-data-info-text text-left notice inline-block"
+    >
       <div>
         {{ userStore.currentApp.guideMsg || '引导语' }}
       </div>
@@ -50,5 +55,12 @@ const userStore = useUserStore()
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.tip-btn {
+		position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #6b83ff;
 }
 </style>

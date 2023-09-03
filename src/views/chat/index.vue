@@ -168,7 +168,7 @@ function askFn(askMsg: string, replayMsgId: string, position) {
   onConversation(askMsg, {
     replay: 1,
     replayMsgId,
-    position
+    position,
   })
 }
 function onlineFn(askMsg: string) {
@@ -203,8 +203,6 @@ function reportCallback(row: any) {
 }
 
 async function onConversation(askMsg?: string, opt?) {
-
-
   if (chatStore.isLimit && userStore.isHighVersion && userStore.isHighVersionMsg) {
     const res = await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0')
     if (!res)
@@ -240,12 +238,12 @@ async function onConversation(askMsg?: string, opt?) {
   if (opt && opt.replay) {
     // 重复提问
     await replayQuestions(message, opt)
-  } else {
+  }
+  else {
     await newQuestions(message)
   }
 }
 async function replayQuestions(message, opt) {
-
   let options: Chat.ConversationRequest = {}
   const lastContext
     = conversationList.value[conversationList.value.length - 1]
@@ -254,10 +252,9 @@ async function replayQuestions(message, opt) {
   if (lastContext)
     options = { ...lastContext }
   let contentList = []
-  let row = getChatByUuidAndIndex(chatStore.getUuid, opt.position);
-  if (row) {
-    contentList = row.contentList || [];
-  }
+  const row = getChatByUuidAndIndex(chatStore.getUuid, opt.position)
+  if (row)
+    contentList = row.contentList || []
 
   contentList.push('')
   updateChat(chatStore.getUuid, opt.position, {
@@ -383,7 +380,7 @@ async function replayQuestions(message, opt) {
         const xhr = event.target
         // const { responseText } = xhr
         const chunk = xhr.responseText
-        contentList[contentList.length - 1] = chunk;
+        contentList[contentList.length - 1] = chunk
 
         try {
           // const data = JSON.parse(chunk)
@@ -498,7 +495,8 @@ async function replayQuestions(message, opt) {
         loading: false,
       })
     }
-  } finally {
+  }
+  finally {
     if (chatStore.plugState === 1)
       chatStore.setPlugState(2) // 插件结束状态
 
@@ -521,7 +519,6 @@ async function replayQuestions(message, opt) {
   }
 }
 
-
 async function newQuestions(message) {
   await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
@@ -536,7 +533,7 @@ async function newQuestions(message) {
   goToBottom()
   loading.value = true
   prompt.value = ''
-  let contentList = []
+  const contentList = []
 
   let options: Chat.ConversationRequest = {}
   const lastContext
@@ -668,7 +665,7 @@ async function newQuestions(message) {
         const xhr = event.target
         // const { responseText } = xhr
         const chunk = xhr.responseText
-        contentList[0] = chunk;
+        contentList[0] = chunk
         // console.log(contentList)
         try {
           // const data = JSON.parse(chunk)
@@ -1007,28 +1004,37 @@ function handleMode() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
-      <div class="relative transition"
-        :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '100px' : '0px' }">
-        <div v-show="userStore.toggleValue"
-          class="absolute w-[30px] h-[30px] rounded-full -right-[18px] top-1/2 overflow bg-[#00000033] text-[#fff] dark:bg-[#ffffff33] z-40 text-[24px] flex items-center justify-center"
-          @click="userStore.sliderToggleMode">
-          <SvgIcon icon="formkit:left" v-if="userStore.sliderToggle" />
-          <SvgIcon icon="formkit:right" v-if="!userStore.sliderToggle" />
+      <div
+        class="relative transition"
+        :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }"
+      >
+        <div
+          v-show="userStore.toggleValue"
+          class="m-pointer  plugin-btn absolute w-[30px] h-[30px] rounded-full -right-[18px] top-1/2 overflow bg-[#00000033] text-[#fff] dark:bg-[#ffffff33] z-40 text-[24px] flex items-center justify-center"
+          @click="userStore.sliderToggleMode"
+        >
+          <SvgIcon v-if="userStore.sliderToggle" icon="formkit:left" />
+          <SvgIcon v-if="!userStore.sliderToggle" icon="formkit:right" />
         </div>
         <transition name="fade1">
-          <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue && userStore.sliderToggle"
-            class="transition" :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '100px' : '0px' }" />
+          <applicationList
+            v-show="userStore.isAuth === 2 && userStore.toggleValue && userStore.sliderToggle"
+            class="transition" :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }"
+          />
         </transition>
       </div>
 
-      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
-        :class="[userStore.toggleValue ? 'p90' : '']">
-        <div id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
-          style="height: 100%;overflow: hidden">
+      <div
+        id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']"
+      >
+        <div
+          id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
+          style="height: 100%;overflow: hidden"
+        >
           <div id="scrollRef1" ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
             <transition name="fade1">
-
               <div v-if="isEnd" class="icon-top" style="" @click="scrollToTop">
                 <SvgIcon icon="grommet-icons:link-top" />
               </div>
@@ -1049,8 +1055,10 @@ function handleMode() {
                   ChatMoss使用教程（推荐必看）：
                 </div>
                 <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
+                  <img
+                    style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt=""
+                  >
                 </a>
               </div>
               <div v-else>
@@ -1058,19 +1066,23 @@ function handleMode() {
                 <div class="no-data-info-tip-title">
                   无需注册即可登录ChatMoss
                 </div>
-                <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                <img
+                  style="cursor: pointer; border-radius: 10px;" width="320" height="240"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/xsjc1.png" alt=""
-                  @click="() => { go({ name: 'login' }) }">
+                  @click="() => { go({ name: 'login' }) }"
+                >
               </div>
             </div>
             <div v-else id="data-wrapper">
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+              <Message
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                 :info="item"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
                 :question-mode="item.mossReduceInfo?.questionMode" @ask="(...args) => askFn(...args, index)"
-                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
+                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback"
+              />
 
               <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" @click="handleStop">
@@ -1089,20 +1101,26 @@ function handleMode() {
           </transition>
           <div v-show="!hidden" class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
+              <NInput
+                v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter" />
-              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                @keydown="handleEnter"
+              />
+              <NSelect
+                v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput"
+              />
               <!-- MOSS字数 -->
               <div class="btn-style btn-mode" @click="handleMode">
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
               </div>
               <div class="btn-style ">
-                <NButton id="ask-question"
+                <NButton
+                  id="ask-question"
                   style="background-color: var(--moss-bg-ask-color);border-radius: 3px;color: var(--moss-text-ask-color);"
-                  type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+                  type="primary" :disabled="buttonDisabled" @click="handleSubmit"
+                >
                   <template #icon>
                     <span class="">
                       <SvgIcon icon="ri:send-plane-fill" />
@@ -1351,6 +1369,7 @@ function handleMode() {
 }
 
 .btn-mode {
+	opacity: .4;
   background-color: var(--moss-bg-ask-color);
   border-radius: 3px;
   color: var(--moss-text-ask-color);
@@ -1361,6 +1380,9 @@ function handleMode() {
   right: 60px;
   width: 60px;
   line-height: 22px;
+	&:hover {
+		opacity: 1;
+	}
 }
 
 .btn-style button {
@@ -1490,5 +1512,13 @@ function handleMode() {
     // border: 1px solid #6388FF !important;
     color: #fff !important;
   }
+}
+
+.plugin-btn {
+	transform: scale(0.9);
+  opacity: .5;
+	&:hover {
+		opacity: 1;
+	}
 }
 </style>

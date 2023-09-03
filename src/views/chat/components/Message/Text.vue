@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { computed, ref, watch, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import MarkdownIt from 'markdown-it'
 import mdKatex from '@traptitech/markdown-it-katex'
 import hljs from 'highlight.js'
+import * as IncrementalDOM from 'incremental-dom'
+import MarkdownItIncrementalDOM from 'markdown-it-incremental-dom'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
 import { isVscode } from '@/utils/vsCodeUtils'
-import * as IncrementalDOM from 'incremental-dom'
-import MarkdownItIncrementalDOM from 'markdown-it-incremental-dom'
 import { SvgIcon } from '@/components/common'
 interface Props {
   inversion?: boolean
   error?: boolean
   text?: string
-  info: any;
-  loading?: boolean,
-  modelValue: Number;
+  info: any
+  loading?: boolean
+  modelValue: Number
 }
 interface Emit {
   (e: 'copy'): void
@@ -53,7 +53,7 @@ const wrapClass = computed(() => {
     { 'text-red-500': props.error },
   ]
 })
-let textInfo = ref('')
+const textInfo = ref('')
 // let currentPage = ref(1)
 function handleChange(page) {
   // console.log(page)
@@ -62,19 +62,15 @@ function handleChange(page) {
 }
 
 onMounted(() => {
-
   watch(() => props.info, () => {
-
     if (props.info && props.info.contentList && !props.info.contentList[props.info.contentList.length - 1]) {
       currentPage.value = props.info.contentList.length
-      emit('update:modelValue',   currentPage.value)
-  
+      emit('update:modelValue', currentPage.value)
     }
 
-    if (props.info && props.info.contentList && props.info.contentList[props.info.contentList.length - 1]) {
-      
-      textInfo.value = props.info.contentList[props.info.contentList.length - 1];
-    }
+    if (props.info && props.info.contentList && props.info.contentList[props.info.contentList.length - 1])
+
+      textInfo.value = props.info.contentList[props.info.contentList.length - 1]
   }, { immediate: true, deep: true })
 
   watch(() => props.text, () => {
@@ -82,15 +78,14 @@ onMounted(() => {
   }, { immediate: true })
 
   watch(() => textInfo.value, () => {
-    let dom = textRef.value?.querySelector('.markdown-body')
+    const dom = textRef.value?.querySelector('.markdown-body')
     // console.log(textInfo.value,dom)
     if (dom) {
       IncrementalDOM.patch(
         dom,
-        mdi.renderToIncrementalDOM(textInfo.value)
+        mdi.renderToIncrementalDOM(textInfo.value),
       )
     }
-
   }, { immediate: true })
 })
 
@@ -126,15 +121,16 @@ defineExpose({ textRef })
       <SvgIcon icon="nonicons:loading-16" class="loading" style="color:#6388FF" />
     </template>
     <template v-if="!loading">
-
       <div ref="textRef" class="leading-relaxed break-words" @dblclick="handleDoubleClick">
         <div v-if="!inversion" class="markdown-body" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>
     </template>
-    <div style="width: 100px;" v-if="!inversion && info.contentList && info.contentList.length > 1">
-      <van-pagination v-model="currentPage" :show-prev-button="false" :page-count="info.contentList.length" mode="simple"
-        class="my-pagination" @change="handleChange">
+    <div v-if="!inversion && info.contentList && info.contentList.length > 1" style="width: 100px;">
+      <van-pagination
+        v-model="currentPage" :show-prev-button="false" :page-count="info.contentList.length" mode="simple"
+        class="my-pagination" @change="handleChange"
+      >
         <template #prev-text>
           <van-icon name="arrow-left" />
         </template>
@@ -143,7 +139,6 @@ defineExpose({ textRef })
         </template>
       </van-pagination>
     </div>
-
   </div>
 </template>
 
