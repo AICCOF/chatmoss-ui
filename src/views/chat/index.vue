@@ -272,7 +272,7 @@ async function replayQuestions(message, opt) {
   const pluginId = selectPlugin?.pluginId // 插件ID
   try {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
-    console.log('chatMossPiecesNumber', chatMossPiecesNumber)
+    // console.log('chatMossPiecesNumber', chatMossPiecesNumber)
     // 在这里拼接用户所有的上下文
     let texts = message
     const token = getToken()
@@ -560,7 +560,7 @@ async function newQuestions(message) {
   const pluginId = selectPlugin?.pluginId // 插件ID
   try {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
-    console.log('chatMossPiecesNumber', chatMossPiecesNumber)
+    // console.log('chatMossPiecesNumber', chatMossPiecesNumber)
     // 在这里拼接用户所有的上下文
     let texts = message
     const token = getToken()
@@ -574,10 +574,10 @@ async function newQuestions(message) {
     let execPluginResponse: any = {}
     let pluginObj = {}
     const isPlugin = checkValues()
-    if (selectPlugin && chatStore.getSelectPluginInfo?.select && !isPlugin)
+    if (token && selectPlugin && chatStore.getSelectPluginInfo?.select && !isPlugin)
       ms.error('温馨提示，因为成本问题，插件功能只有3.5月卡以上付费用户才可使用，所以本次回答并未调用插件功能~如购买月卡后还有此提示，请重新登录后即可~')
 
-    if (selectPlugin && chatStore.getSelectPluginInfo?.select && isPlugin) {
+    if (token && selectPlugin && chatStore.getSelectPluginInfo?.select && isPlugin) {
       /**
        * 执行插件逻辑
        */
@@ -772,7 +772,7 @@ async function newQuestions(message) {
       scrollToBottom()
       return
     }
-    console.log('errorMessage', errorMessage)
+    // console.log('errorMessage', errorMessage)
     if (errorMessage !== undefined) {
       updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
         text: `${errorMessage || '已取消'}`,
@@ -936,7 +936,7 @@ vsCodeUtils({
 })
 function clickMessage() {
   const selectedText = localStorage.getItem('selectedText')
-  console.log('??', selectedText)
+  // console.log('??', selectedText)
   if (selectedText) {
     prompt.value = selectedText
     localStorage.setItem('selectedText', '')
@@ -1000,41 +1000,29 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
-
-
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
-      <div
-        class="relative transition"
-        :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }"
-      >
-        <div
-          v-show="userStore.toggleValue"
+      <div v-if="authStore.token" class="relative transition"
+        :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }">
+        <div v-show="userStore.toggleValue"
           class="m-pointer  plugin-btn absolute w-[30px] h-[30px] rounded-full -right-[18px] top-1/2 overflow bg-[#00000033] text-[#fff] dark:bg-[#ffffff33] z-40 text-[24px] flex items-center justify-center"
-          @click="userStore.sliderToggleMode"
-        >
+          @click="userStore.sliderToggleMode">
           <SvgIcon v-if="userStore.sliderToggle" icon="formkit:left" />
           <SvgIcon v-if="!userStore.sliderToggle" icon="formkit:right" />
         </div>
         <transition name="fade1">
-          <applicationList
-            v-show="userStore.isAuth === 2 && userStore.toggleValue && userStore.sliderToggle"
-            class="transition" :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }"
-          />
+          <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue && userStore.sliderToggle"
+            class="transition" :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }" />
         </transition>
       </div>
 
-      <div
-        id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
-        :class="[userStore.toggleValue ? 'p90' : '']"
-      >
-        <div
-          id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
-          style="height: 100%;overflow: hidden"
-        >
+      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']">
+        <div id="image-wrapper" class="w-full m-auto items-center py-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
+          style="height: 100%;overflow: hidden">
           <div id="scrollRef1" ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
             <applicationIntro />
             <transition name="fade1">
@@ -1049,19 +1037,18 @@ function handleMode() {
               </div>
             </transition>
 
-            <div v-if="!dataSources.length && (userStore.currentApp && !userStore.currentApp.guideMsg) " class="no-data-info w-full">
+            <div v-if="!dataSources.length" class="no-data-info w-full">
               <!-- 应用介绍 -->
 
               <!-- 空态占位图 -->
-              <div v-if="authStore.token && userStore.centerPicUrl">
+              <div
+                v-if="authStore.token && userStore.centerPicUrl && (userStore.currentApp && !userStore.currentApp.guideMsg)">
                 <div class="no-data-info-tip-title">
                   ChatMoss使用教程（推荐必看）：
                 </div>
                 <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img
-                    style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt=""
-                  >
+                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
                 </a>
               </div>
               <div v-else>
@@ -1069,23 +1056,19 @@ function handleMode() {
                 <div class="no-data-info-tip-title">
                   无需注册即可登录ChatMoss
                 </div>
-                <img
-                  style="cursor: pointer; border-radius: 10px;" width="320" height="240"
+                <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
                   src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/xsjc1.png" alt=""
-                  @click="() => { go({ name: 'login' }) }"
-                >
+                  @click="() => { go({ name: 'login' }) }">
               </div>
             </div>
             <div v-else id="data-wrapper">
-              <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                 :info="item"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                 :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
                 :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
                 :question-mode="item.mossReduceInfo?.questionMode" @ask="(...args) => askFn(...args, index)"
-                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback"
-              />
+                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
 
               <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" @click="handleStop">
@@ -1104,26 +1087,20 @@ function handleMode() {
           </transition>
           <div v-show="!hidden" class="w-full m-auto p-2" style="padding-bottom: 0px;">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput
-                v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
+              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
                 autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter"
-              />
-              <NSelect
-                v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                @keydown="handleEnter" />
+              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-                label-field="key" @keydown="handleEnter" @input="handleSelectInput"
-              />
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
               <div class="btn-style btn-mode" @click="handleMode">
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
               </div>
               <div class="btn-style ">
-                <NButton
-                  id="ask-question"
+                <NButton id="ask-question"
                   style="background-color: var(--moss-bg-ask-color);border-radius: 3px;color: var(--moss-text-ask-color);"
-                  type="primary" :disabled="buttonDisabled" @click="handleSubmit"
-                >
+                  type="primary" :disabled="buttonDisabled" @click="handleSubmit">
                   <template #icon>
                     <span class="">
                       <SvgIcon icon="ri:send-plane-fill" />
@@ -1372,7 +1349,7 @@ function handleMode() {
 }
 
 .btn-mode {
-	opacity: .4;
+  opacity: .4;
   background-color: var(--moss-bg-ask-color);
   border-radius: 3px;
   color: var(--moss-text-ask-color);
@@ -1383,9 +1360,10 @@ function handleMode() {
   right: 60px;
   width: 60px;
   line-height: 22px;
-	&:hover {
-		opacity: 1;
-	}
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .btn-style button {
@@ -1518,10 +1496,11 @@ function handleMode() {
 }
 
 .plugin-btn {
-	transform: scale(0.9);
+  transform: scale(0.9);
   opacity: .5;
-	&:hover {
-		opacity: 1;
-	}
+
+  &:hover {
+    opacity: 1;
+  }
 }
 </style>

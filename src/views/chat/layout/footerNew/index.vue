@@ -2,14 +2,14 @@
 import { NPopover, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
 import { Popover, Switch } from 'ant-design-vue'
-import { useChatStore, useUserStore } from '@/store'
+import { useChatStore, useUserStore, useAuthStoreWithout } from '@/store'
 import { conversationUpload } from '@/api/index'
 import { updateAppConfig } from '@/api/application'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const ms = useMessage()
 const popoverDom = ref()
-
+const authStore = useAuthStoreWithout()
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
 })
@@ -136,7 +136,7 @@ function handleParamConfigs(item, row) {
                     </div>
                   </div>
                 </template>
-                <div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin" style="">
+                <div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin" style="" v-if="authStore.token">
                   插件系统
                   <!-- <img
                   src="@/assets/icon/icon-plugin.png" style="width: 12px;

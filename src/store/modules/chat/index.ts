@@ -49,7 +49,7 @@ export const useChatStore = defineStore('chat-store', {
       return Math.ceil(dataSources.map(item => item.text).join('\n').length)
     },
     isLimit() {
-      console.log(this.textLength, 'textLength')
+      // console.log(this.textLength, 'textLength')
       const leg = this.textLength as number
       return leg > 2500
     },
@@ -76,27 +76,27 @@ export const useChatStore = defineStore('chat-store', {
         title: string
         data: Chat.ChatState[]
       }[] = [
-          {
-            title: '今天',
-            data: [],
-          },
-          {
-            title: '昨天',
-            data: [],
-          },
-          {
-            title: '三天前',
-            data: [],
-          },
-          {
-            title: '七天前',
-            data: [],
-          },
-          {
-            title: '一个月前',
-            data: [],
-          },
-        ]
+        {
+          title: '今天',
+          data: [],
+        },
+        {
+          title: '昨天',
+          data: [],
+        },
+        {
+          title: '三天前',
+          data: [],
+        },
+        {
+          title: '七天前',
+          data: [],
+        },
+        {
+          title: '一个月前',
+          data: [],
+        },
+      ]
       this.chatsCollect.forEach((row) => {
         const timestamp = row.timestamp
         if (timestamp >= dayjs().startOf('day').valueOf())
@@ -150,7 +150,7 @@ export const useChatStore = defineStore('chat-store', {
   actions: {
     async getPlugin() {
       const info = await getPlugin({})
-      console.log('pluginList', info)
+      // console.log('pluginList', info)
       info.pluginList.map((item) => {
         if (this.currentPlugin.pluginId === item.pluginId && this.currentPlugin.select)
           item.select = true
@@ -246,16 +246,15 @@ export const useChatStore = defineStore('chat-store', {
           const res = await getConversationDetail({ conversationId: this.active, pageSize: 200 })
           const rows = res.rows.sort((a, b) => a.timestamp - b.timestamp)
           let preObj = {} // 处理用插件提问题的情况
-          console.log(rows)
+          // console.log(rows)
           result.data.push(
             ...rows.map((row: any, i: number, array: any[]) => {
               if (row.contentList) {
-                // row.contentList = JSON.parse(row.contentList)  
+                // row.contentList = JSON.parse(row.contentList)
                 row.contentList = row.contentList.map((content) => {
                   return content.slice(2)
                 })
               }
-            
 
               if (row.content.startsWith('0:')) {
                 // content": "0:北京市明天的天气\n|$moss{"name:":"1"}$moss|根据提供的数据，查询天气信息，并格式化输出
@@ -265,7 +264,7 @@ export const useChatStore = defineStore('chat-store', {
                 const matchText = text.match(/\|\$moss(.*?)\$moss\|/, '')
 
                 let pluginInfo = [text]
-                console.log(pluginInfo[0])
+                // console.log(pluginInfo[0])
                 let json = {}
                 if (matchText) {
                   pluginInfo = text.split(matchText[0])
@@ -409,7 +408,7 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute()
     },
     async deleteBatchHistory() {
-      console.log(this.$state)
+      // console.log(this.$state)
       const originIds = []
       const localIds = []
       this.$state.deleteIds.forEach((id) => {
@@ -457,11 +456,11 @@ export const useChatStore = defineStore('chat-store', {
     },
     async addLocalChat(id: number, chat: Chat.Chat) {
       if (!id || id === 0) {
-        if (this.localChat.length === 0) {
+        if (this.localChat.length === 0)
           await this.createLocalChat(chat.text)
-        } else {
+
+        else
           this.active = this.localChat[0].id
-        }
       }
       const result = this.localChat.find(item => item.id === this.active)
       if (result) {

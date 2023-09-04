@@ -56,7 +56,7 @@ const wrapClass = computed(() => {
 const textInfo = ref('')
 // let currentPage = ref(1)
 function handleChange(page) {
-  // console.log(page)
+  console.log(page)
   textInfo.value = props.info.contentList[page - 1]
   emit('update:modelValue', page)
 }
@@ -79,11 +79,11 @@ onMounted(() => {
 
   watch(() => textInfo.value, () => {
     const dom = textRef.value?.querySelector('.markdown-body')
-    // console.log(textInfo.value,dom)
+    // console.log(textInfo, dom)
     if (dom) {
       IncrementalDOM.patch(
         dom,
-        mdi.renderToIncrementalDOM(textInfo.value),
+        mdi.renderToIncrementalDOM(!props.info.contentList ? props.info.text : textInfo.value),
       )
     }
   }, { immediate: true })
@@ -120,12 +120,14 @@ defineExpose({ textRef })
       <!-- nonicons:loading-16 -->
       <SvgIcon icon="nonicons:loading-16" class="loading" style="color:#6388FF" />
     </template>
+    <!-- 普通提问展示 -->
     <template v-if="!loading">
       <div ref="textRef" class="leading-relaxed break-words" @dblclick="handleDoubleClick">
         <div v-if="!inversion" class="markdown-body" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>
     </template>
+    <!-- 重新提问展示 -->
     <div v-if="!inversion && info.contentList && info.contentList.length > 1" style="width: 100px;">
       <van-pagination
         v-model="currentPage" :show-prev-button="false" :page-count="info.contentList.length" mode="simple"
