@@ -16,7 +16,7 @@ const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
-import { notification } from 'ant-design-vue';
+import { notification, Popover } from 'ant-design-vue';
 // const notification = useNotification()
 const go = useGo()
 const modelValue = ref(false)
@@ -88,7 +88,7 @@ async function getSystemNoticeAPI() {
     notification.open({
       description: notice.content,
       message: notice.createTime,
-      duration: 5000,
+      duration: null,
       onClick: () => {
         // console.log('Notification Clicked!');
       },
@@ -105,6 +105,9 @@ function settingMainEvent() {
 function shopEvent() {
   go({ name: 'shop' })
 }
+// let dom =  document.querySelector('#app')
+
+let domShow = ref(false)
 </script>
 
 <template>
@@ -155,15 +158,17 @@ function shopEvent() {
             </NPopover>
           </div>
           <div class="header-right-item">
-            <NPopover style="max-height: 340px" trigger="click" scrollable to="body">
+            <NButton quaternary circle size="tiny" @click="() => domShow = true">
+              <template #icon>
+                <span class="">
+                  <SvgIcon icon="ph:bell" class="icon" />
+                </span>
+              </template>
+            </NButton>
+            <NPopover :show="domShow" v-if="domShow" style="max-height: 340px" trigger="click" scrollable
+              @clickoutside="() => domShow = false">
               <template #trigger>
-                <NButton quaternary circle size="tiny">
-                  <template #icon>
-                    <span class="">
-                      <SvgIcon icon="ph:bell" class="icon" />
-                    </span>
-                  </template>
-                </NButton>
+                <span> </span>
               </template>
               <div style="width: 300px; max-height: 648px;">
                 <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice">

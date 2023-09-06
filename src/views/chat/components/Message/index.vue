@@ -67,7 +67,7 @@ watch(
       },
 
     ]
-    if (!props.inversion && getToken()) {
+    if (!props.inversion && getToken() && value.id) {
       options.push({
         label: '重新提问',
         key: 'ask',

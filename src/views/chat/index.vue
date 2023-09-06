@@ -480,21 +480,26 @@ async function replayQuestions(message, opt) {
     }
 
     // 答应其他信息
-    const errorMessage = error.msg
+    const errorMessage = error.msg || '已取消'
     if (error.message === 'canceled') {
-      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+      updateChatSome(chatStore.getUuid, opt.position, {
         loading: false,
       })
       scrollToBottom()
       return
     }
-    console.log('errorMessage', errorMessage)
+    // console.log('errorMessage', errorMessage)
+    contentList[contentList.length - 1] = `${errorMessage}`
+    console.log(errorMessage !== undefined)
     if (errorMessage !== undefined) {
-      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+      updateChatSome(chatStore.getUuid, opt.position, {
         text: `${errorMessage || '已取消'}`,
+        contentList,
         error: true,
         loading: false,
       })
+    } else {
+
     }
   }
   finally {
@@ -708,6 +713,7 @@ async function newQuestions(message) {
   }
   catch (error: any) {
     // ms.error(error.msg || error.message)
+    console.log(error.msg, error.message)
 
     if (error.code === 10000) {
       showConfirmDialog({
@@ -764,7 +770,7 @@ async function newQuestions(message) {
     }
 
     // 答应其他信息
-    const errorMessage = error.msg
+    const errorMessage = error.msg || '已取消'
     if (error.message === 'canceled') {
       updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
         loading: false,
@@ -775,7 +781,8 @@ async function newQuestions(message) {
     // console.log('errorMessage', errorMessage)
     if (errorMessage !== undefined) {
       updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-        text: `${errorMessage || '已取消'}`,
+        text: `${errorMessage}`,
+        contentList: [errorMessage],
         error: true,
         loading: false,
       })
@@ -797,6 +804,7 @@ async function newQuestions(message) {
               questionMode: res.data[0].questionMode,
               viewMsg: res.data[0].viewMsg,
             },
+            loading: false,
             mossReduceInfoList: [res.data[0]],
             conversationId: chatStore.getUuid,
             id: res.data[0].id,
