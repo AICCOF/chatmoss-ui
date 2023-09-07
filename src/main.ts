@@ -3,7 +3,7 @@ import { createApp } from 'vue'
 import 'vant/lib/index.css'
 import 'v3-tour/dist/vue-tour.css'
 import '@vant/touch-emulator';
-import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
+import { NoticeBar, Overlay, Swipe, SwipeItem, Switch, Tabbar, TabbarItem } from 'vant'
 import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet, Divider, DropdownMenu, DropdownItem, Popover, Checkbox, CheckboxGroup, RadioGroup, Radio, Pagination } from 'vant';
 import App from './App.vue'
 import { setupI18n } from './locales'
@@ -56,6 +56,8 @@ async function bootstrap() {
   app.use(CheckboxGroup);
   app.use(Radio);
   app.use(RadioGroup);
+  app.use(Tabbar);
+  app.use(TabbarItem);
 
   setupAssets()
 

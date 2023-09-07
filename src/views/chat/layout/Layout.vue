@@ -18,7 +18,6 @@ const { isMobile } = useBasicLayout()
 
 // const collapsed = computed(() => appStore.siderCollapsed)
 
-const needPermission = computed(() => !!authStore.session?.auth && !authStore.token)
 
 const getMobileClass = computed(() => {
   return ['rounded-none', 'shadow-none']
@@ -48,6 +47,5 @@ const getContainerClass = computed(() => {
         </NLayoutContent>
       </NLayout>
     </div>
-    <Permission :visible="needPermission" />
   </div>
 </template>
