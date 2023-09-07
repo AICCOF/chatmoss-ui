@@ -86,7 +86,7 @@ function handleSave() {
             @click="handleClick(element)"
           >
             <div>
-              <NPopover trigger="hover">
+              <NPopover trigger="hover" placement="right" style="width: max-content;">
                 <template #trigger>
                   <img :src="element.iconUrl" alt="">
                   <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/s-logo1.png" alt=""> -->
@@ -114,7 +114,7 @@ function handleSave() {
               <van-icon class="close-icon" name="cross" />
             </span>
             <div :class="[enabled ? 'animate-pulse animate' : '']">
-              <NPopover trigger="hover">
+              <NPopover trigger="hover" placement="right" style="width: max-content;">
                 <template #trigger>
                   <img :src="element.iconUrl" alt="">
                   <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt=""> -->
@@ -154,8 +154,7 @@ function handleSave() {
   border-bottom-right-radius: 5px;
   display: flex;
   flex-direction: column;
-  padding-top: 90px;
-  background-color: var(--moss-header-color);
+  // padding-top: 90px;
 
   .list {
     position: relative;
@@ -163,7 +162,6 @@ function handleSave() {
     // width: 71px;
     height: 80%;
     flex:1;
-    background-color: var(--moss-header-color);
 
     &::-webkit-scrollbar {
       width: 0px;
@@ -187,7 +185,7 @@ function handleSave() {
       width: 100%;
       // height: 45px;
       padding: 10px 0;
-      background-color: var(--moss-header-color);
+      // background-color: var(--moss-header-color);
       border-radius: 4px;
       // display: flex;
       // align-items: center;

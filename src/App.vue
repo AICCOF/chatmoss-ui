@@ -51,7 +51,7 @@ let active = ref('/chat')
           </div>
 
           <div>
-            <van-tabbar v-model="active" route @change="onChange">
+            <van-tabbar v-model="active" route >
               <van-tabbar-item replace :name="item.path" :to="item.path" v-for="(item, i) of  tabList " :key="i">
 
                 <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90" :class="[active == item.path ? 'text-[#ffffff]' : '']">

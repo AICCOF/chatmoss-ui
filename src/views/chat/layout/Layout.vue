@@ -38,7 +38,9 @@ const getContainerClass = computed(() => {
   <div class="h-full dark:bg-[#24272e] transition-all" :class="[isMobile ? 'p-0' : 'p-0']">
     <div class="h-full overflow-hidden" :class="getMobileClass">
       <NLayout class="z-40 transition" :class="getContainerClass" has-sider>
+        <!-- 历史记录 -->
         <Sider/>
+        <!-- 头部 -->
         <Header />
         <NLayoutContent class="h-full">
           <RouterView v-slot="{ Component, route }">

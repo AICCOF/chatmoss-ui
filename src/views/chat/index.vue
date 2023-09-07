@@ -9,6 +9,7 @@ import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
 import applicationList from './applicationList.vue'
+import applicationSlide from './applicationSlide.vue'
 import Footer from './layout/footerNew/index.vue'
 import applicationIntro from './application_intro.vue'
 import { SvgIcon } from '@/components/common'
@@ -1013,19 +1014,7 @@ function handleMode() {
 <template>
   <div class="flex flex-col w-full h-full" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
-      <div v-if="authStore.token" class="relative transition"
-        :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }">
-        <div v-show="userStore.toggleValue"
-          class="m-pointer  plugin-btn absolute w-[30px] h-[30px] rounded-full -right-[18px] top-1/2 overflow bg-[#00000033] text-[#fff] dark:bg-[#ffffff33] z-40 text-[24px] flex items-center justify-center"
-          @click="userStore.sliderToggleMode">
-          <SvgIcon v-if="userStore.sliderToggle" icon="formkit:left" />
-          <SvgIcon v-if="!userStore.sliderToggle" icon="formkit:right" />
-        </div>
-        <transition name="fade1">
-          <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue && userStore.sliderToggle"
-            class="transition" :style="{ width: userStore.toggleValue && userStore.sliderToggle ? '71px' : '0px' }" />
-        </transition>
-      </div>
+      <applicationSlide />
 
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
         :class="[userStore.toggleValue ? 'p90' : '']">

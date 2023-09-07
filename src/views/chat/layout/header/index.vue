@@ -417,9 +417,9 @@ let domShow = ref(false)
   transition: all 0.3s;
 }
 
-.transition {
-  transition: all 0.3s;
-}
+// .transition {
+//   transition: all 0.3s;
+// }
 
 .header-item-btn {
   display: flex;
