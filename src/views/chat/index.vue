@@ -1134,7 +1134,7 @@ function handleMode() {
   background-color: var(--moss-bg-reply-color);
   color: var(--moss-text-reply-color);
   right: 30px;
-  bottom: 150px;
+  bottom: 200px;
   font-size: 20px;
   width: 40px;
   height: 40px;
@@ -1161,7 +1161,8 @@ function handleMode() {
 }
 
 .chat-main {
-  background-color: var(--moss-bg-content-color);
+  transition: all 0.7s;
+  // background-color: var(--moss-bg-content-color);
 }
 
 .p90 {

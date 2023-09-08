@@ -33,8 +33,8 @@ module.exports = {
           '--moss-bg-color': '#6B83FF',
           '--moss-bg-btn-color': '#45485C88',
           '--moss-bg-btn-send-color': '#38394B',
-          '--moss-bg-ask-color': '#6388FF',
-          '--moss-bg-reply-color': '#FFFFFF',
+          '--moss-bg-ask-color': '#1D3161',
+          '--moss-bg-reply-color': '#282828',
           '--moss-bg-content-color': '#F7F8FC',
           '--moss-bg-text-color': '#6B83FF22',
           '--moss-text-purple-color': '#A677E7',
@@ -49,6 +49,7 @@ module.exports = {
           // "--n-border": '1px solid red'
         },
         '.dark': {
+          "--van-background-2": '#161616',
           '--moss-tip-bg-color': '#43434399',
           '--moss-header-color': '#242424',
           // '--moss-bg-color': '#313338',

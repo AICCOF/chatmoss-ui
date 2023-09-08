@@ -6,6 +6,7 @@ import { NPopover, useMessage } from 'naive-ui'
 import { useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationSort } from '@/api/application'
 import { useChatStore, useUserStore } from '@/store'
+import { SvgIcon } from '@/components/common'
 const ms = useMessage()
 
 const go = useGo()
@@ -75,16 +76,26 @@ function handleSave() {
 
 <template>
   <div class="wrap">
+    <div class="flex justify-center items-center" style="
+          margin: 0 auto;
+          margin-top: 38px;
+          margin-bottom: 25px;
+          width: 26px;
+          border-radius: 50%;
+          height: 26px;
+          background: rgba(129,136,148,0.5);
+          color: #fff;
+          font-size: 20px;
+          border: 1px solid #595E77;"  @click="userStore.sliderToggleMode">
+      <SvgIcon icon="formkit:left" />
+    </div>
+
     <div class="list">
-      <draggable
-        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-        ghost-class="ghost"
-      >
+      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost">
         <template #item="{ element }">
-          <div
-            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)"
-          >
+          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)">
             <div>
               <NPopover trigger="hover" placement="right" style="width: max-content;">
                 <template #trigger>
@@ -101,15 +112,11 @@ function handleSave() {
           </div>
         </template>
       </draggable>
-      <draggable
-        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-        ghost-class="ghost"
-      >
+      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost">
         <template #item="{ element, index }">
-          <div
-            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)"
-          >
+          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)">
             <span v-if="enabled" class="close" @click="handleDelete(element, index)">
               <van-icon class="close-icon" name="cross" />
             </span>
@@ -146,7 +153,7 @@ function handleSave() {
 <style scoped lang="less">
 .wrap {
   height: 100%;
-  width: 71px;
+  width: 65px;
   border-right: 0.5px solid rgba(145, 158, 171, .16);
   border-bottom: 0.5px solid rgba(145, 158, 171, .16);
   box-sizing: border-box;
@@ -161,7 +168,7 @@ function handleSave() {
     overflow: auto;
     // width: 71px;
     height: 80%;
-    flex:1;
+    flex: 1;
 
     &::-webkit-scrollbar {
       width: 0px;
@@ -182,15 +189,22 @@ function handleSave() {
     .img {
       margin: 0 auto;
       position: relative;
-      width: 100%;
+      width: 57px;
+      margin: 0 auto;
+      margin-top: 10px;
+      padding: 4px 0px;
       // height: 45px;
-      padding: 10px 0;
+      // padding: 10px 0;
       // background-color: var(--moss-header-color);
-      border-radius: 4px;
+      border-radius: 6px;
       // display: flex;
       // align-items: center;
       // justify-content: center;
       cursor: pointer;
+
+      &:hover {
+        background: #232A4A
+      }
 
       img {
         width: 26px;
@@ -199,7 +213,8 @@ function handleSave() {
       }
 
       &.active {
-        background-color: var(--moss-bg-content-color)
+        // background-color: var(--moss-bg-content-color)
+        background: #38416A;
       }
 
       .animate {
@@ -226,6 +241,7 @@ function handleSave() {
         width: 100%;
         opacity: 0.8;
         font-size: 8px;
+        margin-top: 5px;
         // transform: scale(0.6);
         text-align: center;
         opacity: .9;

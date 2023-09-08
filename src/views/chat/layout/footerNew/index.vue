@@ -276,7 +276,7 @@ function handleParamConfigs(item, row) {
 	padding: 0 0.5rem;
 	user-select: none;
 	backdrop-filter: blur(20px);
-	background-color: var(--moss-bg-content-color);
+	// background-color: var(--moss-bg-content-color);
 	z-index: 20;
 
 	.footer-left {
