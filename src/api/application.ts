@@ -5,6 +5,12 @@ export interface ApplicationListRequest {
   pageNum: number
   appType?:string
 }
+export function getButtonList<T>(data) {
+  return get<T>({
+    url: '/luomacode-api/home/buttonList',
+    data,
+  })
+}
 
 export function getApplicationList<T>(data: ApplicationListRequest) {
   return get<T>({

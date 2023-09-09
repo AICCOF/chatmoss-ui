@@ -1012,7 +1012,7 @@ function handleMode() {
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-full" :class="wrapClass">
+  <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
     <main class="flex flex-1 overflow-hidden">
       <applicationSlide />
 
@@ -1082,22 +1082,23 @@ function handleMode() {
           <transition name="fade1">
             <Footer />
           </transition>
-          <div v-show="!hidden" class="w-full m-auto p-2" style="padding-bottom: 0px;">
+          <div v-show="!hidden" class="w-full m-auto p-2" style="">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
-                autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter" />
+              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C]"
+                :bordered="false" autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 5 }"
+                :placeholder="placeholder" @keydown="handleEnter" />
               <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
-              <div class="btn-style btn-mode" @click="handleMode">
+              <div class="btn-style btn-mode dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
+                @click="handleMode">
                 {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
               </div>
               <div class="btn-style ">
-                <NButton id="ask-question"
-                  style="background-color: var(--moss-bg-ask-color);border-radius: 3px;color: var(--moss-text-ask-color);"
-                  type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+                <NButton id="ask-question" strong secondary circle
+                  style="background-color: transparent;color: var(--moss-text-ask-color);" type="primary"
+                  :disabled="buttonDisabled" @click="handleSubmit">
                   <template #icon>
                     <span class="">
                       <SvgIcon icon="ri:send-plane-fill" />
@@ -1301,6 +1302,14 @@ function handleMode() {
 
 .input {
   border: 0px;
+  box-shadow: 0px 2px 7px 0px rgba(231, 232, 241, 1);
+  border-radius: 17px;
+}
+
+.dark {
+  .input {
+    box-shadow: 0px 2px 7px 0px rgba(19, 19, 19, 1);
+  }
 }
 
 #scrollRef1 {
@@ -1347,15 +1356,15 @@ function handleMode() {
 }
 
 .btn-mode {
-  opacity: .4;
-  background-color: var(--moss-bg-ask-color);
+  opacity: .9;
+  // background-color: var(--moss-bg-ask-color);
   border-radius: 3px;
-  color: var(--moss-text-ask-color);
+  // color: var(--moss-text-ask-color);
   padding: 1px 0px;
   font-size: 12px;
   cursor: pointer;
   // display: block;
-  right: 60px;
+  left: 0px;
   width: 60px;
   line-height: 22px;
 

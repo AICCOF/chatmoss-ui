@@ -13,7 +13,9 @@ import icontem3 from '@/assets/tab/icon-item3.png'
 import icontem1a from '@/assets/tab/icon-item1_a.png'
 import icontem2a from '@/assets/tab/icon-item2_a.png'
 import icontem3a from '@/assets/tab/icon-item3_a.png'
-
+import { useBack, useGo } from '@/utils/router'
+import { showConfirmDialog, showToast } from 'vant'
+const go = useGo()
 let tabList = ref([
   {
     title: '首页',
@@ -36,7 +38,14 @@ let tabList = ref([
 ])
 let active = ref('/chat')
 
-
+function handleChange(path) {
+  if(path==='/source'){
+    showToast('开发中')
+    return 
+  }
+  // console.log(path)
+  go(path)
+}
 
 </script>
 
@@ -51,10 +60,9 @@ let active = ref('/chat')
           </div>
 
           <div>
-            <van-tabbar v-model="active" route >
-              <van-tabbar-item replace :name="item.path" :to="item.path" v-for="(item, i) of  tabList " :key="i">
-
-                <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90" :class="[active == item.path ? 'text-[#ffffff]' : '']">
+            <van-tabbar v-model="active" @change="handleChange" >
+              <van-tabbar-item :name="item.path"  v-for="(item, i) of  tabList " :key="i">
+                <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90" :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : '']">
                   <img v-show="active === item.path" :src="item.activeImg" class="w-[36px]" alt="">
                   <img v-show="active !== item.path" :src="item.img" class="w-[36px]" alt="">
                   <div>

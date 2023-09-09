@@ -86,7 +86,7 @@ function handleSave() {
           background: rgba(129,136,148,0.5);
           color: #fff;
           font-size: 20px;
-          border: 1px solid #595E77;"  @click="userStore.sliderToggleMode">
+          border: 1px solid #595E77;" @click="userStore.sliderToggleMode">
       <SvgIcon icon="formkit:left" />
     </div>
 
@@ -105,7 +105,7 @@ function handleSave() {
                 <span>{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span whitespace-nowrap">
+            <div class="span whitespace-nowrap text-[#FFFFFF]">
               {{ element.appName.length > 5 ? element.appName.slice(0, 5)
                 : element.appName }}
             </div>
@@ -129,7 +129,7 @@ function handleSave() {
                 <span class="">{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span whitespace-nowrap">
+            <div class="span whitespace-nowrap text-[#FFFFFF]">
               {{ element.appName.length > 5 ? element.appName.slice(0, 5)
                 : element.appName }}
             </div>
@@ -138,11 +138,15 @@ function handleSave() {
       </draggable>
     </div>
     <div class="btns">
-      <div class="btn">
-        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
+      <div class="btn bg-[#FFFFFF] dark:bg-[#38416A]" style="width: 31px;
+height: 31px;
+border-radius: 7px;">
+        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" style="font-size: 18px;" />
         <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
       </div>
-      <div class="btn">
+      <div class="btn mt-[24px]" style="width: 31px;
+height: 31px;
+border-radius: 7px;">
         <!-- <van-icon name="plus" @click="() => { go({ name: 'application' }) }" /> -->
         <img class="btn-icon" src="./img/appstore.png" alt="" @click="() => { go({ name: 'application' }) }">
       </div>
@@ -252,9 +256,10 @@ function handleSave() {
   }
 
   .btns {
+    margin: 0 auto;
     // height:;
     // width: 71px;
-    background-color: var(--moss-header-color);
+    // background-color: var(--moss-header-color);
     font-size: 24px;
     font-size: 24px;
     padding-bottom: 10px;
@@ -271,8 +276,8 @@ function handleSave() {
       cursor: pointer;
 
       .btn-icon {
-        width: 26px;
-        height: 26px;
+        // width: 26px;
+        // height: 26px;
       }
 
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1),

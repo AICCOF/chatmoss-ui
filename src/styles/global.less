@@ -140,16 +140,16 @@ fade1-enter-active,
 	white-space: nowrap;
 	display: flex;
 	align-items: center;
-	background: var(--moss-bg-btn-color);
+	// background: var(--moss-bg-btn-color);
 	border-radius: 27px;
-	color: var(--moss-text-ask-color);
+	// color: var(--moss-text-ask-color);
 	padding: 2px 8px;
 	margin-top: 5px;
 	margin-bottom: 5px;
 	font-size: 12px;
 
 	&.model-version {
-		background-color: var(--moss-bg-ask-color);
+		// background-color: var(--moss-bg-ask-color);
 	}
 
 	.icon {
@@ -241,6 +241,11 @@ p {
 .van-tabbar {
 	height: auto;
 	position: relative;
+
+	&::after{
+		content: '';
+		display: none;
+	}
 }
 
 .my-drawer {
