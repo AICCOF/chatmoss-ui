@@ -20,6 +20,8 @@ import sign from '@/views/page/sign/index.vue'
 import feedback from '@/views/page/feedback/index.vue'
 import appList from '@/views/page/appList/index.vue'
 import createApp from '@/views/page/createApp/index.vue'
+import source from '@/views/page/source/index.vue'
+import my from '@/views/page/my/index.vue'
 import c404 from '@/views/exception/404/index.vue'
 import c500 from '@/views/exception/500/index.vue'
 import agreement from '@/views/page/agreement/index.vue'
@@ -129,6 +131,16 @@ const routes: RouteRecordRaw[] = [
         path: '/chat/:uuid?',
         name: 'Chat',
         component: chat
+      },
+      {
+        path: '/source',
+        name: 'source',
+        component: source
+      },
+      {
+        path: '/my',
+        name: 'my',
+        component: my
       },
     ],
   },

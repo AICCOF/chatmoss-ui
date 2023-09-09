@@ -8,7 +8,6 @@ import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
-import applicationList from './applicationList.vue'
 import applicationSlide from './applicationSlide.vue'
 import Footer from './layout/footerNew/index.vue'
 import applicationIntro from './application_intro.vue'
@@ -25,6 +24,8 @@ import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
 import { checkPlugin, execPlugin } from '@/api/plugin'
+import Sider from './layout/sider/index.vue'
+import Header from './layout/header/index.vue'
 
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
@@ -1013,6 +1014,9 @@ function handleMode() {
 
 <template>
   <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
+
+    <Sider />
+    <Header />
     <main class="flex flex-1 overflow-hidden">
       <applicationSlide />
 
@@ -1084,9 +1088,9 @@ function handleMode() {
           </transition>
           <div v-show="!hidden" class="w-full m-auto p-2" style="">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C]"
-                :bordered="false" autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 5 }"
-                :placeholder="placeholder" @keydown="handleEnter" />
+              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt"
+                class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C]" :bordered="false" autofocus type="textarea"
+                :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="placeholder" @keydown="handleEnter" />
               <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
