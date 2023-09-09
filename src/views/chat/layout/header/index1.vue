@@ -239,7 +239,7 @@ let domShow = ref(false)
 
             <NPopover trigger="click" :duration="500" @update:show="() => userStore.getBalanceInfo()">
               <template #trigger>
-                <div class="money">
+                <div class="money ">
                   余额
                 </div>
               </template>

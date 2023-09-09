@@ -3,9 +3,13 @@ import { ref, computed } from 'vue'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
 import { getButtonList } from '@/api/application'
+import { useGo } from '@/utils/router'
+
+const go = useGo()
 let tabList = ref([
 
 ])
+
 getButtonListAPI()
 async function getButtonListAPI() {
   let res = await getButtonList({
@@ -15,6 +19,23 @@ async function getButtonListAPI() {
   tabList.value = res.data || []
 }
 
+function handleLink(item) {
+  // console.log(item)
+
+  let json = JSON.parse(item.jumpUrl)
+
+  if(json.type==='path'){
+    go({
+      name: json.info.path
+    })
+  }else{
+     go({
+      name: 'h5',
+      query: json.info
+    })
+  }
+  
+}
 
 </script>
 
@@ -24,9 +45,9 @@ async function getButtonListAPI() {
       <div class="relative" style="width: 100%;height: 100%;">
         <div style="width: 100%;height: 100%;overflow-y: scroll;">
           <div class="flex pl-[24px] pr-[80px] h-full" style="width: max-content;">
-            <div v-for="(item, i) of tabList" :key="i" class="mr-[36px] flex items-center">
+            <div v-for="(item, i) of tabList" :key="i" class="mr-[34px] flex items-center cursor-pointer" @click="handleLink(item)">
               <div>
-                <img :src="item.iconUrl" class="w-[36px] h-[36px] m-auto" alt="">
+                <img :src="item.iconUrl" class="w-[30px] h-[30px] m-auto" alt="">
                 <div class="mt-[7px] text-center">{{ item.name }}</div>
               </div>
 
@@ -37,7 +58,7 @@ async function getButtonListAPI() {
       </div>
       <div class="absolute flex justify-center items-center money" style="right:0;
             top:0;width: 100px;height: 100%;">
-        <div class="flex justify-center items-center" style="width: 54px;
+        <div class="btn flex justify-center items-center" style="width: 54px;
             height: 27px;
             font-size: 11px;
             font-weight: 600;
