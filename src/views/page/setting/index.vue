@@ -260,7 +260,7 @@ function setOpenaiVersion(action) {
           <div>注销</div>
         </div>
         <div class="flex mt-2 justify-between">
-          <div style="margin-top: 10px;  font-size: 12px">
+          <div class="flex mr-[30px]" style="margin-top: 10px;  font-size: 12px">
             注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
           </div>
 

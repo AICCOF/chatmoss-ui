@@ -25,7 +25,7 @@ userStore.residueCountAPI()
 
 let infoList = ref([
   { title: '设置', img: item1, callBack: () => { go({ name: 'setting' }) } },
-  { title: '客服', img: item2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
+  { title: '客服', img: item2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank'); } },
   { title: '反馈', img: item3, callBack: () => { showToast('暂未开放')  } },
   {
     title: '帮助', img: item4, callBack: () => {
@@ -42,9 +42,9 @@ let infoList = ref([
 ])
 
 let cardList = ref([
-  // { title: '实名认证', img: card1, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
-  { title: '隐私协议', img: card2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
-  { title: '用户协议', img: card3, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
+  // { title: '实名认证', img: card1, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true','_blank'); } },
+  { title: '隐私协议', img: card2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank'); } },
+  { title: '用户协议', img: card3, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank'); } },
 
 ])
 

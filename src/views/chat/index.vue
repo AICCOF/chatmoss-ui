@@ -1082,7 +1082,7 @@ function handleDump(item) {
               <!-- 空态占位图 -->
               <div style="width: 100%;">
                 <n-carousel direction="vertical" autoplay dot-placement="bottom" mousewheel
-                  style="width: 80%; height: 30vh;margin: 0 auto;">
+                  style="height: 20vh;margin: 0 auto;">
                   <n-carousel-item v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
                     <img :src="item.iconUrl" style="width: 100%;height: 100%;object-fit: contain; border-radius: 10px;"
                       @click="handleDump(item)">
@@ -1130,21 +1130,39 @@ function handleDump(item) {
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
-              <div class="btn-style btn-mode dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
-                @click="handleMode">
-                {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
+
+              <div style="
+                display: flex;
+                align-items: center;
+                width: 100%;
+                justify-content: space-between;
+                position: absolute;
+                bottom: 10px;
+                box-sizing: border-box;
+                margin: 0;
+              ">
+                <div>
+                  <!-- 左边按钮 -->
+                </div>
+                <div class="flex items-center">
+                  <div class="btn-mode text-center dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
+                    @click="handleMode">
+                    {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
+                  </div>
+
+                  <NButton id="ask-question" strong secondary circle
+                    style="background-color: transparent;color: var(--moss-text-ask-color);" type="primary"
+                    :disabled="buttonDisabled" @click="handleSubmit">
+                    <template #icon>
+                      <span class="">
+                        <SvgIcon icon="ri:send-plane-fill" />
+                      </span>
+                    </template>
+                  </NButton>
+                </div>
+
               </div>
-              <div class="btn-style ">
-                <NButton id="ask-question" strong secondary circle
-                  style="background-color: transparent;color: var(--moss-text-ask-color);" type="primary"
-                  :disabled="buttonDisabled" @click="handleSubmit">
-                  <template #icon>
-                    <span class="">
-                      <SvgIcon icon="ri:send-plane-fill" />
-                    </span>
-                  </template>
-                </NButton>
-              </div>
+
             </div>
           </div>
         </footer>
@@ -1172,7 +1190,7 @@ function handleDump(item) {
   position: fixed;
   z-index: 100;
   background-color: var(--moss-bg-reply-color);
-  color: var(--moss-text-reply-color);
+  // color: var(--moss-text-reply-color);
   right: 30px;
   bottom: 200px;
   font-size: 20px;
