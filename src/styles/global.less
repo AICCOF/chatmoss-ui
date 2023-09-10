@@ -265,3 +265,26 @@ p {
 		transform: scale(.96);
 	}
 }
+
+@keyframes scaleAnimation {
+	0% {
+		transform: scale(1);
+		/* 初始状态，不进行缩放 */
+	}
+
+	50% {
+		transform: scale(0.8);
+		/* 在动画的中间阶段进行缩放 */
+	}
+
+	100% {
+		transform: scale(1);
+		/* 回到原始大小 */
+	}
+}
+
+/* 将动画应用到需要缩放的元素上 */
+.element-to-animate {
+	animation: scaleAnimation 2s ease-in-out infinite;
+	/* 使用动画，并设定动画参数 */
+}

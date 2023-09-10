@@ -1010,10 +1010,20 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
+
+function handleNewPerson() {
+  go({
+    name: 'h5', query: {
+      url: 'http://h5.aihao123.cn/pages/app/new-persion/index.html'
+    }
+  })
+}
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
+    <img src="@/assets/gift/icon-gift.png" class="element-to-animate " alt=""
+      style="position: fixed;right:11px;top:105px;width: 100px;z-index: 1000;" @click.stop="handleNewPerson">
 
     <Sider />
     <Header />
@@ -1116,7 +1126,7 @@ function handleMode() {
       </div>
     </main>
 
-    <div v-if="!userStore.userInfo.user.authed" class="text-center">
+    <div v-if="userStore.userInfo.user && !userStore.userInfo.user.authed" class="text-center">
       <!-- 通关ChatMoss使用教程，获得20w字符奖励 -->
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
@@ -1370,7 +1380,7 @@ function handleMode() {
   // display: block;
   left: 0px;
   width: 60px;
-  line-height: 22px;
+  line-height: 26px;
 
   &:hover {
     opacity: 1;
@@ -1513,5 +1523,4 @@ function handleMode() {
   &:hover {
     opacity: 1;
   }
-}
-</style>
+}</style>

@@ -31,7 +31,7 @@ export function bindingStatus<T>(data = {}) {
       data,
     })
   }else{
-    return Promise.reject()
+    return Promise.reject('未登录')
   }
 }
 

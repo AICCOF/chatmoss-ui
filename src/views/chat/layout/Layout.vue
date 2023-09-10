@@ -30,6 +30,8 @@ import icontem2a from '@/assets/tab/icon-item2_a.png'
 import icontem3a from '@/assets/tab/icon-item3_a.png'
 import { useBack, useGo } from '@/utils/router'
 import { showConfirmDialog, showToast } from 'vant'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const go = useGo()
 let tabList = ref([
   {
@@ -51,7 +53,8 @@ let tabList = ref([
     img: icontem3
   }
 ])
-let active = ref('/chat')
+console.log(router.currentRoute)
+let active = ref(router.currentRoute.value.path)
 
 function handleChange(path) {
   // if (path === '/source') {

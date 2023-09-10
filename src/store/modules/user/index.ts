@@ -187,8 +187,11 @@ export const useUserStore = defineStore('user-store', {
         else {
           if (getToken())
             this.isAuth = 3
-          else
+          else{
+            this.userInfo.user = null
             this.isAuth = 1
+          }
+            
         }
 
         return Promise.resolve(res)

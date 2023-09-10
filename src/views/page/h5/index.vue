@@ -15,7 +15,7 @@ onMounted(() => {
 
 const url = computed(() => {
   console.log(router.currentRoute)
-  return `http://127.0.0.1:5173/pages/app/top-up/index.html?token=${getToken()}&time=${new Date().getTime()}`
+  // return `http://127.0.0.1:5173/pages/app/top-up/index.html?token=${getToken()}&time=${new Date().getTime()}`
   return `${router.currentRoute.value.query.url}?token=${getToken()}&time=${new Date().getTime()}`
 })
 </script>
