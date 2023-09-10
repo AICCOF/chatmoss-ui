@@ -43,7 +43,6 @@ const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const NInputRef = ref<HTMLInputElement | null>(null)
 const NSelectRef = ref<HTMLInputElement | null>(null)
-import { SvgIcon } from '@/components/common'
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
@@ -1105,7 +1104,7 @@ function handleDump(item) {
 
                   <template #arrow="{ prev, next }">
                     <div class="custom-arrow">
-                      <button type="button" @click="prev" style="    
+                      <button type="button" @click="next"  style="    
                         position: absolute;
                         right: 0;
                         top: 50%;
@@ -1115,14 +1114,14 @@ function handleDump(item) {
                       ">
                         <SvgIcon icon="uiw:right" class="icon" />
                       </button>
-                      <button type="button" style="    
+                      <button type="button" @click="prev" style="    
                         position: absolute;
                         left: 0;
                         top: 50%;
                         margin-top: -15px;
                         font-size: 30px;
                         color:rgb(0, 122, 255);
-                      " @click="next">
+                      ">
                         <SvgIcon icon="uiw:left" class="icon" />
                       </button>
                     </div>
