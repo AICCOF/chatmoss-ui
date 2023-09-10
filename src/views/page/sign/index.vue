@@ -5,7 +5,12 @@ import { useBack } from '@/utils/router'
 import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
 
-const url = ref(`http://h5.aihao123.cn/pages/app/signIn-new/index.html?token=${getToken()}&time=${new Date().getTime()}`)
+let dom = 'http://h5.aihao123.cn/pages/app/signIn-new/index.html'
+
+if (location.origin == 'http://localhost') {
+  dom = dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
+}
+const url = ref(`${dom}?token=${getToken()}&time=${new Date().getTime()}`)
 </script>
 
 <template>

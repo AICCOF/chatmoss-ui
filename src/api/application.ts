@@ -7,7 +7,7 @@ export interface ApplicationListRequest {
 }
 export function getButtonList<T>(data) {
   return get<T>({
-    url: '/luomacode-api/home/buttonList',
+    url: '/luomacode-api/chat/homeButtonList',
     data,
   })
 }

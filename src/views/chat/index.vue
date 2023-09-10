@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
+import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage, NCarousel, NCarouselItem } from 'naive-ui'
 import { showConfirmDialog } from 'vant'
 import { Modal } from 'ant-design-vue'
 import { Message } from './components'
@@ -26,6 +26,7 @@ import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
 import { checkPlugin, execPlugin } from '@/api/plugin'
 import Sider from './layout/sider/index.vue'
 import Header from './layout/header/index.vue'
+import { getButtonList } from '@/api/application'
 
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
@@ -825,6 +826,8 @@ async function newQuestions(message) {
 
         userStore.residueCountAPI()
         loading.value = false
+      } else {
+        loading.value = false
       }
     }, 2000)
   }
@@ -1010,7 +1013,15 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
-
+let tabList = ref([])
+getButtonListAPI()
+async function getButtonListAPI() {
+  let res = await getButtonList({
+    type: 1
+  });
+  // console.log(res)
+  tabList.value = res.data || []
+}
 function handleNewPerson() {
   go({
     name: 'h5', query: {
@@ -1018,14 +1029,31 @@ function handleNewPerson() {
     }
   })
 }
+
+function handleDump(item) {
+  let json = JSON.parse(item.jumpUrl)
+
+  if (json.type === 'path') {
+    go({
+      name: json.info.path
+    })
+  } else {
+    go({
+      name: 'h5',
+      query: json.info
+    })
+  }
+
+}
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
-    <img src="@/assets/gift/icon-gift.png" class="element-to-animate " alt=""
-      style="position: fixed;right:11px;top:105px;width: 100px;z-index: 1000;" @click.stop="handleNewPerson">
+    <img src="@/assets/gift/icon-gift.png" class="element-to-animate" alt=""
+      style="position: fixed;right:11px;top:105px;width: 100px;z-index: 1000;" @click.stop="handleNewPerson"
+      v-if="userStore.newUser">
 
-    <Sider />
+    <Sider v-if="userStore.userInfo.user" />
     <Header />
     <main class="flex flex-1 overflow-hidden">
       <applicationSlide />
@@ -1052,27 +1080,24 @@ function handleNewPerson() {
               <!-- 应用介绍 -->
 
               <!-- 空态占位图 -->
-              <div
-                v-if="authStore.token && userStore.centerPicUrl && (userStore.currentApp && !userStore.currentApp.guideMsg)">
-                <div class="no-data-info-tip-title">
-                  ChatMoss使用教程（推荐必看）：
-                </div>
-                <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
-                </a>
+              <div style="width: 100%;">
+                <n-carousel direction="vertical" autoplay dot-placement="bottom" mousewheel
+                  style="width: 80%; height: 30vh;margin: 0 auto;">
+                  <n-carousel-item v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
+                    <img :src="item.iconUrl" style="width: 100%;height: 100%;object-fit: contain; border-radius: 10px;"
+                      @click="handleDump(item)">
+                  </n-carousel-item>
+                </n-carousel>
+                <!-- <van-swipe>
+                  <van-swipe-item v-for="(item, i) of tabList" :key="i">
+                    <img :src="item.iconUrl" alt="" style="width: 100%;border-radius: 10px;" @click="handleDump(item)">
+                  </van-swipe-item>
+
+                </van-swipe> -->
               </div>
-              <div v-else>
-                <!-- 后面期望这里跳转使用教程页面 -->
-                <div class="no-data-info-tip-title">
-                  无需注册即可登录ChatMoss
-                </div>
-                <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                  src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/xsjc1.png" alt=""
-                  @click="() => { go({ name: 'login' }) }">
-              </div>
+
             </div>
-            <div v-else id="data-wrapper">
+            <div v-if="dataSources.length" id="data-wrapper">
               <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                 :info="item"
                 :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
@@ -1523,4 +1548,5 @@ function handleNewPerson() {
   &:hover {
     opacity: 1;
   }
-}</style>
+}
+</style>

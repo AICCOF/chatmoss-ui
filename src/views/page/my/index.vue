@@ -26,7 +26,7 @@ userStore.residueCountAPI()
 let infoList = ref([
   { title: '设置', img: item1, callBack: () => { go({ name: 'setting' }) } },
   { title: '客服', img: item2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
-  { title: '反馈', img: item3, callBack: () => { go({ name: 'setting' }) } },
+  { title: '反馈', img: item3, callBack: () => { showToast('暂未开放')  } },
   {
     title: '帮助', img: item4, callBack: () => {
       go({
@@ -37,14 +37,14 @@ let infoList = ref([
       })
     }
   },
-  { title: '统计', img: item5, callBack: () => { showToast('暂未开发') } },
-  { title: '分销', img: item6, callBack: () => { showToast('暂未开发') } }
+  { title: '统计', img: item5, callBack: () => { showToast('暂未开放') } },
+  // { title: '分销', img: item6, callBack: () => { showToast('暂未开发') } }
 ])
 
 let cardList = ref([
-  { title: '实名认证', img: card1, callBack: () => { } },
-  { title: '隐私协议', img: card2, callBack: () => { } },
-  { title: '用户协议', img: card3, callBack: () => { } },
+  // { title: '实名认证', img: card1, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
+  { title: '隐私协议', img: card2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
+  { title: '用户协议', img: card3, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true'); } },
 
 ])
 
@@ -130,9 +130,9 @@ function handleClick(row) {
       </div>
     </div>
 
-    <div class="card flex justify-center justify-between flex-wrap "
-      style="margin-top: 18px;padding:0 16px;padding-bottom: 15px;">
-      <div class="info mt-[14px]" v-for="(item, i) of infoList" :key="i" @click="handleClick(item)">
+    <div class="card flex justify-start  flex-wrap "
+      style="margin-top: 18px;padding:0 4px;padding-bottom: 15px;">
+      <div class="info mt-[14px] ml-[6px] mr-[6px]" v-for="(item, i) of infoList" :key="i" @click="handleClick(item)">
         <div class="w-[50px] h-[50px] m-auto mt-[15px]">
           <img :src="item.img" alt="">
         </div>

@@ -35,7 +35,7 @@ function handleBack() {
   if (router.currentRoute.value.query && router.currentRoute.value.query.invite) {
     // console.log(router.currentRoute.value.query.invite)
     go({
-      name: 'Chat',
+      name: 'chat',
       query: {
         invite: router.currentRoute.value.query.invite,
       },

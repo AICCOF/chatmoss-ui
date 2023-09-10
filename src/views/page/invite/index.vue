@@ -8,7 +8,13 @@ const back = useBack()
 
 onMounted(() => {
 })
-const url = ref(`http://h5.aihao123.cn/pages/app/invite/index.html?token=${getToken()}&time=${new Date().getTime()}`)
+
+let dom = 'http://h5.aihao123.cn/pages/app/invite-new/index.html'
+
+if (location.origin == 'http://localhost') {
+  dom = dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
+}
+const url = ref(`${dom}?token=${getToken()}&time=${new Date().getTime()}`)
 </script>
 
 <template>

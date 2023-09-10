@@ -9,15 +9,19 @@ const userStore = useUserStore()
 const chatStore = useChatStore()
 const ms = useMessage()
 const popoverDom = ref()
+import { useScroll } from './../../hooks/useScroll'
 const authStore = useAuthStoreWithout()
+const { resetValue } = useScroll()
 const hidden = computed(() => {
 	return location.search.includes('hiddenInput')
 })
 
 // 新建对话
 function createQuestion() {
-	const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-	questionBtnDom.click()
+	// const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+	// questionBtnDom.click()
+	chatStore.createChat()
+	resetValue()
 	ms.success('新建会话成功，请提问~')
 }
 

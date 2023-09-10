@@ -20,6 +20,7 @@ export const useUserStore = defineStore('user-store', {
       notices: [],
       balanceInfo: null,
       sliderToggle: false,
+      newUser: false,
       // useKey: '1',
       isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
@@ -176,6 +177,7 @@ export const useUserStore = defineStore('user-store', {
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
+        this.newUser = res.data.newUser
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
 
 
@@ -187,11 +189,11 @@ export const useUserStore = defineStore('user-store', {
         else {
           if (getToken())
             this.isAuth = 3
-          else{
+          else {
             this.userInfo.user = null
             this.isAuth = 1
           }
-            
+
         }
 
         return Promise.resolve(res)

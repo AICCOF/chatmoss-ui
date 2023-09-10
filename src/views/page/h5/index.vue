@@ -15,8 +15,13 @@ onMounted(() => {
 
 const url = computed(() => {
   console.log(router.currentRoute)
-  // return `http://127.0.0.1:5173/pages/app/top-up/index.html?token=${getToken()}&time=${new Date().getTime()}`
-  return `${router.currentRoute.value.query.url}?token=${getToken()}&time=${new Date().getTime()}`
+  let dom = router.currentRoute.value.query.url
+
+   if (location.origin == 'http://localhost') {
+    dom = dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
+  }
+  // return `http://127.0.0.1:5173/pages/app/task/index.html?token=${getToken()}&time=${new Date().getTime()}`
+  return `${dom}?token=${getToken()}&time=${new Date().getTime()}`
 })
 </script>
 

@@ -5,7 +5,7 @@ import { NLayout, NLayoutContent } from 'naive-ui'
 
 
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-// router.replace({ name: 'Chat', params: { uuid: chatStore.active } })
+// router.replace({ name: 'chat', params: { uuid: chatStore.active } })
 
 const { isMobile } = useBasicLayout()
 
