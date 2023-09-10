@@ -157,7 +157,7 @@ border-radius: 7px;">
 <style scoped lang="less">
 .wrap {
   height: 100%;
-  width: 65px;
+  // width: 65px;
   border-right: 0.5px solid rgba(145, 158, 171, .16);
   border-bottom: 0.5px solid rgba(145, 158, 171, .16);
   box-sizing: border-box;

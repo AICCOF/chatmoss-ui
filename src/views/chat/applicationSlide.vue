@@ -1,6 +1,6 @@
 <template>
   <div class="absolute  transition-all w-[0px] bg-[#212430] duration-180 h-full left-[0] top-[0]">
-    <NDrawer class="my-drawer !bg-[#212430]" v-model:show="userStore.sliderToggle" :width="65" placement="left">
+    <NDrawer class="my-drawer !bg-[#212430]" v-model:show="userStore.sliderToggle" :width="80" placement="left">
       <NDrawerContent>
         <applicationList></applicationList>
       </NDrawerContent>
