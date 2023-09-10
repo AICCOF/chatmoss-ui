@@ -1,6 +1,6 @@
 import post, { deleteRequest, get } from '@/utils/request'
 
-
+import { getToken } from '@/store/modules/auth/helper'
 
 export interface InviteRes {
   "40TotalDays": number
@@ -19,8 +19,13 @@ export function getInviteInfo<T>() {
 
 
 export function trace<T>(data) {
-  return post<T>({
-    url: `/luomacode-api/trace`,
-    data,
-  })
+  if (getToken()){
+    return post<T>({
+      url: `/luomacode-api/trace`,
+      data,
+    })
+  }
+
+  return Promise.reject('未登录')
+  
 }

@@ -1063,7 +1063,7 @@ function handleDump(item) {
 <template>
   <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
     <img src="@/assets/gift/icon-gift.png" class="element-to-animate" alt=""
-      style="position: fixed;right:11px;top:105px;width: 100px;z-index: 1000;" @click.stop="handleNewPerson"
+      style="position: fixed;right:11px;top:105px;width: 110px;z-index: 1000;" @click.stop="handleNewPerson"
       v-if="userStore.newUser">
 
     <Sider />
@@ -1095,7 +1095,7 @@ function handleDump(item) {
               <!-- 空态占位图 -->
               <div style="width: 100%;">
                 <n-carousel autoplay dot-placement="top" mousewheel show-arrow
-                  style="width: 80%;max-width:500px;margin: 0 auto;">
+                  style="width: 80%;max-width:500px;margin: 0 auto;" :interval="3000">
                   <n-carousel-item v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
                     <img :src="item.iconUrl"
                       style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
@@ -1106,23 +1106,24 @@ function handleDump(item) {
                     <div class="custom-arrow">
                       <button type="button" @click="next"  style="    
                         position: absolute;
-                        right: 0;
+                        right: 10px;
                         top: 50%;
                         margin-top: -15px;
                         font-size: 30px;
                         color:rgb(0, 122, 255);
                       ">
-                        <SvgIcon icon="uiw:right" class="icon" />
+                        <!-- <SvgIcon icon="uiw:right" class="icon" /> -->
+                        <img src="@/assets/main/icon-left-arrow.png" style="    width: 40px;transform: rotateZ(180deg);" alt="">
                       </button>
                       <button type="button" @click="prev" style="    
                         position: absolute;
-                        left: 0;
+                        left:10px;
                         top: 50%;
                         margin-top: -15px;
                         font-size: 30px;
                         color:rgb(0, 122, 255);
                       ">
-                        <SvgIcon icon="uiw:left" class="icon" />
+                        <img src="@/assets/main/icon-left-arrow.png" style="    width: 40px;" alt="">
                       </button>
                     </div>
 
@@ -1193,7 +1194,7 @@ function handleDump(item) {
           <div v-show="!hidden" class="w-full m-auto p-2" style="">
             <div class="moss-btns flex justify-between space-x-2 w-full">
               <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt"
-                class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C]" :bordered="false" autofocus type="textarea"
+                class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C] " :bordered="false" autofocus type="textarea"
                 :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="placeholder" @keydown="handleEnter" />
               <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
@@ -1423,7 +1424,7 @@ function handleDump(item) {
 }
 
 .n-input.n-input--textarea {
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .input {

@@ -17,6 +17,7 @@ import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useAppStore, useUserStore } from '@/store'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { showToast } from 'vant';
+import { SvgIcon } from '@/components/common'
 const go = useGo()
 const chatStore = useChatStore()
 const userStore = useUserStore()
@@ -26,13 +27,13 @@ userStore.residueCountAPI()
 let infoList = ref([
   { title: '设置', img: item1, callBack: () => { go({ name: 'setting' }) } },
   { title: '客服', img: item2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank'); } },
-  { title: '反馈', img: item3, callBack: () => {  window.open('https://chatmoss.feishu.cn/share/base/form/shrcnayy8oLPuz44E8fd0Nkztug', '_blank');   } },
+  { title: '反馈', img: item3, callBack: () => { window.open('https://chatmoss.feishu.cn/share/base/form/shrcnayy8oLPuz44E8fd0Nkztug', '_blank'); } },
   {
     title: '帮助', img: item4, callBack: () => {
       go({
         name: 'h5',
         query: {
-          url:'https://h5.aihao123.cn/pages/app/help/index.html'
+          url: 'https://h5.aihao123.cn/pages/app/help/index.html'
         }
       })
     }
@@ -126,65 +127,49 @@ function handleClick(row) {
         </div>
       </div>
       <div>
-        <img src="@/assets/my/icon-arrow-right.png" style="width: 8px;" alt="">
+        <SvgIcon icon="mingcute:right-fill" class="icon"  style="color: #dfe1e8;font-size: 16px;"/>
       </div>
     </div>
 
-    <div class="card flex justify-start  flex-wrap "
-      style="margin-top: 18px;padding:0 4px;padding-bottom: 15px;">
-      <div class="info mt-[14px] ml-[6px] mr-[6px] cursor-pointer" v-for="(item, i) of infoList" :key="i" @click="handleClick(item)">
+    <div class="card flex justify-start  flex-wrap " style="margin-top: 18px;padding:0 4px;padding-bottom: 15px;">
+      <div class="info mt-[14px] ml-[6px] mr-[6px] cursor-pointer card-item" v-for="(item, i) of infoList" :key="i"
+        @click="handleClick(item)">
         <div class="w-[50px] h-[50px] m-auto mt-[15px]">
           <img :src="item.img" alt="">
         </div>
-        <div style="
-        text-align: center;
-        font-size: 16px;
-        font-weight: 400;
-        color: #1A1A1A;
-        line-height: 22px;
-        margin-top: 6px;
+        <div class="text" style="
         ">{{ item.title }}</div>
 
       </div>
-
     </div>
 
-    <div class="card " style="margin-top: 14px;">
-      <div v-for="(item, i) of cardList" class="px-[16px] cursor-pointer" :key="i">
+    <div class="card" style="margin-top: 14px;">
+      <div v-for="(item, i) of cardList" class="card-item px-[16px] cursor-pointer" :key="i" @click="handleClick(item)">
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px] ">
           <div class="flex items-center ">
             <img :src="item.img" style="width: 22px;" alt="">
-            <div style="
-            margin-left: 11px;
-            font-size: 16px;
-            font-weight: 400;
-            color: #1A1A1A;
-            line-height: 22px;
+            <div class="title" style="
             ">{{ item.title }}</div>
           </div>
           <div>
-            <img src="@/assets/my/icon-arrow-right.png" style="width: 8px;" alt="">
+            <SvgIcon icon="mingcute:right-fill" class="icon" />
           </div>
         </div>
       </div>
     </div>
 
-    <div class="card " style="margin-top: 14px;">
-      <div class="px-[16px] cursor-pointer" @click="logout">
+    <div class="card" style="margin-top: 14px;">
+      <div class="px-[16px] cursor-pointer card-item" @click="logout">
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px]">
           <div class="flex items-center ">
             <img :src="card4" style="width: 22px;" alt="">
-            <div style="
-            margin-left: 11px;
-            font-size: 16px;
-            font-weight: 400;
-            color: #1A1A1A;
-            line-height: 22px;
-            ">退出登录</div>
+            <div class="title">退出登录</div>
           </div>
+
           <div>
-            <img src="@/assets/my/icon-arrow-right.png" style="width: 8px;" alt="">
+            <SvgIcon icon="mingcute:right-fill" class="icon" />
           </div>
+
         </div>
       </div>
     </div>
@@ -203,6 +188,45 @@ function handleClick(row) {
   width: 347px;
   background: #FFFFFF;
   border-radius: 11px;
+
+  .card-item {
+    .text {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 22px;
+      margin-top: 6px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 22px;
+      margin-left: 15px;
+    }
+
+    .icon {
+      color: #dfe1e8;
+      font-size: 16px;
+    }
+
+    &:hover {
+      .title {
+        color: #A4A4A6;
+      }
+
+      .icon {
+        color: #BEC5DE;
+      }
+    }
+  }
+
+
+
+
 }
 
 .info {
@@ -211,6 +235,10 @@ function handleClick(row) {
   background: linear-gradient(180deg, #FDFDFD 0%, #F6F7F9 100%);
   border-radius: 9px;
   border: 1px solid #F1F3F4;
+
+  &:hover{
+    border: 1px solid #BEC5DE;
+  }
 }
 
 .main {
@@ -224,4 +252,5 @@ function handleClick(row) {
   // background: #F6F7FA;
   background-repeat: no-repeat;
   background-size: cover;
-}</style>
+}
+</style>

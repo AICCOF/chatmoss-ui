@@ -77,7 +77,7 @@ function handleChange(path) {
       <NLayout class="z-40 transition" :class="getContainerClass" has-sider>
 
         <NLayoutContent class="h-full">
-          <div class="flex" style="height: 100%;flex-direction: column;">
+          <div class="flex" style="height: 100%;flex-direction: column;overflow-y: hidden;">
 
             <div class="flex-1 overflow-hidden">
               <RouterView v-slot="{ Component, route }">
@@ -86,8 +86,11 @@ function handleChange(path) {
 
             </div>
             <transition name="height">
-              <div v-show="userStore.userInfo && userStore.userInfo.user && userStore.toggleValue" class="element-to-animate1">
-                <van-tabbar v-model="active" @change="handleChange">
+              <div v-show="userStore.userInfo && userStore.userInfo.user && userStore.toggleValue"
+                class="element-to-animate1 bg-[#F6F7FA] dark:bg-[#161616]">
+                <van-tabbar v-model="active" @change="handleChange" 
+                style="margin: 0 auto;"
+                >
                   <van-tabbar-item :name="item.path" v-for="(item, i) of  tabList " :key="i">
                     <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90"
                       :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : '']">
@@ -101,9 +104,6 @@ function handleChange(path) {
                 </van-tabbar>
               </div>
             </transition>
-
-
-
           </div>
         </NLayoutContent>
       </NLayout>

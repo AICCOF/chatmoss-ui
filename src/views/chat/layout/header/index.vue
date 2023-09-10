@@ -4,7 +4,7 @@ import { useUserStore } from '@/store'
 const userStore = useUserStore()
 import { getButtonList } from '@/api/application'
 import { useGo } from '@/utils/router'
-import {  NButton, NPopover, NTag } from 'naive-ui'
+import { NButton, NPopover, NTag } from 'naive-ui'
 import { trace } from '@/api/invite'
 const go = useGo()
 let tabList = ref([
@@ -70,12 +70,14 @@ function handleClose(goName: any) {
   <transition name="fade1">
     <header v-if="userStore.toggleValue" class="header-main">
       <div class="relative" style="width: 100%;height: 100%;">
-        <div style="width: 100%;height: 100%;overflow-y: scroll;">
+        <div class="scroll" style="width: 100%;height: 100%;overflow-y: scroll;">
           <div class="flex pl-[24px] pr-[80px] h-full" style="width: max-content;">
-            <div v-for="(item, i) of tabList" :key="i" class="mr-[34px] flex items-center cursor-pointer"
+            <div v-for="(item, i) of tabList" :key="i" class="mr-[34px] flex items-center cursor-pointer tab"
               @click="handleLink(item)">
               <div>
-                <img :src="item.iconUrl" class="w-[30px] h-[30px] m-auto" alt="">
+                <div class="img w-[40px] h-[40px] flex items-center justify-center m-auto">
+                  <img :src="item.iconUrl" class="w-[30px] h-[30px] m-auto" alt="">
+                </div>
                 <div class="mt-[7px] text-center">{{ item.name }}</div>
               </div>
 
@@ -149,6 +151,34 @@ function handleClose(goName: any) {
 </template>
 
 <style lang="less">
+.scroll {
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 4px;
+    /**/
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #bfbfbf;
+    border-radius: 10px;
+  }
+}
+
+
+.tab {
+  :hover {
+    .img {
+      border-radius: 6px;
+      background: #EBEDF5;
+    }
+  }
+}
+
 .money {
 
   background: linear-gradient(90deg, rgba(246, 247, 250, 0) 0%, rgba(246, 247, 250, 1) 20%, #F6F7FA 100%);
@@ -159,6 +189,15 @@ function handleClose(goName: any) {
   .money {
     background: linear-gradient(90deg, #16161600 0%, #161616 20%, #161616 100%);
 
+  }
+
+  .tab {
+    :hover {
+      .img {
+        border-radius: 6px;
+        background: #3A3A3C;
+      }
+    }
   }
 }
 

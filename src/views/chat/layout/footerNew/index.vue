@@ -99,15 +99,15 @@ function handleParamConfigs(item, row) {
 				<div class="footer-left">
 					<div class="div">
 						<div class="div-wrap">
-							<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1"
+							<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1 bg-[#EBEDF5] dark:bg-[#292929] btn"
 								@click="createQuestion">
 								新建会话
 							</div>
-							<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2"
+							<div v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2 bg-[#EBEDF5] dark:bg-[#292929] btn"
 								@click="toggleButtonEvent">
 								历史记录
 							</div>
-							<Popover title="" trigger="hover" overlay-class-name="ant-popover-my">
+							<Popover title="" trigger="hover" overlay-class-name="ant-popover-my bg-[#EBEDF5] dark:bg-[#292929]">
 								<template #content>
 									<div style="padding: 8px">
 										<a href="https://chatmoss.feishu.cn/share/base/form/shrcngN778J03PwR7b8z7Puge0f" target="_blank">
@@ -133,7 +133,7 @@ function handleParamConfigs(item, row) {
 										</div>
 									</div>
 								</template>
-								<div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin" style=""
+								<div class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin bg-[#EBEDF5] dark:bg-[#292929] btn" style=""
 									v-if="authStore.token">
 									插件系统
 									<!-- <img
