@@ -1084,7 +1084,7 @@ function handleDump(item) {
                 <n-carousel direction="vertical" autoplay dot-placement="bottom" mousewheel
                   style="height: 20vh;margin: 0 auto;">
                   <n-carousel-item v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
-                    <img :src="item.iconUrl" style="width: 100%;height: 100%;object-fit: contain; border-radius: 10px;"
+                    <img :src="item.iconUrl" style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
                       @click="handleDump(item)">
                   </n-carousel-item>
                 </n-carousel>
