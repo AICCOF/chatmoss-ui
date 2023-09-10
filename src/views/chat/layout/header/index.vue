@@ -5,6 +5,7 @@ const userStore = useUserStore()
 import { getButtonList } from '@/api/application'
 import { useGo } from '@/utils/router'
 import {  NButton, NPopover, NTag } from 'naive-ui'
+import { trace } from '@/api/invite'
 const go = useGo()
 let tabList = ref([
 
@@ -21,7 +22,13 @@ async function getButtonListAPI() {
 
 function handleLink(item) {
   // console.log(item)
-
+  trace({
+    eventName: 'h5Click',
+    customField: {
+      scene: "首页banner", // 场景
+      id: item.id // 对应的首页banner的ID
+    }
+  })
   let json = JSON.parse(item.jumpUrl)
 
   if (json.type === 'path') {
@@ -156,7 +163,7 @@ function handleClose(goName: any) {
 }
 
 .header-main {
-  height: 90px;
+  height: 80px;
   width: 100%;
   display: flex;
   align-items: center;

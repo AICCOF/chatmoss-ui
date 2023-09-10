@@ -169,9 +169,9 @@ function refresh(){
             <div class="login cursor-pointer" @click="loginEvent">
               登录
             </div>
-            <div class="register cursor-pointer" @click="() => { go({ name: 'register' }) }">
+            <!-- <div class="register cursor-pointer" @click="() => { go({ name: 'register' }) }">
               注册
-            </div>
+            </div> -->
             <div class="register cursor-pointer" @click="() => { go({ name: 'forget' }) }">
               忘记密码
             </div>

@@ -110,6 +110,22 @@ fade1-enter-active,
 	// transition: all 1s;
 }
 
+.height-enter-active,
+.height-leave-active {
+	transition: all 0.5s;
+	/* 过渡的持续时间 */
+}
+
+.height-enter,
+.height-leave-to {
+	height: 0;
+	opacity: 0;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
+
+
 @keyframes bounce-in {
 	0% {
 		opacity: 0;

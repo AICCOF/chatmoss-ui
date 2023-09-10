@@ -29,8 +29,10 @@ import icontem1a from '@/assets/tab/icon-item1_a.png'
 import icontem2a from '@/assets/tab/icon-item2_a.png'
 import icontem3a from '@/assets/tab/icon-item3_a.png'
 import { useBack, useGo } from '@/utils/router'
-import { showConfirmDialog, showToast } from 'vant'
+import { useChatStore, useUserStore, useAuthStoreWithout } from '@/store'
+
 import { useRouter } from 'vue-router'
+const userStore = useUserStore()
 const router = useRouter()
 const go = useGo()
 let tabList = ref([
@@ -73,7 +75,7 @@ function handleChange(path) {
   <div class="h-full transition-all" :class="[isMobile ? 'p-0' : 'p-0']">
     <div class="h-full overflow-hidden" :class="getMobileClass">
       <NLayout class="z-40 transition" :class="getContainerClass" has-sider>
-   
+
         <NLayoutContent class="h-full">
           <div class="flex" style="height: 100%;flex-direction: column;">
 
@@ -83,27 +85,34 @@ function handleChange(path) {
               </RouterView>
 
             </div>
-            <div>
-              <van-tabbar v-model="active" @change="handleChange">
-                <van-tabbar-item :name="item.path" v-for="(item, i) of  tabList " :key="i">
-                  <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90"
-                    :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : '']">
-                    <img v-show="active === item.path" :src="item.activeImg" class="w-[36px]" alt="">
-                    <img v-show="active !== item.path" :src="item.img" class="w-[36px]" alt="">
-                    <div>
-                      {{ item.title }}
+            <transition name="height">
+              <div v-show="userStore.userInfo && userStore.userInfo.user && userStore.toggleValue" class="element-to-animate1">
+                <van-tabbar v-model="active" @change="handleChange">
+                  <van-tabbar-item :name="item.path" v-for="(item, i) of  tabList " :key="i">
+                    <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90"
+                      :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : '']">
+                      <img v-show="active === item.path" :src="item.activeImg" class="w-[36px]" alt="">
+                      <img v-show="active !== item.path" :src="item.img" class="w-[36px]" alt="">
+                      <div>
+                        {{ item.title }}
+                      </div>
                     </div>
-                  </div>
-                </van-tabbar-item>
-              </van-tabbar>
-            </div>
+                  </van-tabbar-item>
+                </van-tabbar>
+              </div>
+            </transition>
+
+
+
           </div>
-
-
-
-
         </NLayoutContent>
       </NLayout>
     </div>
   </div>
 </template>
+<style lang="less">
+.element-to-animate1 {
+  /* 元素的初始高度 */
+  height: 62px;
+}
+</style>

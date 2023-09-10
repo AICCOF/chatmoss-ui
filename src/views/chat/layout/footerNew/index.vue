@@ -143,7 +143,7 @@ function handleParamConfigs(item, row) {
                 > -->
 									<!-- <span class="align-text-top">插件</span> -->
 								</div>
-								<div class="inline-block align-middle">
+								<div class="inline-block align-middle" v-if="authStore.token">
 									<img v-if="chatStore.getSelectPluginInfo?.select" class="plugin-main-select-icon"
 										:src="chatStore.getSelectPluginInfo.icon" alt="">
 								</div>

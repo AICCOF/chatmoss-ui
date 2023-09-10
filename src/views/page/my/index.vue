@@ -26,7 +26,7 @@ userStore.residueCountAPI()
 let infoList = ref([
   { title: '设置', img: item1, callBack: () => { go({ name: 'setting' }) } },
   { title: '客服', img: item2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank'); } },
-  { title: '反馈', img: item3, callBack: () => { showToast('暂未开放')  } },
+  { title: '反馈', img: item3, callBack: () => {  window.open('https://chatmoss.feishu.cn/share/base/form/shrcnayy8oLPuz44E8fd0Nkztug', '_blank');   } },
   {
     title: '帮助', img: item4, callBack: () => {
       go({
@@ -43,8 +43,8 @@ let infoList = ref([
 
 let cardList = ref([
   // { title: '实名认证', img: card1, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true','_blank'); } },
-  { title: '隐私协议', img: card2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank'); } },
-  { title: '用户协议', img: card3, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank'); } },
+  { title: '隐私协议', img: card2, callBack: () => { window.open('https://chatmoss.feishu.cn/wiki/YqbswQDH3iSaltkVMv4cjzghn5c', '_blank'); } },
+  { title: '用户协议', img: card3, callBack: () => { window.open('https://chatmoss.feishu.cn/wiki/DRwDwcl5EiO9YakBPHgcAcD8n3e', '_blank'); } },
 
 ])
 
@@ -53,13 +53,13 @@ function logout() {
   sendToMsg('chatMossToken', '')
   chatStore.clearList()
   userStore.residueCountAPI()
+  go({ name: 'chat' })
 }
 
 function handleLogin() {
   if (!userStore.userInfo.user) {
     go({ name: 'login' })
   }
-
 }
 
 function handleClick(row) {
@@ -132,7 +132,7 @@ function handleClick(row) {
 
     <div class="card flex justify-start  flex-wrap "
       style="margin-top: 18px;padding:0 4px;padding-bottom: 15px;">
-      <div class="info mt-[14px] ml-[6px] mr-[6px]" v-for="(item, i) of infoList" :key="i" @click="handleClick(item)">
+      <div class="info mt-[14px] ml-[6px] mr-[6px] cursor-pointer" v-for="(item, i) of infoList" :key="i" @click="handleClick(item)">
         <div class="w-[50px] h-[50px] m-auto mt-[15px]">
           <img :src="item.img" alt="">
         </div>
@@ -150,8 +150,8 @@ function handleClick(row) {
     </div>
 
     <div class="card " style="margin-top: 14px;">
-      <div v-for="(item, i) of cardList" class="px-[16px]">
-        <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px]">
+      <div v-for="(item, i) of cardList" class="px-[16px] cursor-pointer" :key="i">
+        <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px] ">
           <div class="flex items-center ">
             <img :src="item.img" style="width: 22px;" alt="">
             <div style="
@@ -170,7 +170,7 @@ function handleClick(row) {
     </div>
 
     <div class="card " style="margin-top: 14px;">
-      <div class="px-[16px]" @click="logout">
+      <div class="px-[16px] cursor-pointer" @click="logout">
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px]">
           <div class="flex items-center ">
             <img :src="card4" style="width: 22px;" alt="">

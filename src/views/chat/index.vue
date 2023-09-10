@@ -27,6 +27,7 @@ import { checkPlugin, execPlugin } from '@/api/plugin'
 import Sider from './layout/sider/index.vue'
 import Header from './layout/header/index.vue'
 import { getButtonList } from '@/api/application'
+import { trace } from '@/api/invite'
 
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
@@ -38,11 +39,11 @@ const go = useGo()
 const userStore = useUserStore()
 const showPaper = ref(false)
 const appStore = useAppStore()
-
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const NInputRef = ref<HTMLInputElement | null>(null)
 const NSelectRef = ref<HTMLInputElement | null>(null)
+import { SvgIcon } from '@/components/common'
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
@@ -1023,6 +1024,12 @@ async function getButtonListAPI() {
   tabList.value = res.data || []
 }
 function handleNewPerson() {
+  trace({
+    eventName: 'h5Click',
+    customField: {
+      scene: "新人礼包", // 场景
+    }
+  })
   go({
     name: 'h5', query: {
       url: 'http://h5.aihao123.cn/pages/app/new-persion/index.html'
@@ -1031,6 +1038,13 @@ function handleNewPerson() {
 }
 
 function handleDump(item) {
+  trace({
+    eventName: 'h5Click',
+    customField: {
+      scene: "首页banner", // 场景
+      id: item.id // 对应的首页banner的ID
+    }
+  })
   let json = JSON.parse(item.jumpUrl)
 
   if (json.type === 'path') {
@@ -1053,10 +1067,10 @@ function handleDump(item) {
       style="position: fixed;right:11px;top:105px;width: 100px;z-index: 1000;" @click.stop="handleNewPerson"
       v-if="userStore.newUser">
 
-    <Sider v-if="userStore.userInfo.user" />
+    <Sider />
     <Header />
     <main class="flex flex-1 overflow-hidden">
-      <applicationSlide />
+      <applicationSlide v-if="userStore.toggleValue && userStore.userInfo.user" />
 
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
         :class="[userStore.toggleValue ? 'p90' : '']">
@@ -1081,12 +1095,68 @@ function handleDump(item) {
 
               <!-- 空态占位图 -->
               <div style="width: 100%;">
-                <n-carousel direction="vertical" autoplay dot-placement="bottom" mousewheel
-                  style="height: 20vh;margin: 0 auto;">
+                <n-carousel autoplay dot-placement="top" mousewheel show-arrow
+                  style="width: 80%;max-width:500px;margin: 0 auto;">
                   <n-carousel-item v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
-                    <img :src="item.iconUrl" style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
+                    <img :src="item.iconUrl"
+                      style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
                       @click="handleDump(item)">
                   </n-carousel-item>
+
+                  <template #arrow="{ prev, next }">
+                    <div class="custom-arrow">
+                      <button type="button" @click="prev" style="    
+                        position: absolute;
+                        right: 0;
+                        top: 50%;
+                        margin-top: -15px;
+                        font-size: 30px;
+                        color:rgb(0, 122, 255);
+                      ">
+                        <SvgIcon icon="uiw:right" class="icon" />
+                      </button>
+                      <button type="button" style="    
+                        position: absolute;
+                        left: 0;
+                        top: 50%;
+                        margin-top: -15px;
+                        font-size: 30px;
+                        color:rgb(0, 122, 255);
+                      " @click="next">
+                        <SvgIcon icon="uiw:left" class="icon" />
+                      </button>
+                    </div>
+
+
+                  </template>
+                  <template #dots="{ total, currentIndex, to }">
+                    <div class="custom-dots flex items-center justify-center" style="
+                      position: absolute;
+                      bottom: 20px;
+                      left: 0px;
+                      width: 100%;
+                    ">
+                      <ul class="custom-dots" style="
+                          display: flex;
+                          margin: 0;
+                          padding: 0;
+                      ">
+                        <li v-for="index of total" :key="index" @click="to(index - 1)" :style="{
+                          backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)'
+                        }" style="display: inline-block;
+                          width: 12px;
+                          height: 4px;
+                          margin: 0 3px;
+                          border-radius: 4px;
+                          transition: width 0.3s, background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                          cursor: pointer;
+                        ">
+                        </li>
+
+                      </ul>
+                    </div>
+
+                  </template>
                 </n-carousel>
                 <!-- <van-swipe>
                   <van-swipe-item v-for="(item, i) of tabList" :key="i">
@@ -1224,7 +1294,7 @@ function handleDump(item) {
 }
 
 .p90 {
-  padding-top: 90px;
+  padding-top: 80px;
 }
 
 .no-data-info {

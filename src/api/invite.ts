@@ -16,3 +16,11 @@ export function getInviteInfo<T>() {
     data: {},
   })
 }
+
+
+export function trace<T>(data) {
+  return post<T>({
+    url: `/luomacode-api/trace`,
+    data,
+  })
+}
