@@ -7,9 +7,11 @@ import { useRouter } from 'vue-router'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useGo } from '@/utils/router'
 import { useUserStore } from '@/store'
-
+import { useTheme } from '@/hooks/useTheme'
 // router.replace({ name: 'chat', params: { uuid: chatStore.active } })
+const { vantTheme } = useTheme()
 
+// console.log('theme', vantTheme)
 const { isMobile } = useBasicLayout()
 
 // const collapsed = computed(() => appStore.siderCollapsed)
@@ -31,20 +33,44 @@ const tabList = ref([
   {
     title: '首页',
     path: '/chat',
-    activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab/icon-item1_a.png',
-    img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab/icon-item1.png',
+    img: {
+      light: {
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item1_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item1.png',
+      },
+      dark: {
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item1_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item1.png',
+      }
+    }
   },
   {
     title: '教程',
     path: '/source',
-    activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab/icon-item2_a.png',
-    img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab/icon-item2.png',
+    img: {
+      light: {
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item2_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item2.png',
+      },
+      dark: {
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item2_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item2.png',
+      }
+    }
   },
   {
     title: '我的',
     path: '/my',
-    activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab/icon-item3_a.png',
-    img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab/icon-item3.png',
+    img: {
+      light: {
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item3_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item3.png',
+      },
+      dark: {
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item3_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item3.png',
+      }
+    }
   },
 ])
 // console.log(router.currentRoute)
@@ -76,11 +102,13 @@ function handleChange(path) {
                 class="element-to-animate1 bg-[#F6F7FA] dark:bg-[#161616]">
                 <van-tabbar v-model="active" style="margin: 0 auto;" @change="handleChange">
                   <van-tabbar-item v-for="(item, i) of tabList " :key="i" :name="item.path">
-                    <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90"
-                      :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : '']">
-                      <img v-show="active === item.path" :src="item.activeImg" class="w-[36px]" alt="">
-                      <img v-show="active !== item.path" :src="item.img" class="w-[36px]" alt="">
-                      <div>
+                    <div class="item text-center pb-[8px]  -mt-[10px]"
+                      :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : 'text-[#1a1a1a] dark:text-[#686868]']">
+                      <div  class="w-[36px] h-[36px] img">
+                        <img v-show="active === item.path" :src="item.img[vantTheme].activeImg" class="w-[100%]" alt="">
+                        <img v-show="active !== item.path" :src="item.img[vantTheme].img" class="w-[100%]" alt="">
+                      </div>
+                      <div class="">
                         {{ item.title }}
                       </div>
                     </div>
@@ -96,6 +124,14 @@ function handleChange(path) {
 </template>
 
 <style lang="less">
+
+.item{
+  &:hover{
+    .img{
+      transform: scale(0.9);
+    }
+  }
+}
 .element-to-animate1 {
   /* 元素的初始高度 */
   // height: 62px;

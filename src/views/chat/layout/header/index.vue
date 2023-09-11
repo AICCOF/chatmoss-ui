@@ -96,10 +96,10 @@ async function getSystemNoticeAPI() {
               @click="handleLink(item)"
             >
               <div>
-                <div class="img w-[40px] h-[40px] flex items-center justify-center m-auto">
+                <div class="img w-[35px] h-[35px] flex items-center justify-center m-auto">
                   <img :src="item.iconUrl" class="w-[26px] h-[26px] m-auto" alt="">
                 </div>
-                <div class="mt-[7px] text-center">
+                <div class="text-center">
                   {{ item.name }}
                 </div>
               </div>
@@ -182,15 +182,14 @@ async function getSystemNoticeAPI() {
   }
 
   &::-webkit-scrollbar-track {
-    background: transparent;
     border-radius: 2px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #bfbfbf;
     border-radius: 10px;
   }
 }
+
 
 .tab {
   :hover {
@@ -224,7 +223,7 @@ async function getSystemNoticeAPI() {
 }
 
 .header-main {
-  height: 80px;
+  height: 86px;
   width: 100%;
   display: flex;
   align-items: center;

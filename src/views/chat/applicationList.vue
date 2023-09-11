@@ -200,12 +200,10 @@ function handleSave() {
     }
 
     &::-webkit-scrollbar-track {
-      background: transparent;
       border-radius: 2px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #bfbfbf;
       border-radius: 10px;
     }
 

@@ -189,6 +189,16 @@ fade1-enter-active,
 	// display: none;
 }
 
+::-webkit-scrollbar-thumb {
+	  background: #ccd0d6;
+	border-radius: 10px;
+}
+.dark {
+	::-webkit-scrollbar-thumb {
+		background: #565656;
+		border-radius: 10px;
+	}
+}
 
 .flex-center {
 	display: flex;
@@ -259,8 +269,12 @@ p {
 }
 
 .van-tabbar {
-	height: auto;
+	// height: auto;
+	height: 60px;
 	position: relative;
+	.van-tabbar-item{
+		// height: 55px;
+	}
 
 	&::after {
 		content: '';

@@ -8,6 +8,8 @@ import { useLanguage } from '@/hooks/useLanguage'
 import { jumpLink } from '@/utils/jumpLink'
 import { useRouter } from 'vue-router'
 const { theme, themeOverrides, vantTheme } = useTheme()
+
+console.log('theme', vantTheme)
 const { language } = useLanguage()
 let router = useRouter()
 window.addEventListener("message", function (event) {

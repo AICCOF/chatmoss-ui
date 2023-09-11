@@ -311,12 +311,10 @@ function handleParamConfigs(item, row) {
 			}
 
 			&::-webkit-scrollbar-track {
-				background-color: var(--moss-border-color);
 				border-radius: 10px;
 			}
 
 			&::-webkit-scrollbar-thumb:hover {
-				background: var(--moss-text-time-color);
 				border-radius: 10px;
 			}
 
