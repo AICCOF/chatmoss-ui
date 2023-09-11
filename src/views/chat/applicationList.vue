@@ -149,18 +149,23 @@ function handleSave() {
     </div>
     <div class="btns">
       <div
-        class="btn bg-[#FFFFFF] dark:bg-[#38416A]" style="width: 31px;
-height: 31px;
-border-radius: 7px;"
+        class="btn bg-[#FFFFFF] dark:bg-[#38416A]" 
+        style="
+          width: 31px;
+          height: 31px;
+          border-radius: 7px;"
       >
         <van-icon v-if="!enabled" name="edit" style="font-size: 18px;" @click="() => handleEdit()" />
         <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
       </div>
       <div
-        class="btn mt-[24px]" style="width: 31px;
-height: 31px;
-border-radius: 7px;"
-      >
+        class="btn mt-[24px]" 
+        style="
+          width: 31px;
+          height: 31px;
+          border-radius: 7px;
+          "
+        >
         <!-- <van-icon name="plus" @click="() => { go({ name: 'application' }) }" /> -->
         <img class="btn-icon" src="./img/appstore.png" alt="" @click="() => { go({ name: 'application' }) }">
       </div>

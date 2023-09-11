@@ -71,20 +71,13 @@ function handleChange(path) {
                 <component :is="Component" :key="route.fullPath" />
               </RouterView>
             </div>
-            <transition name="height">
-              <div
-                v-show="userStore.userInfo && userStore.userInfo.user && userStore.toggleValue"
-                class="element-to-animate1 bg-[#F6F7FA] dark:bg-[#161616]"
-              >
-                <van-tabbar
-                  v-model="active" style="margin: 0 auto;"
-                  @change="handleChange"
-                >
+            <transition name="height" :duration="{ enter: 300, leave: 300 }">
+              <div v-show="userStore.userInfo && userStore.userInfo.user && userStore.toggleValue"
+                class="element-to-animate1 bg-[#F6F7FA] dark:bg-[#161616]">
+                <van-tabbar v-model="active" style="margin: 0 auto;" @change="handleChange">
                   <van-tabbar-item v-for="(item, i) of tabList " :key="i" :name="item.path">
-                    <div
-                      class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90"
-                      :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : '']"
-                    >
+                    <div class="text-center pb-[10px] text-[#A4A4A6] hover:scale-90"
+                      :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : '']">
                       <img v-show="active === item.path" :src="item.activeImg" class="w-[36px]" alt="">
                       <img v-show="active !== item.path" :src="item.img" class="w-[36px]" alt="">
                       <div>
@@ -105,6 +98,6 @@ function handleChange(path) {
 <style lang="less">
 .element-to-animate1 {
   /* 元素的初始高度 */
-  height: 62px;
+  // height: 62px;
 }
 </style>

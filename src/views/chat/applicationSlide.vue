@@ -28,11 +28,14 @@ function mouseenter() {
       </NDrawerContent>
     </NDrawer>
     <!-- @mouseenter="() => userStore.sliderToggleMode()" -->
-    <div
-      class="m-pointer  plugin-btn absolute w-[30px] h-[30px] rounded-full -right-[13px] top-[180px] overflow bg-[#00000033] z-10 text-[#fff] dark:bg-[#ffffff33] text-[24px] flex items-center justify-center pl-[10px]"
-      style="" @mouseenter="mouseenter"
-    >
-      <SvgIcon icon="formkit:right" />
+
+    <div class="absolute  top-[180px] z-10 w-[80px] h-[80px] flex items-center justify-start" @mouseenter="mouseenter">
+      <div
+        class="m-pointer plugin-btn  w-[30px] h-[30px] rounded-full  overflow bg-[#00000033] -ml-[15px] text-[#fff] dark:bg-[#ffffff33] text-[24px] flex items-center justify-center pl-[10px]"
+        style="" >
+        <SvgIcon icon="formkit:right" />
+      </div>
     </div>
+
   </div>
 </template>

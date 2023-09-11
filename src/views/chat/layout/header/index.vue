@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { NButton, NPopover, NTag } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
@@ -7,6 +7,9 @@ import { getButtonList } from '@/api/application'
 import { useGo } from '@/utils/router'
 import { trace } from '@/api/invite'
 import { jumpLink } from '@/utils/jumpLink'
+import { notification } from 'ant-design-vue'
+import { getSystemNotice } from '@/api/personCenter'
+import type { Notice } from '@/store/modules/user/helper'
 const userStore = useUserStore()
 const go = useGo()
 const tabList = ref([
@@ -57,10 +60,33 @@ function handleClose(goName: any) {
     name: goName || 'shop',
   })
 }
+
+onMounted(() => {
+  // resetToken()
+  getSystemNoticeAPI()
+})
+const temNotice = computed(() => userStore.getNotices || [])
+async function getSystemNoticeAPI() {
+  const res = await getSystemNotice<Notice[]>()
+
+  const notice = res.data[0]
+
+  if (res.data.length > temNotice.value.length) {
+    notification.open({
+      description: notice.content,
+      message: notice.createTime,
+      duration: null,
+      onClick: () => {
+        // console.log('Notification Clicked!');
+      },
+    })
+  }
+  userStore.setNotices(res.data)
+}
 </script>
 
 <template>
-  <transition name="fade1">
+  <transition name="height">
     <header v-if="userStore.toggleValue" class="header-main">
       <div class="relative" style="width: 100%;height: 100%;">
         <div class="scroll" style="width: 100%;height: 100%;overflow-y: scroll;">

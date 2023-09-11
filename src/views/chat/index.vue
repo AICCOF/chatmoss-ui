@@ -970,6 +970,7 @@ onMounted(() => {
   userStore.getActivityListAPI()
   userStore.residueCountAPI()
   userStore.getBalanceInfo()
+  userStore.getApplicationInstallListAPI()
 })
 
 onUnmounted(() => {
@@ -1309,7 +1310,7 @@ function handleDump(item) {
 }
 
 .chat-main {
-  transition: all 0.7s;
+  transition: all 0.2s;
   // background-color: var(--moss-bg-content-color);
 }
 
