@@ -1182,7 +1182,7 @@ function handleDump(item) {
             <div class="moss-btns flex justify-between space-x-2 w-full">
               <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt"
                 class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C] " :bordered="false" autofocus type="textarea"
-                :autosize="{ minRows: 1, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" style="padding-bottom: 50px;"/>
+                :autosize="{ minRows: 3, maxRows: 5}" :placeholder="placeholder" @keydown="handleEnter" style=""/>
               <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
@@ -1191,12 +1191,12 @@ function handleDump(item) {
               <div style="
                 display: flex;
                 align-items: center;
-                width: 100%;
                 justify-content: space-between;
                 position: absolute;
                 bottom: 10px;
                 box-sizing: border-box;
                 margin: 0;
+                right: 0;
               ">
                 <div>
                   <!-- 左边按钮 -->
@@ -1468,7 +1468,7 @@ function handleDump(item) {
 }
 
 .btn-mode {
-  opacity: .4;
+  opacity: .6;
   // background-color: var(--moss-bg-ask-color);
   border-radius: 3px;
   // color: var(--moss-text-ask-color);
