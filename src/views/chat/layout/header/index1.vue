@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { NAvatar, NButton, NPopover, NTag, useMessage, useNotification } from 'naive-ui'
-import { computed, h, onMounted, ref, watchEffect } from 'vue'
+import { NButton, NPopover, NTag, useMessage } from 'naive-ui'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
+import { notification } from 'ant-design-vue'
 import activity from './../activity.vue'
 import { SvgIcon } from '@/components/common'
 import { useUserStore } from '@/store'
@@ -16,7 +17,6 @@ const useAuthStore = useAuthStoreWithout()
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
-import { notification, Popover } from 'ant-design-vue';
 // const notification = useNotification()
 const go = useGo()
 const modelValue = ref(false)
@@ -92,7 +92,7 @@ async function getSystemNoticeAPI() {
       onClick: () => {
         // console.log('Notification Clicked!');
       },
-    });
+    })
   }
   userStore.setNotices(res.data)
 }
@@ -107,7 +107,7 @@ function shopEvent() {
 }
 // let dom =  document.querySelector('#app')
 
-let domShow = ref(false)
+const domShow = ref(false)
 </script>
 
 <template>
@@ -165,10 +165,12 @@ let domShow = ref(false)
                 </span>
               </template>
             </NButton>
-            <NPopover :show="domShow" v-if="domShow" style="max-height: 340px" trigger="click" scrollable
-              @clickoutside="() => domShow = false">
+            <NPopover
+              v-if="domShow" :show="domShow" style="max-height: 340px" trigger="click" scrollable
+              @clickoutside="() => domShow = false"
+            >
               <template #trigger>
-                <span> </span>
+                <span />
               </template>
               <div style="width: 300px; max-height: 648px;">
                 <div v-for="(item, index) of userStore.getNotices" :key="index" class="notice">
@@ -176,8 +178,10 @@ let domShow = ref(false)
                     <div style="color: var(--n-text-color);; font-size: 16px; font-weight: 600; line-height: 22px">
                       {{ item.createTime }}
                     </div>
-                    <div v-if="item.content.length > 96" style="color: var(--moss-text); font-size: 12px"
-                      class="cursor-pointer" @click="() => (item.unfold = !item.unfold)">
+                    <div
+                      v-if="item.content.length > 96" style="color: var(--moss-text); font-size: 12px"
+                      class="cursor-pointer" @click="() => (item.unfold = !item.unfold)"
+                    >
                       <div v-if="!item.unfold" class="flex-center">
                         <SvgIcon icon="ant-design:down-outlined" class="icon" />
                         <span style="margin-left: 10px">展开</span>
@@ -243,8 +247,10 @@ let domShow = ref(false)
                   余额
                 </div>
               </template>
-              <div v-for="(row, i) of userStore.packageList" :key="i"
-                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
+              <div
+                v-for="(row, i) of userStore.packageList" :key="i"
+                class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
+              >
                 <div>
                   <div class="flex justify-between">
                     <span class="mr-4">{{ row.title }}</span>
@@ -267,12 +273,12 @@ let domShow = ref(false)
               </div>
 
               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
-                <div style="width:200px">
+                <div style="width:240px">
                   <span class="mr-4">免费字符数：{{ residueCountFree }}</span>
                 </div>
               </div>
               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
-                <div style="width:200px">
+                <div style="width:240px">
                   <span class="mr-4">付费字符数：{{ residueCountPay }}</span>
                 </div>
               </div>

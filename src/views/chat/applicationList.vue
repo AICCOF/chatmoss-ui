@@ -24,7 +24,7 @@ function handleEdit() {
 function handleClick(row) {
   if (!enabled.value && userStore.appIdValue !== row.appId) {
     if (row.isOpened === 0) {
-      ms.info(row.notOpenReason || '暂未开放，敬请期待...')
+      ms.info(row.notOpenReason || '即将开放，敬请期待...')
       return
     }
     userStore.setAppId(row.appId)
@@ -76,7 +76,8 @@ function handleSave() {
 
 <template>
   <div class="wrap">
-    <div class="flex justify-center items-center" style="
+    <div
+      class="flex justify-center items-center" style="
           margin: 0 auto;
           margin-top: 38px;
           margin-bottom: 25px;
@@ -86,16 +87,21 @@ function handleSave() {
           background: rgba(129,136,148,0.5);
           color: #fff;
           font-size: 20px;
-          border: 1px solid #595E77;" @click="userStore.sliderToggleMode">
+          border: 1px solid #595E77;" @click="userStore.sliderToggleMode"
+    >
       <SvgIcon icon="formkit:left" />
     </div>
 
     <div class="list">
-      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <div>
               <NPopover trigger="hover" placement="right" style="width: max-content;">
                 <template #trigger>
@@ -112,11 +118,15 @@ function handleSave() {
           </div>
         </template>
       </draggable>
-      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element, index }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <span v-if="enabled" class="close" @click="handleDelete(element, index)">
               <van-icon class="close-icon" name="cross" />
             </span>
@@ -138,15 +148,19 @@ function handleSave() {
       </draggable>
     </div>
     <div class="btns">
-      <div class="btn bg-[#FFFFFF] dark:bg-[#38416A]" style="width: 31px;
+      <div
+        class="btn bg-[#FFFFFF] dark:bg-[#38416A]" style="width: 31px;
 height: 31px;
-border-radius: 7px;">
-        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" style="font-size: 18px;" />
+border-radius: 7px;"
+      >
+        <van-icon v-if="!enabled" name="edit" style="font-size: 18px;" @click="() => handleEdit()" />
         <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
       </div>
-      <div class="btn mt-[24px]" style="width: 31px;
+      <div
+        class="btn mt-[24px]" style="width: 31px;
 height: 31px;
-border-radius: 7px;">
+border-radius: 7px;"
+      >
         <!-- <van-icon name="plus" @click="() => { go({ name: 'application' }) }" /> -->
         <img class="btn-icon" src="./img/appstore.png" alt="" @click="() => { go({ name: 'application' }) }">
       </div>

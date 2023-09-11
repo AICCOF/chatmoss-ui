@@ -4,8 +4,8 @@ import applicationList from './applicationList.vue'
 import { SvgIcon } from '@/components/common'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
-let time;
-let time1;
+let time
+let time1
 function mouseleave(e) {
   clearTimeout(time)
   userStore.sliderToggle = false
@@ -29,8 +29,9 @@ function mouseenter() {
     </NDrawer>
     <!-- @mouseenter="() => userStore.sliderToggleMode()" -->
     <div
-      class="m-pointer  plugin-btn absolute w-[30px] h-[30px] rounded-full -right-[13px] top-[150px] overflow bg-[#00000033] z-10 text-[#fff] dark:bg-[#ffffff33] text-[24px] flex items-center justify-center pl-[10px]"
-      style="" @mouseenter="mouseenter">
+      class="m-pointer  plugin-btn absolute w-[30px] h-[30px] rounded-full -right-[13px] top-[180px] overflow bg-[#00000033] z-10 text-[#fff] dark:bg-[#ffffff33] text-[24px] flex items-center justify-center pl-[10px]"
+      style="" @mouseenter="mouseenter"
+    >
       <SvgIcon icon="formkit:right" />
     </div>
   </div>

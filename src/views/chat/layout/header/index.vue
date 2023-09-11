@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { NButton, NPopover, NTag } from 'naive-ui'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
 import { getButtonList } from '@/api/application'
 import { useGo } from '@/utils/router'
 import { trace } from '@/api/invite'
 import { jumpLink } from '@/utils/jumpLink'
-import { useRouter } from 'vue-router'
 const userStore = useUserStore()
 const go = useGo()
 const tabList = ref([
@@ -22,7 +22,7 @@ async function getButtonListAPI() {
   tabList.value = res.data || []
 }
 
-let router= useRouter()
+const router = useRouter()
 function handleLink(item) {
   // console.log(item)
   trace({
@@ -65,8 +65,10 @@ function handleClose(goName: any) {
       <div class="relative" style="width: 100%;height: 100%;">
         <div class="scroll" style="width: 100%;height: 100%;overflow-y: scroll;">
           <div class="flex pl-[24px] pr-[80px] h-full" style="width: max-content;">
-            <div v-for="(item, i) of tabList" :key="i" class="mr-[34px] flex items-center cursor-pointer tab"
-              @click="handleLink(item)">
+            <div
+              v-for="(item, i) of tabList" :key="i" class="mr-[34px] flex items-center cursor-pointer tab"
+              @click="handleLink(item)"
+            >
               <div>
                 <div class="img w-[40px] h-[40px] flex items-center justify-center m-auto">
                   <img :src="item.iconUrl" class="w-[26px] h-[26px] m-auto" alt="">
@@ -82,7 +84,8 @@ function handleClose(goName: any) {
       <div class="absolute flex justify-center items-center money" style="right:0;top:0;width: 100px;height: 100%;">
         <NPopover trigger="click" :duration="500" @update:show="() => userStore.getBalanceInfo()">
           <template #trigger>
-            <div class="btn flex justify-center items-center" style="width: 54px;
+            <div
+              class="btn flex justify-center items-center" style="width: 54px;
             height: 27px;
             font-size: 11px;
             font-weight: 600;
@@ -90,12 +93,15 @@ function handleClose(goName: any) {
             line-height: 15px;
             background: linear-gradient(90deg, #1F2654 0%, #2D3253 100%);
             border-radius: 13px;
-        ">
+        "
+            >
               余额
             </div>
           </template>
-          <div v-for="(row, i) of userStore.packageList" :key="i"
-            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
+          <div
+            v-for="(row, i) of userStore.packageList" :key="i"
+            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
+          >
             <div>
               <div class="flex justify-between">
                 <span class="mr-4">{{ row.title }}</span>
@@ -118,12 +124,12 @@ function handleClose(goName: any) {
           </div>
 
           <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
-            <div style="width:200px">
+            <div style="width:240px">
               <span class="mr-4">免费字符数：{{ residueCountFree }}</span>
             </div>
           </div>
           <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
-            <div style="width:200px">
+            <div style="width:240px">
               <span class="mr-4">付费字符数：{{ residueCountPay }}</span>
             </div>
           </div>

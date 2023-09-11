@@ -2,32 +2,24 @@
 import { ref } from 'vue'
 import { showToast } from 'vant'
 import { useGo } from '@/utils/router'
-import item1 from '@/assets/my/item1.png'
-import item2 from '@/assets/my/item2.png'
-import item3 from '@/assets/my/item3.png'
-import item4 from '@/assets/my/item4.png'
-import item5 from '@/assets/my/item5.png'
-import card2 from '@/assets/my/card2.png'
-import card3 from '@/assets/my/card3.png'
-import card4 from '@/assets/my/card4.png'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useUserStore } from '@/store'
 import { useAuthStoreWithout, useChatStore } from '@/store/modules'
 import { SvgIcon } from '@/components/common'
+import { openWebView } from '@/utils/jumpLink'
 const go = useGo()
 const chatStore = useChatStore()
 const userStore = useUserStore()
 const useAuthStore = useAuthStoreWithout()
 userStore.residueCountAPI()
-import { openWebView }  from '@/utils/jumpLink'
 
 const infoList = ref([
-  { title: '设置', img: item1, callBack: () => { go({ name: 'setting' }) } },
-  { title: '在线客服', img: item2, callBack: () => { openWebView('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true') } },
-  { title: '问题反馈', img: item3, callBack: () => { openWebView('https://chatmoss.feishu.cn/share/base/form/shrcnayy8oLPuz44E8fd0Nkztug') } },
+  { title: '设置', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item1.png', callBack: () => { go({ name: 'setting' }) } },
+  { title: '在线客服', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item2.png', callBack: () => { openWebView('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true') } },
+  { title: '问题反馈', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item3.png', callBack: () => { openWebView('https://chatmoss.feishu.cn/share/base/form/shrcnayy8oLPuz44E8fd0Nkztug') } },
   {
     title: '帮助文档',
-    img: item4,
+    img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item4.png',
     callBack: () => {
       go({
         name: 'h5',
@@ -37,14 +29,14 @@ const infoList = ref([
       })
     },
   },
-  { title: '使用统计', img: item5, callBack: () => { showToast('暂未开放') } },
-  // { title: '分销', img: item6, callBack: () => { showToast('暂未开发') } }
+  { title: '使用统计', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item5.png', callBack: () => { showToast('即将开放，敬请期待~') } },
+  // { title: '分销', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item6.png', callBack: () => { showToast('即将开放，敬请期待~') } }
 ])
 
 const cardList = ref([
   // { title: '实名认证', img: card1, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true','_blank'); } },
-  { title: '隐私协议', img: card2, callBack: () => { openWebView('https://chatmoss.feishu.cn/wiki/YqbswQDH3iSaltkVMv4cjzghn5c') } },
-  { title: '用户协议', img: card3, callBack: () => { openWebView('https://chatmoss.feishu.cn/wiki/DRwDwcl5EiO9YakBPHgcAcD8n3e') } },
+  { title: '隐私协议', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/card2.png', callBack: () => { openWebView('https://chatmoss.feishu.cn/wiki/YqbswQDH3iSaltkVMv4cjzghn5c') } },
+  { title: '用户协议', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/card3.png', callBack: () => { openWebView('https://chatmoss.feishu.cn/wiki/DRwDwcl5EiO9YakBPHgcAcD8n3e') } },
 
 ])
 
@@ -179,7 +171,7 @@ function handleClick(row) {
       <div class="px-[16px] cursor-pointer card-item" @click="logout">
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px]">
           <div class="flex items-center ">
-            <img :src="card4" style="width: 22px;" alt="">
+            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/card4.png" style="width: 22px;" alt="">
             <div class="title">
               退出登录
             </div>
@@ -261,7 +253,7 @@ function handleClick(row) {
   max-width: 1000px;
   margin: 0 auto;
   background-size: contain;
-  background-image: url('@/assets/my/bg.png');
+  background-image: url('https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/bg.png');
   background-color: #F6F7FA;
   // background: #F6F7FA;
   background-repeat: no-repeat;

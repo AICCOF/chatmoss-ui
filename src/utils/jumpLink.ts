@@ -5,19 +5,21 @@ export function jumpLink(json, router) {
   const go = useGo(router)
   if (json.type === 'path') {
     go({
-      name: json.info.path
+      name: json.info.path,
     })
-  } else if (json.type === 'web') {
+  }
+  else if (json.type === 'web') {
     if (json.info.type === 'openLink') {
       // win
       let dom = json.info.url
       dom = replaceDom(dom)
-      let url = `${dom}?token=${getToken()}&time=${new Date().getTime()}`
+      const url = `${dom}?token=${getToken()}&time=${new Date().getTime()}`
       openWebView(url)
-    } else {
+    }
+    else {
       go({
         name: 'h5',
-        query: json.info
+        query: json.info,
       })
     }
   }
@@ -26,24 +28,23 @@ export function jumpLink(json, router) {
 export function openWebView(url) {
   // window.open(url, '_blank')
 
-  let dom = document.createElement('a');
-  dom.href = url;
+  const dom = document.createElement('a')
+  dom.href = url
   dom.target = '_blank'
-  dom.style.display='none'
+  dom.style.display = 'none'
 
-  document.body.appendChild(dom);
-  dom.click();
+  document.body.appendChild(dom)
+  dom.click()
 
   setTimeout(() => {
     document.body.removeChild(dom)
-  }, 3000);
-
+  }, 3000)
 }
 
 export function replaceDom(dom) {
-  if (location.origin == 'http://localhost') {
+  if (location.origin == 'http://localhost')
     return dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
-  } else {
+
+  else
     return dom
-  }
 }

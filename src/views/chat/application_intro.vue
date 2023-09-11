@@ -1,21 +1,20 @@
 <script setup lang='ts'>
+import { showImagePreview } from 'vant'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
-import { showImagePreview } from 'vant';
 async function handlePreImg(row) {
   if (row.images && row.images.length > 0) {
     showImagePreview({
       images: row.images,
       closeable: true,
-    });
+    })
   }
-
 }
 </script>
 
 <template>
   <div>
-    <div v-if="userStore.currentApp" style="position: relative;" class="no-data-info-text text-left notice">
+    <div v-if="userStore.currentApp" style="position: relative;" class="no-data-info-text text-left notice notice-decorate">
       <div class="flex">
         <div>
           <img :src="userStore.currentApp.iconUrl" alt="" style="min-width:44px;height:44px;margin-right: 4px;">
@@ -28,7 +27,7 @@ async function handlePreImg(row) {
             {{ userStore.currentApp.desc }}
           </div>
         </div>
-        <button class="tip-btn" v-if="userStore.currentApp.images && userStore.currentApp.images.length>0" @click="handlePreImg(userStore.currentApp)">
+        <button v-if="userStore.currentApp.images && userStore.currentApp.images.length > 0" class="tip-btn" @click="handlePreImg(userStore.currentApp)">
           使用说明
         </button>
       </div>
@@ -49,6 +48,12 @@ async function handlePreImg(row) {
   // max-width: 800px;
   margin: 0 auto;
   margin-bottom: 20px;
+}
+
+.notice-decorate {
+	padding: 10px !important;
+	background-color: var(--moss-tip-bg-color);
+	border-radius: 10px;
 }
 
 .guideMsg {

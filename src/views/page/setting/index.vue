@@ -144,8 +144,10 @@ function setOpenaiVersion(action) {
           <!-- <span>{{ plusEndTime }}到期</span> -->
         </div>
         <div class="flex">
-          <div v-if="userStore.userInfo.user && userStore.userInfo.user.email" id="question-push"
-            class="mr-4 btn cursor-pointer" @click="() => { go({ name: 'feedback' }) }">
+          <div
+            v-if="userStore.userInfo.user && userStore.userInfo.user.email" id="question-push"
+            class="mr-4 btn cursor-pointer" @click="() => { go({ name: 'feedback' }) }"
+          >
             问题反馈
           </div>
           <div class="flex items-center btn cursor-pointer" @click="() => { go({ name: 'forget' }) }">
@@ -213,8 +215,10 @@ function setOpenaiVersion(action) {
           <div class="flex justify-between">
             <div>OpenAI模型选择</div>
             <div>
-              <van-popover v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
-                @select="setOpenaiVersion">
+              <van-popover
+                v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
+                @select="setOpenaiVersion"
+              >
                 <template #reference>
                   <div class="footer-item footer-item-btn footer-item-btn1 model-version " style="margin-right: 0px;">
                     {{ userStore.getModeVersion.viewName }}
@@ -236,8 +240,10 @@ function setOpenaiVersion(action) {
           <div class="flex justify-between items-center">
             <div> ChatMoss主题设定</div>
             <div class="flex">
-              <NSwitch v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
-                @update:value="handleUpdateValue" />
+              <NSwitch
+                v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
+                @update:value="handleUpdateValue"
+              />
               <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
             </div>
           </div>
@@ -247,8 +253,10 @@ function setOpenaiVersion(action) {
           <div class="flex justify-between items-center">
             <div> 回答模式</div>
             <div class="flex">
-              <NSwitch v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
-                @update:value="handleModeValue" />
+              <NSwitch
+                v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
+                @update:value="handleModeValue"
+              />
               <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
             </div>
           </div>
@@ -256,18 +264,6 @@ function setOpenaiVersion(action) {
 
         <van-divider />
 
-        <div class="justify-between">
-          <div>注销</div>
-        </div>
-        <div class="flex mt-2 justify-between">
-          <div class="flex mr-[30px]" style="margin-top: 10px;  font-size: 12px">
-            注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
-          </div>
-
-          <van-button class="btn-primary" size="small" @click="handleLogout">
-            注销
-          </van-button>
-        </div>
         <NDivider />
 
         <div class="justify-between">
@@ -279,8 +275,23 @@ function setOpenaiVersion(action) {
             确定
           </van-button>
         </div>
+
         <NDivider />
+
         <div class="justify-between">
+          <div>注销</div>
+        </div>
+        <div class="flex mt-2 justify-between">
+          <div class="flex mr-[30px]" style="margin-top: 10px;  font-size: 12px">
+            注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
+          </div>
+
+          <van-button style="white-space: nowrap;" class="btn-primary" size="small" @click="handleLogout">
+            注销
+          </van-button>
+        </div>
+        <NDivider />
+        <!-- <div class="justify-between">
           <div>
             <span>本机累计使用字符数:</span>
             <span class="title-h2">未知</span>
@@ -288,14 +299,17 @@ function setOpenaiVersion(action) {
           <div class="tip-text-input">
             小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
-    <Modal v-model:visible="open" :title="null" :footer="null" centered class="self-model" style="width: fit-content"
-      @cancel="handleClose">
+    <Modal
+      v-model:visible="open" :title="null" :footer="null" centered class="self-model" style="width: fit-content"
+      @cancel="handleClose"
+    >
       <div style="width: 410px; height: 310px; overflow: hidden; border-radius: 16px; background: #fff">
-        <div style="
+        <div
+          style="
             width: 410px;
             height: 70px;
             background: linear-gradient(90deg, #756df2 0%, #756df2 100%);
@@ -304,10 +318,12 @@ function setOpenaiVersion(action) {
             font-weight: 600;
             line-height: 70px;
             text-align: center;
-          ">
+          "
+        >
           注销账号
         </div>
-        <div class="" style="
+        <div
+          class="" style="
             box-sizing: border-box;
             margin-top: 50px;
             padding: 0 27px;
@@ -315,7 +331,8 @@ function setOpenaiVersion(action) {
             font-size: 16px;
             font-weight: 500;
             line-height: 22px;
-          ">
+          "
+        >
           是否注销账号，注销账号之后，账号数据将会被全部清空，不可恢复，账号也不可重新注册
         </div>
 
@@ -323,7 +340,8 @@ function setOpenaiVersion(action) {
           <div class="btn-confirm" :class="[secondsToGo === 0 ? 'active' : '']" @click="handleConfirm">
             确认<span v-if="secondsToGo > 0">（{{ secondsToGo }}）</span>
           </div>
-          <div style="
+          <div
+            style="
               width: 170px;
               height: 54px;
               border-radius: 8px;
@@ -333,7 +351,8 @@ function setOpenaiVersion(action) {
               font-weight: 500;
               line-height: 54px;
               text-align: center;
-            " @click="() => (open = false)">
+            " @click="() => (open = false)"
+          >
             取消
           </div>
         </div>
