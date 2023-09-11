@@ -1182,7 +1182,7 @@ function handleDump(item) {
             <div class="moss-btns flex justify-between space-x-2 w-full">
               <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt"
                 class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C] " :bordered="false" autofocus type="textarea"
-                :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="placeholder" @keydown="handleEnter" />
+                :autosize="{ minRows: 1, maxRows: 3 }" :placeholder="placeholder" @keydown="handleEnter" style="padding-bottom: 50px;"/>
               <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />

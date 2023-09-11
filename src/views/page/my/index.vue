@@ -19,11 +19,12 @@ const chatStore = useChatStore()
 const userStore = useUserStore()
 const useAuthStore = useAuthStoreWithout()
 userStore.residueCountAPI()
+import { openWebView }  from '@/utils/jumpLink'
 
 const infoList = ref([
   { title: '设置', img: item1, callBack: () => { go({ name: 'setting' }) } },
-  { title: '在线客服', img: item2, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true', '_blank') } },
-  { title: '问题反馈', img: item3, callBack: () => { window.open('https://chatmoss.feishu.cn/share/base/form/shrcnayy8oLPuz44E8fd0Nkztug', '_blank') } },
+  { title: '在线客服', img: item2, callBack: () => { openWebView('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true') } },
+  { title: '问题反馈', img: item3, callBack: () => { openWebView('https://chatmoss.feishu.cn/share/base/form/shrcnayy8oLPuz44E8fd0Nkztug') } },
   {
     title: '帮助文档',
     img: item4,
@@ -42,8 +43,8 @@ const infoList = ref([
 
 const cardList = ref([
   // { title: '实名认证', img: card1, callBack: () => { window.open('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true','_blank'); } },
-  { title: '隐私协议', img: card2, callBack: () => { window.open('https://chatmoss.feishu.cn/wiki/YqbswQDH3iSaltkVMv4cjzghn5c', '_blank') } },
-  { title: '用户协议', img: card3, callBack: () => { window.open('https://chatmoss.feishu.cn/wiki/DRwDwcl5EiO9YakBPHgcAcD8n3e', '_blank') } },
+  { title: '隐私协议', img: card2, callBack: () => { openWebView('https://chatmoss.feishu.cn/wiki/YqbswQDH3iSaltkVMv4cjzghn5c') } },
+  { title: '用户协议', img: card3, callBack: () => { openWebView('https://chatmoss.feishu.cn/wiki/DRwDwcl5EiO9YakBPHgcAcD8n3e') } },
 
 ])
 

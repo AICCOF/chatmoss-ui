@@ -13,7 +13,7 @@ export function jumpLink(json, router) {
       let dom = json.info.url
       dom = replaceDom(dom)
       let url = `${dom}?token=${getToken()}&time=${new Date().getTime()}`
-      window.open(url, '_blank')
+      openWebView(url)
     } else {
       go({
         name: 'h5',
@@ -23,10 +23,27 @@ export function jumpLink(json, router) {
   }
 }
 
+export function openWebView(url) {
+  // window.open(url, '_blank')
+
+  let dom = document.createElement('a');
+  dom.href = url;
+  dom.target = '_blank'
+  dom.style.display='none'
+
+  document.body.appendChild(dom);
+  dom.click();
+
+  setTimeout(() => {
+    document.body.removeChild(dom)
+  }, 3000);
+
+}
+
 export function replaceDom(dom) {
   if (location.origin == 'http://localhost') {
     return dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
-  }else{
+  } else {
     return dom
   }
 }
