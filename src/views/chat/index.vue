@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage, NCarousel, NCarouselItem } from 'naive-ui'
+import { NButton, NCard, NCarousel, NCarouselItem, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { showConfirmDialog } from 'vant'
 import { Modal } from 'ant-design-vue'
 import { Message } from './components'
@@ -11,6 +11,8 @@ import Guide from './guide.vue'
 import applicationSlide from './applicationSlide.vue'
 import Footer from './layout/footerNew/index.vue'
 import applicationIntro from './application_intro.vue'
+import Sider from './layout/sider/index.vue'
+import Header from './layout/header/index.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
@@ -24,11 +26,10 @@ import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
 import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
 import { checkPlugin, execPlugin } from '@/api/plugin'
-import Sider from './layout/sider/index.vue'
-import Header from './layout/header/index.vue'
 import { getButtonList } from '@/api/application'
 import { trace } from '@/api/invite'
-
+import { jumpLink } from '@/utils/jumpLink'
+import { useRouter } from 'vue-router'
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
 })
@@ -501,7 +502,8 @@ async function replayQuestions(message, opt) {
         error: true,
         loading: false,
       })
-    } else {
+    }
+    else {
 
     }
   }
@@ -826,7 +828,8 @@ async function newQuestions(message) {
 
         userStore.residueCountAPI()
         loading.value = false
-      } else {
+      }
+      else {
         loading.value = false
       }
     }, 2000)
@@ -1013,12 +1016,12 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
-let tabList = ref([])
+const tabList = ref([])
 getButtonListAPI()
 async function getButtonListAPI() {
-  let res = await getButtonList({
-    type: 1
-  });
+  const res = await getButtonList({
+    type: 1,
+  })
   // console.log(res)
   tabList.value = res.data || []
 }
@@ -1026,45 +1029,34 @@ function handleNewPerson() {
   trace({
     eventName: 'h5Click',
     customField: {
-      scene: "新人礼包", // 场景
-    }
+      scene: '新人礼包', // 场景
+    },
   })
   go({
-    name: 'h5', query: {
-      url: 'http://h5.aihao123.cn/pages/app/new-persion/index.html'
-    }
+    name: 'h5',
+    query: {
+      url: 'http://h5.aihao123.cn/pages/app/new-persion/index.html',
+    },
   })
 }
-
+let router = useRouter()
 function handleDump(item) {
   trace({
     eventName: 'h5Click',
     customField: {
-      scene: "首页banner", // 场景
-      id: item.id // 对应的首页banner的ID
-    }
+      scene: '首页banner', // 场景
+      id: item.id, // 对应的首页banner的ID
+    },
   })
-  let json = JSON.parse(item.jumpUrl)
-
-  if (json.type === 'path') {
-    go({
-      name: json.info.path
-    })
-  } else {
-    go({
-      name: 'h5',
-      query: json.info
-    })
-  }
-
+  const json = JSON.parse(item.jumpUrl)
+  jumpLink(json, router)
 }
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
-    <img src="@/assets/gift/icon-gift.png" class="element-to-animate" alt=""
-      style="position: fixed;right:11px;top:105px;width: 110px;z-index: 1000;" @click.stop="handleNewPerson"
-      v-if="userStore.newUser">
+    <img v-if="userStore.newUser" src="@/assets/gift/icon-gift.png" class="element-to-animate" alt=""
+      style="position: fixed;right:11px;top:105px;width: 110px;z-index: 1000;" @click.stop="handleNewPerson">
 
     <Sider />
     <Header />
@@ -1094,40 +1086,39 @@ function handleDump(item) {
 
               <!-- 空态占位图 -->
               <div style="width: 100%;">
-                <n-carousel autoplay dot-placement="top" mousewheel show-arrow
+                <NCarousel autoplay dot-placement="top" mousewheel show-arrow
                   style="width: 80%;max-width:500px;margin: 0 auto;" :interval="3000">
-                  <n-carousel-item v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
-                    <img :src="item.iconUrl"
+                  <NCarouselItem v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
+                    <img class="cursor-pointer" :src="item.iconUrl"
                       style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
                       @click="handleDump(item)">
-                  </n-carousel-item>
+                  </NCarouselItem>
 
                   <template #arrow="{ prev, next }">
                     <div class="custom-arrow">
-                      <button type="button" @click="next"  style="    
+                      <button type="button" style="
                         position: absolute;
                         right: 10px;
                         top: 50%;
                         margin-top: -15px;
                         font-size: 30px;
                         color:rgb(0, 122, 255);
-                      ">
+                      " @click="next">
                         <!-- <SvgIcon icon="uiw:right" class="icon" /> -->
-                        <img src="@/assets/main/icon-left-arrow.png" style="    width: 40px;transform: rotateZ(180deg);" alt="">
+                        <img src="@/assets/main/icon-left-arrow.png" style="width: 40px;transform: rotateZ(180deg);"
+                          alt="">
                       </button>
-                      <button type="button" @click="prev" style="    
+                      <button type="button" style="
                         position: absolute;
                         left:10px;
                         top: 50%;
                         margin-top: -15px;
                         font-size: 30px;
                         color:rgb(0, 122, 255);
-                      ">
+                      " @click="prev">
                         <img src="@/assets/main/icon-left-arrow.png" style="    width: 40px;" alt="">
                       </button>
                     </div>
-
-
                   </template>
                   <template #dots="{ total, currentIndex, to }">
                     <div class="custom-dots flex items-center justify-center" style="
@@ -1141,8 +1132,8 @@ function handleDump(item) {
                           margin: 0;
                           padding: 0;
                       ">
-                        <li v-for="index of total" :key="index" @click="to(index - 1)" :style="{
-                          backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)'
+                        <li v-for="index of total" :key="index" :style="{
+                          backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)',
                         }" style="display: inline-block;
                           width: 12px;
                           height: 4px;
@@ -1150,14 +1141,11 @@ function handleDump(item) {
                           border-radius: 4px;
                           transition: width 0.3s, background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                           cursor: pointer;
-                        ">
-                        </li>
-
+                        " @click="to(index - 1)" />
                       </ul>
                     </div>
-
                   </template>
-                </n-carousel>
+                </NCarousel>
                 <!-- <van-swipe>
                   <van-swipe-item v-for="(item, i) of tabList" :key="i">
                     <img :src="item.iconUrl" alt="" style="width: 100%;border-radius: 10px;" @click="handleDump(item)">
@@ -1165,7 +1153,6 @@ function handleDump(item) {
 
                 </van-swipe> -->
               </div>
-
             </div>
             <div v-if="dataSources.length" id="data-wrapper">
               <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
@@ -1230,9 +1217,7 @@ function handleDump(item) {
                     </template>
                   </NButton>
                 </div>
-
               </div>
-
             </div>
           </div>
         </footer>
@@ -1483,7 +1468,7 @@ function handleDump(item) {
 }
 
 .btn-mode {
-  opacity: .9;
+  opacity: .4;
   // background-color: var(--moss-bg-ask-color);
   border-radius: 3px;
   // color: var(--moss-text-ask-color);

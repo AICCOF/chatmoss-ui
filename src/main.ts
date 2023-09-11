@@ -3,11 +3,11 @@ import { createApp } from 'vue'
 import 'vant/lib/index.css'
 import 'v3-tour/dist/vue-tour.css'
 import '@vant/touch-emulator';
-import { NoticeBar, Overlay, Swipe, SwipeItem, Switch, Tabbar, TabbarItem } from 'vant'
+
 import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet, Divider, DropdownMenu, DropdownItem, Popover, Checkbox, CheckboxGroup, RadioGroup, Radio, Pagination } from 'vant';
 import App from './App.vue'
 import { setupI18n } from './locales'
-
+import { setupAssets } from './plugins'
 import { setupStore } from './store'
 import { setupRouter } from './router'
 
@@ -15,7 +15,8 @@ import { setupRouter } from './router'
 import getDomainAPI from './api/getDomain'
 import VueTour from 'v3-tour'
 import 'ant-design-vue/dist/antd.css';
-import { setupAssets } from './plugins'
+
+import { NoticeBar, Overlay, Swipe, SwipeItem, Switch, Tabbar, TabbarItem } from 'vant'
 
 // bootstrap()
 getDomainAPI().then(() => {

@@ -7,20 +7,13 @@ import { useBack } from '@/utils/router'
 import { getToken } from '@/store/modules/auth/helper'
 const router = useRouter()
 const back = useBack()
-console.log(router)
-
-onMounted(() => {
-})
-
+import { jumpLink, replaceDom } from '@/utils/jumpLink'
 
 const url = computed(() => {
-  console.log(router.currentRoute)
+  // console.log(router.currentRoute)
   let dom = router.currentRoute.value.query.url
 
-   if (location.origin == 'http://localhost') {
-    dom = dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
-  }
-  // return `http://127.0.0.1:5173/pages/app/task/index.html?token=${getToken()}&time=${new Date().getTime()}`
+  dom = replaceDom(dom)
   return `${dom}?token=${getToken()}&time=${new Date().getTime()}`
 })
 </script>

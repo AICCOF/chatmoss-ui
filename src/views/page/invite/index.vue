@@ -1,19 +1,17 @@
 <script lang="ts" setup>
-import { useMessage } from 'naive-ui'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
 import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
-
+import {  replaceDom } from '@/utils/jumpLink'
 onMounted(() => {
 })
 
 let dom = 'http://h5.aihao123.cn/pages/app/invite-new/index.html'
 
-if (location.origin == 'http://localhost') {
-  dom = dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
-}
+dom = replaceDom(dom)
+
 const url = ref(`${dom}?token=${getToken()}&time=${new Date().getTime()}`)
 </script>
 

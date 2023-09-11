@@ -55,7 +55,7 @@ let tabList = ref([
     img: icontem3
   }
 ])
-console.log(router.currentRoute)
+// console.log(router.currentRoute)
 let active = ref(router.currentRoute.value.path)
 
 function handleChange(path) {

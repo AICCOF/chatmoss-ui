@@ -1,47 +1,40 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
+import { NButton, NPopover, NTag } from 'naive-ui'
 import { useUserStore } from '@/store'
-const userStore = useUserStore()
 import { getButtonList } from '@/api/application'
 import { useGo } from '@/utils/router'
-import { NButton, NPopover, NTag } from 'naive-ui'
 import { trace } from '@/api/invite'
+import { jumpLink } from '@/utils/jumpLink'
+import { useRouter } from 'vue-router'
+const userStore = useUserStore()
 const go = useGo()
-let tabList = ref([
+const tabList = ref([
 
 ])
 
 getButtonListAPI()
 async function getButtonListAPI() {
-  let res = await getButtonList({
-    type: 0
-  });
+  const res = await getButtonList({
+    type: 0,
+  })
   console.log(res)
   tabList.value = res.data || []
 }
 
+let router= useRouter()
 function handleLink(item) {
   // console.log(item)
   trace({
     eventName: 'h5Click',
     customField: {
-      scene: "首页banner", // 场景
-      id: item.id // 对应的首页banner的ID
-    }
+      scene: '首页banner', // 场景
+      id: item.id, // 对应的首页banner的ID
+    },
   })
-  let json = JSON.parse(item.jumpUrl)
+  const json = JSON.parse(item.jumpUrl)
 
-  if (json.type === 'path') {
-    go({
-      name: json.info.path
-    })
-  } else {
-    go({
-      name: 'h5',
-      query: json.info
-    })
-  }
-
+  jumpLink(json, router)
 }
 // moss数量
 const residueCountPay = computed(() => {
@@ -76,18 +69,17 @@ function handleClose(goName: any) {
               @click="handleLink(item)">
               <div>
                 <div class="img w-[40px] h-[40px] flex items-center justify-center m-auto">
-                  <img :src="item.iconUrl" class="w-[30px] h-[30px] m-auto" alt="">
+                  <img :src="item.iconUrl" class="w-[26px] h-[26px] m-auto" alt="">
                 </div>
-                <div class="mt-[7px] text-center">{{ item.name }}</div>
+                <div class="mt-[7px] text-center">
+                  {{ item.name }}
+                </div>
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
       <div class="absolute flex justify-center items-center money" style="right:0;top:0;width: 100px;height: 100%;">
-
         <NPopover trigger="click" :duration="500" @update:show="() => userStore.getBalanceInfo()">
           <template #trigger>
             <div class="btn flex justify-center items-center" style="width: 54px;
@@ -144,7 +136,6 @@ function handleClose(goName: any) {
             </NButton>
           </div>
         </NPopover>
-
       </div>
     </header>
   </transition>
@@ -168,7 +159,6 @@ function handleClose(goName: any) {
     border-radius: 10px;
   }
 }
-
 
 .tab {
   :hover {
