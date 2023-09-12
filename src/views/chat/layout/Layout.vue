@@ -134,6 +134,7 @@ function handleChange(path) {
 }
 .element-to-animate1 {
   /* 元素的初始高度 */
-  // height: 62px;
+  // height: 60px;
+  transition: all 0.3s;
 }
 </style>

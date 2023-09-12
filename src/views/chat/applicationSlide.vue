@@ -29,13 +29,13 @@ function mouseenter() {
     </NDrawer>
     <!-- @mouseenter="() => userStore.sliderToggleMode()" -->
 
-    <div class="absolute  top-[180px] z-10 w-[80px] h-[80px] flex items-center justify-start" @mouseenter="mouseenter">
+    <div style="cursor: pointer;" class="absolute  top-[180px] z-10 w-[40px] h-[60px] flex items-center justify-start" @mouseenter="mouseenter">
       <div
         class="m-pointer plugin-btn  w-[30px] h-[30px] rounded-full  overflow bg-[#00000033] -ml-[15px] text-[#fff] dark:bg-[#ffffff33] text-[24px] flex items-center justify-center pl-[10px]"
-        style="" >
+        style=""
+      >
         <SvgIcon icon="formkit:right" />
       </div>
     </div>
-
   </div>
 </template>

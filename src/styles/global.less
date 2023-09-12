@@ -112,13 +112,33 @@ fade1-enter-active,
 
 .height-enter-active,
 .height-leave-active {
-	transition: all 0.3s;
-	height: 62px;
+	transition: 60px ;
 	overflow: hidden;
 	/* 过渡的持续时间 */
 }
 
-.height-enter,
+.height-enter-from{
+	height: 0;
+	opacity: 0;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
+.height-enter-to {
+	height: 60px;
+	opacity: 1;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
+
+.height-leave-from {
+	height: 60px;
+	opacity: 1;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
 .height-leave-to {
 	height: 0;
 	opacity: 0;
@@ -126,6 +146,7 @@ fade1-enter-active,
 	overflow: hidden;
 	/* 隐藏超出部分 */
 }
+
 
 
 @keyframes bounce-in {

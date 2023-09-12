@@ -1064,7 +1064,7 @@ function handleDump(item) {
     <Sider />
     <Header />
     <main class="flex flex-1 overflow-hidden">
-      <applicationSlide v-if="userStore.toggleValue && userStore.userInfo.user" />
+      <applicationSlide v-if="userStore.userInfo.user" />
 
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
         :class="[userStore.toggleValue ? 'p90' : '']">

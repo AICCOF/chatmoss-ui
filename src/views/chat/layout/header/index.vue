@@ -87,7 +87,7 @@ async function getSystemNoticeAPI() {
 
 <template>
   <transition name="height">
-    <header v-if="userStore.toggleValue" class="header-main">
+    <header v-show="userStore.toggleValue" class="header-main">
       <div class="relative" style="width: 100%;height: 100%;">
         <div class="scroll" style="width: 100%;height: 100%;overflow-y: scroll;">
           <div class="flex pl-[24px] pr-[80px] h-full" style="width: max-content;">
