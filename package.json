@@ -24,6 +24,7 @@
     "build-mac-only": "vite build --mode mac",
     "build-win-only": "vite build --mode win",
     "build-vscode-only": "vite build --mode vscode",
+    "build-cf-only": "vite build --mode cf",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
