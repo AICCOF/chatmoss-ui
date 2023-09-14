@@ -89,7 +89,7 @@ function handleBack() {
   if (router.currentRoute.value.query && router.currentRoute.value.query.invite) {
     // console.log(router.currentRoute.value.query.invite)
     go({
-      name: 'Chat',
+      name: 'chat',
       query: {
         invite: router.currentRoute.value.query.invite,
       },
@@ -187,7 +187,7 @@ async function loginEvent() {
     handleBack()
     handleClick()
     sendToMsg('chatMossToken', res.loginToken)
-    go({ name: 'Chat' })
+    go({ name: 'chat' })
   }
   catch (error: any) {
     message.info(error.msg, { duration: 5000 })

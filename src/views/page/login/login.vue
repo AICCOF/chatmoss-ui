@@ -8,6 +8,7 @@ import { getTokenByTicket, getWechatLoginQrCode } from './../../../api/weixin'
 import Page from '@/components/page/index.vue'
 import { useAuthStoreWithout, useChatStore } from '@/store'
 import { login } from '@/api'
+import { SvgIcon } from '@/components/common'
 import { sendToMsg } from '@/utils/vsCodeUtils'
 import { useBack, useGo } from '@/utils/router'
 // const props = defineProps(['tab'])
@@ -34,7 +35,7 @@ function handleBack() {
   if (router.currentRoute.value.query && router.currentRoute.value.query.invite) {
     // console.log(router.currentRoute.value.query.invite)
     go({
-      name: 'Chat',
+      name: 'chat',
       query: {
         invite: router.currentRoute.value.query.invite,
       },
@@ -44,6 +45,8 @@ function handleBack() {
     back()
   }
 }
+
+const start = ref(false)
 
 async function loginEvent() {
   try {
@@ -67,6 +70,7 @@ getWechatLoginQrCodeAPI()
 
 async function getWechatLoginQrCodeAPI() {
   clearInterval(time)
+  start.value = true;
   // console.log(router.currentRoute.value.query.invite)
   const res = await getWechatLoginQrCode({
     inviteCode: router.currentRoute.value.query.invite,
@@ -78,7 +82,8 @@ async function getWechatLoginQrCodeAPI() {
     console.log(expire_seconds)
     if (expire_seconds <= 0) {
       clearInterval(time)
-      getWechatLoginQrCodeAPI()
+      start.value = false;
+      // getWechatLoginQrCodeAPI()
     }
     getTokenByTicketAPI(res.data.ticket)
   }, 2000)
@@ -93,7 +98,7 @@ async function getTokenByTicketAPI(ticket: string) {
     authStore.setToken(res.data.token)
     // chatStore.chatList()
     message.info('扫码登录成功，现在可以返回继续使用啦～')
-  
+
     setTimeout(() => {
       handleBack()
       handleClick()
@@ -110,6 +115,9 @@ onUnmounted(() => {
 })
 function handleToggle() {
   type.value = type.value === 1 ? 2 : 1
+}
+function refresh(){
+ getWechatLoginQrCodeAPI();
 }
 </script>
 
@@ -137,6 +145,15 @@ function handleToggle() {
             </div>
             <div class="code top">
               <img v-if="imgUrl" :src="imgUrl" alt="">
+
+              <div class="over" v-if="!start" @click="refresh">
+                <div>
+                  <div>二维码已过期</div>
+                  <div class="flex items-center">请点击刷新
+                    <SvgIcon icon="ri:refresh-line" class="icon" />
+                  </div>
+                </div>
+              </div>
             </div>
             <!-- <div class="bottom">
               登录即同意<span class="link" @click="() => { go({ name: 'agreement' }) }">用户协议</span>和<span class="link" @click="() => { go({ name: 'privacy' }) }">隐私条款</span>
@@ -152,9 +169,9 @@ function handleToggle() {
             <div class="login cursor-pointer" @click="loginEvent">
               登录
             </div>
-            <div class="register cursor-pointer" @click="() => { go({ name: 'register' }) }">
+            <!-- <div class="register cursor-pointer" @click="() => { go({ name: 'register' }) }">
               注册
-            </div>
+            </div> -->
             <div class="register cursor-pointer" @click="() => { go({ name: 'forget' }) }">
               忘记密码
             </div>
@@ -268,7 +285,8 @@ function handleToggle() {
     max-width: 300px;
     max-height: 300px;
     min-width: 200px;
-    min-height: 200px;;
+    min-height: 200px;
+    ;
     height: 60%;
     // width:;
   }
@@ -290,11 +308,24 @@ function handleToggle() {
 
 .top {
   margin-top: 50px;
+  position: relative;
+
+  .over {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
 }
 
 .bg {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxmaWx0ZXIgeD0iLTUuNyUiIHk9Ii04LjclIiB3aWR0aD0iMTEyLjQlIiBoZWlnaHQ9IjExNy40JSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94IiBpZD0iYSI+PGZlT2Zmc2V0IGR4PSIyIiBpbj0iU291cmNlQWxwaGEiIHJlc3VsdD0ic2hhZG93T2Zmc2V0T3V0ZXIxIi8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNy41IiBpbj0ic2hhZG93T2Zmc2V0T3V0ZXIxIiByZXN1bHQ9InNoYWRvd0JsdXJPdXRlcjEiLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAuMTUgMCIgaW49InNoYWRvd0JsdXJPdXRlcjEiLz48L2ZpbHRlcj48cGF0aCBkPSJNMiAwaDMyNy41ODZhMSAxIDAgMDEuNzA3LjI5M2w0OS40MTQgNDkuNDE0YTEgMSAwIDAxLjI5My43MDdWMjY4YTIgMiAwIDAxLTIgMkgyYTIgMiAwIDAxLTItMlYyYTIgMiAwIDAxMi0yeiIgaWQ9ImIiLz48L2RlZnM+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTMzMCkiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgZmlsbD0iI0ZGRiIgd2lkdGg9IjM4MCIgaGVpZ2h0PSIyNzAiIHJ4PSIyIi8+PHBhdGggZD0iTTM2Ni44MzMgMTAuODMzdjIuMzM0aDIuMzM0di0yLjMzNGgtMi4zMzR6bS03IDE2LjMzNGgyLjMzNFYyOS41aC0yLjMzNHYtMi4zMzN6bTkuMzM0LTkuMzM0aDIuMzMzdjIuMzM0aC0yLjMzM3YtMi4zMzR6bS05LjMzNCA0LjY2N2gyLjMzNHYyLjMzM2gtMi4zMzRWMjIuNXptNC42NjctNC42NjdoMi4zMzN2Mi4zMzRIMzY0LjV2LTIuMzM0ek0zNTEuNjY3IDguNUgzNjFjLjY0NCAwIDEuMTY3LjUyMiAxLjE2NyAxLjE2N1YxOWMwIC42NDQtLjUyMyAxLjE2Ny0xLjE2NyAxLjE2N2gtOS4zMzNBMS4xNjcgMS4xNjcgMCAwMTM1MC41IDE5VjkuNjY3YzAtLjY0NS41MjItMS4xNjcgMS4xNjctMS4xNjd6bTEuMTY2IDIuMzMzdjdoN3YtN2gtN3ptMi4zMzQgMi4zMzRoMi4zMzNWMTUuNWgtMi4zMzN2LTIuMzMzem0xMC41LTQuNjY3aDQuNjY2Yy42NDUgMCAxLjE2Ny41MjIgMS4xNjcgMS4xNjd2NC42NjZjMCAuNjQ1LS41MjIgMS4xNjctMS4xNjcgMS4xNjdoLTQuNjY2YTEuMTY3IDEuMTY3IDAgMDEtMS4xNjctMS4xNjdWOS42NjdjMC0uNjQ1LjUyMi0xLjE2NyAxLjE2Ny0xLjE2N3ptMCAxNGg0LjY2NmMuNjQ1IDAgMS4xNjcuNTIyIDEuMTY3IDEuMTY3djQuNjY2YzAgLjY0NS0uNTIyIDEuMTY3LTEuMTY3IDEuMTY3aC00LjY2NmExLjE2NyAxLjE2NyAwIDAxLTEuMTY3LTEuMTY3di00LjY2NmMwLS42NDUuNTIyLTEuMTY3IDEuMTY3LTEuMTY3em0xLjE2NiAyLjMzM3YyLjMzNGgyLjMzNHYtMi4zMzRoLTIuMzM0ek0zNTEuNjY3IDIyLjVoNC42NjZjLjY0NSAwIDEuMTY3LjUyMiAxLjE2NyAxLjE2N3Y0LjY2NmMwIC42NDUtLjUyMiAxLjE2Ny0xLjE2NyAxLjE2N2gtNC42NjZhMS4xNjcgMS4xNjcgMCAwMS0xLjE2Ny0xLjE2N3YtNC42NjZjMC0uNjQ1LjUyMi0xLjE2NyAxLjE2Ny0xLjE2N3ptMS4xNjYgMi4zMzN2Mi4zMzRoMi4zMzR2LTIuMzM0aC0yLjMzNHoiIG9wYWNpdHk9Ii41IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9Ii45Ii8+PHVzZSBmaWxsPSIjMDAwIiBmaWx0ZXI9InVybCgjYSkiIHhsaW5rOmhyZWY9IiNiIi8+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYiIvPjwvZz48L3N2Zz4=);
   background-repeat: no-repeat;
   background-position: top right;
-}
-</style>
+}</style>

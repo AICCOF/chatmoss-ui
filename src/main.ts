@@ -1,8 +1,10 @@
 import { createApp } from 'vue'
+
 import 'vant/lib/index.css'
 import 'v3-tour/dist/vue-tour.css'
-import { NoticeBar, Overlay, Swipe, SwipeItem, Switch } from 'vant'
-import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet, Divider, DropdownMenu, DropdownItem, Popover, Checkbox, CheckboxGroup,RadioGroup, Radio } from 'vant';
+import '@vant/touch-emulator';
+
+import { NavBar, ConfigProvider, Tab, Tabs, Cell, CellGroup, Button, Field, Icon, Search, Sidebar, SidebarItem, Image as VanImage, Popup, ActionSheet, Divider, DropdownMenu, DropdownItem, Popover, Checkbox, CheckboxGroup, RadioGroup, Radio, Pagination } from 'vant';
 import App from './App.vue'
 import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
@@ -12,7 +14,9 @@ import { setupRouter } from './router'
 
 import getDomainAPI from './api/getDomain'
 import VueTour from 'v3-tour'
+import 'ant-design-vue/dist/antd.css';
 
+import { NoticeBar, Overlay, Swipe, SwipeItem, Switch, Tabbar, TabbarItem } from 'vant'
 
 // bootstrap()
 getDomainAPI().then(() => {
@@ -24,6 +28,7 @@ getDomainAPI().then(() => {
 
 async function bootstrap() {
   const app = createApp(App)
+  app.use(Pagination);
   app.use(ActionSheet);
   app.use(NoticeBar)
   app.use(Overlay)
@@ -53,6 +58,8 @@ async function bootstrap() {
   app.use(CheckboxGroup);
   app.use(Radio);
   app.use(RadioGroup);
+  app.use(Tabbar);
+  app.use(TabbarItem);
 
   setupAssets()
 

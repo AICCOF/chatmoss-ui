@@ -1,3 +1,11 @@
+/*
+ * @Descripttion:
+ * @version:
+ * @Author: Hamster Huang
+ * @Date: 2023-07-29 14:13:54
+ * @LastEditors: Hamster Huang
+ * @LastEditTime: 2023-07-29 14:13:54
+ */
 export const ShopInfo = {
   score: 0,
   notices: [],
@@ -49,7 +57,7 @@ export const ShopInfo = {
     {
       title: '5美元key',
       desc: '3天质保',
-      count: 39.90,
+      count: 39.9,
       shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/zh.png',
     },
   ],
@@ -58,49 +66,55 @@ export const ShopInfo = {
       title: '基础套餐',
       desc: '900次/月(30次/天)',
       count: '29.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_1.png',
+      shopImg:
+        'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_1.png',
     },
     {
       title: '高级套餐',
       desc: '1500次/月(50次/天)',
       count: '39.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_2.png',
+      shopImg:
+        'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_2.png',
     },
     {
       title: '顶级套餐',
       desc: '3000次/月(100次/天)',
       count: '59.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_3.png',
+      shopImg:
+        'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_3_5_3.png',
     },
-
   ],
   shopsV4: [
     {
       title: '一天体验套餐',
       desc: '20次(每人限一次)',
       count: '1.01元',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_0.png',
+      shopImg:
+        'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_0.png',
     },
     {
       title: '基础套餐',
       desc: '900次/月(30次/天)',
       count: '59.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_1.png',
+      shopImg:
+        'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_1.png',
     },
     {
       title: '高级套餐',
       desc: '1500次/月(50次/天)',
       count: '89.9元/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_2.png',
+      shopImg:
+        'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_2.png',
     },
     {
       title: '顶级套餐',
       desc: '3000次/月(100次/天)',
       count: '139.9/30天',
-      shopImg: 'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_3.png',
+      shopImg:
+        'https://chatmoss-shop-1253302184.cos.ap-beijing.myqcloud.com/shop/chatmoss_4_0_3.png',
     },
   ],
-}
+};
 
 export const exchangeOptions = [
   {
@@ -115,4 +129,4 @@ export const exchangeOptions = [
     label: 'GPT-3.5_500次_100万字符数_30天有效',
     value: '1026',
   },
-]
+];

@@ -8,6 +8,7 @@ import type { Notice } from '@/store/modules/user/helper'
 import { getSystemNotice } from '@/api/personCenter'
 import { getApplicationInstallList } from '@/api/application'
 import { getBalanceInfo, getModelList } from '@/api/weixin'
+
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
@@ -18,6 +19,8 @@ export const useUserStore = defineStore('user-store', {
       appList: {},
       notices: [],
       balanceInfo: null,
+      sliderToggle: false,
+      newUser: false,
       // useKey: '1',
       isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
@@ -82,11 +85,17 @@ export const useUserStore = defineStore('user-store', {
       return true
     },
     packageList(state) {
-      let arr =[];
+      let arr = [];
       if (!state.balanceInfo)
         return []
-      
-      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5']){
+      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5-4k']) {
+        arr.push({
+          title: 'GPT3.5-4k套餐',
+          timesResidue: state.balanceInfo.timesResidue['3.5-4k'],
+          list: state.balanceInfo.orderResidue['3.5-4k'],
+        })
+      }
+      if (state.balanceInfo.timesResidue && state.balanceInfo.timesResidue['3.5']) {
         arr.push({
           title: 'GPT3.5-16k套餐',
           timesResidue: state.balanceInfo.timesResidue['3.5'],
@@ -142,6 +151,9 @@ export const useUserStore = defineStore('user-store', {
       this.useKey = '0'
       // 
     },
+    sliderToggleMode() {
+      this.sliderToggle = !this.sliderToggle
+    },
     toggleMode() {
       this.toggle = this.toggle === '0' ? "1" : '0'
       // console.log(this.toggle)
@@ -165,7 +177,10 @@ export const useUserStore = defineStore('user-store', {
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
+        this.newUser = res.data.newUser
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
+
+
         if (res.data && res.data.user) {
           this.centerPicUrl = res.data.centerPicUrl
           this.userInfo.user.authed = false
@@ -174,8 +189,11 @@ export const useUserStore = defineStore('user-store', {
         else {
           if (getToken())
             this.isAuth = 3
-          else
+          else {
+            this.userInfo.user = null
             this.isAuth = 1
+          }
+
         }
 
         return Promise.resolve(res)
@@ -201,6 +219,43 @@ export const useUserStore = defineStore('user-store', {
     async getApplicationInstallListAPI() {
       if (getToken()) {
         const res = await getApplicationInstallList()
+
+        res.data.installList.map((row => {
+          if (row.paramConfigs) {
+
+            row.paramConfigs.map(row => {
+              row.choicesMap = {};
+              if (!row.choiceSelect) {
+                row.choiceSelect = row.defaultChoice
+              }
+              row.choices.map(data => {
+                row.choicesMap[data.id] = data
+              })
+            })
+          }
+
+          return {
+            ...row
+          }
+        }))
+
+        res.data.systemList.map((row => {
+          if (row.paramConfigs) {
+            row.paramConfigs.map(row => {
+              row.choicesMap = {};
+              if (!row.choiceSelect) {
+                row.choiceSelect = row.defaultChoice
+              }
+              row.choices.map(data => {
+                row.choicesMap[data.id] = data
+              })
+            })
+          }
+
+          return {
+            ...row
+          }
+        }))
         this.appList = res.data || {
           installList: [],
           systemList: [],

@@ -20,6 +20,9 @@ import sign from '@/views/page/sign/index.vue'
 import feedback from '@/views/page/feedback/index.vue'
 import appList from '@/views/page/appList/index.vue'
 import createApp from '@/views/page/createApp/index.vue'
+import source from '@/views/page/source/index.vue'
+import my from '@/views/page/my/index.vue'
+import h5 from '@/views/page/h5/index.vue'
 import c404 from '@/views/exception/404/index.vue'
 import c500 from '@/views/exception/500/index.vue'
 import agreement from '@/views/page/agreement/index.vue'
@@ -32,6 +35,11 @@ const routes: RouteRecordRaw[] = [
     component: PageLayout,
     // redirect: '/page/shop',
     children: [
+      {
+        path: 'h5',
+        name: 'h5',
+        component: h5,
+      },
       {
         path: 'agreement',
         name: 'agreement',
@@ -127,8 +135,18 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '/chat/:uuid?',
-        name: 'Chat',
-        component: chat,
+        name: 'chat',
+        component: chat
+      },
+      {
+        path: '/source',
+        name: 'source',
+        component: source
+      },
+      {
+        path: '/my',
+        name: 'my',
+        component: my
       },
     ],
   },

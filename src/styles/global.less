@@ -22,6 +22,7 @@ body {
 	width: 32px !important;
 	height: 32px !important;
 	opacity: 0;
+	display: none !important;
 }
 
 .wrap-main {
@@ -89,25 +90,64 @@ body {
 	}
 }
 
-// fade-enter-active,
-// .fade-leave-active {
-// 	transition: opacity .5s;
-// }
+fade1-enter-active,
+.fade1-leave-active {
+	transition: opacity .3s;
+}
 
-.fade-enter-active {
-	animation: bounce-in .5s;
+.fade1-enter-active {
+	animation: bounce-in .3s;
 	// transition: all 1s;
 }
 
-.fade-enter,
-.fade-leave-to {
+.fade1-enter,
+.fade1-leave-to {
 	opacity: 0;
 }
 
-.fade-leave-active {
-	animation: bounce-in .5s reverse;
+.fade1-leave-active {
+	animation: bounce-in .3s reverse;
 	// transition: all 1s;
 }
+
+.height-enter-active,
+.height-leave-active {
+	transition: 60px ;
+	overflow: hidden;
+	/* 过渡的持续时间 */
+}
+
+.height-enter-from{
+	height: 0;
+	opacity: 0;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
+.height-enter-to {
+	height: 60px;
+	opacity: 1;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
+
+.height-leave-from {
+	height: 60px;
+	opacity: 1;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
+.height-leave-to {
+	height: 0;
+	opacity: 0;
+	/* 初始高度和最终高度 */
+	overflow: hidden;
+	/* 隐藏超出部分 */
+}
+
+
 
 @keyframes bounce-in {
 	0% {
@@ -136,18 +176,19 @@ body {
 }
 
 .footer-item-btn {
+	white-space: nowrap;
 	display: flex;
 	align-items: center;
-	background: var(--moss-bg-btn-color);
+	// background: var(--moss-bg-btn-color);
 	border-radius: 27px;
-	color: var(--moss-text-ask-color);
+	// color: var(--moss-text-ask-color);
 	padding: 2px 8px;
 	margin-top: 5px;
 	margin-bottom: 5px;
 	font-size: 12px;
 
 	&.model-version {
-		background-color: var(--moss-bg-ask-color);
+		// background-color: var(--moss-bg-ask-color);
 	}
 
 	.icon {
@@ -163,4 +204,151 @@ body {
 .n-input .n-input__border,
 .n-base-selection .n-base-selection__border {
 	// border: 1px solid rgb(224, 224, 230) !important;
+}
+
+::-webkit-scrollbar {
+	// display: none;
+}
+
+::-webkit-scrollbar-thumb {
+	  background: #ccd0d6;
+	border-radius: 10px;
+}
+.dark {
+	::-webkit-scrollbar-thumb {
+		background: #565656;
+		border-radius: 10px;
+	}
+}
+
+.flex-center {
+	display: flex;
+	align-items: center;
+}
+
+.self-model {
+	overflow: hidden;
+	border-radius: 16px;
+
+
+
+	.ant-modal-body {
+		padding: 0;
+	}
+}
+
+.loading {
+	width: 16px;
+	height: 16px;
+	margin-right: 6px;
+	animation: spin 2s linear infinite;
+	/* 使用 @keyframes 动画 */
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+p {
+	margin-bottom: 0 !important;
+}
+
+.ant-back-top {
+	// bottom: 150px;
+}
+
+
+.my-pagination {
+	// color:var(--moss-text-ask-color);
+	margin-top: 5px;
+	border-radius: 20px;
+	// border: 1px solid var(--moss-text-ask-color);
+	height: 30px;
+	margin-left: -10px;
+
+	.van-pagination__item {
+		background-color: transparent;
+
+		&::after {
+			border: 0px;
+		}
+	}
+}
+
+.m-pointer {
+	cursor: pointer;
+}
+
+.ant-notification-notice {
+	border-radius: 12px !important;
+}
+
+.van-tabbar {
+	// height: auto;
+	height: 60px;
+	position: relative;
+	.van-tabbar-item{
+		// height: 55px;
+	}
+
+	&::after {
+		content: '';
+		display: none;
+	}
+}
+
+.my-drawer {
+
+	.n-drawer-content {
+		.n-drawer-body-content-wrapper {
+			padding: 0 !important;
+		}
+	}
+
+}
+
+.btn {
+	cursor: pointer;
+
+	&:active {
+		transform: scale(.96);
+	}
+}
+
+@keyframes scaleAnimation {
+	0% {
+		transform: scale(1);
+		/* 初始状态，不进行缩放 */
+	}
+
+	50% {
+		transform: scale(0.95);
+		/* 在动画的中间阶段进行缩放 */
+	}
+
+	100% {
+		transform: scale(1);
+		/* 回到原始大小 */
+	}
+}
+
+/* 将动画应用到需要缩放的元素上 */
+.element-to-animate {
+	animation: scaleAnimation 2s ease-in-out infinite;
+	/* 使用动画，并设定动画参数 */
+}
+
+
+.ant-switch {
+	background-color: #00000040 !important;
+}
+
+.ant-switch-checked {
+	background-color: #1890ff !important;
 }

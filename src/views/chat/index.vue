@@ -1,15 +1,19 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { NButton, NCard, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
+import { NButton, NCard, NCarousel, NCarouselItem, NInput, NModal, NSelect, useDialog, useMessage } from 'naive-ui'
 import { showConfirmDialog } from 'vant'
+import { Modal } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import Guide from './guide.vue'
-import applicationList from './applicationList.vue'
+import applicationSlide from './applicationSlide.vue'
 import Footer from './layout/footerNew/index.vue'
-import { getLatestCharReduceInfo } from './../../api/weixin'
+import applicationIntro from './application_intro.vue'
+import Sider from './layout/sider/index.vue'
+import Header from './layout/header/index.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStoreWithout, useChatStore, useUserStore, verify } from '@/store'
@@ -21,19 +25,25 @@ import vsCodeUtils from '@/utils/vsCodeUtils'
 import { localStorage } from '@/utils/storage/localStorage'
 import { getToken } from '@/store/modules/auth/helper'
 import { useGo } from '@/utils/router'
-
+import { conversationReport, getLatestCharTwoReduceInfo } from '@/api/weixin'
+import { checkPlugin, execPlugin } from '@/api/plugin'
+import { getButtonList } from '@/api/application'
+import { trace } from '@/api/invite'
+import { jumpLink } from '@/utils/jumpLink'
+const hidden = computed(() => {
+  return location.search.includes('hiddenInput')
+})
+// console.log(hidden)
 const authStore = useAuthStoreWithout()
 const go = useGo()
 
 const userStore = useUserStore()
 const showPaper = ref(false)
 const appStore = useAppStore()
-
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const NInputRef = ref<HTMLInputElement | null>(null)
 const NSelectRef = ref<HTMLInputElement | null>(null)
-
 if (!localStorage.getItem('chatMossPiecesNumber'))
   localStorage.setItem('chatMossPiecesNumber', '30')
 
@@ -48,11 +58,15 @@ if (!localStorage.getItem('chatmossMode'))
 
 // 字体初始化
 if (!localStorage.getItem('fontSizeNum')) {
-  localStorage.setItem('fontSizeNum', '100%')
+  localStorage.setItem('fontSizeNum', '90%')
 }
 else {
-  const fontSizeNumNew: any = localStorage.getItem('fontSizeNum')
-  localStorage.setItem('fontSizeNum', fontSizeNumNew.endsWith('%') ? fontSizeNumNew : `${fontSizeNumNew < 50 ? 50 : fontSizeNumNew}%`)
+  const fontSizeNumNew: any = localStorage.getItem('fontSizeNum') || '90%' // 默认值为 90%
+  let parsedFontSize = parseFloat(fontSizeNumNew)
+  if (isNaN(parsedFontSize))
+    parsedFontSize = 65 // 默认最小值
+  parsedFontSize = Math.max(65, Math.min(150, parsedFontSize)) // 范围限制
+  localStorage.setItem('fontSizeNum', `${parsedFontSize}%`)
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
@@ -69,7 +83,7 @@ useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex }
   = useChat()
-const { scrollRef, scrollToBottom, goToBottom } = useScroll()
+const { scrollRef, scrollToBottom, goToBottom, scrollToTop, isTop, isEnd } = useScroll()
 
 const dataSources = computed(() => chatStore.getChatByUuid())
 const conversationList = computed(() =>
@@ -108,7 +122,7 @@ watch(() => chatStore.getChatByUuid(), (...vals) => {
 })
 
 function handleSubmit() {
-  userStore.residueCountAPI()
+  // userStore.residueCountAPI()
   onConversation()
 }
 
@@ -155,8 +169,12 @@ let chatOptions: Record<string, any> = {
   conversationId: chatStore.getUuid,
   openaiVersion: userStore.getOpenaiVersion,
 }
-function askFn(askMsg: string) {
-  onConversation(askMsg, {})
+function askFn(askMsg: string, replayMsgId: string, position) {
+  onConversation(askMsg, {
+    replay: 1,
+    replayMsgId,
+    position,
+  })
 }
 function onlineFn(askMsg: string) {
   // console.log(askMsg, 1)
@@ -166,16 +184,30 @@ function onlineFn(askMsg: string) {
 function jarvisFn(askMsg: string) {
   onConversation(askMsg, { jarvis: 1 })
 }
-async function onConversation(askMsg?: string, opt?) {
-  if (userStore.residueCount < 200000 && userStore.isHighVersion && userStore.isHighVersionMsg) {
-    ms.error('4.0模型消耗大量字符，需20万字符才可使用。请去ChatMoss商店补充字符数或购买包月模式，或者切换至3.5模型')
-    return
-  }
-  // if (localStorage.getItem('apiKey') && userStore.isHighVersion && userStore.isHighVersionMsg) {
-  //   ms.error('请先去设置中心移除key再使用4.0进行提问')
-  //   return
-  // }
 
+function reportCallback(row: any) {
+  Modal.confirm({
+    title: '举报',
+    content: '当前回答内容您是否觉得不符合正确社会价值观，是否进行举报，我们将对这条内容进行删除处理，感谢您的反馈',
+    okText: '确定删除',
+    okType: 'danger',
+    cancelText: '取消',
+    async onOk() {
+      // console.log('OK');
+      const res = await conversationReport({
+        conversationId: row.conversationId,
+        id: row.id,
+      })
+      ms.success('举报成功')
+      row.text = res.msg || '内容不符合平台生成规定，已被清理'
+    },
+    onCancel() {
+      console.log('Cancel')
+    },
+  })
+}
+
+async function onConversation(askMsg?: string, opt?) {
   if (chatStore.isLimit && userStore.isHighVersion && userStore.isHighVersionMsg) {
     const res = await ConfirmNotice('当前问题字符数过高，请斟酌是否继续使用4.0')
     if (!res)
@@ -208,45 +240,43 @@ async function onConversation(askMsg?: string, opt?) {
     return
 
   controller = new AbortController()
-
-  await addChat(chatStore.getUuid, {
-    timestamp: new Date().getTime(),
-    createTime: new Date().toLocaleString(),
-    text: message,
-    inversion: true,
-    error: false,
-    ast: '',
-    conversationOptions: null,
-    requestOptions: { prompt: message, options: null },
-  })
-  goToBottom()
-  loading.value = true
-  prompt.value = ''
-
+  if (opt && opt.replay) {
+    // 重复提问
+    await replayQuestions(message, opt)
+  }
+  else {
+    await newQuestions(message)
+  }
+}
+async function replayQuestions(message, opt) {
   let options: Chat.ConversationRequest = {}
   const lastContext
     = conversationList.value[conversationList.value.length - 1]
       ?.conversationOptions
-
+  loading.value = true
   if (lastContext)
     options = { ...lastContext }
+  let contentList = []
+  const row = getChatByUuidAndIndex(chatStore.getUuid, opt.position)
+  if (row)
+    contentList = row.contentList || []
 
-  await addChat(chatStore.getUuid, {
+  contentList.push('')
+  updateChat(chatStore.getUuid, opt.position, {
+    ...row,
     timestamp: new Date().getTime(),
     createTime: new Date().toLocaleString(),
-    text: '',
+    contentList,
     loading: true,
-    inversion: false,
-    error: false,
-    ast: message,
-    conversationOptions: { conversationId: chatStore.getUuid },
-    requestOptions: { prompt: message, options: { ...options } },
-  })
-  scrollToBottom()
 
+  })
+  //  console.log(opt.position, getChatByUuidAndIndex(chatStore.getUuid, opt.position))
+  //  return ;
+  const selectPlugin = chatStore.getSelectPluginInfo
+  const pluginId = selectPlugin?.pluginId // 插件ID
   try {
     const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
-    console.log('chatMossPiecesNumber', chatMossPiecesNumber)
+    // console.log('chatMossPiecesNumber', chatMossPiecesNumber)
     // 在这里拼接用户所有的上下文
     let texts = message
     const token = getToken()
@@ -257,6 +287,91 @@ async function onConversation(askMsg?: string, opt?) {
       texts = `${texts} 请详细回答`
 
     // texts = compressCode(texts)
+    let execPluginResponse: any = {}
+    let pluginObj = {}
+    const isPlugin = checkValues()
+    if (selectPlugin && chatStore.getSelectPluginInfo?.select && !isPlugin)
+      ms.error('温馨提示，因为成本问题，插件功能只有3.5月卡以上付费用户才可使用，所以本次回答并未调用插件功能~如购买月卡后还有此提示，请重新登录后即可~')
+
+    if (selectPlugin && chatStore.getSelectPluginInfo?.select && isPlugin) {
+      /**
+       * 执行插件逻辑
+       */
+      chatStore.setPlugState(0)
+      const response = await checkPlugin({
+        pluginId,
+        tags: userStore.userInfo.tags,
+        messages: [
+          {
+            role: 'user',
+            content: texts,
+          },
+        ],
+      })
+      // console.log('1.判断是否执行插件', response.checkPluginInfo.function_call)
+      const fn = response.checkPluginInfo.function_call
+
+      // 执行插件内容
+      if (fn) {
+        pluginObj = {
+          pluginId,
+        }
+        updateChat(chatStore.getUuid, opt.position, {
+          ...row,
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          contentList,
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: true,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: '',
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        })
+        // 插件展示状态：0 没执行，1 执行中，2 执行完成
+        chatStore.setPlugState(1)
+        // console.log('2.插件可执行：', JSON.parse(fn.arguments))
+
+        // 执行内容
+        execPluginResponse = await execPlugin({
+          pluginId,
+          args: JSON.parse(fn.arguments),
+        })
+        // console.log('3.插件执行结果：', execPluginResponse.pluginStr)
+
+        texts = `${texts}\n|$moss${JSON.stringify(pluginObj)}$moss|${execPluginResponse.pluginStr ? execPluginResponse.pluginStr : ''
+          }`
+
+        updateChat(chatStore.getUuid, opt.position, {
+          ...row,
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          contentList,
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: true,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: execPluginResponse.pluginStr,
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        })
+      }
+    }
 
     const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
@@ -270,17 +385,25 @@ async function onConversation(askMsg?: string, opt?) {
         const xhr = event.target
         // const { responseText } = xhr
         const chunk = xhr.responseText
-        // console.log(unescape(xhr.responseText))
+        contentList[contentList.length - 1] = chunk
+
         try {
           // const data = JSON.parse(chunk)
-          updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+          updateChat(chatStore.getUuid, opt.position, {
+            ...row,
             timestamp: new Date().getTime(),
             createTime: new Date().toLocaleString(),
             text: chunk ?? '',
+            contentList,
             inversion: false,
             ast: message,
             error: false,
             loading: false,
+            pluginInfo: {
+              ast: message,
+              pluginMessage: execPluginResponse.pluginStr,
+              ...pluginObj,
+            },
             conversationOptions: {
               conversationId: chatStore.getUuid,
             },
@@ -300,6 +423,7 @@ async function onConversation(askMsg?: string, opt?) {
       ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
 
     addTextNum(texts.length)
+
     scrollToBottom()
   }
   catch (error: any) {
@@ -307,13 +431,14 @@ async function onConversation(askMsg?: string, opt?) {
 
     if (error.code === 10000) {
       showConfirmDialog({
-        title: '切换模型',
-        message: '您当前问题已经超过模型最大4k字符上下文，是否切换到16k上下文模型?',
-        confirmButtonText: '切换',
-        cancelButtonText: '不切换',
+        title: '问题',
+        message: '您当前问题已经超过模型最大上下文，是否新建问题解决此问题',
+        confirmButtonText: '新建问题',
+        cancelButtonText: '取消',
       }).then(() => {
         // on close
-        userStore.toggleOpenaiVersion()
+        // userStore.toggleOpenaiVersion();
+        chatStore.createChat()
       })
     }
     else if (error.code === 10001) {
@@ -342,7 +467,8 @@ async function onConversation(askMsg?: string, opt?) {
           })
         })
       }
-    } else if (error.code === 20000) {
+    }
+    else if (error.code === 20000) {
       showConfirmDialog({
         title: '字符已用尽',
         message: '试用字符已经用尽，目前ChatMoss 3.5登录后可免费使用，是否登录',
@@ -352,13 +478,304 @@ async function onConversation(askMsg?: string, opt?) {
         // on close
         // userStore.toggleOpenaiVersion()
         go({
-          name: 'login'
+          name: 'login',
         })
       })
     }
 
     // 答应其他信息
-    const errorMessage = error.msg
+    const errorMessage = error.msg || '已取消'
+    if (error.message === 'canceled') {
+      updateChatSome(chatStore.getUuid, opt.position, {
+        loading: false,
+      })
+      scrollToBottom()
+      return
+    }
+    // console.log('errorMessage', errorMessage)
+    contentList[contentList.length - 1] = `${errorMessage}`
+    console.log(errorMessage !== undefined)
+    if (errorMessage !== undefined) {
+      updateChatSome(chatStore.getUuid, opt.position, {
+        text: `${errorMessage || '已取消'}`,
+        contentList,
+        error: true,
+        loading: false,
+      })
+    }
+    else {
+
+    }
+  }
+  finally {
+    if (chatStore.plugState === 1)
+      chatStore.setPlugState(2) // 插件结束状态
+
+    setTimeout(() => {
+      // 问答结束后2s,去服务端拿结果。
+      if (loading.value && !verify(chatStore.getUuid)) {
+        getLatestCharTwoReduceInfo({
+          conversationId: chatStore.getUuid,
+        }).then((res) => {
+          row.mossReduceInfoList.push(res.data[0])
+          updateChat(chatStore.getUuid, opt.position, {
+            ...row,
+          })
+        })
+
+        userStore.residueCountAPI()
+        loading.value = false
+      }
+    }, 2000)
+  }
+}
+
+async function newQuestions(message) {
+  await addChat(chatStore.getUuid, {
+    timestamp: new Date().getTime(),
+    createTime: new Date().toLocaleString(),
+    text: message,
+    inversion: true,
+    error: false,
+    ast: '',
+    conversationOptions: null,
+    requestOptions: { prompt: message, options: null },
+  })
+  goToBottom()
+  loading.value = true
+  prompt.value = ''
+  const contentList = []
+
+  let options: Chat.ConversationRequest = {}
+  const lastContext
+    = conversationList.value[conversationList.value.length - 1]
+      ?.conversationOptions
+
+  if (lastContext)
+    options = { ...lastContext }
+
+  await addChat(chatStore.getUuid, {
+    timestamp: new Date().getTime(),
+    createTime: new Date().toLocaleString(),
+    text: '',
+    loading: true,
+    inversion: false,
+    error: false,
+    ast: message,
+    conversationOptions: { conversationId: chatStore.getUuid },
+    requestOptions: { prompt: message, options: { ...options } },
+  })
+  scrollToBottom()
+  const selectPlugin = chatStore.getSelectPluginInfo
+  const pluginId = selectPlugin?.pluginId // 插件ID
+  try {
+    const chatMossPiecesNumber = Number(localStorage.getItem('chatMossPiecesNumber')) + 2
+    // console.log('chatMossPiecesNumber', chatMossPiecesNumber)
+    // 在这里拼接用户所有的上下文
+    let texts = message
+    const token = getToken()
+    if (!token && verify(chatStore.getUuid))
+      texts = dataSources.value.slice(-chatMossPiecesNumber).map(item => item.text).join('\n')
+
+    if (localStorage.getItem('chatmossMode') === 'speciality')
+      texts = `${texts} 请详细回答`
+
+    // texts = compressCode(texts)
+    let execPluginResponse: any = {}
+    let pluginObj = {}
+    const isPlugin = checkValues()
+    if (token && selectPlugin && chatStore.getSelectPluginInfo?.select && !isPlugin)
+      ms.error('温馨提示，因为成本问题，插件功能只有3.5月卡以上付费用户才可使用，所以本次回答并未调用插件功能~如购买月卡后还有此提示，请重新登录后即可~')
+
+    if (token && selectPlugin && chatStore.getSelectPluginInfo?.select && isPlugin) {
+      /**
+       * 执行插件逻辑
+       */
+      chatStore.setPlugState(0)
+      const response = await checkPlugin({
+        pluginId,
+        tags: userStore.userInfo.tags,
+        messages: [
+          {
+            role: 'user',
+            content: texts,
+          },
+        ],
+      })
+      // console.log('1.判断是否执行插件', response.checkPluginInfo.function_call)
+      const fn = response.checkPluginInfo.function_call
+
+      // 执行插件内容
+      if (fn) {
+        pluginObj = {
+          pluginId,
+        }
+        updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          contentList,
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: false,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: '',
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        })
+        // 插件展示状态：0 没执行，1 执行中，2 执行完成
+        chatStore.setPlugState(1)
+        // console.log('2.插件可执行：', JSON.parse(fn.arguments))
+
+        // 执行内容
+        execPluginResponse = await execPlugin({
+          pluginId,
+          args: JSON.parse(fn.arguments),
+        })
+        // console.log('3.插件执行结果：', execPluginResponse.pluginStr)
+
+        texts = `${texts}\n|$moss${JSON.stringify(pluginObj)}$moss|${execPluginResponse.pluginStr ? execPluginResponse.pluginStr : ''
+          }`
+
+        updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+          timestamp: new Date().getTime(),
+          createTime: new Date().toLocaleString(),
+          text: '',
+          inversion: false,
+          ast: message,
+          error: false,
+          loading: false,
+          pluginInfo: {
+            ast: message,
+            pluginMessage: execPluginResponse.pluginStr,
+            ...pluginObj,
+          },
+          conversationOptions: {
+            conversationId: chatStore.getUuid,
+          },
+          requestOptions: { prompt: message, options: { ...options } },
+        })
+      }
+    }
+
+    const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
+      prompt: texts,
+      options: {
+        ...options,
+        ...chatOptions,
+      },
+      apiKey: userStore.useKey === '1' ? localStorage.getItem('apiKey') : '',
+      signal: controller.signal,
+      onDownloadProgress: ({ event }) => {
+        const xhr = event.target
+        // const { responseText } = xhr
+        const chunk = xhr.responseText
+        contentList[0] = chunk
+        // console.log(contentList)
+        try {
+          // const data = JSON.parse(chunk)
+          updateChat(chatStore.getUuid, dataSources.value.length - 1, {
+            timestamp: new Date().getTime(),
+            createTime: new Date().toLocaleString(),
+            text: chunk ?? '',
+            inversion: false,
+            ast: message,
+            contentList,
+            error: false,
+            loading: false,
+            pluginInfo: {
+              ast: message,
+              pluginMessage: execPluginResponse.pluginStr,
+              ...pluginObj,
+            },
+            conversationOptions: {
+              conversationId: chatStore.getUuid,
+            },
+            requestOptions: { prompt: message, options: { ...options } },
+          })
+          scrollToBottom()
+        }
+        catch (error) {
+          //
+        }
+      },
+    })
+
+    // 超出token提示
+    const tip1 = data as any as string
+    if (engList.includes(tip1))
+      ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
+
+    addTextNum(texts.length)
+
+    scrollToBottom()
+  }
+  catch (error: any) {
+    // ms.error(error.msg || error.message)
+    console.log(error.msg, error.message)
+
+    if (error.code === 10000) {
+      showConfirmDialog({
+        title: '问题',
+        message: '您当前问题已经超过模型最大上下文，是否新建问题解决此问题',
+        confirmButtonText: '新建问题',
+        cancelButtonText: '取消',
+      }).then(() => {
+        // on close
+        // userStore.toggleOpenaiVersion();
+        chatStore.createChat()
+      })
+    }
+    else if (error.code === 10001) {
+      if (getToken()) {
+        showConfirmDialog({
+          title: 'key失效',
+          message: '您当前设置的key不正确，或者key已经到期，目前ChatMoss 3.5 可免费使用，是否取消使用自己的key?',
+          confirmButtonText: '确定',
+          cancelButtonText: '知道了',
+        }).then(() => {
+          // on close
+          userStore.closeKey()
+        })
+      }
+      else {
+        showConfirmDialog({
+          title: 'key失效',
+          message: '您当前设置的key不正确，或者key已经到期，目前ChatMoss 3.5登录后可免费使用，是否登录？',
+          confirmButtonText: '去登录',
+          cancelButtonText: '知道了',
+        }).then(() => {
+          // on close
+          userStore.closeKey()
+          go({
+            name: 'login',
+          })
+        })
+      }
+    }
+    else if (error.code === 20000) {
+      showConfirmDialog({
+        title: '字符已用尽',
+        message: '试用字符已经用尽，目前ChatMoss 3.5登录后可免费使用，是否登录',
+        confirmButtonText: '去登录',
+        cancelButtonText: '知道了',
+      }).then(() => {
+        // on close
+        // userStore.toggleOpenaiVersion()
+        go({
+          name: 'login',
+        })
+      })
+    }
+
+    // 答应其他信息
+    const errorMessage = error.msg || '已取消'
     if (error.message === 'canceled') {
       updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
         loading: false,
@@ -366,50 +783,82 @@ async function onConversation(askMsg?: string, opt?) {
       scrollToBottom()
       return
     }
-
-    // const currentChat = getChatByUuidAndIndex(
-    //   chatStore.getUuid,
-    //   dataSources.value.length - 1,
-    // )
-
-    // if (currentChat?.text && currentChat.text !== '') {
-      
-    // }
-    updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-      text: `${errorMessage}`,
-      error: true,
-      loading: false,
-    })
-    return
-
-    // updateChat(chatStore.getUuid, dataSources.value.length - 1, {
-    //   timestamp: new Date().getTime(),
-    //   createTime: new Date().toLocaleString(),
-    //   text: errorMessage,
-    //   inversion: false,
-    //   ast: message,
-    //   error: true,
-    //   loading: false,
-    //   conversationOptions: null,
-    //   requestOptions: { prompt: message, options: { ...options } },
-    // })
-    scrollToBottom()
+    // console.log('errorMessage', errorMessage)
+    if (errorMessage !== undefined) {
+      updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+        text: `${errorMessage}`,
+        contentList: [errorMessage],
+        error: true,
+        loading: false,
+      })
+    }
   }
   finally {
-    setTimeout(() => {
-      getLatestCharReduceInfo({
-        conversationId: chatStore.getUuid,
-      }).then((res) => {
-        updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
-          mossReduceInfo: res.data,
-        })
-      })
+    if (chatStore.plugState === 1)
+      chatStore.setPlugState(2) // 插件结束状态
 
-      loading.value = false
-      userStore.residueCountAPI()
-    }, 2000);
+    setTimeout(() => {
+      // 问答结束后2s,去服务端拿结果。
+      if (loading.value && !verify(chatStore.getUuid)) {
+        getLatestCharTwoReduceInfo({
+          conversationId: chatStore.getUuid,
+        }).then((res) => {
+          updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
+            mossReduceInfo: {
+              id: res.data[0].id,
+              questionMode: res.data[0].questionMode,
+              viewMsg: res.data[0].viewMsg,
+            },
+            loading: false,
+            mossReduceInfoList: [res.data[0]],
+            conversationId: chatStore.getUuid,
+            id: res.data[0].id,
+          })
+
+          updateChatSome(chatStore.getUuid, dataSources.value.length - 2, {
+            mossReduceInfo: {
+              ...res.data[1],
+              questionMode: res.data[0].questionMode,
+              viewMsg: res.data[0].viewMsg,
+            },
+            conversationId: chatStore.getUuid,
+            id: res.data[1].id,
+          })
+        })
+
+        userStore.residueCountAPI()
+        loading.value = false
+      }
+      else {
+        loading.value = false
+      }
+    }, 2000)
   }
 }
+
+/**
+ * 是否执行插件
+ */
+function checkValues() {
+  const arr = userStore.userInfo.tags
+  // 检查 arr 是否是 null 或 undefined
+  if (arr == null || !Array.isArray(arr))
+    return false
+
+  for (const item of arr) {
+    // 检查 item 是否是 null 或 undefined
+    if (item == null || typeof item !== 'object')
+      continue
+
+    // 检查 item.name 是否是 null 或 undefined
+    if (item.name != null)
+      return true
+  }
+
+  return false
+}
+
+window.onConversation = onConversation
 
 const handleSelectInput = (event: any) => {
   prompt.value = event.data
@@ -503,7 +952,7 @@ vsCodeUtils({
 })
 function clickMessage() {
   const selectedText = localStorage.getItem('selectedText')
-  console.log('??', selectedText)
+  // console.log('??', selectedText)
   if (selectedText) {
     prompt.value = selectedText
     localStorage.setItem('selectedText', '')
@@ -521,6 +970,7 @@ onMounted(() => {
   userStore.getActivityListAPI()
   userStore.residueCountAPI()
   userStore.getBalanceInfo()
+  userStore.getApplicationInstallListAPI()
 })
 
 onUnmounted(() => {
@@ -567,95 +1017,213 @@ async function onSuccessAuth() {
 function handleMode() {
   userStore.toggleMode()
 }
+const tabList = ref([])
+getButtonListAPI()
+async function getButtonListAPI() {
+  const res = await getButtonList({
+    type: 1,
+  })
+  // console.log(res)
+  tabList.value = res.data || []
+}
+function handleNewPerson() {
+  trace({
+    eventName: 'h5Click',
+    customField: {
+      scene: '新人礼包', // 场景
+    },
+  })
+  go({
+    name: 'h5',
+    query: {
+      url: 'http://h5.aihao123.cn/pages/app/new-persion/index.html',
+    },
+  })
+}
+const router = useRouter()
+function handleDump(item) {
+  trace({
+    eventName: 'h5Click',
+    customField: {
+      scene: '首页banner', // 场景
+      id: item.id, // 对应的首页banner的ID
+    },
+  })
+  const json = JSON.parse(item.jumpUrl)
+  jumpLink(json, router)
+}
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-full" :class="wrapClass">
+  <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
+    <img v-if="userStore.newUser"
+      src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-gift.png"
+      class="element-to-animate" alt="" style="position: fixed;right:11px;top:105px;width: 110px;z-index: 1000;"
+      @click.stop="handleNewPerson">
+
+    <Sider />
+    <Header />
     <main class="flex flex-1 overflow-hidden">
-      <transition name="fade">
-        <applicationList v-show="userStore.isAuth === 2 && userStore.toggleValue" class="transition"
-          :style="{ width: userStore.toggleValue ? '71px' : '1px' }" />
-      </transition>
+      <applicationSlide v-if="userStore.userInfo.user" />
+
       <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
         :class="[userStore.toggleValue ? 'p90' : '']">
-        <div id="image-wrapper" class="w-full m-auto flex items-center py-4" :class="[isMobile ? 'px-2' : 'px-4']"
+        <div id="image-wrapper" class="w-full m-auto items-center pb-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
           style="height: 100%;overflow: hidden">
-          <template v-if="!dataSources.length">
-            <div class="no-data-info  w-full">
-              <!-- 应用介绍 -->
-              <div v-if="userStore.currentApp" class="no-data-info-text">
-                应用使用说明：{{ userStore.currentApp.desc }}
+          <div id="scrollRef1" class="pt-[12px]" ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
+            <applicationIntro />
+            <transition name="fade1">
+              <div v-if="isEnd" class="icon-top" style="" @click="scrollToTop">
+                <SvgIcon icon="grommet-icons:link-top" />
               </div>
-              <!-- 空态占位图 -->
-              <div v-if="authStore.token && userStore.centerPicUrl">
-                <div class="no-data-info-tip-title">
-                  ChatMoss使用教程（推荐必看）：
-                </div>
-                <a href="https://h5.aihao123.cn/pages/app/study/index.html" target="_blank">
-                  <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                    src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss_1.png" alt="">
-                </a>
-              </div>
-              <!-- <img
-                v-if="authStore.token && userStore.centerPicUrl" class="no-data-img" :src="userStore.centerPicUrl"
-                alt="" @click="() => { go({ name: 'shop' }) }"
-              > -->
-              <div v-else>
-                <!-- 后面期望这里跳转使用教程页面 -->
-                <div class="no-data-info-tip-title">
-                  无需注册即可登录ChatMoss
-                </div>
-                <img style="cursor: pointer; border-radius: 10px;" width="320" height="240"
-                  src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/xsjc1.png" alt=""
-                  @click="() => { go({ name: 'login' }) }">
-              </div>
-            </div>
-          </template>
-          <template v-else>
-            <div ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
-              <div id="data-wrapper">
-                <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.createTime" :text="item.text"
-                  :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
-                  :ask-msg="item.ast" :inversion="item.inversion" :error="item.error" :loading="item.loading"
-                  :view-msg="item.mossReduceInfo?.viewMsg" :question-mode="item.mossReduceInfo?.questionMode" @ask="askFn"
-                  @online="onlineFn" @jarvis="jarvisFn" />
+            </transition>
 
-                <div class="sticky bottom-0 left-0 flex justify-center">
-                  <NButton v-if="loading" type="warning" @click="handleStop">
-                    <template #icon>
-                      <SvgIcon icon="ri:stop-circle-line" />
-                    </template>
-                    正在响应
-                  </NButton>
-                </div>
+            <transition name="fade1">
+              <div v-if="isTop" class="icon-top" @click="goToBottom">
+                <SvgIcon icon="grommet-icons:link-bottom" />
+              </div>
+            </transition>
+
+            <div v-if="!dataSources.length" class="no-data-info w-full">
+              <!-- 应用介绍 -->
+
+              <!-- 空态占位图 -->
+              <div style="width: 100%;">
+                <NCarousel autoplay dot-placement="top" mousewheel show-arrow
+                  style="width: 80%;max-width:500px;margin: 0 auto;" :interval="3000">
+                  <NCarouselItem v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
+                    <img class="cursor-pointer" :src="item.iconUrl"
+                      style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
+                      @click="handleDump(item)">
+                  </NCarouselItem>
+
+                  <template #arrow="{ prev, next }">
+                    <div class="custom-arrow">
+                      <button type="button" style="
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        margin-top: -15px;
+                        font-size: 30px;
+                        color:rgb(0, 122, 255);
+                      " @click="next">
+                        <!-- <SvgIcon icon="uiw:right" class="icon" /> -->
+                        <img
+                          src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
+                          style="width: 40px;transform: rotateZ(180deg);" alt="">
+                      </button>
+                      <button type="button" style="
+                        position: absolute;
+                        left:10px;
+                        top: 50%;
+                        margin-top: -15px;
+                        font-size: 30px;
+                        color:rgb(0, 122, 255);
+                      " @click="prev">
+                        <img
+                          src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
+                          style="    width: 40px;" alt="">
+                      </button>
+                    </div>
+                  </template>
+                  <template #dots="{ total, currentIndex, to }">
+                    <div class="custom-dots flex items-center justify-center" style="
+                      position: absolute;
+                      bottom: 20px;
+                      left: 0px;
+                      width: 100%;
+                    ">
+                      <ul class="custom-dots" style="
+                          display: flex;
+                          margin: 0;
+                          padding: 0;
+                      ">
+                        <li v-for="index of total" :key="index" :style="{
+                          backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)',
+                        }" style="display: inline-block;
+                          width: 12px;
+                          height: 4px;
+                          margin: 0 3px;
+                          border-radius: 4px;
+                          transition: width 0.3s, background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                          cursor: pointer;
+                        " @click="to(index - 1)" />
+                      </ul>
+                    </div>
+                  </template>
+                </NCarousel>
+                <!-- <van-swipe>
+                  <van-swipe-item v-for="(item, i) of tabList" :key="i">
+                    <img :src="item.iconUrl" alt="" style="width: 100%;border-radius: 10px;" @click="handleDump(item)">
+                  </van-swipe-item>
+
+                </van-swipe> -->
               </div>
             </div>
-          </template>
+            <div v-if="dataSources.length" id="data-wrapper">
+              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+                :info="item"
+                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
+                :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
+                :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
+                :question-mode="item.mossReduceInfo?.questionMode" @ask="(...args) => askFn(...args, index)"
+                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
+
+              <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
+                <NButton v-if="loading" @click="handleStop">
+                  <template #icon>
+                    <SvgIcon icon="ri:stop-circle-line" />
+                  </template>
+                  正在响应
+                </NButton>
+              </div>
+            </div>
+          </div>
         </div>
         <footer :class="footerClass">
-          <transition name="fade">
+          <transition name="fade1">
             <Footer />
           </transition>
-          <div class="w-full m-auto p-2" style="padding-bottom: 0px;">
+          <div v-show="!hidden" class="w-full m-auto p-2" style="">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt" class="step1 input"
-                autofocus type="textarea" :autosize="{ minRows: 3, maxRows: 3 }" :placeholder="placeholder"
-                @keydown="handleEnter" />
+              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt"
+                class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C] " :bordered="false" autofocus type="textarea"
+                :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="placeholder" style="" @keydown="handleEnter" />
               <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
                 label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
               <!-- MOSS字数 -->
-              <div class="btn-style btn-mode" @click="handleMode">
-                {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
-              </div>
-              <div class="btn-style ">
-                <NButton id="ask-question" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
-                  <template #icon>
-                    <span class="">
-                      <SvgIcon icon="ri:send-plane-fill" />
-                    </span>
-                  </template>
-                </NButton>
+
+              <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: absolute;
+                bottom: 10px;
+                box-sizing: border-box;
+                margin: 0;
+                right: 0;
+              ">
+                <div>
+                  <!-- 左边按钮 -->
+                </div>
+                <div class="flex items-center">
+                  <div style="transform: scale(0.9);"
+                    class="btn-mode text-center dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
+                    @click="handleMode">
+                    {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
+                  </div>
+
+                  <NButton id="ask-question" strong secondary circle
+                    style="background-color: transparent;color: var(--moss-text-ask-color);" type="primary"
+                    :disabled="buttonDisabled" @click="handleSubmit">
+                    <template #icon>
+                      <span class="">
+                        <SvgIcon icon="ri:send-plane-fill" />
+                      </span>
+                    </template>
+                  </NButton>
+                </div>
               </div>
             </div>
           </div>
@@ -663,7 +1231,7 @@ function handleMode() {
       </div>
     </main>
 
-    <div v-if="!userStore.userInfo.user.authed" class="text-center">
+    <div v-if="userStore.userInfo.user && !userStore.userInfo.user.authed" class="text-center">
       <!-- 通关ChatMoss使用教程，获得20w字符奖励 -->
       <span class="v-auth cursor-pointer" @click="startTutorial" />
     </div>
@@ -678,12 +1246,47 @@ function handleMode() {
 </template>
 
 <style lang="less" scoped>
+.icon-top {
+  border-radius: 50%;
+  overflow: hidden;
+  position: fixed;
+  z-index: 100;
+  background-color: var(--moss-bg-reply-color);
+  // color: var(--moss-text-reply-color);
+  right: 30px;
+  bottom: 200px;
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0.9;
+
+  &:hover {
+    // background-color: #00000040;
+    opacity: 1;
+  }
+}
+
+.guideMsg {
+  text-align: left;
+  display: inline-block;
+  border-radius: 60px;
+  margin-top: 10px;
+  background-color: var(--moss-bg-reply-color);
+  color: var(--moss-text-time-color);
+  padding: 4px 10px;
+}
+
 .chat-main {
-  background-color: var(--moss-bg-content-color);
+  transition: all 0.2s;
+  // background-color: var(--moss-bg-content-color);
 }
 
 .p90 {
-  padding-top: 90px;
+  padding-top: 86px;
 }
 
 .no-data-info {
@@ -691,7 +1294,9 @@ function handleMode() {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 0;
 
   .no-data-info-tip-title {
     font-size: 14px;
@@ -710,10 +1315,10 @@ function handleMode() {
 
   .no-data-info-text {
     width: 100%;
-    text-align: center;
+    // text-align: center;
     font-size: 14px;
     color: var(--moss-text-time-color);
-    position: absolute;
+    // position: absolute;
     font-size: 12px;
     top: 30px;
   }
@@ -811,18 +1416,54 @@ function handleMode() {
 }
 
 .n-input.n-input--textarea {
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .input {
   border: 0px;
+  box-shadow: 0px 2px 7px 0px rgba(231, 232, 241, 1);
+  border-radius: 17px;
 }
 
-/* 隐藏滚动进度条 */
-::-webkit-scrollbar {
-  display: none;
+.dark {
+  .input {
+    box-shadow: 0px 2px 7px 0px rgba(19, 19, 19, 1);
+  }
 }
 
+
+
+#scrollRef1 {
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    border-radius: 10px;
+
+    /**/
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    // background-color: #2c2c2c;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+  }
+
+
+  &::-webkit-scrollbar-thumb:hover {
+    border-radius: 10px;
+  }
+}
+.dark {
+  #scrollRef1 {
+     &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+    }
+  }
+}
 .moss-btns {
   position: relative;
 }
@@ -839,16 +1480,21 @@ function handleMode() {
 }
 
 .btn-mode {
-  background-color: var(--moss-bg-ask-color);
+  opacity: .6;
+  // background-color: var(--moss-bg-ask-color);
   border-radius: 3px;
-  color: var(--moss-text-ask-color);
+  // color: var(--moss-text-ask-color);
   padding: 1px 0px;
   font-size: 12px;
   cursor: pointer;
   // display: block;
-  right: 60px;
+  left: 0px;
   width: 60px;
-  line-height: 22px;
+  line-height: 26px;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .btn-style button {
@@ -969,6 +1615,23 @@ function handleMode() {
   .no-data-img {
     width: 250px !important;
     height: 166px !important;
+  }
+}
+
+.respondingBtn {
+  .n-button {
+    background-color: #6388FF !important;
+    // border: 1px solid #6388FF !important;
+    color: #fff !important;
+  }
+}
+
+.plugin-btn {
+  transform: scale(0.9);
+  opacity: .5;
+
+  &:hover {
+    opacity: 1;
   }
 }
 </style>

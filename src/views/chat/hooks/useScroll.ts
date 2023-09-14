@@ -5,6 +5,10 @@ type ScrollElement = HTMLDivElement | null
 
 interface ScrollReturn {
   scrollRef: Ref<ScrollElement>
+  isBottom: Ref<boolean>
+  isTop: Ref<boolean>
+  isEnd: Ref<boolean>
+  resetValue: () => void
   scrollToBottom: () => Promise<void>
   scrollToTop: () => Promise<void>
   goToBottom: () => Promise<void>
@@ -13,17 +17,30 @@ interface ScrollReturn {
 export function useScroll(): ScrollReturn {
   const scrollRef = ref<ScrollElement>(null)
   const isBottom = ref(false)
+  const isTop = ref(false)
+  const isEnd = ref(false)
   // console.log(scrollRef.value)
   watch(() => scrollRef.value, (...args) => {
-
-
     if (scrollRef.value) {
       scrollRef.value.addEventListener('scroll', async () => {
+        // console.log(scrollRef.value.scrollHeight , scrollRef.value.clientHeight)
+        if (scrollRef.value.scrollHeight <= scrollRef.value.clientHeight){
+          isTop.value = false;
+          isEnd.value = false;
+          return ;
+        }
+        if (scrollRef.value.scrollTop < 20) {
+          isTop.value = true;
+        } else {
+          isTop.value = false;
+        }
         if (scrollRef.value.scrollHeight - 10 < (scrollRef.value.scrollTop + scrollRef.value.clientHeight)) {
           //到达底了
           isBottom.value = true;
-        }else{
+          isEnd.value = true;
+        } else {
           isBottom.value = false;
+          isEnd.value = false;
         }
       })
     }
@@ -43,12 +60,23 @@ export function useScroll(): ScrollReturn {
   }
 
   const scrollToTop = async () => {
+  
     await nextTick()
     if (scrollRef.value)
       scrollRef.value.scrollTop = 0
   }
+  const resetValue = () => {
+    // isTop.value = false;
+    // isEnd.value = false
+
+    // console.log(isTop, isEnd)
+  }
 
   return {
+    isBottom,
+    isTop,
+    resetValue,
+    isEnd,
     scrollRef,
     scrollToBottom,
     scrollToTop,

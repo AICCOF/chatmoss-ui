@@ -1,22 +1,23 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import { NButton, NForm, NFormItem, NInput, NSelect, NSpace, NSwitch } from 'naive-ui'
-import { FormInst, FormItemRule, useMessage } from 'naive-ui'
+import { onMounted, ref } from 'vue'
+import type { FormInst } from 'naive-ui'
+import { NSelect, useMessage } from 'naive-ui'
+import { useRouter } from 'vue-router'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
-import { getApplicationIconList, getApplicationCreate, getApplicationTypeList, getApplicationQueryById, getApplicationUpdate } from '@/api/application'
-import { useRouter } from 'vue-router'
-const router = useRouter();
+import { getApplicationCreate, getApplicationIconList, getApplicationQueryById, getApplicationTypeList, getApplicationUpdate } from '@/api/application'
+const router = useRouter()
 const back = useBack()
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
-let title = ref('')
+const title = ref('')
 const formValue = ref({
   iconUrl: '',
   share: 1,
-  contextEnabled: 1
+  contextEnabled: 1,
+  guideMsg: '',
 })
-let rules = {
+const rules = {
   iconId: {
     required: true,
     message: '输入选择图标',
@@ -36,64 +37,60 @@ let rules = {
   appType: {
     required: true,
     message: '请选择应用类型',
-  }
-};
+  },
+}
 const showBottom = ref(false)
-let iconList = ref([])
-let typeList = ref([])
+const iconList = ref([])
+const typeList = ref([])
 function handleValidateButtonClick() {
-  if (formValue.value.id) {
+  if (formValue.value.id)
     getApplicationUpdateAPI()
-  } else {
-    getApplicationCreateAPI();
-  }
 
+  else
+    getApplicationCreateAPI()
 }
 
-getApplicationListAPI();
-getApplicationTypeListAPI();
+getApplicationListAPI()
+getApplicationTypeListAPI()
 async function getApplicationTypeListAPI() {
-  let res = await getApplicationTypeList();
-  typeList.value = (res.list || []).map(row => {
+  const res = await getApplicationTypeList()
+  typeList.value = (res.list || []).map((row) => {
     return {
       label: row.typeName,
-      value: row.id
+      value: row.id,
     }
   })
 }
 async function getApplicationListAPI() {
-  let res = await getApplicationIconList();
+  const res = await getApplicationIconList()
   // console.log(iconList, res)
   formValue.value.iconUrl = res.rows[0] ? res.rows[0].url : ''
   formValue.value.iconId = res.rows[0] ? res.rows[0].id : ''
   iconList.value = res.rows || []
-
 }
 
 async function getApplicationCreateAPI() {
-  let res = await getApplicationCreate(formValue.value);
-  back();
+  const res = await getApplicationCreate(formValue.value)
+  back()
   message.success(res.msg)
 }
 async function getApplicationUpdateAPI() {
-  let res = await getApplicationUpdate(formValue.value);
-  back();
+  const res = await getApplicationUpdate(formValue.value)
+  back()
   message.success(res.msg)
 }
 function handleImage(row) {
-
   formValue.value.iconUrl = row.url
   formValue.value.iconId = row.id
-  showBottom.value = false;
+  showBottom.value = false
 }
 onMounted(async () => {
-
   if (router.currentRoute.value.query) {
-    let id = router.currentRoute.value.query.id
+    const id = router.currentRoute.value.query.id
     if (id) {
       title.value = '编辑应用'
-      let res = await getApplicationQueryById(id)
-      let data = res.data || {}
+      const res = await getApplicationQueryById(id)
+      const data = res.data || {}
       formValue.value = {
         id: data.id,
         iconId: data.iconId,
@@ -103,17 +100,14 @@ onMounted(async () => {
         desc: data.desc,
         promot: data.promot,
         share: data.share,
-        contextEnabled: data.contextEnabled
+        contextEnabled: data.contextEnabled,
       }
-    } else {
+    }
+    else {
       title.value = '新建应用'
     }
-
   }
-
 })
-
-
 </script>
 
 <template>
@@ -127,32 +121,41 @@ onMounted(async () => {
         <div class="flex justify-between items-center">
           <div>请挑选一个应用的图标</div>
           <div>
-            <van-image round width="3rem" height="3rem" :src="formValue.iconUrl" class="m-auto"
-              @click="() => { showBottom = true }" />
+            <van-image
+              round width="3rem" height="3rem" :src="formValue.iconUrl" class="m-auto"
+              @click="() => { showBottom = true }"
+            />
           </div>
         </div>
         <van-divider />
         <div class=" flex justify-between items-center">
           <div>应用名称</div>
           <div class="flex-1" style="margin-left: 20px;">
-            <input class="input" v-model="formValue.appName" placeholder="例如：智能翻译助手(限12字)" />
+            <input v-model="formValue.appName" class="input" placeholder="例如：智能翻译助手(限12字)">
           </div>
         </div>
         <van-divider />
         <div class="">
           <div>应用描述</div>
           <div class="flex-1">
-            <textarea class="textarea" type="textarea" v-model="formValue.desc" placeholder="例如：智能翻译助手(限12字)" />
+            <textarea v-model="formValue.desc" class="textarea" type="textarea" placeholder="例如：智能翻译助手(限12字)" />
           </div>
         </div>
         <van-divider />
-         <div class="">
-            <div>指令</div>
-            <div class="flex-1">
-              <textarea class="textarea" type="textarea" v-model="formValue.promot" placeholder="例如：智能翻译助手智能翻译助手" />
-            </div>
+        <div class="">
+          <div>指令</div>
+          <div class="flex-1">
+            <textarea v-model="formValue.promot" class="textarea" type="textarea" placeholder="例如：智能翻译助手智能翻译助手" />
           </div>
-          <van-divider />
+        </div>
+        <van-divider />
+        <div class="">
+          <div>引导语(非必填)</div>
+          <div class="flex-1">
+            <textarea v-model="formValue.guideMsg" class="textarea" type="textarea" placeholder="例如：请输入你想翻译的语言" />
+          </div>
+        </div>
+        <van-divider />
         <div class="flex justify-between items-center">
           <div>应用类型</div>
           <div class="">
@@ -160,7 +163,7 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <div class="box mt-4">
+      <!-- <div class="box mt-4">
         <div class=" flex justify-between items-center">
           <div>发布商店</div>
           <div class="">
@@ -175,27 +178,26 @@ onMounted(async () => {
           </div>
         </div>
 
+      </div> -->
+      <div class="save" @click="handleValidateButtonClick">
+        保存
       </div>
-      <div class="save" @click="handleValidateButtonClick">保存</div>
-
     </div>
 
     <!-- 底部弹出 -->
     <van-action-sheet v-model:show="showBottom" title="选择图标">
       <div class="content">
         <div class="list">
-          <div class="item" v-for="(item, i) of iconList" :key="i">
+          <div v-for="(item, i) of iconList" :key="i" class="item">
             <img :src="item.url" alt="" @click="handleImage(item)">
           </div>
         </div>
       </div>
     </van-action-sheet>
-
   </Page>
 </template>
 
 <style scoped lang="less">
-
 .save {
   text-align: center;
   width: 80%;
@@ -213,7 +215,7 @@ onMounted(async () => {
   margin-top: 10px;
   padding: 5px 10px;
   height: 100px;
-  background-color:  var(--moss-bg-reply-color);
+  background-color: var(--moss-bg-reply-color);
   border-radius: 8px;
 }
 
@@ -221,7 +223,7 @@ onMounted(async () => {
   text-align: left;
   padding: 5px 10px;
   border-radius: 8px;
-  background-color:  var(--moss-bg-reply-color);
+  background-color: var(--moss-bg-reply-color);
   width: 100%;
 }
 

@@ -6,10 +6,9 @@ export function setupPageGuard(router: Router) {
     const authStore = useAuthStoreWithout()
 
     if (from.path === '/')
-      next({ name: 'Chat' })
+      next({ name: 'chat' })
 
     // if (from.path == '/login' && authStore.token){
-    //   next({ name: 'Chat' })
     // }
     if (from.path !== '/login' && !authStore.token) {
       next()

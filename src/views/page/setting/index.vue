@@ -1,25 +1,27 @@
 <script setup lang="ts">
-import { NDivider, NSwitch, useDialog, useMessage } from 'naive-ui'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { NDivider, NSwitch } from 'naive-ui'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 // import dayjs from 'dayjs'
+import { Modal, message as ms } from 'ant-design-vue'
 import uni from '@dcloudio/uni-webview-js'
-import { bindingStatus, unbind } from './../../../api/weixin'
+import { useRouter } from 'vue-router'
+import { bindingStatus } from './../../../api/weixin'
 import { useAppStore, useUserStore } from '@/store'
 import { localStorage } from '@/utils/storage/localStorage'
 import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { SvgIcon } from '@/components/common'
+import { accountClose } from '@/api/account'
 // let props = defineProps(['register'])
 // const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
 const go = useGo()
 const userStore = useUserStore()
-
-const ms = useMessage()
+const router = useRouter()
 const appStore = useAppStore()
 
 const nickname = computed(() => {
-  return userStore.userInfo.user.nickname
+  return userStore.userInfo.user ? userStore.userInfo.user.nickname : false
 })
 
 onMounted(() => {
@@ -53,9 +55,26 @@ function settingBtn() {
   }
 }
 
-const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '85%') as any
+const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '90%') as any
 function fontSizeNumBtn() {
-  localStorage.setItem('fontSizeNum', fontSizeNum.value.endsWith('%') ? fontSizeNum.value : `${fontSizeNum.value < 50 ? 50 : fontSizeNum.value}%`)
+  // 获取用户输入的字体大小值
+  const userInput = fontSizeNum.value.trim()
+
+  // 提取输入中的数值部分
+  let fontSizeValue = parseFloat(userInput)
+  if (isNaN(fontSizeValue)) {
+    // 如果输入不是有效的数值，则默认使用最小值
+    fontSizeValue = 65
+  }
+
+  // 确保字体大小在范围内
+  fontSizeValue = Math.max(65, Math.min(150, fontSizeValue))
+
+  // 格式化为百分比形式
+  const formattedValue = `${fontSizeValue}%`
+
+  // 将值存储到 localStorage
+  localStorage.setItem('fontSizeNum', formattedValue)
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
@@ -71,11 +90,32 @@ function handleUpdateValue(chatmossTheme: string) {
     },
   })
 }
-
-// 模型选择
-// console.log(userStore.getOpenaiVersion)
-// if (userStore.userInfo.fourSwitch !== 'ON')
-//   userStore.saveOpenaiVersion('3.5')
+const open = ref(false)
+const secondsToGo = ref(10)
+let interval: any
+function handleClose() {
+  clearInterval(interval)
+}
+function handleLogout() {
+  open.value = true
+  secondsToGo.value = 10
+  interval = setInterval(() => {
+    secondsToGo.value -= 1
+    if (secondsToGo.value <= 0) {
+      secondsToGo.value = 0
+      clearInterval(interval)
+    }
+  }, 1000)
+}
+async function handleConfirm() {
+  if (secondsToGo.value === 0) {
+    await accountClose()
+    ms.info('注销成功')
+    localStorage.clear()
+    await nextTick()
+    back()
+  }
+}
 
 // 专业模式
 function handleModeValue(chatmossMode: string) {
@@ -89,49 +129,6 @@ const showPopover = ref(false)
 function setOpenaiVersion(action) {
   userStore.saveOpenaiVersion(action)
   ms.success('模型切换成功')
-}
-
-const dialog = useDialog()
-function bindEvent(type, text) {
-  // 解绑操作
-  if (text) {
-    new Promise((resole, reject) => {
-      dialog.error({
-        title: '解绑',
-        content: '确认解绑？',
-        positiveText: '确定',
-        negativeText: '取消',
-        onPositiveClick: async () => {
-          const res = await unbind({
-            type: type === 'email' ? 1 : 0,
-          })
-          ms.info(res.msg)
-          bindingStatusAPI()
-        },
-        onNegativeClick: () => {
-
-        },
-      })
-    })
-  }
-  else {
-    if (type === 'email') {
-      go({
-        name: 'bindQQ',
-        query: {
-          type,
-        },
-      })
-    }
-    else {
-      go({
-        name: 'bindWechat',
-        query: {
-          type,
-        },
-      })
-    }
-  }
 }
 </script>
 
@@ -148,8 +145,8 @@ function bindEvent(type, text) {
         </div>
         <div class="flex">
           <div
-            v-if="userStore.userInfo.user.email" id="question-push" class="mr-4 btn cursor-pointer"
-            @click="() => { go({ name: 'feedback' }) }"
+            v-if="userStore.userInfo.user && userStore.userInfo.user.email" id="question-push"
+            class="mr-4 btn cursor-pointer" @click="() => { go({ name: 'feedback' }) }"
           >
             问题反馈
           </div>
@@ -267,6 +264,8 @@ function bindEvent(type, text) {
 
         <van-divider />
 
+        <NDivider />
+
         <div class="justify-between">
           <div>字体大小设置</div>
         </div>
@@ -276,8 +275,23 @@ function bindEvent(type, text) {
             确定
           </van-button>
         </div>
+
         <NDivider />
+
         <div class="justify-between">
+          <div>注销</div>
+        </div>
+        <div class="flex mt-2 justify-between">
+          <div class="flex mr-[30px]" style="margin-top: 10px;  font-size: 12px">
+            注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
+          </div>
+
+          <van-button style="white-space: nowrap;" class="btn-primary" size="small" @click="handleLogout">
+            注销
+          </van-button>
+        </div>
+        <NDivider />
+        <!-- <div class="justify-between">
           <div>
             <span>本机累计使用字符数:</span>
             <span class="title-h2">未知</span>
@@ -285,13 +299,86 @@ function bindEvent(type, text) {
           <div class="tip-text-input">
             小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
+
+    <Modal
+      v-model:visible="open" :title="null" :footer="null" centered class="self-model" style="width: fit-content"
+      @cancel="handleClose"
+    >
+      <div style="width: 410px; height: 310px; overflow: hidden; border-radius: 16px; background: #fff">
+        <div
+          style="
+            width: 410px;
+            height: 70px;
+            background: linear-gradient(90deg, #756df2 0%, #756df2 100%);
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 70px;
+            text-align: center;
+          "
+        >
+          注销账号
+        </div>
+        <div
+          class="" style="
+            box-sizing: border-box;
+            margin-top: 50px;
+            padding: 0 27px;
+            color: #1c212a;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 22px;
+          "
+        >
+          是否注销账号，注销账号之后，账号数据将会被全部清空，不可恢复，账号也不可重新注册
+        </div>
+
+        <div class="flex-center justify-between" style="box-sizing: border-box; margin-top: 50px; padding: 0 27px">
+          <div class="btn-confirm" :class="[secondsToGo === 0 ? 'active' : '']" @click="handleConfirm">
+            确认<span v-if="secondsToGo > 0">（{{ secondsToGo }}）</span>
+          </div>
+          <div
+            style="
+              width: 170px;
+              height: 54px;
+              border-radius: 8px;
+              background: #605dff;
+              color: #fff;
+              font-size: 18px;
+              font-weight: 500;
+              line-height: 54px;
+              text-align: center;
+            " @click="() => (open = false)"
+          >
+            取消
+          </div>
+        </div>
+      </div>
+    </Modal>
   </Page>
 </template>
 
 <style lang="less" scoped>
+.btn-confirm {
+  width: 170px;
+  height: 54px;
+  border: 1px solid #cdcdcd;
+  border-radius: 8px;
+  background: #fff;
+  color: #cdcdcd;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 54px;
+  text-align: center;
+
+  &.active {
+    color: #1d2129;
+  }
+}
+
 .tip-text-input {
   font-size: 12px;
   margin-top: 5px;

@@ -13,8 +13,11 @@ service.interceptors.request.use(
       config.headers.token = token
 
     // 处理 url
-    const doMain  = getDomain();
-    config.url = config.url && config.url.indexOf('http')>-1 ?config.url:doMain + config.url;
+    const doMain = getDomain();
+    if (doMain){
+      config.url = config.url && config.url.indexOf('http') > -1 ? config.url : doMain + config.url;
+    }
+
     return config
   },
   (error) => {

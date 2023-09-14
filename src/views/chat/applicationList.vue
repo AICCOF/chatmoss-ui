@@ -6,7 +6,7 @@ import { NPopover, useMessage } from 'naive-ui'
 import { useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationSort } from '@/api/application'
 import { useChatStore, useUserStore } from '@/store'
-
+import { SvgIcon } from '@/components/common'
 const ms = useMessage()
 
 const go = useGo()
@@ -22,10 +22,9 @@ function handleEdit() {
   enabled.value = true
 }
 function handleClick(row) {
-  
   if (!enabled.value && userStore.appIdValue !== row.appId) {
     if (row.isOpened === 0) {
-      ms.info(row.notOpenReason || '暂未开放，敬请期待...')
+      ms.info(row.notOpenReason || '即将开放，敬请期待...')
       return
     }
     userStore.setAppId(row.appId)
@@ -77,15 +76,34 @@ function handleSave() {
 
 <template>
   <div class="wrap">
-    <div class="list">
-      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-        ghost-class="ghost">
-        <template #item="{ element }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+    <div
+      class="flex justify-center items-center" style="
+          margin: 0 auto;
+          margin-top: 38px;
+          margin-bottom: 25px;
+          width: 26px;
+          border-radius: 50%;
+          height: 26px;
+          background: rgba(129,136,148,0.5);
+          color: #fff;
+          font-size: 20px;
+          border: 1px solid #595E77;" @click="userStore.sliderToggleMode"
+    >
+      <SvgIcon icon="formkit:left" />
+    </div>
 
+    <div class="list">
+      <draggable
+        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
+        <template #item="{ element }">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <div>
-              <NPopover trigger="hover">
+              <NPopover trigger="hover" placement="right" style="width: max-content;">
                 <template #trigger>
                   <img :src="element.iconUrl" alt="">
                   <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/s-logo1.png" alt=""> -->
@@ -93,40 +111,61 @@ function handleSave() {
                 <span>{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span">{{ element.appName.length > 5 ? element.appName.slice(0, 5) :
-              element.appName }}</div>
+            <div class="span whitespace-nowrap text-[#FFFFFF]">
+              {{ element.appName.length > 5 ? element.appName.slice(0, 5)
+                : element.appName }}
+            </div>
           </div>
         </template>
       </draggable>
-      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element, index }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <span v-if="enabled" class="close" @click="handleDelete(element, index)">
               <van-icon class="close-icon" name="cross" />
             </span>
             <div :class="[enabled ? 'animate-pulse animate' : '']">
-              <NPopover trigger="hover">
+              <NPopover trigger="hover" placement="right" style="width: max-content;">
                 <template #trigger>
                   <img :src="element.iconUrl" alt="">
                   <!-- <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo/logo1.png" alt=""> -->
                 </template>
-                <span>{{ element.appName }}</span>
+                <span class="">{{ element.appName }}</span>
               </NPopover>
             </div>
-            <div class="span">{{ element.appName.length > 5 ? element.appName.slice(0, 5) :
-              element.appName }}</div>
+            <div class="span whitespace-nowrap text-[#FFFFFF]">
+              {{ element.appName.length > 5 ? element.appName.slice(0, 5)
+                : element.appName }}
+            </div>
           </div>
         </template>
       </draggable>
     </div>
     <div class="btns">
-      <div class="btn">
-        <van-icon v-if="!enabled" name="edit" @click="() => handleEdit()" />
+      <div
+        class="btn bg-[#FFFFFF] dark:bg-[#38416A]" 
+        style="
+          width: 31px;
+          height: 31px;
+          border-radius: 7px;"
+      >
+        <van-icon v-if="!enabled" name="edit" style="font-size: 18px;" @click="() => handleEdit()" />
         <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
       </div>
-      <div class="btn">
+      <div
+        class="btn mt-[24px]" 
+        style="
+          width: 31px;
+          height: 31px;
+          border-radius: 7px;
+          "
+        >
         <!-- <van-icon name="plus" @click="() => { go({ name: 'application' }) }" /> -->
         <img class="btn-icon" src="./img/appstore.png" alt="" @click="() => { go({ name: 'application' }) }">
       </div>
@@ -134,11 +173,10 @@ function handleSave() {
   </div>
 </template>
 
-
 <style scoped lang="less">
 .wrap {
   height: 100%;
-  width: 71px;
+  // width: 65px;
   border-right: 0.5px solid rgba(145, 158, 171, .16);
   border-bottom: 0.5px solid rgba(145, 158, 171, .16);
   box-sizing: border-box;
@@ -146,17 +184,14 @@ function handleSave() {
   border-bottom-right-radius: 5px;
   display: flex;
   flex-direction: column;
-  padding-top: 90px;
-  background-color: var(--moss-header-color);
-
+  // padding-top: 90px;
 
   .list {
+    position: relative;
     overflow: auto;
     // width: 71px;
     height: 80%;
-    flex:1;
-    background-color: var(--moss-header-color);
-
+    flex: 1;
 
     &::-webkit-scrollbar {
       width: 0px;
@@ -165,27 +200,32 @@ function handleSave() {
     }
 
     &::-webkit-scrollbar-track {
-      background: transparent;
       border-radius: 2px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #bfbfbf;
       border-radius: 10px;
     }
 
     .img {
       margin: 0 auto;
       position: relative;
-      width: 100%;
+      width: 57px;
+      margin: 0 auto;
+      margin-top: 10px;
+      padding: 4px 0px;
       // height: 45px;
-      padding: 10px 0;
-      background-color: var(--moss-header-color);
-      border-radius: 4px;
+      // padding: 10px 0;
+      // background-color: var(--moss-header-color);
+      border-radius: 6px;
       // display: flex;
       // align-items: center;
       // justify-content: center;
       cursor: pointer;
+
+      &:hover {
+        background: #232A4A
+      }
 
       img {
         width: 26px;
@@ -194,7 +234,8 @@ function handleSave() {
       }
 
       &.active {
-        background-color: var(--moss-bg-content-color)
+        // background-color: var(--moss-bg-content-color)
+        background: #38416A;
       }
 
       .animate {
@@ -221,6 +262,7 @@ function handleSave() {
         width: 100%;
         opacity: 0.8;
         font-size: 8px;
+        margin-top: 5px;
         // transform: scale(0.6);
         text-align: center;
         opacity: .9;
@@ -231,12 +273,13 @@ function handleSave() {
   }
 
   .btns {
+    margin: 0 auto;
     // height:;
     // width: 71px;
-    background-color: var(--moss-header-color);
+    // background-color: var(--moss-header-color);
     font-size: 24px;
     font-size: 24px;
-    padding-bottom: 40px;
+    padding-bottom: 10px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -250,8 +293,8 @@ function handleSave() {
       cursor: pointer;
 
       .btn-icon {
-        width: 26px;
-        height: 26px;
+        // width: 26px;
+        // height: 26px;
       }
 
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1),
@@ -259,4 +302,5 @@ function handleSave() {
     }
   }
 
-}</style>
+}
+</style>

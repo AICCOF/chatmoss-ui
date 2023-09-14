@@ -4,8 +4,13 @@ import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
 import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
+import {  replaceDom } from '@/utils/jumpLink'
 
-const url = ref(`http://h5.aihao123.cn/pages/app/signIn-new/index.html?token=${getToken()}&time=${new Date().getTime()}`)
+let dom = 'http://h5.aihao123.cn/pages/app/signIn-new/index.html'
+
+dom = replaceDom(dom)
+
+const url = ref(`${dom}?token=${getToken()}&time=${new Date().getTime()}`)
 </script>
 
 <template>

@@ -8,16 +8,19 @@ import List from './List.vue'
 import Footer from './Footer.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useGo } from '@/utils/router'
+import { useScroll } from './../../hooks/useScroll'
 // const userStore = useUserStore()
 // const showModal = ref(false)
 const appStore = useAppStore()
 const chatStore = useChatStore()
+
 const go = useGo()
 const isMobile = ref(true)
 const collapsed = computed(() => appStore.siderCollapsed)
-
+const { resetValue } = useScroll()
 function handleAdd() {
   chatStore.createChat()
+  resetValue()
 }
 
 function handleUpdateCollapsed() {

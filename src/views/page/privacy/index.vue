@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { useMessage } from 'naive-ui'
 import { computed, onMounted, ref } from 'vue'
 import Page from '@/components/page/index.vue'
 import { useBack } from '@/utils/router'
-import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
 
 onMounted(() => {

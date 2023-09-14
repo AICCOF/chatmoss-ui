@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
-import { NInput, NPopconfirm,NCheckbox, NCheckboxGroup, NScrollbar } from 'naive-ui'
+import { NInput, NPopconfirm, NCheckbox, NCheckboxGroup, NScrollbar } from 'naive-ui'
 // import {  useMessage } from 'naive-ui'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
@@ -45,6 +45,20 @@ function isActive(id: any) {
   return chatStore.active === id
 }
 
+function handleChoose(arr) {
+
+
+
+  arr.forEach(element => {
+    let index = chatStore.deleteIds.indexOf(element.id)
+    if (index === -1) {
+      chatStore.deleteIds.push(element.id)
+    } else {
+      chatStore.deleteIds.splice(index, 1)
+    }
+  });
+
+}
 
 </script>
 
@@ -58,54 +72,53 @@ function isActive(id: any) {
         </div>
       </template>
       <template v-else>
+
         <n-checkbox-group v-model:value="chatStore.deleteIds">
-        <div v-for="(row, i) of dataSources" :key="i">
-          <div v-if="row.data.length > 0" class="px-1 py-1">
-             {{ row.title }}
-          </div>
-          <div v-for="(item, index) of row.data" :key="index" class="group">
-            <a
-              class="question-list relative flex items-center gap-3 px-3 py-3 mt-1 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
-              :class="isActive(item.id) && ['border-[#00CCFF]', 'bg-neutral-100', 'text-[#0099FF]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]', 'pr-14']"
-              @click="handleSelect(item)"
-            >
-              <span>
-                 <n-checkbox :value="item.id" label="" @click.stop/>
-              </span>
-              <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
-                <NInput
-                  v-if="item.isEdit" v-model:value="item.tem" size="tiny"
-                  @keypress="handleEnter(item, false, $event)"
-                />
-                <span v-else>{{ item.title || '新建问题' }}</span>
+          <div v-for="(row, i) of dataSources" :key="i">
+            <div v-if="row.data.length > 0" class="px-1 py-1 hover:text-[#0099FF] cursor-pointer"
+              @click="handleChoose(row.data)">
+              {{ row.title }}
+            </div>
+            <div v-for="(item, index) of row.data" :key="index" class="group">
+              <div
+                class="question-list relative flex items-center gap-3 px-3 py-3 mt-1 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
+                :class="isActive(item.id) && ['border-[#00CCFF]', 'bg-neutral-100', 'text-[#0099FF]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]', 'pr-14']"
+                @click="handleSelect(item)">
+                <span>
+                  <n-checkbox :value="item.id" label="" @click.stop />
+                </span>
+                <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
+                  <NInput v-if="item.isEdit" v-model:value="item.tem" size="tiny"
+                    @keypress="handleEnter(item, false, $event)" />
+                  <span v-else>{{ item.title || '新建问题' }}</span>
+                </div>
+                <!-- v-if="isActive(item.uuid)" -->
+                <div class="absolute z-10 flex visible right-1">
+                  <template v-if="item.isEdit && isActive(item.id)">
+                    <button class="p-1" @click="handleEdit(item, false, $event)">
+                      <SvgIcon icon="ri:save-line" />
+                    </button>
+                  </template>
+                  <template v-if="!item.isEdit">
+                    <button v-if="isActive(item.id)" class="p-1">
+                      <SvgIcon icon="ri:edit-line" @click="handleEdit(item, true, $event)" />
+                    </button>
+                    <!-- group-hover:visible -->
+                    <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
+                      <NPopconfirm placement="bottom" @positive-click="handleDelete(index, item, $event)">
+                        <template #trigger>
+                          <button class="p-1" @click.stop>
+                            <SvgIcon icon="ri:delete-bin-line" />
+                          </button>
+                        </template>
+                        {{ $t('chat.deleteHistoryConfirm') }}
+                      </NPopconfirm>
+                    </div>
+                  </template>
+                </div>
               </div>
-              <!-- v-if="isActive(item.uuid)" -->
-              <div class="absolute z-10 flex visible right-1">
-                <template v-if="item.isEdit && isActive(item.id)">
-                  <button class="p-1" @click="handleEdit(item, false, $event)">
-                    <SvgIcon icon="ri:save-line" />
-                  </button>
-                </template>
-                <template v-if="!item.isEdit">
-                  <button v-if="isActive(item.id)" class="p-1">
-                    <SvgIcon icon="ri:edit-line" @click="handleEdit(item, true, $event)" />
-                  </button>
-                  <!-- group-hover:visible -->
-                  <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
-                    <NPopconfirm placement="bottom" @positive-click="handleDelete(index, item, $event)">
-                      <template #trigger>
-                        <button class="p-1" @click.stop>
-                          <SvgIcon icon="ri:delete-bin-line" />
-                        </button>
-                      </template>
-                      {{ $t('chat.deleteHistoryConfirm') }}
-                    </NPopconfirm>
-                  </div>
-                </template>
-              </div>
-            </a>
+            </div>
           </div>
-        </div>
         </n-checkbox-group>
       </template>
     </div>

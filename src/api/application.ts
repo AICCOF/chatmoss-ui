@@ -2,7 +2,14 @@ import post, { get, put } from '@/utils/request'
 
 export interface ApplicationListRequest {
   pageSize: number
-  pageNum: 1
+  pageNum: number
+  appType?:string
+}
+export function getButtonList<T>(data) {
+  return get<T>({
+    url: '/luomacode-api/chat/homeButtonList',
+    data,
+  })
 }
 
 export function getApplicationList<T>(data: ApplicationListRequest) {
@@ -106,6 +113,12 @@ export function getApplicationLike<T>(data) {
   // 0 安装, 1 卸载
   return post<T>({
     url: '/luomacode-api/application/like',
+    data,
+  })
+}
+export function updateAppConfig<T>(data) {
+  return post<T>({
+    url: '/luomacode-api/application/install/updateAppConfig',
     data,
   })
 }
