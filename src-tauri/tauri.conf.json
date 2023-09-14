@@ -3,7 +3,7 @@
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
     "devPath": "http://192.168.0.104:80/",
-    "distDir": "../dist",
+    "distDir": "./build",
     "withGlobalTauri": false
   },
   "package": {
