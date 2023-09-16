@@ -90,9 +90,9 @@ function handleNotice() {
 <template>
   <div class="main">
     <div class="flex justify-end w-[375px] m-auto">
-      <div class="relative mr-[15px]">
+      <div class="relative mr-[15px]" @click="handleNotice">
         <van-badge :content="(userStore.redCount > 0) ? userStore.redCount : undefined"
-          style="position: absolute;right: 10px;top:5px" @click="handleNotice">
+          style="position: absolute;right: 10px;top:5px" >
         </van-badge>
         <img src="@/assets/my/member/notice.png" alt="" style="width: 36px;height: 36px;">
       </div>

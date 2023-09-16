@@ -22,7 +22,7 @@ export function sendToMsg(type: string, state: any) {
 }
 let record: Record<string, Function> = {};
 window.addEventListener('message', (event) => {
-  const message = event.data
+  const message = event.data || {}
   switch (message.type) {
     case 'selectedText':
       if (message.value) {
