@@ -58,59 +58,84 @@ function handleClick(row) {
     row.callBack()
 }
 
+function goSetting() {
+  go({
+    name: 'h5',
+    query: {
+      url: 'https://h5.aihao123.cn/pages/app/acount/index.html',
+    },
+  })
+}
+function handleMember() {
+  go({
+    name: 'h5',
+    query: {
+      url: 'https://h5.aihao123.cn/pages/app/memberCenter/index.html',
+    },
+  })
+}
+function handleNotice() {
+   go({
+    name: 'h5',
+    query: {
+      url: 'https://h5.aihao123.cn/pages/app/notice/index.html',
+    },
+  })
+}
+
 // { title: '退出登录', img: card4 },
 // https://h5.aihao123.cn/pages/app/help/index.html
 </script>
 
 <template>
   <div class="main">
-    <div
-      class="flex items-center justify-between" style="
+    <div class="flex justify-end w-[375px] m-auto">
+      <div class="relative mr-[15px]">
+        <van-badge :content="(userStore.redCount > 0) ? userStore.redCount : undefined"
+          style="position: absolute;right: 10px;top:5px" @click="handleNotice">
+        </van-badge>
+        <img src="@/assets/my/member/notice.png" alt="" style="width: 36px;height: 36px;">
+      </div>
+
+
+    </div>
+    <div class="flex items-center justify-between" style="
       margin: 0 auto;
       padding:0 16px;
       width: 347px;
       height: 87px;
-      background: #FFFFFF;
-      box-shadow: 0px 3px 13px 0px rgba(234,237,246,1);
-      border-radius: 11px;
-    " @click="handleLogin"
-    >
+    " @click="handleLogin">
       <div class="flex items-center">
-        <div
-          style="
+        <div class="flex items-center justify-center" style="
           margin-right: 13px;
           overflow: hidden;
           border-radius: 50%;
           width: 57px;
           height: 57px;
-          "
-        >
-          <img
-            src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo.svg" style="width:100%;height:100%"
-            alt=""
-          >
+          background: #FFFFFF;
+          ">
+          <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo.svg" style="width:80%;height:80%"
+            alt="">
         </div>
         <div>
-          <div
-            style="
+          <div style="
             font-size: 18px;
             font-weight: 500;
             color: #1A1A1A;
             line-height: 25px;
-          "
-          >
-            {{ userStore.userInfo.user ? userStore.userInfo.user.nickname : '未登录' }}
+          ">
+            <span v-if="userStore.userInfo.customAccount">{{ userStore.userInfo.customAccount }}</span>
+            <span v-else>
+              {{ userStore.userInfo.user ? userStore.userInfo.user.nickname : '未登录' }}
+            </span>
           </div>
-          <div
-            v-if="userStore.userInfo.user" style="
+          <div v-if="userStore.userInfo.user" style="
             font-size: 13px;
             font-weight: 400;
             color: #828793;
             line-height: 19px;
-        "
-          >
-            <span
-              style="
+        ">
+            <span style="
             display: inline-block;
             width: 17px;
             height: 17px;
@@ -121,28 +146,60 @@ function handleClick(row) {
             color: #7196F4;
             line-height: 17px;
             text-align: center;
-        "
-            >ID</span><span> {{ userStore.userInfo.user.uid }}</span>
+        ">ID</span><span> {{ userStore.userInfo.user.uid }}</span>
           </div>
         </div>
       </div>
-      <div>
-        <SvgIcon icon="mingcute:right-fill" class="icon" style="color: #dfe1e8;font-size: 16px;" />
+      <div class="flex items-center cursor-pointer">
+
+        <span v-if="userStore.userInfo.hideCustomAccount === 0" @click="goSetting"
+          style=" font-size: 13px;font-weight: 400;line-height: 19px;">
+          <span v-if="!userStore.userInfo.customAccount" style="
+             color: #FF536F;
+            ">去设置账号</span>
+          <span v-if="userStore.userInfo.customAccount" style="
+            color: #828793;
+            ">修改账号</span>
+        </span>
+
+        <SvgIcon icon="mingcute:right-fill" class="icon" style="color: #DFE1E8;font-size: 16px;" />
+      </div>
+    </div>
+    <div class="member cursor-pointer" @click="handleMember">
+      <div class="flex justify-between items-center">
+        <div class="flex  items-center justify-between">
+          <img src="@/assets/my/member/icon-01.png" class="mr-[7px]" alt="" style="width: 22px;height: 22px;">
+          <span>Lv{{ userStore.userInfo.memberLevel }}会员</span>
+        </div>
+        <div class="flex  items-center">
+          <span>查看</span>
+          <SvgIcon icon="mingcute:right-fill" class="icon" style="color: #DFE1E8;font-size: 16px;" />
+        </div>
+      </div>
+      <div class="flex items-center justify-between mt-[13px]">
+        <div class="flex  items-center ">
+          <img src="@/assets/my/member/icon-item01.png" class="mr-[7px]" alt="">
+          <span>模型免费用</span>
+        </div>
+        <div class="flex items-center">
+          <img src="@/assets/my/member/icon-item02.png" class="mr-[7px]" alt="">
+          <span>多插件提效</span>
+        </div>
+        <div class="flex  items-center">
+          <img src="@/assets/my/member/icon-item03.png" class="mr-[7px]" alt="">
+          <span>提示词模版</span>
+        </div>
       </div>
     </div>
 
     <div class="card flex justify-start  flex-wrap " style="margin-top: 18px;padding:0 4px;padding-bottom: 15px;">
-      <div
-        v-for="(item, i) of infoList" :key="i" class="info mt-[14px] ml-[6px] mr-[6px] cursor-pointer card-item"
-        @click="handleClick(item)"
-      >
+      <div v-for="(item, i) of infoList" :key="i" class="info mt-[14px] ml-[6px] mr-[6px] cursor-pointer card-item"
+        @click="handleClick(item)">
         <div class="w-[50px] h-[50px] m-auto mt-[15px]">
           <img :src="item.img" alt="">
         </div>
-        <div
-          class="text" style="
-        "
-        >
+        <div class="text" style="
+        ">
           {{ item.title }}
         </div>
       </div>
@@ -153,10 +210,8 @@ function handleClick(row) {
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px] ">
           <div class="flex items-center ">
             <img :src="item.img" style="width: 22px;" alt="">
-            <div
-              class="title" style="
-            "
-            >
+            <div class="title" style="
+            ">
               {{ item.title }}
             </div>
           </div>
@@ -171,7 +226,8 @@ function handleClick(row) {
       <div class="px-[16px] cursor-pointer card-item" @click="logout">
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px]">
           <div class="flex items-center ">
-            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/card4.png" style="width: 22px;" alt="">
+            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/card4.png"
+              style="width: 22px;" alt="">
             <div class="title">
               退出登录
             </div>
@@ -187,6 +243,27 @@ function handleClick(row) {
 </template>
 
 <style lang="less" scoped>
+.member {
+  width: 347px;
+  height: 80px;
+  margin: 0 auto;
+  background: linear-gradient(45deg, #221A2A 0%, #3E3646 100%);
+  box-shadow: inset 0px 1px 5px 0px rgba(31, 26, 36, 1);
+  border-radius: 11px;
+  box-sizing: border-box;
+  padding: 16px 15px;
+  font-size: 11px;
+  font-weight: 400;
+  color: #BBAAA5;
+  line-height: 16px;
+
+  img {
+    width: 17px;
+    height: 17px;
+  }
+
+}
+
 .my-border {
   border-bottom: 1px solid #F6F7FA;
 }
@@ -242,12 +319,13 @@ function handleClick(row) {
   border-radius: 9px;
   border: 1px solid #F1F3F4;
 
-  &:hover{
+  &:hover {
     border: 1px solid #BEC5DE;
   }
 }
 
 .main {
+  // width: 375px;
   min-height: 100%;
   padding-top: 74px;
   max-width: 1000px;

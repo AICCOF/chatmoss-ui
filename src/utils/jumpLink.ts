@@ -43,10 +43,12 @@ export function openWebView(url) {
 
 export function replaceDom(dom) {
   // 打包境外软件使用
-  dom = dom.replace('http://h5.aihao123.cn', 'https://h5.aihao123.cn')
-  if (location.origin == 'http://localhost')
+  // dom = dom.replace('http://h5.aihao123.cn', 'https://h5.aihao123.cn')
+  if (location.origin == 'http://localhost') {
+    dom = dom.replace('https://h5.aihao123.cn', 'http://127.0.0.1:5173')
     return dom.replace('http://h5.aihao123.cn', 'http://127.0.0.1:5173')
-
-  else
+  } else {
     return dom
+  }
+
 }

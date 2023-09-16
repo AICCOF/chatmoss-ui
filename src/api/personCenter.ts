@@ -8,6 +8,12 @@ export function getSystemNotice<T>() {
     data: {},
   })
 }
+export function getRedCount<T>(data) {
+  return get<T>({
+    url: `/luomacode-api/red/count`,
+    data: data,
+  })
+}
 
 export function getPlusInfo<T>() {
   return get<T>({

@@ -102,9 +102,14 @@ function handleChange(path) {
                 class="element-to-animate1 bg-[#F6F7FA] dark:bg-[#161616]">
                 <van-tabbar v-model="active" style="margin: 0 auto;" @change="handleChange">
                   <van-tabbar-item v-for="(item, i) of tabList " :key="i" :name="item.path">
-                    <div class="item text-center pb-[8px]  -mt-[10px]"
+
+                    <div class="item text-center pb-[8px]  -mt-[10px] relative"
                       :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : 'text-[#1a1a1a] dark:text-[#686868]']">
-                      <div  class="w-[36px] h-[36px] img">
+                      <van-badge
+                        :content="(item.path === '/my' && userStore.redCount > 0) ? userStore.redCount : undefined"
+                        max="99" style="position: absolute;right:5px;top:10px">
+                      </van-badge>
+                      <div class="w-[36px] h-[36px] img">
                         <img v-show="active === item.path" :src="item.img[vantTheme].activeImg" class="w-[100%]" alt="">
                         <img v-show="active !== item.path" :src="item.img[vantTheme].img" class="w-[100%]" alt="">
                       </div>
@@ -112,6 +117,7 @@ function handleChange(path) {
                         {{ item.title }}
                       </div>
                     </div>
+
                   </van-tabbar-item>
                 </van-tabbar>
               </div>
@@ -124,14 +130,14 @@ function handleChange(path) {
 </template>
 
 <style lang="less">
-
-.item{
-  &:hover{
-    .img{
+.item {
+  &:hover {
+    .img {
       transform: scale(0.9);
     }
   }
 }
+
 .element-to-animate1 {
   /* 元素的初始高度 */
   // height: 60px;

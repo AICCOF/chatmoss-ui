@@ -5,7 +5,7 @@ import { defaultSetting, getLocalState, setLocalState } from './helper'
 import { getActivityList, residueCount } from '@/api'
 import { localStorage } from '@/utils/storage/localStorage'
 import type { Notice } from '@/store/modules/user/helper'
-import { getSystemNotice } from '@/api/personCenter'
+import { getSystemNotice, getRedCount } from '@/api/personCenter'
 import { getApplicationInstallList } from '@/api/application'
 import { getBalanceInfo, getModelList } from '@/api/weixin'
 
@@ -21,6 +21,7 @@ export const useUserStore = defineStore('user-store', {
       balanceInfo: null,
       sliderToggle: false,
       newUser: false,
+      redCount:0,
       // useKey: '1',
       isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
@@ -143,6 +144,10 @@ export const useUserStore = defineStore('user-store', {
     },
   },
   actions: {
+    async getRedCountAPI() {
+      let res = await getRedCount({type:0});
+      this.redCount = res.data;
+    },
     async getBalanceInfo() {
       let res = await getBalanceInfo();
       this.balanceInfo = res.data;
@@ -195,6 +200,7 @@ export const useUserStore = defineStore('user-store', {
           }
 
         }
+        this.getRedCountAPI();
 
         return Promise.resolve(res)
       }
