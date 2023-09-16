@@ -8,10 +8,12 @@ import type { Notice } from '@/store/modules/user/helper'
 import { getSystemNotice, getRedCount } from '@/api/personCenter'
 import { getApplicationInstallList } from '@/api/application'
 import { getBalanceInfo, getModelList } from '@/api/weixin'
-
+import { notification } from 'ant-design-vue'
+import dayjs from 'dayjs'
 export const useUserStore = defineStore('user-store', {
   state: () => {
     return {
+
       ...getLocalState(),
       centerPicUrl: '',
       modelList: [],
@@ -21,7 +23,7 @@ export const useUserStore = defineStore('user-store', {
       balanceInfo: null,
       sliderToggle: false,
       newUser: false,
-      redCount:0,
+      redCount: 0,
       // useKey: '1',
       isAuth: 0, // 0 代表初始状态,1代表未登录,2 代表登录,3.登录过期,
     }
@@ -145,7 +147,7 @@ export const useUserStore = defineStore('user-store', {
   },
   actions: {
     async getRedCountAPI() {
-      let res = await getRedCount({type:0});
+      let res = await getRedCount({ type: 0 });
       this.redCount = res.data;
     },
     async getBalanceInfo() {
@@ -315,9 +317,25 @@ export const useUserStore = defineStore('user-store', {
       this.recordState()
     },
 
-    setNotices(value: any[]) {
-      this.userInfo.notices = value
-      this.recordState()
+    async setNotices() {
+      console.log(this.noticesId,'this.noticesId')
+      const res = await getSystemNotice({
+        lastNoticeId: this.noticesId
+      })
+      let notice = res.data;
+      if (notice) {
+        notification.open({
+          description: notice.context,
+          message: dayjs(notice.createTime).format('YYYY-MM-DD HH:mm:ss'),
+          duration: null,
+          onClick: () => {
+            // console.log('Notification Clicked!');
+          },
+        })
+        this.noticesId = notice.id
+        this.recordState()
+      }
+
     },
     setAppId(appId) {
       this.appId = appId

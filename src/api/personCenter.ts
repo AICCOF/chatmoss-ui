@@ -2,10 +2,10 @@ import post, { deleteRequest, get } from '@/utils/request'
 
 
 
-export function getSystemNotice<T>() {
+export function getSystemNotice<T>(data) {
   return get<T>({
-    url: `/luomacode-api/user/system/notice`,
-    data: {},
+    url: `/luomacode-api/announcement/newest`,
+    data,
   })
 }
 export function getRedCount<T>(data) {

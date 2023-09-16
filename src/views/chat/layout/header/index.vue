@@ -7,9 +7,6 @@ import { getButtonList } from '@/api/application'
 import { useGo } from '@/utils/router'
 import { trace } from '@/api/invite'
 import { jumpLink } from '@/utils/jumpLink'
-import { notification } from 'ant-design-vue'
-import { getSystemNotice } from '@/api/personCenter'
-import type { Notice } from '@/store/modules/user/helper'
 const userStore = useUserStore()
 const go = useGo()
 const tabList = ref([
@@ -21,7 +18,7 @@ async function getButtonListAPI() {
   const res = await getButtonList({
     type: 0,
   })
-  console.log(res)
+  // console.log(res)
   tabList.value = res.data || []
 }
 
@@ -63,26 +60,9 @@ function handleClose(goName: any) {
 
 onMounted(() => {
   // resetToken()
-  getSystemNoticeAPI()
+  userStore.setNotices()
 })
-const temNotice = computed(() => userStore.getNotices || [])
-async function getSystemNoticeAPI() {
-  const res = await getSystemNotice<Notice[]>()
 
-  const notice = res.data[0]
-
-  if (res.data.length > temNotice.value.length) {
-    notification.open({
-      description: notice.content,
-      message: notice.createTime,
-      duration: null,
-      onClick: () => {
-        // console.log('Notification Clicked!');
-      },
-    })
-  }
-  userStore.setNotices(res.data)
-}
 </script>
 
 <template>
