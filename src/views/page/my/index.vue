@@ -74,14 +74,7 @@ function handleMember() {
     },
   })
 }
-function handleNotice() {
-   go({
-    name: 'h5',
-    query: {
-      url: 'https://h5.aihao123.cn/pages/app/notice/index.html',
-    },
-  })
-}
+
 
 // { title: '退出登录', img: card4 },
 // https://h5.aihao123.cn/pages/app/help/index.html
@@ -89,16 +82,6 @@ function handleNotice() {
 
 <template>
   <div class="main">
-    <div class="flex justify-end w-[375px] m-auto">
-      <div class="relative mr-[15px]" @click="handleNotice">
-        <van-badge :content="(userStore.redCount > 0) ? userStore.redCount : undefined"
-          style="position: absolute;right: 10px;top:5px" >
-        </van-badge>
-        <img src="@/assets/my/member/notice.png" alt="" style="width: 36px;height: 36px;">
-      </div>
-
-
-    </div>
     <div class="flex items-center justify-between" style="
       margin: 0 auto;
       padding:0 16px;

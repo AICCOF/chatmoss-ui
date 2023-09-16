@@ -7,7 +7,7 @@ import { jumpLink, replaceDom } from '@/utils/jumpLink'
 
 const url = computed(() => {
   // console.log(router.currentRoute)
-  let dom = 'https://h5.aihao123.cn/pages/app/study/index.html'
+  let dom = 'https://h5.aihao123.cn/pages/app/notice/index.html'
 
   dom = replaceDom(dom)
   return `${dom}?token=${getToken()}&time=${new Date().getTime()}`

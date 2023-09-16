@@ -21,6 +21,7 @@ import feedback from '@/views/page/feedback/index.vue'
 import appList from '@/views/page/appList/index.vue'
 import createApp from '@/views/page/createApp/index.vue'
 import source from '@/views/page/source/index.vue'
+import notice from '@/views/page/notice/index.vue'
 import my from '@/views/page/my/index.vue'
 import h5 from '@/views/page/h5/index.vue'
 import c404 from '@/views/exception/404/index.vue'
@@ -147,6 +148,11 @@ const routes: RouteRecordRaw[] = [
         path: '/my',
         name: 'my',
         component: my
+      },
+      {
+        path: '/notice',
+        name: 'notice',
+        component: notice
       },
     ],
   },
