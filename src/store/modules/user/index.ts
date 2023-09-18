@@ -184,7 +184,7 @@ export const useUserStore = defineStore('user-store', {
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
-        this.userInfo.userLevel = 5;
+        this.userInfo.userLevel = 1;
         this.newUser = res.data.newUser
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
 

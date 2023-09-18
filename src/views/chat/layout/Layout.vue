@@ -63,16 +63,16 @@ const tabList = ref([
     path: '/notice',
     img: {
       light: {
-        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_notice_a.png',
+        activeImg: 'https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/layout/light_notice.png',
         img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_notice.png',
       },
       dark: {
-        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_notice_a.png',
+        activeImg: 'https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/layout/dark-notice.png',
         img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_notice.png',
       }
     }
   },
-  
+
   {
     title: '我的',
     path: '/my',
@@ -120,9 +120,9 @@ function handleChange(path) {
 
                     <div class="item text-center pb-[8px]  -mt-[10px] relative"
                       :class="[active == item.path ? 'dark:text-[#ffffff] text-[#1A1A1A]' : 'text-[#1a1a1a] dark:text-[#686868]']">
-                      <van-badge
+                      <van-badge color="#ff536f"
                         :content="(item.path === '/notice' && userStore.redCount > 0) ? userStore.redCount : undefined"
-                        max="99" style="position: absolute;right:5px;top:10px">
+                        max="99" style="position: absolute;right:5px;top:10px;z-index: 100;border-color: #fff;">
                       </van-badge>
                       <div class="w-[36px] h-[36px] img">
                         <img v-show="active === item.path" :src="item.img[vantTheme].activeImg" class="w-[100%]" alt="">

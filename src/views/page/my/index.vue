@@ -148,35 +148,37 @@ function handleMember() {
       </div>
     </div>
     <div class="member cursor-pointer relative" @click="handleMember" :class="['member' + userStore.userInfo.userLevel]">
+
       <img src="@/assets/member/member_bg.png" alt="" style="position: absolute;left:0;top:0;width: 100%;height: 100%;">
       <div class="flex justify-between items-center">
         <div class="flex items-center justify-between title">
           <img src="@/assets/my/member/icon-01.png" class="mr-[7px]" alt="" style="width: 22px;height: 22px;">
-          <span>Lv{{ userStore.userInfo.userLevel }}会员</span>
+          <span class="top font-bold">Lv{{ userStore.userInfo.userLevel }}等级</span>
         </div>
         <div class="flex  items-center" style="opacity: 0.3;">
           <span>查看</span>
           <SvgIcon icon="mingcute:right-fill" class="icon" style="font-size: 16px;" />
         </div>
       </div>
-      <div class="flex items-center justify-between mt-[13px]">
-        <div class="flex  items-center ">
+      <div class="flex items-center justify-between mt-[13px]" style="opacity: 0.5;">
+        <div class="flex  items-center " >
           <span class="iconfont icon-a-35-16gongzuorishiyong
 " style="font-size: 24px">
           </span>
-          <span style="opacity: 0.5;">模型免费用</span>
+          <span >模型免费用</span>
         </div>
         <div class="flex items-center">
           <span class="iconfont icon-keyishiyongchajian
 " style="font-size: 24px"> </span>
-          <span style="opacity: 0.5;">多插件提效</span>
+          <span >多插件提效</span>
         </div>
         <div class="flex  items-center">
           <span class="iconfont icon-tishicimoban
 " style="font-size: 24px"> </span>
-          <span style="opacity: 0.5;">提示词模版</span>
+          <span>提示词模版</span>
         </div>
       </div>
+
     </div>
 
     <div class="card flex justify-start  flex-wrap " style="margin-top: 18px;padding:0 4px;padding-bottom: 15px;">
@@ -256,8 +258,12 @@ function handleMember() {
 
   &.member1 {
     background-image: linear-gradient(45deg, #A0C1E1 0%, #DCEFFB 100%);
-    // border: 1px solid #FFFFFF;
+    border: 1px solid #FFFFFF;
     color: #496682;
+
+    .top {
+      color: #2B4365;
+    }
 
     .title {
       color: #2B4365;
@@ -266,9 +272,12 @@ function handleMember() {
 
   &.member2 {
     background-image: linear-gradient(45deg, #ADC9FA 0%, #EDF4FD 100%);
-    // border: 1px solid;
-    // border-image: linear-gradient(232deg, rgba(221, 234, 254, 1), rgba(158, 187, 244, 1)) 1 1;
-    color: #313775;
+    border: 1px solid #9ebbf4;
+    color: #ddeafe;
+
+    .top {
+      color: #202F67;
+    }
 
     .title {
       color: #202F67;
@@ -278,6 +287,11 @@ function handleMember() {
   &.member3 {
     background-image: linear-gradient(45deg, #F8D8BF 0%, #FDF2EB 100%);
     color: #80543D;
+    border: 1px solid #ffe7d4;
+
+    .top {
+      color: #5C3626;
+    }
 
     .title {
       color: #5C3626;
@@ -287,7 +301,11 @@ function handleMember() {
   &.member4 {
     background-image: linear-gradient(45deg, #AABDEB 0%, #DBE5F1 50%, #EBF0F6 100%);
     color: #454D65;
-    ;
+    border: 1px solid #deeaef;
+
+    .top {
+      color: #454D65;
+    }
 
     .title {
       color: #454D65;
@@ -297,6 +315,11 @@ function handleMember() {
   &.member5 {
     background-image: linear-gradient(45deg, #EFD49A 0%, #F5E3C1 100%);
     color: #B48C53;
+    border: 1px solid #fad696;
+
+    .top {
+      color: #7A4A25
+    }
 
     .title {
       color: #7A4A25;
@@ -306,7 +329,11 @@ function handleMember() {
   &.member6 {
     background-image: linear-gradient(45deg, #DBAD8B 0%, #F7EBD7 48%, #F3DBBC 100%);
     color: #A8713F;
-    ;
+    border: 1px solid #fcf4e1;
+
+    .top {
+      color: #4B321B;
+    }
 
     .title {
       color: #4B321B;
@@ -314,8 +341,13 @@ function handleMember() {
   }
 
   &.member7 {
-    background-image: linear-gradient(45deg, #DBAD8B 0%, #F7EBD7 48%, #F3DBBC 100%);
+    background-image: linear-gradient(45deg, #1C162F 0%, #3F3368 100%);
     color: #FFFFFF;
+    border: 1px solid #cbbbff;
+
+    .top {
+      color: #F1E4F7;
+    }
 
     .title {
       color: #F1E4F7;
@@ -323,8 +355,13 @@ function handleMember() {
   }
 
   &.member8 {
-    background-image: linear-gradient(45deg, #DBAD8B 0%, #F7EBD7 48%, #F3DBBC 100%);
+    background-image: linear-gradient(45deg, #1E1E2E 0%, #3A3A52 100%);;
     color: #FFFFFF;
+    border: 1px solid #333453;
+
+    .top {
+      color: #E4E4F7;
+    }
 
     .title {
       color: #F1E4F7;
@@ -334,8 +371,13 @@ function handleMember() {
   &.member9 {
     background-image: linear-gradient(45deg, #141015 0%, #333030 100%);
     box-shadow: inset 0px 1px 5px 0px rgba(31, 26, 36, 1);
-
     color: #FFFFFF;
+    border: 1px solid #494748;
+
+    .top {
+      color: #F5D3BF;
+    }
+
 
     .title {
       color: #F5D3BF;
@@ -345,8 +387,12 @@ function handleMember() {
   &.member10 {
     background-image: linear-gradient(45deg, #221A2A 0%, #3E3646 100%);
     box-shadow: inset 0px 1px 5px 0px rgba(31, 26, 36, 1);
-
     color: #BBAAA5;
+    border: 1px solid #bfa7b0;
+
+    .top {
+      color: #F7E9E0;
+    }
 
     .title {
       color: #F7E9E0;
@@ -365,6 +411,7 @@ function handleMember() {
   width: 347px;
   background: #FFFFFF;
   border-radius: 11px;
+  box-shadow: 0px 2px 15px 0px rgba(220, 224, 239, 1);
 
   .card-item {
     .text {

@@ -75,7 +75,7 @@ function handleSave() {
 
 <template>
   <div class="wrap">
-    <div style="padding-top: 23px; padding-bottom: 20px;">
+    <div style="padding-top: 23px;">
       <div class="flex justify-center items-center"> <NSwitch v-model:value="userStore.slideActive" class="mySwitch" @update:value="()=> userStore.recordState()" /></div>
       <div class="flex justify-center items-center" style="
       font-size: 12px;

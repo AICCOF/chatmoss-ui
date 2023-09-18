@@ -12,6 +12,9 @@ const ms = useMessage()
 const popoverDom = ref()
 const authStore = useAuthStoreWithout()
 const { resetValue } = useScroll()
+import { useTheme } from '@/hooks/useTheme'
+// router.replace({ name: 'chat', params: { uuid: chatStore.active } })
+const { vantTheme } = useTheme()
 const hidden = computed(() => {
   return location.search.includes('hiddenInput')
 })
@@ -62,7 +65,7 @@ const handleSwitchChange = (selectedItem) => {
 }
 // 获取选中的插件信息
 chatStore.getPlugin()
-
+const dataSources = computed(() => chatStore.getChatByUuid())
 function handleParamConfigs(item, row) {
   item.choiceSelect = row.id
   updateAppConfig({
@@ -75,27 +78,34 @@ function handleParamConfigs(item, row) {
 </script>
 
 <template>
-  <div>
+  <div class="relative">
+    <div v-if="dataSources.length === 0" style="
+    z-index: 10;
+    position: absolute;
+    width: 162px;
+    top: -124px;
+    left: 50%;
+    margin-left: -81px;" class="element-to-animate">
+      <img v-if="vantTheme === 'dark'" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/chat/drak-notice.png"
+        alt="" style="width: 100%;">
+      <img v-if="vantTheme === 'light'"
+        src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/chat/light-notice.png" alt="" style="width: 100%;">
+    </div>
+
     <footer class="">
       <div v-if="userStore.currentApp && userStore.currentApp.paramConfigs" class="flex">
-        <Popover
-          v-for="(item, ii) of userStore.currentApp.paramConfigs" title="" trigger="hover" ::key="ii"
-          overlay-class-name="ant-popover-my"
-        >
+        <Popover v-for="(item, ii) of userStore.currentApp.paramConfigs" title="" trigger="hover" ::key="ii"
+          overlay-class-name="ant-popover-my">
           <template #content>
             <div class="text-center" style="padding: 8px;min-width: 100px">
-              <div
-                v-for="(row, i) of item.choices" :key="i"
-                class="py-1 px-2 cursor-pointer hover:bg-[#00000040] rounded-lg" @click="handleParamConfigs(item, row)"
-              >
+              <div v-for="(row, i) of item.choices" :key="i"
+                class="py-1 px-2 cursor-pointer hover:bg-[#00000040] rounded-lg" @click="handleParamConfigs(item, row)">
                 {{ item.name }}:{{ row.value }}
               </div>
             </div>
           </template>
-          <div
-            style="background: #6388ff;"
-            class="m-pointer footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin ml-2"
-          >
+          <div style="background: #6388ff;"
+            class="m-pointer footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin ml-2">
             {{ item.name }}:{{ item.choicesMap[item.choiceSelect].value }}
           </div>
         </Popover>
@@ -105,16 +115,14 @@ function handleParamConfigs(item, row) {
         <div class="footer-left">
           <div class="div">
             <div class="div-wrap">
-              <div
-                v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn1 bg-[#EBEDF5] dark:bg-[#292929] btn"
-                @click="createQuestion"
-              >
+              <div v-if="!userStore.isQuestionMode"
+                class="footer-item footer-item-btn footer-item-btn1 bg-[#EBEDF5] dark:bg-[#292929] btn"
+                @click="createQuestion">
                 新建会话
               </div>
-              <div
-                v-if="!userStore.isQuestionMode" class="footer-item footer-item-btn footer-item-btn2 bg-[#EBEDF5] dark:bg-[#292929] btn"
-                @click="toggleButtonEvent"
-              >
+              <div v-if="!userStore.isQuestionMode"
+                class="footer-item footer-item-btn footer-item-btn2 bg-[#EBEDF5] dark:bg-[#292929] btn"
+                @click="toggleButtonEvent">
                 历史记录
               </div>
               <Popover title="" trigger="hover" overlay-class-name="ant-popover-my bg-[#EBEDF5] dark:bg-[#292929]">
@@ -143,10 +151,9 @@ function handleParamConfigs(item, row) {
                     </div>
                   </div>
                 </template>
-                <div
-                  v-if="authStore.token" class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin bg-[#EBEDF5] dark:bg-[#292929] btn"
-                  style=""
-                >
+                <div v-if="authStore.token"
+                  class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin bg-[#EBEDF5] dark:bg-[#292929] btn"
+                  style="">
                   插件系统
                   <!-- <img
                   src="@/assets/icon/icon-plugin.png" style="width: 12px;
@@ -156,10 +163,8 @@ function handleParamConfigs(item, row) {
                   <!-- <span class="align-text-top">插件</span> -->
                 </div>
                 <div v-if="authStore.token" class="inline-block align-middle">
-                  <img
-                    v-if="chatStore.getSelectPluginInfo?.select" class="plugin-main-select-icon"
-                    :src="chatStore.getSelectPluginInfo.icon" alt=""
-                  >
+                  <img v-if="chatStore.getSelectPluginInfo?.select" class="plugin-main-select-icon"
+                    :src="chatStore.getSelectPluginInfo.icon" alt="">
                 </div>
               </Popover>
               <!-- <div v-if="userStore.toggleValue && !userStore.isQuestionMode"
@@ -170,29 +175,23 @@ function handleParamConfigs(item, row) {
           </div>
         </div>
         <div class="footer-right">
-          <div
-            v-if="hidden"
+          <div v-if="hidden"
             class="footer-item footer-item-btn footer-item-btn1 model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
-            @click="handleMode"
-          >
+            @click="handleMode">
             {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
           </div>
           <div class="footer-item">
             <div class="header-right-item header-right-item-help">
               <NPopover ref="popoverDom" trigger="hover" placement="left">
                 <template #trigger>
-                  <div
-                    v-if="userStore.getModeVersion"
-                    class="footer-item footer-item-btn footer-item-btn1 model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
-                  >
+                  <div v-if="userStore.getModeVersion"
+                    class="footer-item footer-item-btn footer-item-btn1 model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]">
                     {{ userStore.getModeVersion.viewName }}
                   </div>
                 </template>
                 <div>
-                  <div
-                    v-for="(item, i) of userStore.getModelList" :key="i" class="model-item"
-                    :class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)"
-                  >
+                  <div v-for="(item, i) of userStore.getModelList" :key="i" class="model-item"
+                    :class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)">
                     <NPopover trigger="hover" placement="left" style="width: max-content;">
                       <div class="flex">
                         解释：{{ item.desc }}
@@ -216,196 +215,196 @@ function handleParamConfigs(item, row) {
 
 <style lang="less" scoped>
 .plugin-main-select-icon {
-	width: 16px;
-	height: 16px;
-	margin-left: 6px;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
 }
 
 .plugin-item {
-	display: flex;
-	align-items: center;
-	width: 304px;
-	height: 62px;
-	margin-bottom: 12px;
-	padding: 12px;
-	border-radius: 8px;
+  display: flex;
+  align-items: center;
+  width: 304px;
+  height: 62px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 8px;
 
-	&:hover {
-		background-color: #f2f3f5;
-	}
+  &:hover {
+    background-color: #f2f3f5;
+  }
 
-	.plugin-item-icon {
-		width: 30px;
-		height: 30px;
-		margin-right: 10px;
-	}
+  .plugin-item-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
 
-	.plugin-item-info {
-		// display: flex;
-		width: 180px;
-		height: 44px;
-		margin-right: 10px;
+  .plugin-item-info {
+    // display: flex;
+    width: 180px;
+    height: 44px;
+    margin-right: 10px;
 
-		.plugin-item-name {
-			width: 180px;
-			height: 22px;
-			margin-bottom: 4px;
-			overflow: hidden;
-			color: #1d2129;
-			font-family: PingFangSC-Regular, 'PingFang SC';
-			font-size: 14px;
-			font-weight: 400;
-			line-height: 22px;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
+    .plugin-item-name {
+      width: 180px;
+      height: 22px;
+      margin-bottom: 4px;
+      overflow: hidden;
+      color: #1d2129;
+      font-family: PingFangSC-Regular, 'PingFang SC';
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-		.plugin-item-description {
-			width: 180px;
-			height: 17px;
-			overflow: hidden;
-			color: #86909c;
-			font-family: PingFangSC-Regular, 'PingFang SC';
-			font-size: 12px;
-			font-weight: 400;
-			line-height: 17px;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-	}
+    .plugin-item-description {
+      width: 180px;
+      height: 17px;
+      overflow: hidden;
+      color: #86909c;
+      font-family: PingFangSC-Regular, 'PingFang SC';
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 17px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 }
 
 .model-item {
-	padding: 3px 5px;
-	cursor: pointer;
+  padding: 3px 5px;
+  cursor: pointer;
 }
 
 .line {
-	border-bottom: 0.5px solid #3a3a3c;
+  border-bottom: 0.5px solid #3a3a3c;
 }
 
 .footer-main {
-	width: 100%;
-	min-width: 250px;
-	// overflow: scroll;
-	display: flex;
-	align-items: center;
-	padding: 0 0.5rem;
-	user-select: none;
-	backdrop-filter: blur(20px);
-	// background-color: var(--moss-bg-content-color);
-	z-index: 20;
+  width: 100%;
+  min-width: 250px;
+  // overflow: scroll;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  user-select: none;
+  backdrop-filter: blur(20px);
+  // background-color: var(--moss-bg-content-color);
+  z-index: 20;
 
-	.footer-left {
-		width: 70%;
-		display: flex;
+  .footer-left {
+    width: 70%;
+    display: flex;
 
-		.div {
-			display: block;
-			overflow-x: auto;
+    .div {
+      display: block;
+      overflow-x: auto;
 
-			&::-webkit-scrollbar {
-				width: 10px;
-				height: 5px;
-				/**/
-			}
+      &::-webkit-scrollbar {
+        width: 10px;
+        height: 5px;
+        /**/
+      }
 
-			&::-webkit-scrollbar-track {
-				border-radius: 10px;
-			}
+      &::-webkit-scrollbar-track {
+        border-radius: 10px;
+      }
 
-			&::-webkit-scrollbar-thumb:hover {
-				border-radius: 10px;
-			}
+      &::-webkit-scrollbar-thumb:hover {
+        border-radius: 10px;
+      }
 
-			.div-wrap {
-				width: max-content;
+      .div-wrap {
+        width: max-content;
 
-			}
-		}
-	}
+      }
+    }
+  }
 
-	.footer-right {
-		width: 30%;
-		display: flex;
-		justify-content: flex-end;
-	}
+  .footer-right {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+  }
 
-	.footer-item {
-		margin-right: 5px;
-		cursor: pointer;
-		display: inline-block;
+  .footer-item {
+    margin-right: 5px;
+    cursor: pointer;
+    display: inline-block;
 
-		&:active {
-			transform: scale(.96);
-		}
+    &:active {
+      transform: scale(.96);
+    }
 
-		img {
-			width: 20px;
-			height: 20px;
-		}
-	}
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
 
-	.footer-item-btn {
-		// background: var(--moss-bg-btn-color);
-		border-radius: 27px;
-		// color: var(--moss-text-ask-color);
-		padding: 2px 8px;
-		margin-top: 5px;
-		margin-bottom: 5px;
-		font-size: 12px;
+  .footer-item-btn {
+    // background: var(--moss-bg-btn-color);
+    border-radius: 27px;
+    // color: var(--moss-text-ask-color);
+    padding: 2px 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 12px;
 
-		&.model-version {
-			// background-color: var(--moss-bg-ask-color);
-		}
-	}
+    &.model-version {
+      // background-color: var(--moss-bg-ask-color);
+    }
+  }
 }
 
 .wrapper {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
-	z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  z-index: 10000;
 }
 
 .wrapper-mian {
-	width: 375px;
-	height: 85vh;
-	border-radius: 10px;
-	transform: scale(0.95);
+  width: 375px;
+  height: 85vh;
+  border-radius: 10px;
+  transform: scale(0.95);
 
-	iframe {
-		width: 375px;
-		height: 80vh;
-	}
+  iframe {
+    width: 375px;
+    height: 80vh;
+  }
 }
 
 .plugin-btn {
-	width: 284px;
-	margin: 0 auto;
-	margin-bottom: 20px;
-	margin-top: 14px;
-	text-align: center;
-	border-radius: 20px;
-	border: 1px solid #000;
-	padding: 10px 0px;
-	cursor: pointer;
+  width: 284px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  margin-top: 14px;
+  text-align: center;
+  border-radius: 20px;
+  border: 1px solid #000;
+  padding: 10px 0px;
+  cursor: pointer;
 }
 </style>
 
 <style>
 .van-overlay {
-	z-index: 1000;
+  z-index: 1000;
 }
 
 .ant-popover-inner-content {
-	padding: 0px !important;
-	max-height: 340px !important;
-	overflow: auto !important;
+  padding: 0px !important;
+  max-height: 340px !important;
+  overflow: auto !important;
 }
 
 .ant-popover-inner {
-	border-radius: 8px !important;
+  border-radius: 8px !important;
 }
 </style>
