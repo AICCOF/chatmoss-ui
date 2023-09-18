@@ -148,11 +148,11 @@ function handleMember() {
         <SvgIcon icon="mingcute:right-fill" class="icon" style="color: #DFE1E8;font-size: 16px;" />
       </div>
     </div>
-    <div class="member cursor-pointer" @click="handleMember">
+    <div class="member  cursor-pointer" @click="handleMember" :class="['member' + userStore.userInfo.userLevel]">
       <div class="flex justify-between items-center">
-        <div class="flex  items-center justify-between">
+        <div class="flex items-center justify-between title">
           <img src="@/assets/my/member/icon-01.png" class="mr-[7px]" alt="" style="width: 22px;height: 22px;">
-          <span>Lv{{ userStore.userInfo.memberLevel }}会员</span>
+          <span>Lv{{ userStore.userInfo.userLevel }}会员</span>
         </div>
         <div class="flex  items-center">
           <span>查看</span>
@@ -230,8 +230,9 @@ function handleMember() {
   width: 347px;
   height: 80px;
   margin: 0 auto;
-  background: linear-gradient(45deg, #221A2A 0%, #3E3646 100%);
-  box-shadow: inset 0px 1px 5px 0px rgba(31, 26, 36, 1);
+  // background: linear-gradient(45deg, #221A2A 0%, #3E3646 100%);
+  background-image: linear-gradient(45deg, #A0C1E1 0%, #DCEFFB 100%);
+  // box-shadow: inset 0px 1px 5px 0px rgba(31, 26, 36, 1);
   border-radius: 11px;
   box-sizing: border-box;
   padding: 16px 15px;
@@ -240,9 +241,112 @@ function handleMember() {
   color: #BBAAA5;
   line-height: 16px;
 
+  .title {
+    font-size: 14px;
+  }
+
   img {
     width: 17px;
     height: 17px;
+  }
+
+  &.member1 {
+    background-image: linear-gradient(45deg, #A0C1E1 0%, #DCEFFB 100%);
+    // border: 1px solid #FFFFFF;
+    color: #496682;
+
+    .title {
+      color: #2B4365;
+    }
+  }
+
+  &.member2 {
+    background-image: linear-gradient(45deg, #ADC9FA 0%, #EDF4FD 100%);
+    // border: 1px solid;
+    // border-image: linear-gradient(232deg, rgba(221, 234, 254, 1), rgba(158, 187, 244, 1)) 1 1;
+    color: #313775;
+
+    .title {
+      color: #202F67;
+    }
+  }
+
+  &.member3 {
+    background-image: linear-gradient(45deg, #F8D8BF 0%, #FDF2EB 100%);
+    color: #80543D;
+
+    .title {
+      color: #5C3626;
+    }
+  }
+
+  &.member4 {
+    background-image: linear-gradient(45deg, #AABDEB 0%, #DBE5F1 50%, #EBF0F6 100%);
+    color: #454D65;
+    ;
+
+    .title {
+      color: #454D65;
+    }
+  }
+
+  &.member5 {
+    background-image: linear-gradient(45deg, #EFD49A 0%, #F5E3C1 100%);
+    color: #B48C53;
+
+    .title {
+      color: #7A4A25;
+    }
+  }
+
+  &.member6 {
+    background-image: linear-gradient(45deg, #DBAD8B 0%, #F7EBD7 48%, #F3DBBC 100%);
+    color: #A8713F;
+    ;
+
+    .title {
+      color: #4B321B;
+    }
+  }
+
+  &.member7 {
+    background-image: linear-gradient(45deg, #DBAD8B 0%, #F7EBD7 48%, #F3DBBC 100%);
+    color: #FFFFFF;
+
+    .title {
+      color: #F1E4F7;
+    }
+  }
+
+  &.member8 {
+    background-image: linear-gradient(45deg, #DBAD8B 0%, #F7EBD7 48%, #F3DBBC 100%);
+    color: #FFFFFF;
+
+    .title {
+      color: #F1E4F7;
+    }
+  }
+
+  &.member9 {
+    background-image: linear-gradient(45deg, #141015 0%, #333030 100%);
+    box-shadow: inset 0px 1px 5px 0px rgba(31, 26, 36, 1);
+
+    color: #FFFFFF;
+
+    .title {
+      color: #F5D3BF;
+    }
+  }
+
+  &.member10 {
+    background-image: linear-gradient(45deg, #221A2A 0%, #3E3646 100%);
+    box-shadow: inset 0px 1px 5px 0px rgba(31, 26, 36, 1);
+
+    color: #BBAAA5;
+
+    .title {
+      color: #F7E9E0;
+    }
   }
 
 }
