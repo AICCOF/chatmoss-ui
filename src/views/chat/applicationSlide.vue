@@ -7,10 +7,17 @@ const userStore = useUserStore()
 let time
 let time1
 function mouseleave(e) {
-  clearTimeout(time)
-  userStore.sliderToggle = false
+  if (userStore.slideActive) {
+    clearTimeout(time)
+    userStore.sliderToggle = false
+  }
 }
 
+function iconMouseenter() {
+  if (userStore.slideActive) {
+    mouseenter()
+  }
+}
 function mouseenter() {
   clearTimeout(time1)
   time = setTimeout(() => {
@@ -21,7 +28,7 @@ function mouseenter() {
 
 <template>
   <div class="absolute  transition-all w-[0px] bg-[#212430] duration-180 h-full left-[0] top-[0]">
-    <NDrawer v-model:show="userStore.sliderToggle" class="my-drawer !bg-[#212430]" :width="80" placement="left">
+    <NDrawer v-model:show="userStore.sliderToggle" class="my-drawer !bg-[#212430]" :width="106" placement="left">
       <NDrawerContent>
         <!-- @mouseleave="mouseleave" -->
         <applicationList @mouseleave="mouseleave" @mouseenter="mouseenter" />
@@ -29,11 +36,11 @@ function mouseenter() {
     </NDrawer>
     <!-- @mouseenter="() => userStore.sliderToggleMode()" -->
 
-    <div style="cursor: pointer;" class="absolute  top-[180px] z-10 w-[40px] h-[60px] flex items-center justify-start" @mouseenter="mouseenter">
+    <div style="cursor: pointer;" class="absolute  top-[180px] z-10 w-[40px] h-[60px] flex items-center justify-start"
+      @mouseenter="iconMouseenter" @click="mouseenter">
       <div
         class="m-pointer plugin-btn  w-[30px] h-[30px] rounded-full  overflow bg-[#00000033] -ml-[15px] text-[#fff] dark:bg-[#ffffff33] text-[24px] flex items-center justify-center pl-[10px]"
-        style=""
-      >
+        style="">
         <SvgIcon icon="formkit:right" />
       </div>
     </div>

@@ -10,6 +10,7 @@ import { setupI18n } from './locales'
 import { setupAssets } from './plugins'
 import { setupStore } from './store'
 import { setupRouter } from './router'
+import '@/styles/iconfont.css'
 
 
 import getDomainAPI from './api/getDomain'

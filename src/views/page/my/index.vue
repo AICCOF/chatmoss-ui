@@ -12,7 +12,6 @@ const chatStore = useChatStore()
 const userStore = useUserStore()
 const useAuthStore = useAuthStoreWithout()
 userStore.residueCountAPI()
-
 const infoList = ref([
   { title: '设置', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item1.png', callBack: () => { go({ name: 'setting' }) } },
   { title: '在线客服', img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/item2.png', callBack: () => { openWebView('https://wpa1.qq.com/J3gC8UbU?_type=wpa&qidian=true') } },
@@ -148,29 +147,34 @@ function handleMember() {
         <SvgIcon icon="mingcute:right-fill" class="icon" style="color: #DFE1E8;font-size: 16px;" />
       </div>
     </div>
-    <div class="member  cursor-pointer" @click="handleMember" :class="['member' + userStore.userInfo.userLevel]">
+    <div class="member cursor-pointer relative" @click="handleMember" :class="['member' + userStore.userInfo.userLevel]">
+      <img src="@/assets/member/member_bg.png" alt="" style="position: absolute;left:0;top:0;width: 100%;height: 100%;">
       <div class="flex justify-between items-center">
         <div class="flex items-center justify-between title">
           <img src="@/assets/my/member/icon-01.png" class="mr-[7px]" alt="" style="width: 22px;height: 22px;">
           <span>Lv{{ userStore.userInfo.userLevel }}会员</span>
         </div>
-        <div class="flex  items-center">
+        <div class="flex  items-center" style="opacity: 0.3;">
           <span>查看</span>
-          <SvgIcon icon="mingcute:right-fill" class="icon" style="color: #DFE1E8;font-size: 16px;" />
+          <SvgIcon icon="mingcute:right-fill" class="icon" style="font-size: 16px;" />
         </div>
       </div>
       <div class="flex items-center justify-between mt-[13px]">
         <div class="flex  items-center ">
-          <img src="@/assets/my/member/icon-item01.png" class="mr-[7px]" alt="">
-          <span>模型免费用</span>
+          <span class="iconfont icon-a-35-16gongzuorishiyong
+" style="font-size: 24px">
+          </span>
+          <span style="opacity: 0.5;">模型免费用</span>
         </div>
         <div class="flex items-center">
-          <img src="@/assets/my/member/icon-item02.png" class="mr-[7px]" alt="">
-          <span>多插件提效</span>
+          <span class="iconfont icon-keyishiyongchajian
+" style="font-size: 24px"> </span>
+          <span style="opacity: 0.5;">多插件提效</span>
         </div>
         <div class="flex  items-center">
-          <img src="@/assets/my/member/icon-item03.png" class="mr-[7px]" alt="">
-          <span>提示词模版</span>
+          <span class="iconfont icon-tishicimoban
+" style="font-size: 24px"> </span>
+          <span style="opacity: 0.5;">提示词模版</span>
         </div>
       </div>
     </div>

@@ -63,12 +63,12 @@ const tabList = ref([
     path: '/notice',
     img: {
       light: {
-        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item3_a.png',
-        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_item3.png',
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_notice_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/light_notice.png',
       },
       dark: {
-        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item3_a.png',
-        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_item3.png',
+        activeImg: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_notice_a.png',
+        img: 'https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/tab02/dark_notice.png',
       }
     }
   },
