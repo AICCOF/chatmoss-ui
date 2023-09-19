@@ -338,7 +338,7 @@ async function exchangeMossEvent() {
               alertInfo.price / 100 }}
           </div>
           <div class="tip-text-input1">
-            虚拟商品，不支持退款，请再三考虑是否需要购买
+            节省时间的价值，是无法衡量的
           </div>
         </div>
       </div>
@@ -378,7 +378,7 @@ async function exchangeMossEvent() {
               alertInfo.price / 100 }}
           </div>
           <div class="tip-text-input1">
-            虚拟商品，不支持退款，请再三考虑是否需要购买
+            节省时间的价值，是无法衡量的
           </div>
         </div>
       </div>
