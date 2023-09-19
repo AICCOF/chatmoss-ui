@@ -273,7 +273,7 @@ function handleMember() {
   &.member2 {
     background-image: linear-gradient(45deg, #ADC9FA 0%, #EDF4FD 100%);
     border: 1px solid #9ebbf4;
-    color: #ddeafe;
+    color: #313775;
 
     .top {
       color: #202F67;
