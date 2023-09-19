@@ -464,7 +464,7 @@ function handleMember() {
 
 .main {
   // width: 375px;
-  min-height: 100%;
+  height: 100%;
   padding-top: 74px;
   max-width: 1000px;
   margin: 0 auto;
@@ -474,5 +474,7 @@ function handleMember() {
   // background: #F6F7FA;
   background-repeat: no-repeat;
   background-size: cover;
+  overflow: scroll;
+  padding-bottom: 74px;
 }
 </style>

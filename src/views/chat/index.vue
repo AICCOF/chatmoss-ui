@@ -213,8 +213,6 @@ async function onConversation(askMsg?: string, opt?) {
     if (!res)
       return
   }
-  chatStore.clearQuestionMode()
-
   if (opt) {
     chatOptions = {
       conversationId: chatStore.getUuid,
@@ -245,6 +243,7 @@ async function onConversation(askMsg?: string, opt?) {
     await replayQuestions(message, opt)
   }
   else {
+    chatStore.clearQuestionMode()
     await newQuestions(message)
   }
 }
@@ -258,6 +257,7 @@ async function replayQuestions(message, opt) {
     options = { ...lastContext }
   let contentList = []
   const row = getChatByUuidAndIndex(chatStore.getUuid, opt.position)
+  console.log(row, opt.position)
   if (row)
     contentList = row.contentList || []
 
@@ -1070,8 +1070,9 @@ function handleDump(item) {
         :class="[userStore.toggleValue ? 'p90' : '']">
         <div id="image-wrapper" class="w-full m-auto items-center pb-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
           style="height: 100%;overflow: hidden">
-          <div id="scrollRef1" class="pt-[12px]" ref="scrollRef" style="width:100%;max-height:100%;overflow:auto">
-            <applicationIntro />
+          <div id="scrollRef1" class="pt-[12px]" ref="scrollRef"
+            style="width:100%;height:100%;overflow:auto;display: flex; flex-wrap: wrap; ">
+            <applicationIntro style="width: 100%;" />
             <transition name="fade1">
               <div v-if="isEnd" class="icon-top" style="" @click="scrollToTop">
                 <SvgIcon icon="grommet-icons:link-top" />
@@ -1084,22 +1085,23 @@ function handleDump(item) {
               </div>
             </transition>
 
-            <div v-if="!dataSources.length" class="no-data-info w-full">
-              <!-- 应用介绍 -->
+            <div class="flex-1">
+              <div v-if="!dataSources.length" class="no-data-info w-full">
+                <!-- 应用介绍 -->
 
-              <!-- 空态占位图 -->
-              <div style="width: 100%;">
-                <NCarousel autoplay dot-placement="top" mousewheel show-arrow
-                  style="width: 80%;max-width:500px;margin: 0 auto;" :interval="3000">
-                  <NCarouselItem v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
-                    <img class="cursor-pointer" :src="item.iconUrl"
-                      style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
-                      @click="handleDump(item)">
-                  </NCarouselItem>
+                <!-- 空态占位图 -->
+                <div style="width: 100%;">
+                  <NCarousel autoplay dot-placement="top" mousewheel show-arrow
+                    style="width: 80%;max-width:500px;margin: 0 auto;" :interval="3000">
+                    <NCarouselItem v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
+                      <img class="cursor-pointer" :src="item.iconUrl"
+                        style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
+                        @click="handleDump(item)">
+                    </NCarouselItem>
 
-                  <template #arrow="{ prev, next }">
-                    <div class="custom-arrow">
-                      <button type="button" style="
+                    <template #arrow="{ prev, next }">
+                      <div class="custom-arrow">
+                        <button type="button" style="
                         position: absolute;
                         right: 10px;
                         top: 50%;
@@ -1107,12 +1109,12 @@ function handleDump(item) {
                         font-size: 30px;
                         color:rgb(0, 122, 255);
                       " @click="next">
-                        <!-- <SvgIcon icon="uiw:right" class="icon" /> -->
-                        <img
-                          src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
-                          style="width: 40px;transform: rotateZ(180deg);" alt="">
-                      </button>
-                      <button type="button" style="
+                          <!-- <SvgIcon icon="uiw:right" class="icon" /> -->
+                          <img
+                            src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
+                            style="width: 40px;transform: rotateZ(180deg);" alt="">
+                        </button>
+                        <button type="button" style="
                         position: absolute;
                         left:10px;
                         top: 50%;
@@ -1120,27 +1122,27 @@ function handleDump(item) {
                         font-size: 30px;
                         color:rgb(0, 122, 255);
                       " @click="prev">
-                        <img
-                          src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
-                          style="    width: 40px;" alt="">
-                      </button>
-                    </div>
-                  </template>
-                  <template #dots="{ total, currentIndex, to }">
-                    <div class="custom-dots flex items-center justify-center" style="
+                          <img
+                            src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
+                            style="    width: 40px;" alt="">
+                        </button>
+                      </div>
+                    </template>
+                    <template #dots="{ total, currentIndex, to }">
+                      <div class="custom-dots flex items-center justify-center" style="
                       position: absolute;
                       bottom: 20px;
                       left: 0px;
                       width: 100%;
                     ">
-                      <ul class="custom-dots" style="
+                        <ul class="custom-dots" style="
                           display: flex;
                           margin: 0;
                           padding: 0;
                       ">
-                        <li v-for="index of total" :key="index" :style="{
-                          backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)',
-                        }" style="display: inline-block;
+                          <li v-for="index of total" :key="index" :style="{
+                            backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)',
+                          }" style="display: inline-block;
                           width: 12px;
                           height: 4px;
                           margin: 0 3px;
@@ -1148,34 +1150,35 @@ function handleDump(item) {
                           transition: width 0.3s, background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                           cursor: pointer;
                         " @click="to(index - 1)" />
-                      </ul>
-                    </div>
-                  </template>
-                </NCarousel>
-                <!-- <van-swipe>
+                        </ul>
+                      </div>
+                    </template>
+                  </NCarousel>
+                  <!-- <van-swipe>
                   <van-swipe-item v-for="(item, i) of tabList" :key="i">
                     <img :src="item.iconUrl" alt="" style="width: 100%;border-radius: 10px;" @click="handleDump(item)">
                   </van-swipe-item>
 
                 </van-swipe> -->
+                </div>
               </div>
-            </div>
-            <div v-if="dataSources.length" id="data-wrapper">
-              <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
-                :info="item"
-                :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
-                :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
-                :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
-                :question-mode="item.mossReduceInfo?.questionMode" @ask="(...args) => askFn(...args, index)"
-                @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
+              <div v-if="dataSources.length" id="data-wrapper">
+                <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+                  :info="item"
+                  :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
+                  :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
+                  :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
+                  :question-mode="item.mossReduceInfo?.questionMode" @ask="(...args) => askFn(...args, index)"
+                  @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
 
-              <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
-                <NButton v-if="loading" @click="handleStop">
-                  <template #icon>
-                    <SvgIcon icon="ri:stop-circle-line" />
-                  </template>
-                  正在响应
-                </NButton>
+                <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
+                  <NButton v-if="loading" @click="handleStop">
+                    <template #icon>
+                      <SvgIcon icon="ri:stop-circle-line" />
+                    </template>
+                    正在响应
+                  </NButton>
+                </div>
               </div>
             </div>
           </div>
@@ -1457,13 +1460,15 @@ function handleDump(item) {
     border-radius: 10px;
   }
 }
+
 .dark {
   #scrollRef1 {
-     &::-webkit-scrollbar-thumb {
+    &::-webkit-scrollbar-thumb {
       border-radius: 10px;
     }
   }
 }
+
 .moss-btns {
   position: relative;
 }
@@ -1633,5 +1638,4 @@ function handleDump(item) {
   &:hover {
     opacity: 1;
   }
-}
-</style>
+}</style>

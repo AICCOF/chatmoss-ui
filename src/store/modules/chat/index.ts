@@ -441,6 +441,7 @@ export const useChatStore = defineStore('chat-store', {
         return null
       }
       const chatIndex = this.chat.findIndex(item => item.id === id)
+      // console.log(this.chat[chatIndex].data[index])
       if (chatIndex !== -1)
         return this.chat[chatIndex].data[index]
       return null
