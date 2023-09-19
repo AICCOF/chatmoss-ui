@@ -158,6 +158,10 @@ export const useUserStore = defineStore('user-store', {
       this.useKey = '0'
       // 
     },
+    closeBootPrompt() {
+      this.isNotBootPrompt = true
+      this.recordState()
+    },
     sliderToggleMode() {
       this.sliderToggle = !this.sliderToggle
     },
@@ -184,7 +188,7 @@ export const useUserStore = defineStore('user-store', {
         this.userInfo = {
           ...this.userInfo, ...res.data,
         }
-        this.userInfo.userLevel = 1;
+        // this.userInfo.userLevel = 1;
         this.newUser = res.data.newUser
         // 0 代表初始状态, 1代表未登录, 2 代表登录, 3.登录过期
 
@@ -193,6 +197,7 @@ export const useUserStore = defineStore('user-store', {
           this.centerPicUrl = res.data.centerPicUrl
           this.userInfo.user.authed = false
           this.isAuth = 2
+          this.getRedCountAPI();
         }
         else {
           if (getToken())
@@ -203,7 +208,7 @@ export const useUserStore = defineStore('user-store', {
           }
 
         }
-        this.getRedCountAPI();
+        // this.getRedCountAPI();
 
         return Promise.resolve(res)
       }
@@ -344,6 +349,7 @@ export const useUserStore = defineStore('user-store', {
     },
 
     recordState() {
+      // console.log(this.$state)
       setLocalState(this.$state)
     },
   },

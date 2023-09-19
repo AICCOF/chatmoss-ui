@@ -75,10 +75,11 @@ export function getLocalState(): UserState {
     ...defaultSetting().userInfo,
     ...localSetting.userInfo,
   }
-  // console.log(defaultSetting)
-  return { userInfo, activityList: [], appId: localSetting.appId, toggle: localSetting.toggle, useKey: localSetting.useKey || '1', noticesId: localSetting.noticesId, slideActive: localSetting.slideActive }
+  console.log(localSetting.isNotBootPrompt)
+  return { userInfo, activityList: [], appId: localSetting.appId, toggle: localSetting.toggle, useKey: localSetting.useKey || '1', noticesId: localSetting.noticesId, slideActive: localSetting.slideActive, isNotBootPrompt: localSetting.isNotBootPrompt }
 }
 
 export function setLocalState(setting: UserState): void {
+  console.log(setting,'setting')
   ss.set(LOCAL_NAME, setting)
 }

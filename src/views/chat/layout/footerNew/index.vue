@@ -79,13 +79,13 @@ function handleParamConfigs(item, row) {
 
 <template>
   <div class="relative">
-    <div v-if="dataSources.length === 0" style="
+    <div v-if="dataSources.length === 0 && !userStore.isNotBootPrompt" style="
     z-index: 10;
     position: absolute;
     width: 162px;
     top: -124px;
     left: 50%;
-    margin-left: -81px;" class="element-to-animate">
+    margin-left: -81px;" class="element-to-animate" @click="userStore.closeBootPrompt">
       <img v-if="vantTheme === 'dark'" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/chat/drak-notice.png"
         alt="" style="width: 100%;">
       <img v-if="vantTheme === 'light'"
