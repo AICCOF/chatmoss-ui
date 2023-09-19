@@ -274,7 +274,7 @@ const domShow = ref(false)
 
               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
                 <div style="width:240px">
-                  <span class="mr-4">免费字符数：{{ residueCountFree }}</span>
+                  <span class="mr-4">免费体验字符数:{{ residueCountFree }}</span>
                 </div>
               </div>
               <div class="flex rounded-full box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280]  mt-2">
