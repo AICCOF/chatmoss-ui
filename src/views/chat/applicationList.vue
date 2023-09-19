@@ -21,6 +21,7 @@ function handleEdit() {
   enabled.value = true
 }
 function handleClick(row) {
+  
   if (!enabled.value && userStore.appIdValue !== row.appId) {
     if (row.isOpened === 0) {
       ms.info(row.notOpenReason || '即将开放，敬请期待...')
@@ -28,6 +29,8 @@ function handleClick(row) {
     }
     userStore.setAppId(row.appId)
     nextTick(() => {
+      // userStore.currentApp.iframeToken = 1;
+      // userStore.currentApp.iframeUrl = 'http://127.0.0.1:5173/pages/app/invite-new/index.html'
       chatStore.chatList()
       // ms.warning('切换应用成功,请新建会话或者选中历史会话在提问')
     })

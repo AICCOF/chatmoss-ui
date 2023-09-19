@@ -1052,6 +1052,19 @@ function handleDump(item) {
   const json = JSON.parse(item.jumpUrl)
   jumpLink(json, router)
 }
+
+// userStore.currentApp.iframeToken = 0;
+// userStore.currentApp.iframeUrl = 'https://www.baidu.com'
+let iframePath = computed(() => {
+  if (userStore.currentApp && userStore.currentApp.iframeToken === 0) {
+    return userStore.currentApp.iframeUrl
+  } else {
+    var url = new URL(userStore.currentApp.iframeUrl);
+    url.searchParams.set("token", getToken())
+    return url.toString()
+  }
+
+})
 </script>
 
 <template>
@@ -1065,8 +1078,12 @@ function handleDump(item) {
     <Header />
     <main class="flex flex-1 overflow-hidden">
       <applicationSlide v-if="userStore.userInfo.user" />
+      <div v-if='userStore.currentApp && userStore.currentApp.iframeUrl' id="scrollRef"
+        class="h-full overflow-hidden overflow-y-auto chat-main" :class="[userStore.toggleValue ? 'p90' : '']">
+        <iframe :src="iframePath" frameborder="0" style="width:100%;height:100%;" />
+      </div>
 
-      <div id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+      <div v-else id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
         :class="[userStore.toggleValue ? 'p90' : '']">
         <div id="image-wrapper" class="w-full m-auto items-center pb-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
           style="height: 100%;overflow: hidden">
@@ -1086,11 +1103,11 @@ function handleDump(item) {
             </transition>
 
             <div class="flex-1">
-              <div v-if="!dataSources.length" class="no-data-info w-full">
+              <div v-if="!dataSources.length" class="no-data-info w-full" style="pointer-events: none;">
                 <!-- 应用介绍 -->
 
                 <!-- 空态占位图 -->
-                <div style="width: 100%;">
+                <div style="width: 100%;pointer-events: all;">
                   <NCarousel autoplay dot-placement="top" mousewheel show-arrow
                     style="width: 80%;max-width:500px;margin: 0 auto;" :interval="3000">
                     <NCarouselItem v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
@@ -1638,4 +1655,5 @@ function handleDump(item) {
   &:hover {
     opacity: 1;
   }
-}</style>
+}
+</style>

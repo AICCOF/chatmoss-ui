@@ -3,6 +3,7 @@ import { showImagePreview } from 'vant'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
 async function handlePreImg(row) {
+  console.log(row)
   if (row.images && row.images.length > 0) {
     showImagePreview({
       images: row.images,
@@ -34,7 +35,7 @@ async function handlePreImg(row) {
     </div>
     <div
       v-if="userStore.currentApp && userStore.currentApp.guideMsg"
-      class="no-data-info-text text-left notice inline-block"
+      class="no-data-info-text text-left notice inline-block guideMsg dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
     >
       <div>
         {{ userStore.currentApp.guideMsg || '引导语' }}
@@ -59,10 +60,10 @@ async function handlePreImg(row) {
 .guideMsg {
   text-align: left;
   display: inline-block;
-  border-radius: 60px;
+  border-radius: 10px;
   margin-top: 10px;
-  background-color: var(--moss-bg-reply-color);
-  color: var(--moss-text-time-color);
+  // background-color: var(--moss-bg-reply-color);
+  // color: var(--moss-text-time-color);
   padding: 4px 10px;
 }
 
