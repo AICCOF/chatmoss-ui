@@ -74,50 +74,60 @@ function handleMember() {
   })
 }
 
-
 // { title: '退出登录', img: card4 },
 // https://h5.aihao123.cn/pages/app/help/index.html
 </script>
 
 <template>
   <div class="main">
-    <div class="flex items-center justify-between" style="
+    <div
+      class="flex items-center justify-between" style="
       margin: 0 auto;
       padding:0 16px;
       width: 347px;
       height: 87px;
-    " @click="handleLogin">
+    " @click="handleLogin"
+    >
       <div class="flex items-center">
-        <div class="flex items-center justify-center" style="
+        <div
+          class="flex items-center justify-center" style="
           margin-right: 13px;
           overflow: hidden;
           border-radius: 50%;
           width: 57px;
           height: 57px;
           background: #FFFFFF;
-          ">
-          <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo.svg" style="width:80%;height:80%"
-            alt="">
+          "
+        >
+          <img
+            src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/logo.svg" style="width:80%;height:80%"
+            alt=""
+          >
         </div>
         <div>
-          <div style="
+          <div
+            style="
             font-size: 18px;
             font-weight: 500;
             color: #1A1A1A;
             line-height: 25px;
-          ">
+          "
+          >
             <span v-if="userStore.userInfo.customAccount">{{ userStore.userInfo.customAccount }}</span>
             <span v-else>
               {{ userStore.userInfo.user ? userStore.userInfo.user.nickname : '未登录' }}
             </span>
           </div>
-          <div v-if="userStore.userInfo.user" style="
+          <div
+            v-if="userStore.userInfo.user" style="
             font-size: 13px;
             font-weight: 400;
             color: #828793;
             line-height: 19px;
-        ">
-            <span style="
+        "
+          >
+            <span
+              style="
             display: inline-block;
             width: 17px;
             height: 17px;
@@ -128,27 +138,32 @@ function handleMember() {
             color: #7196F4;
             line-height: 17px;
             text-align: center;
-        ">ID</span><span> {{ userStore.userInfo.user.uid }}</span>
+        "
+            >ID</span><span> {{ userStore.userInfo.user.uid }}</span>
           </div>
         </div>
       </div>
       <div class="flex items-center cursor-pointer">
-
-        <span v-if="userStore.userInfo.hideCustomAccount === 0" @click="goSetting"
-          style=" font-size: 13px;font-weight: 400;line-height: 19px;">
-          <span v-if="!userStore.userInfo.customAccount" style="
+        <span
+          v-if="userStore.userInfo.hideCustomAccount === 0" style=" font-size: 13px;font-weight: 400;line-height: 19px;"
+          @click="goSetting"
+        >
+          <span
+            v-if="!userStore.userInfo.customAccount" style="
              color: #FF536F;
-            ">去设置账号</span>
-          <span v-if="userStore.userInfo.customAccount" style="
+            "
+          >去设置专属账号</span>
+          <span
+            v-if="userStore.userInfo.customAccount" style="
             color: #828793;
-            ">修改账号</span>
+            "
+          >修改专属账号</span>
         </span>
 
         <SvgIcon icon="mingcute:right-fill" class="icon" style="color: #DFE1E8;font-size: 16px;" />
       </div>
     </div>
-    <div class="member cursor-pointer relative" @click="handleMember" :class="['member' + userStore.userInfo.userLevel]">
-
+    <div class="member cursor-pointer relative" :class="[`member${userStore.userInfo.userLevel}`]" @click="handleMember">
       <img src="@/assets/member/member_bg.png" alt="" style="position: absolute;left:0;top:0;width: 100%;height: 100%;">
       <div class="flex justify-between items-center">
         <div class="flex items-center justify-between title">
@@ -161,34 +176,42 @@ function handleMember() {
         </div>
       </div>
       <div class="flex items-center justify-between mt-[13px]" style="opacity: 0.5;">
-        <div class="flex  items-center " >
-          <span class="iconfont icon-a-35-16gongzuorishiyong
-" style="font-size: 24px">
-          </span>
-          <span >模型免费用</span>
+        <div class="flex  items-center ">
+          <span
+            class="iconfont icon-a-35-16gongzuorishiyong
+" style="font-size: 24px"
+          />
+          <span>模型免费用</span>
         </div>
         <div class="flex items-center">
-          <span class="iconfont icon-keyishiyongchajian
-" style="font-size: 24px"> </span>
-          <span >多插件提效</span>
+          <span
+            class="iconfont icon-keyishiyongchajian
+" style="font-size: 24px"
+          />
+          <span>多插件提效</span>
         </div>
         <div class="flex  items-center">
-          <span class="iconfont icon-tishicimoban
-" style="font-size: 24px"> </span>
+          <span
+            class="iconfont icon-tishicimoban
+" style="font-size: 24px"
+          />
           <span>提示词模版</span>
         </div>
       </div>
-
     </div>
 
     <div class="card flex justify-start  flex-wrap " style="margin-top: 18px;padding:0 4px;padding-bottom: 15px;">
-      <div v-for="(item, i) of infoList" :key="i" class="info mt-[14px] ml-[6px] mr-[6px] cursor-pointer card-item"
-        @click="handleClick(item)">
+      <div
+        v-for="(item, i) of infoList" :key="i" class="info mt-[14px] ml-[6px] mr-[6px] cursor-pointer card-item"
+        @click="handleClick(item)"
+      >
         <div class="w-[50px] h-[50px] m-auto mt-[15px]">
           <img :src="item.img" alt="">
         </div>
-        <div class="text" style="
-        ">
+        <div
+          class="text" style="
+        "
+        >
           {{ item.title }}
         </div>
       </div>
@@ -199,8 +222,10 @@ function handleMember() {
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px] ">
           <div class="flex items-center ">
             <img :src="item.img" style="width: 22px;" alt="">
-            <div class="title" style="
-            ">
+            <div
+              class="title" style="
+            "
+            >
               {{ item.title }}
             </div>
           </div>
@@ -215,8 +240,10 @@ function handleMember() {
       <div class="px-[16px] cursor-pointer card-item" @click="logout">
         <div class="my-border flex items-center justify-between m-auto w-[100%] h-[46px]">
           <div class="flex items-center ">
-            <img src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/card4.png"
-              style="width: 22px;" alt="">
+            <img
+              src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/my/card4.png"
+              style="width: 22px;" alt=""
+            >
             <div class="title">
               退出登录
             </div>
@@ -377,7 +404,6 @@ function handleMember() {
     .top {
       color: #F5D3BF;
     }
-
 
     .title {
       color: #F5D3BF;

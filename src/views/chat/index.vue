@@ -1055,40 +1055,50 @@ function handleDump(item) {
 
 // userStore.currentApp.iframeToken = 0;
 // userStore.currentApp.iframeUrl = 'https://www.baidu.com'
-let iframePath = computed(() => {
+const iframePath = computed(() => {
   if (userStore.currentApp && userStore.currentApp.iframeToken === 0) {
     return userStore.currentApp.iframeUrl
-  } else {
-    var url = new URL(userStore.currentApp.iframeUrl);
-    url.searchParams.set("token", getToken())
+  }
+  else {
+    const url = new URL(userStore.currentApp.iframeUrl)
+    url.searchParams.set('token', getToken())
     return url.toString()
   }
-
 })
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full bg-[#F6F7FA] dark:bg-[#161616]" :class="wrapClass">
-    <img v-if="userStore.newUser"
+    <img
+      v-if="userStore.newUser"
       src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-gift.png"
       class="element-to-animate" alt="" style="position: fixed;right:11px;top:105px;width: 110px;z-index: 1000;"
-      @click.stop="handleNewPerson">
+      @click.stop="handleNewPerson"
+    >
 
     <Sider />
     <Header />
     <main class="flex flex-1 overflow-hidden">
       <applicationSlide v-if="userStore.userInfo.user" />
-      <div v-if='userStore.currentApp && userStore.currentApp.iframeUrl' id="scrollRef"
-        class="h-full overflow-hidden overflow-y-auto chat-main" :class="[userStore.toggleValue ? 'p90' : '']">
+      <div
+        v-if="userStore.currentApp && userStore.currentApp.iframeUrl" id="scrollRef"
+        class="h-full overflow-hidden overflow-y-auto chat-main" :class="[userStore.toggleValue ? 'p90' : '']"
+      >
         <iframe :src="iframePath" frameborder="0" style="width:100%;height:100%;" />
       </div>
 
-      <div v-else id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
-        :class="[userStore.toggleValue ? 'p90' : '']">
-        <div id="image-wrapper" class="w-full m-auto items-center pb-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
-          style="height: 100%;overflow: hidden">
-          <div id="scrollRef1" class="pt-[12px]" ref="scrollRef"
-            style="width:100%;height:100%;overflow:auto;display: flex; flex-wrap: wrap; ">
+      <div
+        v-else id="scrollRef" class="h-full overflow-hidden overflow-y-auto chat-main"
+        :class="[userStore.toggleValue ? 'p90' : '']"
+      >
+        <div
+          id="image-wrapper" class="w-full m-auto items-center pb-4 relative" :class="[isMobile ? 'px-2' : 'px-4']"
+          style="height: 100%;overflow: hidden"
+        >
+          <div
+            id="scrollRef1" ref="scrollRef" class="pt-[12px]"
+            style="width:100%;height:100%;overflow:auto;display: flex; flex-wrap: wrap; "
+          >
             <applicationIntro style="width: 100%;" />
             <transition name="fade1">
               <div v-if="isEnd" class="icon-top" style="" @click="scrollToTop">
@@ -1108,65 +1118,81 @@ let iframePath = computed(() => {
 
                 <!-- 空态占位图 -->
                 <div style="width: 100%;pointer-events: all;">
-                  <NCarousel autoplay dot-placement="top" mousewheel show-arrow
-                    style="width: 80%;max-width:500px;margin: 0 auto;" :interval="3000">
+                  <NCarousel
+                    autoplay dot-placement="top" mousewheel show-arrow
+                    style="width: 80%;max-width:420px;margin: 0 auto;" :interval="3000"
+                  >
                     <NCarouselItem v-for="(item, i) of tabList" :key="i" style="border-radius: 10px;overflow: hidden;">
-                      <img class="cursor-pointer" :src="item.iconUrl"
+                      <img
+                        class="cursor-pointer" :src="item.iconUrl"
                         style="height: 100%;object-fit: contain; border-radius: 10px; margin: 0 auto;"
-                        @click="handleDump(item)">
+                        @click="handleDump(item)"
+                      >
                     </NCarouselItem>
 
                     <template #arrow="{ prev, next }">
                       <div class="custom-arrow">
-                        <button type="button" style="
+                        <button
+                          type="button" style="
                         position: absolute;
                         right: 10px;
                         top: 50%;
                         margin-top: -15px;
                         font-size: 30px;
                         color:rgb(0, 122, 255);
-                      " @click="next">
+                      " @click="next"
+                        >
                           <!-- <SvgIcon icon="uiw:right" class="icon" /> -->
                           <img
                             src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
-                            style="width: 40px;transform: rotateZ(180deg);" alt="">
+                            style="width: 40px;transform: rotateZ(180deg);" alt=""
+                          >
                         </button>
-                        <button type="button" style="
+                        <button
+                          type="button" style="
                         position: absolute;
                         left:10px;
                         top: 50%;
                         margin-top: -15px;
                         font-size: 30px;
                         color:rgb(0, 122, 255);
-                      " @click="prev">
+                      " @click="prev"
+                        >
                           <img
                             src="https://luomacode-1253302184.cos.ap-beijing.myqcloud.com/chatmoss/v5.4/icon-left-arrow.png"
-                            style="    width: 40px;" alt="">
+                            style="    width: 40px;" alt=""
+                          >
                         </button>
                       </div>
                     </template>
                     <template #dots="{ total, currentIndex, to }">
-                      <div class="custom-dots flex items-center justify-center" style="
+                      <div
+                        class="custom-dots flex items-center justify-center" style="
                       position: absolute;
                       bottom: 20px;
                       left: 0px;
                       width: 100%;
-                    ">
-                        <ul class="custom-dots" style="
+                    "
+                      >
+                        <ul
+                          class="custom-dots" style="
                           display: flex;
                           margin: 0;
                           padding: 0;
-                      ">
-                          <li v-for="index of total" :key="index" :style="{
-                            backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)',
-                          }" style="display: inline-block;
+                      "
+                        >
+                          <li
+                            v-for="index of total" :key="index" :style="{
+                              backgroundColor: currentIndex === (index - 1) ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)',
+                            }" style="display: inline-block;
                           width: 12px;
                           height: 4px;
                           margin: 0 3px;
                           border-radius: 4px;
                           transition: width 0.3s, background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                           cursor: pointer;
-                        " @click="to(index - 1)" />
+                        " @click="to(index - 1)"
+                          />
                         </ul>
                       </div>
                     </template>
@@ -1180,13 +1206,15 @@ let iframePath = computed(() => {
                 </div>
               </div>
               <div v-if="dataSources.length" id="data-wrapper">
-                <Message v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
+                <Message
+                  v-for="(item, index) of dataSources" :key="index" :date-time="item.timestamp" :text="item.text"
                   :info="item"
                   :is-show="(dataSources.length - 1 == index) && (userStore.currentApp && userStore.currentApp.system === 1)"
                   :is-end="dataSources.length - 1 == index" :ask-msg="item.ast" :inversion="item.inversion"
                   :error="item.error" :loading="item.loading" :view-msg="item.mossReduceInfo?.viewMsg"
                   :question-mode="item.mossReduceInfo?.questionMode" @ask="(...args) => askFn(...args, index)"
-                  @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback" />
+                  @online="onlineFn" @jarvis="jarvisFn" @report="reportCallback"
+                />
 
                 <div class="respondingBtn sticky bottom-0 left-0 flex justify-center">
                   <NButton v-if="loading" @click="handleStop">
@@ -1206,15 +1234,20 @@ let iframePath = computed(() => {
           </transition>
           <div v-show="!hidden" class="w-full m-auto p-2" style="">
             <div class="moss-btns flex justify-between space-x-2 w-full">
-              <NInput v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt"
+              <NInput
+                v-if="!prompt || prompt[0] !== '/'" ref="NInputRef" v-model:value="prompt"
                 class="step1 input !bg-[#ffffff] dark:!bg-[#3A3A3C] " :bordered="false" autofocus type="textarea"
-                :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="placeholder" style="" @keydown="handleEnter" />
-              <NSelect v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
+                :autosize="{ minRows: 3, maxRows: 5 }" :placeholder="placeholder" style="" @keydown="handleEnter"
+              />
+              <NSelect
+                v-if="prompt && prompt[0] === '/'" ref="NSelectRef" v-model:value="prompt" filterable :show="true"
                 :autofocus="true" :autosize="{ minRows: 3, maxRows: 3 }" placeholder="placeholder" :options="selectOption"
-                label-field="key" @keydown="handleEnter" @input="handleSelectInput" />
+                label-field="key" @keydown="handleEnter" @input="handleSelectInput"
+              />
               <!-- MOSS字数 -->
 
-              <div style="
+              <div
+                style="
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -1223,20 +1256,25 @@ let iframePath = computed(() => {
                 box-sizing: border-box;
                 margin: 0;
                 right: 0;
-              ">
+              "
+              >
                 <div>
                   <!-- 左边按钮 -->
                 </div>
                 <div class="flex items-center">
-                  <div style="transform: scale(0.9);"
+                  <div
+                    style="transform: scale(0.9);"
                     class="btn-mode text-center dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
-                    @click="handleMode">
+                    @click="handleMode"
+                  >
                     {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
                   </div>
 
-                  <NButton id="ask-question" strong secondary circle
+                  <NButton
+                    id="ask-question" strong secondary circle
                     style="background-color: transparent;color: var(--moss-text-ask-color);" type="primary"
-                    :disabled="buttonDisabled" @click="handleSubmit">
+                    :disabled="buttonDisabled" @click="handleSubmit"
+                  >
                     <template #icon>
                       <span class="">
                         <SvgIcon icon="ri:send-plane-fill" />
@@ -1451,8 +1489,6 @@ let iframePath = computed(() => {
   }
 }
 
-
-
 #scrollRef1 {
 
   &::-webkit-scrollbar {
@@ -1471,7 +1507,6 @@ let iframePath = computed(() => {
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
   }
-
 
   &::-webkit-scrollbar-thumb:hover {
     border-radius: 10px;

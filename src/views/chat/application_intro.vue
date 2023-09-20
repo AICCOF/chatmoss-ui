@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { watch, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { showImagePreview } from 'vant'
 import { useUserStore } from '@/store'
 const userStore = useUserStore()
@@ -12,30 +12,32 @@ async function handlePreImg(row) {
     })
   }
 }
-let typedText = ref('')
-let currentIndex = ref(0)
+const typedText = ref('')
+const currentIndex = ref(0)
 // userStore.currentApp.guideMsg
 watch(() => userStore.currentApp && userStore.currentApp.guideMsg, () => {
-  currentIndex.value = 0;
+  currentIndex.value = 0
   typedText.value = ''
   userStore.currentApp.guideMsg && typeTextFn(userStore.currentApp.guideMsg)
 })
 function typeTextFn() {
-  if (currentIndex.value <  userStore.currentApp.guideMsg.length) {
-    typedText.value +=  userStore.currentApp.guideMsg.charAt(currentIndex.value);
-    currentIndex.value++;
-    setTimeout(typeTextFn, 100); // 100毫秒后继续下一个字
+  if (currentIndex.value < userStore.currentApp.guideMsg.length) {
+    typedText.value += userStore.currentApp.guideMsg.charAt(currentIndex.value)
+    currentIndex.value++
+    setTimeout(typeTextFn, 100) // 100毫秒后继续下一个字
   }
 }
 </script>
 
 <template>
   <div>
-    <div v-if="userStore.currentApp" style="position: relative;"
-      class="no-data-info-text text-left notice notice-decorate">
+    <div
+      v-if="userStore.currentApp" style="position: relative;"
+      class="no-data-info-text text-left notice notice-decorate"
+    >
       <div class="flex">
         <div>
-          <img :src="userStore.currentApp.iconUrl" alt="" style="min-width:44px;height:44px;margin-right: 4px;">
+          <img :src="userStore.currentApp.iconUrl" alt="" style="min-width:35px;height:35px;margin: 4px;">
         </div>
         <div class="pl-2 text-left main-center">
           <div class="text-sm" style="font-weight: 600;">
@@ -45,14 +47,18 @@ function typeTextFn() {
             {{ userStore.currentApp.desc }}
           </div>
         </div>
-        <button v-if="userStore.currentApp.images && userStore.currentApp.images.length > 0" class="tip-btn"
-          @click="handlePreImg(userStore.currentApp)">
+        <button
+          v-if="userStore.currentApp.images && userStore.currentApp.images.length > 0" class="tip-btn"
+          @click="handlePreImg(userStore.currentApp)"
+        >
           使用说明
         </button>
       </div>
     </div>
-    <div v-if="userStore.currentApp && userStore.currentApp.guideMsg"
-      class="no-data-info-text text-left notice inline-block guideMsg dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]">
+    <div
+      v-if="userStore.currentApp && userStore.currentApp.guideMsg"
+      class="no-data-info-text text-left notice inline-block guideMsg dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
+    >
       <div>
         {{ typedText }}
       </div>

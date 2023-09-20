@@ -2,7 +2,7 @@
 import draggable from 'vuedraggable'
 import { nextTick, ref } from 'vue'
 import { showConfirmDialog } from 'vant'
-import { NPopover, useMessage , NSwitch } from 'naive-ui'
+import { NPopover, NSwitch, useMessage } from 'naive-ui'
 import { useGo } from '@/utils/router'
 import { getApplicationInstall, getApplicationSort } from '@/api/application'
 import { useChatStore, useUserStore } from '@/store'
@@ -21,7 +21,6 @@ function handleEdit() {
   enabled.value = true
 }
 function handleClick(row) {
-  
   if (!enabled.value && userStore.appIdValue !== row.appId) {
     if (row.isOpened === 0) {
       ms.info(row.notOpenReason || '即将开放，敬请期待...')
@@ -79,35 +78,48 @@ function handleSave() {
 <template>
   <div class="wrap">
     <div style="padding-top: 23px;">
-      <div class="flex justify-center items-center"> <NSwitch v-model:value="userStore.slideActive" class="mySwitch" @update:value="()=> userStore.recordState()" /></div>
-      <div class="flex justify-center items-center" style="
+      <div class="flex justify-center items-center">
+        <NSwitch v-model:value="userStore.slideActive" class="mySwitch" @update:value="() => userStore.recordState()" />
+      </div>
+      <div
+        class="flex justify-center items-center" style="
       font-size: 12px;
       font-weight: 400;
       color: #8D92A8;
       line-height: 17px;
       margin-top: 6px;
-      ">滑动触发</div>
+      "
+      >
+        滑动触发
+      </div>
     </div>
-    <div class="flex justify-center items-center" style="
+    <div
+      class="flex justify-center items-center" style="
           margin: 0 auto;
-          margin-top: 38px;
-          margin-bottom: 25px;
+          margin-top: 28px;
+          margin-bottom: 15px;
           width: 26px;
           border-radius: 50%;
           height: 26px;
+					cursor: pointer;
           background: rgba(129,136,148,0.5);
           color: #fff;
           font-size: 20px;
-          border: 1px solid #595E77;" @click="userStore.sliderToggleMode">
+          border: 1px solid #595E77;" @click="userStore.sliderToggleMode"
+    >
       <SvgIcon icon="formkit:left" />
     </div>
 
     <div class="list">
-      <draggable :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.systemList" :disabled="true" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <div>
               <NPopover trigger="hover" placement="right" style="width: max-content;">
                 <template #trigger>
@@ -124,11 +136,15 @@ function handleSave() {
           </div>
         </template>
       </draggable>
-      <draggable :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
-        ghost-class="ghost">
+      <draggable
+        :list="userStore.appList.installList" :disabled="!enabled" item-key="name" class="list-group"
+        ghost-class="ghost"
+      >
         <template #item="{ element, index }">
-          <div class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
-            @click="handleClick(element)">
+          <div
+            class="img" :class="[userStore.appIdValue === element.appId ? 'active' : '']"
+            @click="handleClick(element)"
+          >
             <span v-if="enabled" class="close" @click="handleDelete(element, index)">
               <van-icon class="close-icon" name="cross" />
             </span>
@@ -150,18 +166,22 @@ function handleSave() {
       </draggable>
     </div>
     <div class="btns">
-      <div class="btn bg-[#38416A] text-[#7899e8]" style="
+      <div
+        class="btn bg-[#38416A] text-[#7899e8]" style="
           width: 38px;
           height: 38px;
-          border-radius: 7px;">
+          border-radius: 7px;"
+      >
         <van-icon v-if="!enabled" name="edit" style="font-size: 22px;" @click="() => handleEdit()" />
         <span v-if="enabled" style="font-size: 12px;" @click="() => handleSave()">保存</span>
       </div>
-      <div class="btn mt-[24px]" style="
+      <div
+        class="btn mt-[24px]" style="
           width: 38px;
           height: 38px;
           border-radius: 7px;
-          ">
+          "
+      >
         <!-- <van-icon name="plus" @click="() => { go({ name: 'application' }) }" /> -->
         <img class="btn-icon" src="./img/appstore.png" alt="" @click="() => { go({ name: 'application' }) }">
       </div>

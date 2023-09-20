@@ -185,13 +185,16 @@ function setOpenaiVersion(action) {
       <div class="box mt-3">
         <div class="justify-between">
           <div>ApiKeys设置</div>
-          <div class="tip-text-input">
-            小提示：设置成功，并不代表您的key有余额或者正确
+          <div
+            class="tip-text-input" style="color: #FF6666;"
+          >
+            小提示：平台等级Lv.4此配置才会生效；请保证您的key还有余额并且正确；
           </div>
-          <div class="tip-text-input">
+          <!-- <div class="tip-text-input"
+          >
             可以点击这个网址进行检查：
             <a style="color: #0099FF;" href="https://open.aihao123.cn/" target="_blank">https://open.aihao123.cn/</a>
-          </div>
+          </div> -->
         </div>
         <div class="flex mt-2 justify-between">
           <input v-model="apiKey" class="mr-2 input flex-1" type="text" placeholder="请输入您的apiKey">

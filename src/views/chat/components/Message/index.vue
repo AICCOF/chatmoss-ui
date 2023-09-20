@@ -114,16 +114,17 @@ const activeKey = ref(['0'])
 const currentPage = ref(props.info.contentList ? props.info.contentList.length : 1)
 const message = computed(() => {
   if (props.info && props.info.mossReduceInfoList) {
-    let obj = props.info.mossReduceInfoList[currentPage.value - 1]
+    const obj = props.info.mossReduceInfoList[currentPage.value - 1]
     if (obj) {
-      let viewMsg = obj.viewMsg;
-      let questionMode = obj.questionMode
+      const viewMsg = obj.viewMsg
+      const questionMode = obj.questionMode
       return `${viewMsg} 模式：${questionMode}`
-    } else {
+    }
+    else {
       return null
     }
   }
-  return `${props.viewMsg} 模式：${props.questionMode}`
+  return `${props.viewMsg != undefined ? props.viewMsg : ''} 模式：${props.questionMode != undefined ? props.questionMode : ''}`
 })
 // console.log(props.info.mossReduceInfoList ,'Props.info1')
 </script>
@@ -138,22 +139,28 @@ const message = computed(() => {
         {{ dayjs(dateTime).format('MM月DD日 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
       </p>
 
-      <Collapse v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
-        :bordered="false" class="my-collapse" expand-icon-position="right">
+      <Collapse
+        v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
+        :bordered="false" class="my-collapse" expand-icon-position="right"
+      >
         <template #expandIcon="{ isActive }">
           <CaretRightOutlined :rotate="isActive ? 90 : 0" />
         </template>
-        <CollapsePanel key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
-          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'">
+        <CollapsePanel
+          key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
+          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'"
+        >
           <template #header>
             <div v-if="info.pluginInfo.pluginId" class="flex-center" style="width: 100%">
-              <img style="width: 16px; height: 16px; margin-right: 10px;"
-                :src="chatStore.pluginMap[info.pluginInfo.pluginId].icon" alt="">
+              <img
+                style="width: 16px; height: 16px; margin-right: 10px;"
+                :src="chatStore.pluginMap[info.pluginInfo.pluginId].icon" alt=""
+              >
               <div>
                 {{
                   info.pluginInfo.pluginId
-                  ? chatStore.pluginMap[info.pluginInfo.pluginId].name
-                  : ''
+                    ? chatStore.pluginMap[info.pluginInfo.pluginId].name
+                    : ''
                 }}
               </div>
               <div v-if="chatStore.plugState === 1 && isEnd">
@@ -168,13 +175,17 @@ const message = computed(() => {
         </CollapsePanel>
       </Collapse>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent ref="textRef" v-model="currentPage" :inversion="inversion" :error="error" :text="text"
-          :info="props.info" :loading="loading" />
+        <TextComponent
+          ref="textRef" v-model="currentPage" :inversion="inversion" :error="error" :text="text"
+          :info="props.info" :loading="loading"
+        />
       </div>
       <p v-if="!inversion && message" class="text-xs mt-1 btns" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ message }} </span>
-        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
-          target="_blank">查看字符计算器</a>
+        <a
+          href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank"
+        >查看字符计算器</a>
       </p>
       <div class="flex mt-2 ml-2 btns btns1" :class="[inversion ? 'justify-end' : 'justify-start']">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
