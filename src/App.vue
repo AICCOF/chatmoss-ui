@@ -14,7 +14,7 @@ const { language } = useLanguage()
 let router = useRouter()
 window.addEventListener("message", function (event) {
   // 可以检查 event.origin 以确保消息来自期望的源
-  console.log(event)
+  // console.log(event)
   if (typeof event.data === 'string') {
     try {
       let json = JSON.parse(event.data)

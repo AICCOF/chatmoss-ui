@@ -62,11 +62,15 @@ function http<T = any>(
   }
 
   const failHandler = (error: Response<Error>) => {
-    let res = error.response.data;
-    if (res.code !== 0) {
-      showToast(res.msg)
+    // console.log(error.response, error)
+    if (error.response) {
+      let res = error.response.data;
+      if (res.code !== 0) {
+        showToast(res.msg)
+      }
     }
-    
+
+
     afterRequest?.()
     throw new Error(error?.message || 'Error')
   }
@@ -82,7 +86,7 @@ function http<T = any>(
     : request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
 
 
-    
+
 }
 
 export function get<T = any>(
@@ -170,7 +174,7 @@ export function Request<T = any>(
       showToast(res.msg)
     }
 
-    afterRequest?.()
+    option && option.afterRequest?.()
     throw new Error(error?.message || 'Error')
   }
 

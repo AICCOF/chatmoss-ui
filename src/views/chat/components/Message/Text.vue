@@ -102,11 +102,8 @@ const handleDoubleClick = () => {
 }
 
 function highlightBlock(str: string, lang?: string) {
-  return `<pre class="code-block-wrapper">
-    <div class="code-block-header">
-      <span class="code-block-header__lang">${lang}</span>
-      <div class='flex'>${isVscode() ? '<span class="code-block-header__insert mr-2">插入代码</span>' : ''}<span class="code-block-header__copy">${t('chat.copyCode')}</span></div></div><code class="hljs code-block-body ${lang}">${str}</code>
-    </pre>`
+  return `<pre class="code-block-wrapper flex"><div style='width:100%'>
+        <div class="code-block-header"><span class="code-block-header__lang">${lang}</span><div class='flex'>${isVscode() ? '<span class="code-block-header__insert mr-2">插入代码</span>' : ''}<span class="code-block-header__copy">${t('chat.copyCode')}</span></div></div><code class="hljs code-block-body ${lang}">${str}</code></div></pre>`
 }
 // console.log(props, 'props.value')
 let currentPage = ref(props.modelValue)
