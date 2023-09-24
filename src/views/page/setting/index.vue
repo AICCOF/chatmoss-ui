@@ -135,184 +135,156 @@ function setOpenaiVersion(action) {
 <template>
   <Page>
     <template #title>
-      <van-nav-bar title="设置中心" left-text="返回" left-arrow @click-left="back" />
+      <van-nav-bar title="设置中心" left-arrow @click-left="back" class="my-nav-bar" />
     </template>
-    <div class="setting-mian">
-      <div class="box flex items-center justify-between ">
-        <div class="flex">
-          <span class="mr-4">{{ nickname || '未登录' }}</span>
-          <!-- <span>{{ plusEndTime }}到期</span> -->
-        </div>
-        <div class="flex">
-          <div
-            v-if="userStore.userInfo.user && userStore.userInfo.user.email" id="question-push"
-            class="mr-4 btn cursor-pointer" @click="() => { go({ name: 'feedback' }) }"
-          >
-            问题反馈
+    <div class="px-[14px]">
+      <div class="setting-box !py-[10px]">
+        <div class="item">
+          <div class="flex item-title text-[16px]">
+            <span class="mr-4">ID: {{ nickname || '未登录' }}</span>
+            <!-- <span>{{ plusEndTime }}到期</span> -->
           </div>
-          <div class="flex items-center btn cursor-pointer" @click="() => { go({ name: 'forget' }) }">
-            修改密码
-            <SvgIcon icon="icon-park-outline:right" />
+          <div class="flex item-info  text-[11px]">
+            <div v-if="userStore.userInfo.user && userStore.userInfo.user.email" id="question-push" class="mr-4 btn "
+              @click="() => { go({ name: 'feedback' }) }">
+              问题反馈
+            </div>
+            <div class="flex items-center btn" @click="() => { go({ name: 'forget' }) }">
+              修改密码
+              <SvgIcon class="text-[16px]" icon="icon-park-outline:right" />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="box flex items-center justify-between mt-3">
-        <div class="flex">
-          <span class="mr-4">邮箱：{{ bindInfo.email }}</span>
-        </div>
-        <div class="flex">
-          <!-- <div class="flex items-center btn cursor-pointer" @click="bindEvent('email', bindInfo.email)"
+        <div class="item">
+          <div class="flex item-title text-[16px]">
+            <span class="mr-4">邮箱：{{ bindInfo.email }}</span>
+          </div>
+          <div class="flex">
+            <!-- <div class="flex items-center btn cursor-pointer" @click="bindEvent('email', bindInfo.email)"
             v-if="bindInfo.accountType === 0">
             <span>{{ bindInfo.email ? '解绑' : '去绑定' }}</span>
             <SvgIcon icon="icon-park-outline:right" />
           </div> -->
+          </div>
         </div>
-      </div>
-
-      <div class="box flex items-center justify-between mt-3">
-        <div class="flex">
-          <span class="mr-4">微信账号:{{ bindInfo.wechat ? '已绑定' : '' }}</span>
-        </div>
-        <div class="flex">
-          <!-- <div class="flex items-center btn cursor-pointer" @click="bindEvent('weChat', bindInfo.wechat)"
+        <div class="item no-border">
+          <div class="flex item-title text-[16px]">
+            <span class="mr-4">微信账号: {{ bindInfo.wechat ? '已绑定' : '' }}</span>
+          </div>
+          <div class="flex">
+            <!-- <div class="flex items-center btn cursor-pointer" @click="bindEvent('weChat', bindInfo.wechat)"
             v-if="bindInfo.accountType === 1">
             <span>{{ bindInfo.wechat ? '解绑' : '去绑定' }}</span>
             <SvgIcon icon="icon-park-outline:right" />
           </div> -->
+          </div>
         </div>
       </div>
 
-      <div class="box mt-3">
-        <div class="justify-between">
+      <div class="setting-box !py-[20px]">
+        <div class="flex justify-between items-center text-[#1A1A1A] dark:text-[#ffffff] text-[16px]">
           <div>ApiKeys设置</div>
-          <div
-            class="tip-text-input" style="color: #FF6666;"
-          >
-            小提示：平台等级Lv.4此配置才会生效；请保证您的key还有余额并且正确；
-          </div>
-          <!-- <div class="tip-text-input"
-          >
-            可以点击这个网址进行检查：
-            <a style="color: #0099FF;" href="https://open.aihao123.cn/" target="_blank">https://open.aihao123.cn/</a>
-          </div> -->
-        </div>
-        <div class="flex mt-2 justify-between">
-          <input v-model="apiKey" class="mr-2 input flex-1" type="text" placeholder="请输入您的apiKey">
-          <van-button class="btn-primary" size="small" @click="settingBtn">
-            确定
-          </van-button>
-        </div>
-        <div class="flex mt-2 justify-between mt-4 ml-4">
-          <van-radio-group v-model="userStore.useKey" direction="horizontal" @change="userStore.recordState">
-            <van-radio name="1">
-              使用key
-            </van-radio>
-            <van-radio name="0">
-              不使用key
-            </van-radio>
-          </van-radio-group>
-        </div>
-
-        <van-divider />
-        <div class="">
-          <div class="flex justify-between">
-            <div>OpenAI模型选择</div>
-            <div>
-              <van-popover
-                v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
-                @select="setOpenaiVersion"
-              >
-                <template #reference>
-                  <div class="footer-item footer-item-btn footer-item-btn1 model-version " style="margin-right: 0px;">
-                    {{ userStore.getModeVersion.viewName }}
-                    <SvgIcon icon="icon-park-outline:right" class="icon" />
-                  </div>
-                </template>
-              </van-popover>
-            </div>
-          </div>
-          <div class="tip-text-input">
-            小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
-            <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
-            倍，但是回答的更加专业
-          </div>
-        </div>
-
-        <van-divider />
-        <div>
-          <div class="flex justify-between items-center">
-            <div> ChatMoss主题设定</div>
-            <div class="flex">
-              <NSwitch
-                v-model:value="choose.chatmossTheme" checked-value="dark" unchecked-value="light"
-                @update:value="handleUpdateValue"
-              />
-              <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
-            </div>
-          </div>
-        </div>
-        <van-divider />
-        <div>
-          <div class="flex justify-between items-center">
-            <div> 回答模式</div>
-            <div class="flex">
-              <NSwitch
-                v-model:value="choose.chatmossMode" checked-value="speciality" unchecked-value="normal"
-                @update:value="handleModeValue"
-              />
-              <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <van-divider />
-
-        <NDivider />
-
-        <div class="justify-between">
-          <div>字体大小设置</div>
-        </div>
-        <div class="flex mt-2 justify-between">
-          <input v-model="fontSizeNum" class="mr-2 input flex-1" type="text" placeholder="请输入字体设置比例">
-          <van-button class="btn-primary" size="small" @click="fontSizeNumBtn">
-            确定
-          </van-button>
-        </div>
-
-        <NDivider />
-
-        <div class="justify-between">
-          <div>注销</div>
-        </div>
-        <div class="flex mt-2 justify-between">
-          <div class="flex mr-[30px]" style="margin-top: 10px;  font-size: 12px">
-            注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
-          </div>
-
-          <van-button style="white-space: nowrap;" class="btn-primary" size="small" @click="handleLogout">
-            注销
-          </van-button>
-        </div>
-        <NDivider />
-        <!-- <div class="justify-between">
           <div>
-            <span>本机累计使用字符数:</span>
-            <span class="title-h2">未知</span>
+            <NSwitch v-model:value="userStore.useKey" class="setting-switch" @update:value="() => userStore.recordState()"
+              checked-value="1" unchecked-value="0" />
           </div>
-          <div class="tip-text-input">
-            小提示：数据统计之前采用本地统计并不准确，目前我们在做服务器数据统计，数据更准，敬请期待
+        </div>
+        <div class="flex justify-between items-center mt-[15px]">
+          <input v-model="apiKey"
+            class="mr-2 w-[100%] h-[39px] flex-1 border-[#CECED2] box-border py-[3px] px-[15px] text-[#8B8D97] bg-[#FFFFFF] text-[13px] dark:border-[#3A3A3C] dark:text-[#69696A] dark:bg-[#282828]"
+            type="text" placeholder="请输入您的apiKey" style="border-radius: 9px;border-width: 1px ;border-style: solid;">
+
+          <div
+            class="flex items-center justify-center border-[#CECED2] text-[#8B8D97] dark:border-[#3A3A3C] dark:text-[#69696A]"
+            style="width: 75px;height: 39px;border-radius: 9px;border-width: 1px ;border-style: solid;"
+            @click="settingBtn">
+            确定
           </div>
-        </div> -->
+        </div>
       </div>
+      <div class="setting-box !py-[20px]">
+        <div class="flex justify-between items-center text-[16px] text-[#1A1A1A] dark:text-[#ffffff]">
+          <div>OpenAI模型选择</div>
+          <div>
+            <van-popover v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
+              @select="setOpenaiVersion">
+              <template #reference>
+                <div class="flex items-center text-[#8B8D97]" style="font-size: 11px;">
+                  {{ userStore.getModeVersion.viewName }}
+                  <SvgIcon icon="icon-park-outline:right" class="icon" />
+                </div>
+              </template>
+            </van-popover>
+          </div>
+        </div>
+        <div class="text-[#8B8D97] text-[11px] mt-[15px] dark:text-[#69696A]">
+          小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
+          <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
+          倍，但是回答的更加专业
+        </div>
+      </div>
+
+      <div class="setting-box !pt-[10px] !pb-[20px]">
+        <div class="item">
+          <div class="flex item-title text-[16px]">
+            <div> ChatMoss主题设定</div>
+          </div>
+          <div class="flex item-info">
+            <NSwitch class="setting-switch" v-model:value="choose.chatmossTheme" checked-value="dark"
+              unchecked-value="light" @update:value="handleUpdateValue" />
+            <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="flex item-title text-[16px]">
+            <div>回答模式</div>
+          </div>
+          <div class="flex item-info items-center">
+            <NSwitch class="setting-switch" v-model:value="choose.chatmossMode" checked-value="speciality"
+              unchecked-value="normal" @update:value="handleModeValue" />
+            <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
+          </div>
+        </div>
+
+        <div class="mt-[17px]">
+          <div class="flex justify-between items-center text-[16px] text-[#1A1A1A] dark:text-[#ffffff]">
+            <div>字体大小设置</div>
+          </div>
+          <div class="flex justify-between items-center mt-[15px]">
+            <input v-model="fontSizeNum"
+              class="mr-2 w-[100%] h-[39px] flex-1 border-[#CECED2] box-border py-[3px] px-[15px] text-[#8B8D97] text-[13px] bg-[#ffffff] dark:border-[#3A3A3C] dark:text-[#69696A] dark:bg-[#282828]"
+              type="text" placeholder="请输入字体设置比例" style="border-radius: 9px;border-width: 1px ;border-style: solid;">
+
+            <div class="flex items-center justify-center border-[#CECED2] text-[#8B8D97] dark:border-[#3A3A3C] dark:text-[#69696A] dark:bg-[#282828]"
+              style="width: 75px;height: 39px;border-radius: 9px;border-width: 1px ;border-style: solid;"
+              @click="fontSizeNumBtn">
+              确定
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="setting-box !py-[20px]" @click="handleLogout">
+        <div class="flex justify-between items-center text-[#1A1A1A] text-[16px] dark:text-[#ffffff]">
+          <div>注销</div>
+          <div class="text-[#A8AAB6] ">
+            <SvgIcon class="text-[16px]" icon="icon-park-outline:right" />
+          </div>
+        </div>
+        <div class="text-[#8B8D97] dark:text-[#69696A] text-[11px] mt-[15px]">
+          注销账号之后，账号数据将会全部被清空，不可恢复，账号也不可重新注册
+        </div>
+      </div>
+
+
     </div>
 
-    <Modal
-      v-model:visible="open" :title="null" :footer="null" centered class="self-model" style="width: fit-content"
-      @cancel="handleClose"
-    >
+    <Modal v-model:visible="open" :title="null" :footer="null" centered class="self-model" style="width: fit-content"
+      @cancel="handleClose">
       <div style="width: 410px; height: 310px; overflow: hidden; border-radius: 16px; background: #fff">
-        <div
-          style="
+        <div style="
             width: 410px;
             height: 70px;
             background: linear-gradient(90deg, #756df2 0%, #756df2 100%);
@@ -321,12 +293,10 @@ function setOpenaiVersion(action) {
             font-weight: 600;
             line-height: 70px;
             text-align: center;
-          "
-        >
+          ">
           注销账号
         </div>
-        <div
-          class="" style="
+        <div class="" style="
             box-sizing: border-box;
             margin-top: 50px;
             padding: 0 27px;
@@ -334,8 +304,7 @@ function setOpenaiVersion(action) {
             font-size: 16px;
             font-weight: 500;
             line-height: 22px;
-          "
-        >
+          ">
           是否注销账号，注销账号之后，账号数据将会被全部清空，不可恢复，账号也不可重新注册
         </div>
 
@@ -343,8 +312,7 @@ function setOpenaiVersion(action) {
           <div class="btn-confirm" :class="[secondsToGo === 0 ? 'active' : '']" @click="handleConfirm">
             确认<span v-if="secondsToGo > 0">（{{ secondsToGo }}）</span>
           </div>
-          <div
-            style="
+          <div style="
               width: 170px;
               height: 54px;
               border-radius: 8px;
@@ -354,8 +322,7 @@ function setOpenaiVersion(action) {
               font-weight: 500;
               line-height: 54px;
               text-align: center;
-            " @click="() => (open = false)"
-          >
+            " @click="() => (open = false)">
             取消
           </div>
         </div>
@@ -365,6 +332,30 @@ function setOpenaiVersion(action) {
 </template>
 
 <style lang="less" scoped>
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 55px;
+  line-height: 55px;
+  border-bottom: 1px solid #F6F7FB;
+
+  &.no-border {
+    border-width: 0 !important;
+  }
+
+  .item-title {
+    color: #1A1A1A;
+  }
+
+  .item-info {
+    display: flex;
+    align-items: center;
+    color: #A8AAB6;
+  }
+}
+
 .btn-confirm {
   width: 170px;
   height: 54px;
@@ -393,15 +384,40 @@ function setOpenaiVersion(action) {
   color: #FF6666;
 }
 
-.box {
-  background-color: var(--moss-header-color);
-  border-radius: 5px;
-  padding: 17px 15px;
+
+.setting-box {
+  // width: 347px;
+  margin: 0 auto;
+  margin-top: 11px;
+  box-sizing: border-box;
+  padding: 0 15px;
+  background-color: #FFFFFF;
+  border-radius: 11px;
 
   .btn {
-    color: var(--moss-text-blue-color);
+    // color: var(--moss-text-blue-color);
   }
 }
+
+.dark {
+  .setting-box {
+    background-color: #282828;
+    ;
+  }
+
+  .item {
+    border-bottom: 1px solid #151515;
+
+    .item-title {
+      color: #FFFFFF;
+    }
+
+    .item-info {
+      color: #A8AAB6;
+    }
+  }
+}
+
 
 .btn-primary {
   // background-color: var(--moss-text-reply-color);
@@ -415,7 +431,6 @@ function setOpenaiVersion(action) {
   height: 30px;
   box-sizing: border-box;
   padding: 4px 20px;
-  background-color: var(--moss-bg-content-color);
   border-radius: 27px;
 }
 
@@ -424,7 +439,5 @@ function setOpenaiVersion(action) {
   padding-top: 20px;
   padding-bottom: 60px;
   min-height: 100%;
-  background-color: var(--moss-bg-content-color);
-  color: var(--moss-text);
 }
 </style>

@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { NPopover, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
-import { Popover, Switch } from 'ant-design-vue'
+import { Popover, Switch, Tooltip } from 'ant-design-vue'
 import { useScroll } from './../../hooks/useScroll'
 import { useAuthStoreWithout, useChatStore, useUserStore } from '@/store'
 import { conversationUpload } from '@/api/index'
 import { updateAppConfig } from '@/api/application'
 import { useTheme } from '@/hooks/useTheme'
+import { data } from './data'
+const configs = ref(data)
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const ms = useMessage()
@@ -79,46 +81,34 @@ function handleParamConfigs(item, row) {
 
 <template>
   <div class="relative">
-    <div
-      v-if="dataSources.length === 0 && !userStore.isNotBootPrompt" style="
+    <div v-if="dataSources.length === 0 && !userStore.isNotBootPrompt" style="
     z-index: 10;
     position: absolute;
 		cursor: pointer;
     width: 162px;
     top: -124px;
     left: 50%;
-    margin-left: -81px;" class="element-to-animate" @click="userStore.closeBootPrompt"
-    >
-      <img
-        v-if="vantTheme === 'dark'" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/chat/drak-notice.png"
-        alt="" style="width: 100%;"
-      >
-      <img
-        v-if="vantTheme === 'light'"
-        src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/chat/light-notice.png" alt="" style="width: 100%;"
-      >
+    margin-left: -81px;" class="element-to-animate" @click="userStore.closeBootPrompt">
+      <img v-if="vantTheme === 'dark'" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/chat/drak-notice.png"
+        alt="" style="width: 100%;">
+      <img v-if="vantTheme === 'light'"
+        src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/chat/light-notice.png" alt="" style="width: 100%;">
     </div>
 
     <footer class="">
       <div v-if="userStore.currentApp && userStore.currentApp.paramConfigs" class="flex">
-        <Popover
-          v-for="(item, ii) of userStore.currentApp.paramConfigs" title="" trigger="hover" ::key="ii"
-          overlay-class-name="ant-popover-my"
-        >
+        <Popover v-for="(item, ii) of userStore.currentApp.paramConfigs" title="" trigger="hover" ::key="ii"
+          overlay-class-name="ant-popover-my">
           <template #content>
             <div class="text-center" style="padding: 8px;min-width: 100px">
-              <div
-                v-for="(row, i) of item.choices" :key="i"
-                class="py-1 px-2 cursor-pointer hover:bg-[#00000040] rounded-lg" @click="handleParamConfigs(item, row)"
-              >
+              <div v-for="(row, i) of item.choices" :key="i"
+                class="py-1 px-2 cursor-pointer hover:bg-[#00000040] rounded-lg" @click="handleParamConfigs(item, row)">
                 {{ item.name }}:{{ row.value }}
               </div>
             </div>
           </template>
-          <div
-            style="background: #6388ff;"
-            class="m-pointer footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin ml-2"
-          >
+          <div style="background: #6388ff;"
+            class="m-pointer footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin ml-2">
             {{ item.name }}:{{ item.choicesMap[item.choiceSelect].value }}
           </div>
         </Popover>
@@ -128,21 +118,22 @@ function handleParamConfigs(item, row) {
         <div class="footer-left">
           <div class="div">
             <div class="div-wrap">
-              <div
-                v-if="!userStore.isQuestionMode"
+              <div v-if="!userStore.isQuestionMode"
                 class="footer-item footer-item-btn footer-item-btn1 bg-[#EBEDF5] dark:bg-[#292929] btn"
-                @click="createQuestion"
-              >
+                @click="createQuestion">
                 新建会话
               </div>
-              <div
-                v-if="!userStore.isQuestionMode"
-                class="footer-item footer-item-btn footer-item-btn2 bg-[#EBEDF5] dark:bg-[#292929] btn"
-                @click="toggleButtonEvent"
-              >
-                历史记录
+              <div v-if="!userStore.isQuestionMode" class="mr-[3px]" @click="toggleButtonEvent"
+                @mouseleave="() => { configs.search.active = false }"
+                @mouseenter="() => { configs.search.active = true }">
+                <Tooltip>
+                  <template #title>历史记录</template>
+                  <img v-show="!configs.search.active" :src="configs.search[vantTheme].img" class="w-[26px]" alt="">
+                  <img v-show="configs.search.active" :src="configs.search[vantTheme].activeImg" class="w-[26px]" alt="">
+                </Tooltip>
+
               </div>
-              <Popover title="" trigger="hover" overlay-class-name="ant-popover-my bg-[#EBEDF5] dark:bg-[#292929]">
+              <Popover title="" trigger="hover" overlay-class-name="ant-popover-my" placement="topRight">
                 <template #content>
                   <div style="padding: 8px">
                     <a href="https://chatmoss.feishu.cn/share/base/form/shrcngN778J03PwR7b8z7Puge0f" target="_blank">
@@ -168,24 +159,15 @@ function handleParamConfigs(item, row) {
                     </div>
                   </div>
                 </template>
-                <div
-                  v-if="authStore.token"
-                  class="footer-item footer-item-btn footer-item-btn1 flex-center btn-plugin bg-[#EBEDF5] dark:bg-[#292929] btn"
-                  style=""
-                >
-                  插件系统
-                  <!-- <img
-                  src="@/assets/icon/icon-plugin.png" style="width: 12px;
-									height: 12px;
-									margin-right: 8px;display: inline-block;"
-                > -->
-                  <!-- <span class="align-text-top">插件</span> -->
-                </div>
-                <div v-if="authStore.token" class="inline-block align-middle">
-                  <img
-                    v-if="chatStore.getSelectPluginInfo?.select" class="plugin-main-select-icon"
-                    :src="chatStore.getSelectPluginInfo.icon" alt=""
-                  >
+                <div class="flex items-center w-[100px]">
+                  <div class="mr-[3px]" v-if="authStore.token" @mouseleave="() => { configs.plugin.active = false }"
+                    @mouseenter="() => { configs.plugin.active = true }">
+                    <img v-show="!configs.plugin.active" :src="configs.plugin[vantTheme].img" class="w-[26px]" alt="">
+                    <img v-show="configs.plugin.active" :src="configs.plugin[vantTheme].activeImg" class="w-[26px]"
+                      alt="">
+                  </div>
+                  <img v-if="chatStore.getSelectPluginInfo?.select" class="plugin-main-select-icon"
+                    :src="chatStore.getSelectPluginInfo.icon" alt="">
                 </div>
               </Popover>
               <!-- <div v-if="userStore.toggleValue && !userStore.isQuestionMode"
@@ -196,29 +178,23 @@ function handleParamConfigs(item, row) {
           </div>
         </div>
         <div class="footer-right">
-          <div
-            v-if="hidden"
+          <div v-if="hidden"
             class="footer-item footer-item-btn footer-item-btn1 model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
-            @click="handleMode"
-          >
+            @click="handleMode">
             {{ userStore.toggleValue ? '正常模式' : '极简模式' }}
           </div>
           <div class="footer-item">
             <div class="header-right-item header-right-item-help">
               <NPopover ref="popoverDom" trigger="hover" placement="left">
                 <template #trigger>
-                  <div
-                    v-if="userStore.getModeVersion"
-                    class="footer-item footer-item-btn footer-item-btn1 model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]"
-                  >
+                  <div v-if="userStore.getModeVersion"
+                    class="footer-item footer-item-btn footer-item-btn1 model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]">
                     {{ userStore.getModeVersion.viewName }}
                   </div>
                 </template>
                 <div>
-                  <div
-                    v-for="(item, i) of userStore.getModelList" :key="i" class="model-item"
-                    :class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)"
-                  >
+                  <div v-for="(item, i) of userStore.getModelList" :key="i" class="model-item"
+                    :class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)">
                     <NPopover trigger="hover" placement="left" style="width: max-content;">
                       <div class="flex">
                         解释：{{ item.desc }}
@@ -345,6 +321,8 @@ function handleParamConfigs(item, row) {
       }
 
       .div-wrap {
+        display: flex;
+        align-items: center;
         width: max-content;
 
       }

@@ -3,7 +3,7 @@
     <div class="header">
       <slot name="title" />
     </div>
-    <div class="pages">
+    <div class="pages bg-[#F6F7FA] dark:bg-[#161616]">
       <slot />
     </div>
   </div>
