@@ -119,11 +119,11 @@ function handleParamConfigs(item, row) {
           <div class="div">
             <div class="div-wrap">
               <div v-if="!userStore.isQuestionMode"
-                class="footer-item footer-item-btn footer-item-btn1 bg-[#EBEDF5] dark:bg-[#292929] btn"
+                class="bg-[#EBEDF5] dark:bg-[#292929] btn !mr-[8px] flex items-center h-[29px] px-[9px] rounded-[13px]"
                 @click="createQuestion">
                 新建会话
               </div>
-              <div v-if="!userStore.isQuestionMode" class="mr-[3px]" @click="toggleButtonEvent"
+              <div v-if="!userStore.isQuestionMode" class="mr-[8px] hover:bg-[#edebf5] dark:hover:bg-[#292929] rounded-[6px]" @click="toggleButtonEvent"
                 @mouseleave="() => { configs.search.active = false }"
                 @mouseenter="() => { configs.search.active = true }">
                 <Tooltip>
@@ -159,7 +159,7 @@ function handleParamConfigs(item, row) {
                     </div>
                   </div>
                 </template>
-                <div class="flex items-center w-[100px]">
+                <div class="rounded-[6px] flex items-center hover:bg-[#edebf5] dark:hover:bg-[#292929]">
                   <div class="mr-[3px]" v-if="authStore.token" @mouseleave="() => { configs.plugin.active = false }"
                     @mouseenter="() => { configs.plugin.active = true }">
                     <img v-show="!configs.plugin.active" :src="configs.plugin[vantTheme].img" class="w-[26px]" alt="">
@@ -185,29 +185,32 @@ function handleParamConfigs(item, row) {
           </div>
           <div class="footer-item">
             <div class="header-right-item header-right-item-help">
-              <NPopover ref="popoverDom" trigger="hover" placement="left">
+              <NPopover class="myPopover !bg-[#3A3A3C] !dark:bg-[#ffffff]" ref="popoverDom" trigger="hover" placement="top" >
                 <template #trigger>
                   <div v-if="userStore.getModeVersion"
-                    class="footer-item footer-item-btn footer-item-btn1 model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff]">
-                    {{ userStore.getModeVersion.viewName }}
+                    class="model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff] flex items-center h-[29px] px-[9px] rounded-[13px]">
+                    <img :src="userStore.getModeVersion.selectedIcon" class="w-[22px] h-[22px] mr-[4px]"  alt="">
+                    <span>{{ userStore.getModeVersion.viewName }}</span>
                   </div>
                 </template>
                 <div>
-                  <div v-for="(item, i) of userStore.getModelList" :key="i" class="model-item"
-                    :class="[i < (userStore.getModelList.length - 1) ? 'line' : '']" @click="setOpenaiVersion(item)">
+                  <div v-for="(item, i) of userStore.getModelList" :key="i" class="model-item hover:text-[#BFBFBF] dark:hover:text-[#A7A9B2] text-[#1A1A1A] dark:text-[#FFFFFF]"
+                    :class="[i < (userStore.getModelList.length - 1) ? 'line border-[#F6F7FA] dark:border-[#2D2D2E]' : '']" @click="setOpenaiVersion(item)">
                     <NPopover trigger="hover" placement="left" style="width: max-content;">
                       <div class="flex">
                         解释：{{ item.desc }}
                       </div>
                       <template #trigger>
-                        <div class="cursor">
-                          {{ item.viewName }}
+                        <div class="cursor flex items-center h-[35px]">
+                          <img :src="item.icon" class="w-[22px] h-[22px] mr-[8px]" alt="">
+                          <span>{{ item.viewName }}</span>
                         </div>
                       </template>
                     </NPopover>
                   </div>
                 </div>
               </NPopover>
+              
             </div>
           </div>
         </div>
@@ -283,7 +286,8 @@ function handleParamConfigs(item, row) {
 }
 
 .line {
-  border-bottom: 0.5px solid #3a3a3c;
+  border-bottom-width: 0.5px;
+  border-bottom-style: solid;
 }
 
 .footer-main {

@@ -12,6 +12,7 @@ import Page from '@/components/page/index.vue'
 import { useBack, useGo } from '@/utils/router'
 import { SvgIcon } from '@/components/common'
 import { accountClose } from '@/api/account'
+import { NPopover, useMessage } from 'naive-ui'
 // let props = defineProps(['register'])
 // const emits = defineEmits(['modifyPassword', 'register'])
 const back = useBack()
@@ -59,7 +60,6 @@ const fontSizeNum = ref(localStorage.getItem('fontSizeNum') || '90%') as any
 function fontSizeNumBtn() {
   // 获取用户输入的字体大小值
   const userInput = fontSizeNum.value.trim()
-
   // 提取输入中的数值部分
   let fontSizeValue = parseFloat(userInput)
   if (isNaN(fontSizeValue)) {
@@ -78,6 +78,10 @@ function fontSizeNumBtn() {
   const htmlDom = document.querySelector('html') as any
   htmlDom.style.zoom = localStorage.getItem('fontSizeNum')
 }
+let config = ref({
+  fontSizeFlag: false,
+  apiKeysFlag: false
+})
 
 // 主题
 function handleUpdateValue(chatmossTheme: string) {
@@ -192,10 +196,11 @@ function setOpenaiVersion(action) {
         <div class="flex justify-between items-center mt-[15px]">
           <input v-model="apiKey"
             class="mr-2 w-[100%] h-[39px] flex-1 border-[#CECED2] box-border py-[3px] px-[15px] text-[#8B8D97] bg-[#FFFFFF] text-[13px] dark:border-[#3A3A3C] dark:text-[#69696A] dark:bg-[#282828]"
-            type="text" placeholder="请输入您的apiKey" style="border-radius: 9px;border-width: 1px ;border-style: solid;">
+            type="text" placeholder="请输入您的apiKey" style="border-radius: 9px;border-width: 1px ;border-style: solid;"
+            @input="() => config.apiKeysFlag = true">
 
-          <div
-            class="flex items-center justify-center border-[#CECED2] text-[#8B8D97] dark:border-[#3A3A3C] dark:text-[#69696A]"
+          <div class="flex items-center justify-center"
+            :class="[config.apiKeysFlag ? 'border-[#7569ff] text-[#7569ff] dark:border-[#7569ff] dark:text-[#ffffff]' : 'border-[#CECED2] text-[#8B8D97] dark:border-[#3A3A3C] dark:text-[#69696A]']"
             style="width: 75px;height: 39px;border-radius: 9px;border-width: 1px ;border-style: solid;"
             @click="settingBtn">
             确定
@@ -206,7 +211,7 @@ function setOpenaiVersion(action) {
         <div class="flex justify-between items-center text-[16px] text-[#1A1A1A] dark:text-[#ffffff]">
           <div>OpenAI模型选择</div>
           <div>
-            <van-popover v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
+            <!-- <van-popover v-model:show="showPopover" :actions="userStore.getModelList" placement="left"
               @select="setOpenaiVersion">
               <template #reference>
                 <div class="flex items-center text-[#8B8D97]" style="font-size: 11px;">
@@ -214,10 +219,30 @@ function setOpenaiVersion(action) {
                   <SvgIcon icon="icon-park-outline:right" class="icon" />
                 </div>
               </template>
-            </van-popover>
+            </van-popover> -->
+            <NPopover class="myPopover" ref="popoverDom" trigger="hover" placement="top">
+              <template #trigger>
+                <div class="flex items-center text-[#8B8D97]" style="font-size: 11px;">
+                  {{ userStore.getModeVersion.viewName }}
+                  <SvgIcon icon="icon-park-outline:right" class="icon" />
+                </div>
+              </template>
+              <div>
+                <div v-for="(item, i) of userStore.getModelList" :key="i"
+                  class="model-item hover:text-[#BFBFBF] dark:hover:text-[#A7A9B2] text-[#1A1A1A] dark:text-[#FFFFFF]"
+                  :class="[i < (userStore.getModelList.length - 1) ? 'line border-[#F6F7FA] dark:border-[#2D2D2E]' : '']"
+                  @click="setOpenaiVersion(item)">
+                  <div class="cursor flex items-center h-[35px]">
+                    <img :src="item.icon" class="w-[22px] h-[22px] mr-[8px]" alt="">
+                    <span>{{ item.viewName }}</span>
+                  </div>
+                </div>
+              </div>
+            </NPopover>
+
           </div>
         </div>
-        <div class="text-[#8B8D97] text-[11px] mt-[15px] dark:text-[#69696A]">
+        <div class="text-[#8b8d97] opacity-80 text-[11px] mt-[15px] dark:text-[#69696A]">
           小提示：在ChatMoss中，ChatGPT4.0消耗的字符数要比ChatGPT3.5多
           <span class="font-bold" style="color: #FF6666;">{{ userStore.userInfo.fourRate }}</span>
           倍，但是回答的更加专业
@@ -230,9 +255,10 @@ function setOpenaiVersion(action) {
             <div> ChatMoss主题设定</div>
           </div>
           <div class="flex item-info">
+            <span class="mr-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
             <NSwitch class="setting-switch" v-model:value="choose.chatmossTheme" checked-value="dark"
               unchecked-value="light" @update:value="handleUpdateValue" />
-            <span class="ml-2">{{ choose.chatmossTheme === 'dark' ? '深色模式' : '浅色模式' }}</span>
+
           </div>
         </div>
         <div class="item">
@@ -240,9 +266,10 @@ function setOpenaiVersion(action) {
             <div>回答模式</div>
           </div>
           <div class="flex item-info items-center">
+            <span class="mr-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
             <NSwitch class="setting-switch" v-model:value="choose.chatmossMode" checked-value="speciality"
               unchecked-value="normal" @update:value="handleModeValue" />
-            <span class="ml-2">{{ choose.chatmossMode === 'speciality' ? '专业模式' : '正常模式' }}</span>
+
           </div>
         </div>
 
@@ -253,9 +280,11 @@ function setOpenaiVersion(action) {
           <div class="flex justify-between items-center mt-[15px]">
             <input v-model="fontSizeNum"
               class="mr-2 w-[100%] h-[39px] flex-1 border-[#CECED2] box-border py-[3px] px-[15px] text-[#8B8D97] text-[13px] bg-[#ffffff] dark:border-[#3A3A3C] dark:text-[#69696A] dark:bg-[#282828]"
-              type="text" placeholder="请输入字体设置比例" style="border-radius: 9px;border-width: 1px ;border-style: solid;">
+              type="text" placeholder="请输入字体设置比例" style="border-radius: 9px;border-width: 1px ;border-style: solid;"
+              @input="() => config.fontSizeFlag = true">
 
-            <div class="flex items-center justify-center border-[#CECED2] text-[#8B8D97] dark:border-[#3A3A3C] dark:text-[#69696A] dark:bg-[#282828]"
+            <div class="flex items-center justify-center"
+              :class="[config.fontSizeFlag ? 'border-[#7569ff] text-[#7569ff] dark:border-[#7569ff] dark:text-[#ffffff]' : 'border-[#CECED2] text-[#8B8D97] dark:border-[#3A3A3C] dark:text-[#69696A]']"
               style="width: 75px;height: 39px;border-radius: 9px;border-width: 1px ;border-style: solid;"
               @click="fontSizeNumBtn">
               确定
@@ -296,7 +325,7 @@ function setOpenaiVersion(action) {
           ">
           注销账号
         </div>
-        <div class="" style="
+        <div class="opacity-80" style="
             box-sizing: border-box;
             margin-top: 50px;
             padding: 0 27px;
@@ -351,6 +380,7 @@ function setOpenaiVersion(action) {
 
   .item-info {
     display: flex;
+    font-size: 12px;
     align-items: center;
     color: #A8AAB6;
   }

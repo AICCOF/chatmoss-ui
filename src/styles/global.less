@@ -112,18 +112,19 @@ fade1-enter-active,
 
 .height-enter-active,
 .height-leave-active {
-	transition: 60px ;
+	transition: 60px;
 	overflow: hidden;
 	/* 过渡的持续时间 */
 }
 
-.height-enter-from{
+.height-enter-from {
 	height: 0;
 	opacity: 0;
 	/* 初始高度和最终高度 */
 	overflow: hidden;
 	/* 隐藏超出部分 */
 }
+
 .height-enter-to {
 	height: 60px;
 	opacity: 1;
@@ -139,6 +140,7 @@ fade1-enter-active,
 	overflow: hidden;
 	/* 隐藏超出部分 */
 }
+
 .height-leave-to {
 	height: 0;
 	opacity: 0;
@@ -212,9 +214,10 @@ fade1-enter-active,
 }
 
 ::-webkit-scrollbar-thumb {
-	  background: #ccd0d6;
+	background: #ccd0d6;
 	border-radius: 10px;
 }
+
 .dark {
 	::-webkit-scrollbar-thumb {
 		background: #565656;
@@ -294,7 +297,8 @@ p {
 	// height: auto;
 	height: 60px;
 	position: relative;
-	.van-tabbar-item{
+
+	.van-tabbar-item {
 		// height: 55px;
 	}
 
@@ -355,12 +359,13 @@ p {
 }
 
 
-.mySwitch{
+.mySwitch {
 
-	.n-switch__rail{
+	.n-switch__rail {
 		// background-color: pink !important;
 	}
-	&.n-switch--active{
+
+	&.n-switch--active {
 		.n-switch__rail {
 			background-color: #38416A !important;
 		}
@@ -382,16 +387,33 @@ p {
 
 .my-nav-bar {
 	background-color: transparent;
+
 	.van-icon-arrow-left {
 		color: #1A1A1A;
 	}
+
+	&::after {
+		display: none;
+	}
 }
 
-.dark{
+.dark {
 	.my-nav-bar {
 
 		.van-icon-arrow-left {
 			color: #fff
 		}
+	}
+}
+
+
+.myPopover {
+	border-radius: 11px !important;
+	background-color: #ffffff;
+}
+
+.dark {
+	.myPopover {
+		background-color: #3A3A3C;
 	}
 }

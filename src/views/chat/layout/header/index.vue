@@ -70,14 +70,13 @@ onMounted(() => {
     <header v-show="userStore.toggleValue" class="header-main">
       <div class="relative" style="width: 100%;height: 100%;">
         <div class="scroll" style="width: 100%;height: 100%;overflow-y: scroll;">
-          <div class="flex pl-[24px] pr-[80px] h-full" style="width: max-content;">
-            <div
-              v-for="(item, i) of tabList" :key="i" class="mr-[34px] flex items-center cursor-pointer tab"
-              @click="handleLink(item)"
-            >
+          <div class="flex pl-[4px] pr-[80px] h-full" style="width: max-content;">
+            <div v-for="(item, i) of tabList" :key="i" class="mr-[10px] flex items-center cursor-pointer tab"
+              @click="handleLink(item)">
               <div>
-                <div class="img w-[35px] h-[35px] flex items-center justify-center m-auto">
-                  <img :src="item.iconUrl" class="w-[26px] h-[26px] m-auto" alt="">
+                <div class="img w-[62px] h-[41px] flex items-center justify-center m-auto">
+                  <div class="bg"></div>
+                  <img :src="item.iconUrl" class="h-[100%] m-auto relative z-10" alt="">
                 </div>
                 <div class="text-center">
                   {{ item.name }}
@@ -87,11 +86,10 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div class="absolute flex justify-center items-center money" style="right:0;top:0;width: 100px;height: 100%;">
+      <div class="absolute flex justify-center items-center money" style="right:0;top:0;width: 100px;height: 100%;z-index: 10;">
         <NPopover trigger="click" :duration="500" @update:show="() => userStore.getBalanceInfo()">
           <template #trigger>
-            <div
-              class="btn flex justify-center items-center" style="width: 54px;
+            <div class="btn flex justify-center items-center" style="width: 54px;
             height: 27px;
             font-size: 11px;
             font-weight: 600;
@@ -99,15 +97,12 @@ onMounted(() => {
             line-height: 15px;
             background: linear-gradient(90deg, #1F2654 0%, #2D3253 100%);
             border-radius: 13px;
-        "
-            >
+        ">
               余额
             </div>
           </template>
-          <div
-            v-for="(row, i) of userStore.packageList" :key="i"
-            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 "
-          >
+          <div v-for="(row, i) of userStore.packageList" :key="i"
+            class="rounded-lg box-border px-2 py-1 bg-[#f4f6f8] dark:bg-[#6b7280] mt-2 ">
             <div>
               <div class="flex justify-between">
                 <span class="mr-4">{{ row.title }}</span>
@@ -174,8 +169,15 @@ onMounted(() => {
 .tab {
   :hover {
     .img {
-      border-radius: 6px;
-      background: #EBEDF5;
+      position: relative;
+
+      .bg {
+        border-radius: 6px;
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        background: #EBEDF5;;
+      }
     }
   }
 }
@@ -195,8 +197,16 @@ onMounted(() => {
   .tab {
     :hover {
       .img {
-        border-radius: 6px;
-        background: #3A3A3C;
+        position: relative;
+
+        .bg {
+          z-index: 0;
+          border-radius: 6px;
+          position: absolute;
+          width: 36px;
+          height: 36px;
+          background: #3A3A3C;
+        }
       }
     }
   }
