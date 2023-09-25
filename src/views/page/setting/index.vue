@@ -48,11 +48,11 @@ const apiKey = ref(localStorage.getItem('apiKey') || '') as any
 function settingBtn() {
   if (apiKey.value === '' || apiKey.value.startsWith('sk-')) {
     localStorage.setItem('apiKey', apiKey.value)
-    ms.info('key设置成功~请保证填写正确的key，并且key有额度没有过期~', 5000)
+    ms.info('key设置成功~请保证填写正确的key，并且key有额度没有过期~', 5)
     userStore.residueCountAPI()
   }
   else {
-    ms.error('正确的key是以sk-开头的', 5000)
+    ms.error('正确的key是以sk-开头的', 5)
   }
 }
 
