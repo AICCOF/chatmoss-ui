@@ -452,6 +452,33 @@ p {
 	}
 }
 
+.dark {
+	.my-drawer {
+		// height: 74vh;
+
+		.ant-drawer-content-wrapper {
+			.ant-drawer-content {
+				background: #212121;
+				box-shadow: 0px -2px 15px 0px rgba(19, 19, 19, 1);
+				border-radius: 18px 18px 0px 0px;
+			}
+		}
+
+		.ant-drawer-header {
+			background: #212121;
+
+			.ant-drawer-close {
+				color: rgb(145 145 145 / 45%)
+			}
+
+			.ant-drawer-title {
+				color: #fff;
+			}
+		}
+
+	}
+}
+
 
 .my-checkbox {
 	.ant-checkbox-inner {
@@ -463,27 +490,63 @@ p {
 		border: 1px solid #3875F6;
 	}
 
+	.ant-checkbox-input {
+		&::focus {
+			border-color: transparent;
+		}
+	}
+
 	.ant-checkbox-checked {
 		.ant-checkbox-inner {
 			width: 20px;
 			height: 20px;
-			background-color: #fff;
+			// background-color: #fff;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			overflow: hidden;
+
 			&::after {
 				width: 16px;
+				border: 0;
 				height: 16px;
 				background-color: transparent;
 				background-image: url('https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-tick.png');
 				background-repeat: no-repeat;
 				background-size: contain;
-				left:2px;
-				top:3px;
+				left: 2px;
+				top: 3px;
 				transform: rotate(0deg) scale(1) translate(0%, 0%);
-				content:'';
+				content: '';
 			}
 		}
+
+		&::after {
+			border: 0;
+		}
+	}
+}
+
+.dark {
+	.my-checkbox {
+		.ant-checkbox-inner {
+			width: 20px;
+			height: 20px;
+			position: relative;
+			border-radius: 4px;
+			background: #212121;
+			border: 1px solid #7569FF !important;
+		}
+
+		.ant-checkbox-checked {
+
+			// border: 1px solid #7569FF;
+			.ant-checkbox-inner {
+				&::after {
+					background-image: url('https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-tick.png');
+				}
+			}
+		}
+
 	}
 }

@@ -11,7 +11,8 @@ let hover = ref({})
 // const showModal = ref(false)
 const appStore = useAppStore()
 const chatStore = useChatStore()
-
+import { useTheme } from '@/hooks/useTheme'
+const { vantTheme } = useTheme()
 const go = useGo()
 const isMobile = ref(true)
 const collapsed = computed(() => appStore.siderCollapsed)
@@ -48,7 +49,8 @@ async function handleSave() {
     </template>
     <template #title>历史记录</template>
     <div class="flex px-[22px]">
-      <div class="flex-1 mr-[11px] input-history" :class="[hover.search ? 'border-[#3875F6]' : 'border-[#C7CDE5]']"
+      <div class="flex-1 mr-[11px] input-history"
+        :class="[hover.search ? 'border-[#3875F6] ' : 'border-[#C7CDE5] dark:border-[#3A3A3C] text-[#FFFFFF]']"
         @mouseleave="() => {
           hover.search = false
         }" @mouseenter="() => { hover.search = true }">
@@ -62,18 +64,34 @@ async function handleSave() {
       <div class="w-[32px] mr-[11px]" @click="handleAdd" @mouseleave="() => {
         hover.add = false
       }" @mouseenter="() => { hover.add = true }">
-        <img v-show="!hover.add" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add.png"
-          alt="">
-        <img v-show="hover.add"
-          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add_active.png" alt="">
+        <div v-if="vantTheme === 'light'">
+          <img v-show="!hover.add"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add.png" alt="">
+          <img v-show="hover.add"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add_active.png" alt="">
+        </div>
+        <div v-if="vantTheme === 'dark'">
+          <img v-show="!hover.add" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-add.png"
+            alt="">
+          <img v-show="hover.add"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-add_active.png" alt="">
+        </div>
       </div>
       <div class="w-[32px]" @mouseleave="() => {
         hover.delete = false
       }" @mouseenter="() => { hover.delete = true }" @click="handleDelete">
-        <img v-show="!hover.delete"
-          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all.png" alt="">
-        <img v-show="hover.delete"
-          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all_active.png" alt="">
+        <div v-if="vantTheme === 'light'">
+          <img v-show="!hover.delete"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all.png" alt="">
+          <img v-show="hover.delete"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all_active.png" alt="">
+        </div>
+        <div v-if="vantTheme === 'dark'">
+          <img v-show="!hover.delete"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete_all.png" alt="">
+          <img v-show="hover.delete"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete_all_active.png" alt="">
+        </div>
       </div>
     </div>
     <List :is-delete="batchDelete" @cancel="handleCancel" @save="handleSave"></List>
@@ -83,7 +101,7 @@ async function handleSave() {
 <style lang="less">
 .input-history {
   height: 32px;
-  background: #FFFFFF;
+  // background: #FFFFFF;
   border-radius: 5px;
   box-sizing: border-box;
   padding-left: 30px;
@@ -108,6 +126,7 @@ async function handleSave() {
     border-radius: 5px;
     font-weight: 400;
     color: #C9CDDB;
+    background-color: transparent;
     line-height: 20px
   }
 }
@@ -156,4 +175,5 @@ async function handleSave() {
   margin: 0 auto;
 }
 
-.n-card__content {}</style>
+.n-card__content {}
+</style>

@@ -6,6 +6,8 @@ import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import dayjs from 'dayjs'
+import { useTheme } from '@/hooks/useTheme'
+const { vantTheme } = useTheme()
 // import { copyText } from '@/utils/format'
 const { isMobile } = useBasicLayout()
 
@@ -137,13 +139,13 @@ function formatData(timestamp) {
 <template>
   <NScrollbar class="px-[22px] relative" @scroll="handleScroll">
     <div class="absolute z-10 w-[100%] left-[0px] top-[107px] z-40" v-if="isDelete">
-      <div class="absolute h-[1px] w-[100%] bg-[#3875F6] top-[13px]">
+      <div class="absolute h-[1px] w-[100%] bg-[#3875F6] top-[13px] dark:bg-[#6A6A6A]">
       </div>
-      <div class="absolute flex items-center justify-center right-[23px] text-[#3875F6] border-[#3875F6] cursor-pointer"
+      <div
+        class="absolute flex items-center justify-center right-[23px] text-[#3875F6] border-[#3875F6] cursor-pointer bg-[#fff] dark:bg-[#282828] dark:text-[#6A6A6A] dark:border-[#6A6A6A]"
         style="
         width: 86px;
         height: 27px;
-        background: #FFFFFF;
         border-radius: 5px;
         border-width: 1px;
         border-style: solid;
@@ -162,28 +164,31 @@ function formatData(timestamp) {
         <!-- {{ chatStore.deleteIds }} -->
         <CheckboxGroup v-model:value="chatStore.deleteIds">
           <div v-for="(row, i) of dataSources" class="position" :key="i">
-            <div v-if="row.data.length > 0" class="relative text-[12px] text-[#828793] text-center py-[22px]">
-              <div class="absolute" v-if="i == 0"
-                style="width:100%;height:0.5px;background-color: #e0e0e099;left: 0;top: 50%;"></div>
-              <div class="relative z-10 bg-[#fff] inline-block px-[10px]"> {{ row.title }}</div>
+            <div v-if="row.data.length > 0" class="relative text-[12px] text-center py-[22px]">
+              <div class="absolute bg-[#e0e0e099] dark:bg-[#82879399]" v-if="i == 0"
+                style="width:100%;height:0.5px;left: 0;top: 50%;"></div>
+              <div
+                class="relative z-10 bg-[#fff] text-[#828793] dark:bg-[#212121] dark:text-[#69696A] inline-block px-[10px] ">
+                {{ row.title }}</div>
             </div>
             <div v-for="(item, index) of row.data" :key="index" class="group">
               <div
-                class="question-list relative flex items-center gap-3 px-3 py-[17px] break-all cursor-pointer hover:bg-neutral-10 dark:border-neutral-800 dark:hover:bg-[#24272e] !border-[#e0e0e099] pr-[90px]"
+                class="question-list relative flex items-center gap-3 px-3 py-[17px] break-all cursor-pointer hover:bg-neutral-10 dark:border-neutral-800 dark:hover:bg-[#24272e] !border-[#e0e0e099] pr-[90px] dark:!border-[#82879399]"
                 :class="isActive(item.id) ? ['!border-[]', 'bg-neutral-100', 'text-[]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]',] : []"
                 @click="handleSelect(item)">
                 <div class="w-[100%]">
-                  <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap text-[#1A1A1A]">
-                    <input class="input-title bg-[#fff] border-[#3875F6]" v-if="item.isEdit" v-model="item.tem" size="tiny"
-                      @keypress="handleEnter(item, false, $event)" />
+                  <div
+                    class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap text-[#1A1A1A] dark:text-[#FFFFFF]">
+                    <input class="input-title bg-[#fff] border-[#3875F6] dark:bg-[#212121] dark:border-[#7569FF]"
+                      v-if="item.isEdit" v-model="item.tem" size="tiny" @keypress="handleEnter(item, false, $event)" />
                     <span v-else>{{ item.title || '新建问题' }}</span>
                   </div>
-                  <!-- <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap text-[#828793]">
+                  <!-- <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap text-[#828793] dark:text-[#8E8E8E]">
                     <span>{{ item.remark || '描述' }}</span>
                   </div> -->
                 </div>
                 <!-- v-if="isActive(item.uuid)" -->
-                <div class="absolute z-10 flex visible right-1 text-[#818894]">
+                <div class="absolute z-10 flex items-center visible right-1 text-[#818894] h-[100%]">
                   <template v-if="isDelete">
                     <div class="mr-[30px]">
                       <Checkbox class="my-checkbox" :value="item.id" label="" @click.stop />
@@ -201,18 +206,29 @@ function formatData(timestamp) {
                   </template>
                   <template v-if="!isDelete && !item.isEdit">
                     <div>
-                      <div class="text-[#828793] " v-if="!isActive(item.id)">{{ formatData(item.timestamp) }}</div>
+                      <div class="text-[#828793] dark:text-[#69696A] " v-if="!isActive(item.id)">{{
+                        formatData(item.timestamp) }}</div>
                       <div class="flex justify-center" v-if="isActive(item.id)">
                         <div v-if="isActive(item.id)"
-                          class="w-[30px] h-[30px] flex items-center justify-center mr-[10px] rounded-[6px]" @mouseleave="() => {
+                          class="w-[30px] h-[30px] flex items-center justify-center mr-[10px] rounded-[6px] hover:dark:bg-[#3A3A3C]" @mouseleave="() => {
                             hover.edit = false
                           }" @mouseenter="() => { hover.edit = true }">
-                          <img v-show="!hover.edit"
-                            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-edit.png"
-                            class="w-[17px] " alt="" @click="handleEdit(item, true, $event)" />
-                          <img v-show="hover.edit"
-                            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-edit_active.png"
-                            class="w-[17px]" alt="" @click="handleEdit(item, true, $event)" />
+                          <div v-if="vantTheme === 'light'">
+                            <img v-show="!hover.edit"
+                              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-edit.png"
+                              class="w-[17px] " alt="" @click="handleEdit(item, true, $event)" />
+                            <img v-show="hover.edit"
+                              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-edit_active.png"
+                              class="w-[17px]" alt="" @click="handleEdit(item, true, $event)" />
+                          </div>
+                          <div v-if="vantTheme === 'dark'">
+                            <img v-show="!hover.edit"
+                              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-edit.png"
+                              class="w-[17px] " alt="" @click="handleEdit(item, true, $event)" />
+                            <img v-show="hover.edit"
+                              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-edit_active.png"
+                              class="w-[17px]" alt="" @click="handleEdit(item, true, $event)" />
+                          </div>
                         </div>
                         <!-- group-hover:visible -->
                         <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
@@ -220,13 +236,24 @@ function formatData(timestamp) {
                             <template #trigger>
                               <div @mouseleave="() => { hover.delete = false }"
                                 @mouseenter="() => { hover.delete = true }"
-                                class="w-[30px] h-[30px] flex items-center justify-center rounded-[6px]">
-                                <img v-show="!hover.delete"
-                                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete.png"
-                                  class="w-[17px]" alt="">
-                                <img v-show="hover.delete"
-                                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_active.png"
-                                  class="w-[17px]" alt="">
+                                class="w-[30px] h-[30px] flex items-center justify-center rounded-[6px] hover:dark:bg-[#3A3A3C]">
+                                <div v-if="vantTheme === 'light'">
+                                  <img v-show="!hover.delete"
+                                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete.png"
+                                    class="w-[17px]" alt="">
+                                  <img v-show="hover.delete"
+                                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_active.png"
+                                    class="w-[17px]" alt="">
+                                </div>
+
+                                <div v-if="vantTheme === 'dark'">
+                                  <img v-show="!hover.delete"
+                                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete.png"
+                                    class="w-[17px]" alt="">
+                                  <img v-show="hover.delete"
+                                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete_active.png"
+                                    class="w-[17px]" alt="">
+                                </div>
                               </div>
 
                             </template>
@@ -242,42 +269,64 @@ function formatData(timestamp) {
           </div>
         </CheckboxGroup>
         <div class="h-[94px] relative">
-          <div class="h-[94px] fixed w-[100%] left-[0px] bottom-[0px] bg-[#fff] z-10" v-if="isDelete">
-            <div class="flex items-center relative m-auto" style="
+          <div class="h-[94px] fixed w-[100%] left-[0px] bottom-[0px] bg-[#fff] z-10 dark:bg-[#212121]" v-if="isDelete">
+            <div class="flex items-center relative m-auto border-[#E9EBF4] dark:border-[#6A6A6A]" style="
           width: 342px;
           height: 53px;
-          background: #FFFFFF;
           border-radius: 11px;
-          border: 1px solid #E9EBF4;
+          border-width: 1px;
+          border-style: solid;
           ">
-              <div class="absolute left-[50%] top-[50%]" style="
+              <div class="absolute left-[50%] top-[50%] bg-[#E9EBF4] dark:bg-[#6A6A6A]" style="
             width: 2px;
             height: 16px;
-            background: #E9EBF4;
             border-radius: 11px;
             margin-left: -1px; 
             margin-top: -8px;
             "></div>
-              <div class="cursor-pointer flex items-center justify-center hover:text-[#3875F6]"
+              <div
+                class="cursor-pointer flex items-center justify-center   text-[#818894]  hover:text-[#3875F6] dark:text-[#8E8E8E] dark:hover:text-[#7569FF]"
                 style="width: 50%; text-align: center;" @mouseleave="() => { hover.close = false }"
                 @mouseenter="() => { hover.close = true }" @click="handleInfoCancel">
-                <img v-show="!hover.close"
-                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-close.png"
-                  class="w-[33px]" alt="">
-                <img v-show="hover.close"
-                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-close_active.png"
-                  class="w-[33px]" alt="">
+                <div v-if="vantTheme === 'light'">
+                  <img v-show="!hover.close"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-close.png"
+                    class="w-[33px]" alt="">
+                  <img v-show="hover.close"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-close_active.png"
+                    class="w-[33px]" alt="">
+                </div>
+                <div v-if="vantTheme === 'dark'">
+                  <img v-show="!hover.close"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-close.png"
+                    class="w-[33px]" alt="">
+                  <img v-show="hover.close"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-close_active.png"
+                    class="w-[33px]" alt="">
+                </div>
                 <span>取消选择</span>
               </div>
-              <div class="cursor-pointer flex items-center justify-center hover:text-[#3875F6]"
+              <div
+                class="cursor-pointer flex items-center justify-center   text-[#818894] hover:text-[#3875F6] dark:text-[#8E8E8E] dark:hover:text-[#7569FF]"
                 style="width: 50%; text-align: center;" @mouseleave="() => { hover.save = false }"
                 @mouseenter="() => { hover.save = true }" @click="emit('save')">
-                <img v-show="!hover.save"
-                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose.png" alt=""
-                  class="w-[16px] mr-[6px]">
-                <img v-show="hover.save"
-                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose_active.png"
-                  alt="" class="w-[16px] mr-[6px]">
+                <div v-if="vantTheme === 'light'">
+                  <img v-show="!hover.save"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose.png" alt=""
+                    class="w-[16px] mr-[6px]">
+                  <img v-show="hover.save"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose_active.png"
+                    alt="" class="w-[16px] mr-[6px]">
+                </div>
+                <div v-if="vantTheme === 'dark'">
+                  <img v-show="!hover.save"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-choose.png" alt=""
+                    class="w-[16px] mr-[6px]">
+                  <img v-show="hover.save"
+                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-choose_active.png"
+                    alt="" class="w-[16px] mr-[6px]">
+                </div>
+
                 <span>删除已选</span>
               </div>
             </div>
@@ -292,13 +341,14 @@ function formatData(timestamp) {
 .input-title {
   width: 100%;
   height: 32px;
+  // background-color: transparent;
   // background: #FFFFFF;
   border-radius: 5px;
   // border: 1px solid #3875F6;
   border-width: 1px;
   border-style: solid;
   box-sizing: border-box;
-  padding:0 10px;
+  padding: 0 10px;
 }
 
 .question-list {
