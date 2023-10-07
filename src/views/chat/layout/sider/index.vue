@@ -82,7 +82,7 @@ watch(
               新建问题
             </NButton>
           </div>
-          
+
           <NPopconfirm placement="bottom" @positive-click="()=> chatStore.deleteBatchHistory()">
             <template #trigger>
               <NButton id="question-btn2" dashed block @click.stop>
