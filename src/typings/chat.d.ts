@@ -22,6 +22,7 @@ declare namespace Chat {
 		tem?: string
 		title: string
 		isEdit: boolean
+		isCancel?:boolean
 	}
 	interface ChatState {
 		active: number | string | null

@@ -1,14 +1,12 @@
 <script setup lang='ts'>
-import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NLayoutSider, NPopconfirm , NButton, NInput } from 'naive-ui'
 // import Tips from '../../tips.vue'
-
+import { Drawer, Input } from 'ant-design-vue'
 import List from './List.vue'
-import Footer from './Footer.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useGo } from '@/utils/router'
 import { useScroll } from './../../hooks/useScroll'
+let hover = ref({})
 // const userStore = useUserStore()
 // const showModal = ref(false)
 const appStore = useAppStore()
@@ -17,145 +15,109 @@ const chatStore = useChatStore()
 const go = useGo()
 const isMobile = ref(true)
 const collapsed = computed(() => appStore.siderCollapsed)
+const batchDelete = ref(false);
 const { resetValue } = useScroll()
 function handleAdd() {
   chatStore.createChat()
   resetValue()
 }
 
+function handleDelete() {
+  batchDelete.value = true;
+}
+
 function handleUpdateCollapsed() {
   appStore.setSiderCollapsed(!collapsed.value)
 }
 
-const getMobileClass = computed<CSSProperties>(() => {
-  return {
-    position: 'fixed',
-    zIndex: 50,
-  }
-})
-
-const mobileSafeArea = computed(() => {
-  return {
-    paddingBottom: 'env(safe-area-inset-bottom)',
-  }
-})
-
-
-
-function handleSettingSubmit() {
-  go({name:'shop'})
+function handleCancel() {
+  batchDelete.value = false
 }
 
-// 个人中心
-function myHomeSubmit() {
-  // openModel()
-  // person.value.updated()
-  go({name:'setting'})
+async function handleSave() {
+  await chatStore.deleteBatchHistory()
+  batchDelete.value = false
 }
-
-
-
-watch(
-  isMobile,
-  (val) => {
-    appStore.setSiderCollapsed(val)
-  },
-  {
-    immediate: true,
-    flush: 'post',
-  },
-)
-
-
 
 </script>
 
 <template>
-  <NLayoutSider :collapsed="collapsed" :collapsed-width="0" :width="200" show-trigger="arrow-circle"
-    collapse-mode="transform" position="absolute" bordered :style="getMobileClass"
-    @update-collapsed="handleUpdateCollapsed">
-    <div class="flex flex-col h-full" :style="mobileSafeArea">
-      <main class="flex flex-col flex-1 min-h-0">
-        <div v-show="true" class="p-4">
-          <div class="mb-2">
-            <NButton id="question-btn"  dashed block @click="handleAdd">
-              新建问题
-            </NButton>
-          </div>
-          
-          <NPopconfirm placement="bottom" @positive-click="()=> chatStore.deleteBatchHistory()">
-            <template #trigger>
-              <NButton id="question-btn2" dashed block @click.stop>
-                批量删除
-              </NButton>
-            </template>
-           确定进行此操作?
-          </NPopconfirm>
-          <NInput class="mt-4" v-model:value="chatStore.searchMsg" type="text" placeholder="搜索标题" />
-        </div>
-
-        <div class="flex-1 min-h-0 pb-12 overflow-hidden">
-          <List />
-        </div>
-        <!-- 拓展功能区域 -->
-        <div v-show="false" class="continuation">
-          <div class="setting-main setting-main1" @click="myHomeSubmit">
-            <div class="setting-text step6">
-              个人中心
-            </div>
-          </div>
-          <div class="setting-main setting-main2" @click="handleSettingSubmit">
-            <div class="setting-text step5">
-              ChatMoss商店
-            </div>
-          </div>
-        </div>
-      </main>
-      <Footer />
+  <Drawer class="my-drawer" placement="bottom" :visible="appStore.siderCollapsed" @close="handleUpdateCollapsed"
+    height="60vh" :z-index="1100">
+    <template #extra>
+    </template>
+    <template #title>历史记录</template>
+    <div class="flex px-[22px]">
+      <div class="flex-1 mr-[11px] input-history" :class="[hover.search ? 'border-[#3875F6]' : 'border-[#C7CDE5]']"
+        @mouseleave="() => {
+          hover.search = false
+        }" @mouseenter="() => { hover.search = true }">
+        <img src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-search.png"
+          class="input-search" v-show="!hover.search" alt="">
+        <img v-show="hover.search"
+          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-search_active.png"
+          class="input-search" alt="">
+        <input type="text" v-model="chatStore.searchMsg" placeholder="搜索标题">
+      </div>
+      <div class="w-[32px] mr-[11px]" @click="handleAdd" @mouseleave="() => {
+        hover.add = false
+      }" @mouseenter="() => { hover.add = true }">
+        <img v-show="!hover.add" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add.png"
+          alt="">
+        <img v-show="hover.add"
+          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add_active.png" alt="">
+      </div>
+      <div class="w-[32px]" @mouseleave="() => {
+        hover.delete = false
+      }" @mouseenter="() => { hover.delete = true }" @click="handleDelete">
+        <img v-show="!hover.delete"
+          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all.png" alt="">
+        <img v-show="hover.delete"
+          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all_active.png" alt="">
+      </div>
     </div>
-  </NLayoutSider>
-  <template v-if="isMobile">
-    <div v-show="!collapsed" class="fixed inset-0 z-40 bg-black/40" @click="handleUpdateCollapsed" />
-  </template>
+    <List :is-delete="batchDelete" @cancel="handleCancel" @save="handleSave"></List>
+  </Drawer>
 </template>
 
 <style lang="less">
+.input-history {
+  height: 32px;
+  background: #FFFFFF;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding-left: 30px;
+  position: relative;
+  border-width: 1px;
+  border-style: solid;
+  // border: 1px solid #C7CDE5;
+
+  .input-search {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    margin-top: 8px;
+    margin-left: 8px;
+    width: 16px;
+  }
+
+  input {
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    border-radius: 5px;
+    font-weight: 400;
+    color: #C9CDDB;
+    line-height: 20px
+  }
+}
+
 .continuation {
   margin-bottom: 20px;
   margin-top: 5px;
 }
 
-.setting-main {
-  width: 90%;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  // background-color: #323232;
-  margin: 0 auto;
-  margin-bottom: 10px;
 
-  &:active {
-    transform: scale(.96);
-  }
-
-  &:hover {
-    // background-color: #3c4250;
-  }
-
-  .setting-text {
-    // color: rgba(232, 236, 239, 0.75);
-    font-size: 10px;
-  }
-
-  .setting-btn {
-    width: 20px;
-    height: 20px;
-    margin-left: 8px;
-    margin-right: 12px;
-  }
-}
 
 .title-h1 {
   margin: 10px 0px;
@@ -194,5 +156,4 @@ watch(
   margin: 0 auto;
 }
 
-.n-card__content {}
-</style>
+.n-card__content {}</style>

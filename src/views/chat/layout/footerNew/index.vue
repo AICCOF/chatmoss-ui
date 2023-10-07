@@ -3,7 +3,7 @@ import { NPopover, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
 import { Popover, Switch, Tooltip } from 'ant-design-vue'
 import { useScroll } from './../../hooks/useScroll'
-import { useAuthStoreWithout, useChatStore, useUserStore } from '@/store'
+import { useAuthStoreWithout, useChatStore, useUserStore , useAppStore } from '@/store'
 import { conversationUpload } from '@/api/index'
 import { updateAppConfig } from '@/api/application'
 import { useTheme } from '@/hooks/useTheme'
@@ -14,6 +14,7 @@ const chatStore = useChatStore()
 const ms = useMessage()
 const popoverDom = ref()
 const authStore = useAuthStoreWithout()
+const appStore = useAppStore()
 const { resetValue } = useScroll()
 // router.replace({ name: 'chat', params: { uuid: chatStore.active } })
 const { vantTheme } = useTheme()
@@ -23,8 +24,6 @@ const hidden = computed(() => {
 
 // 新建对话
 function createQuestion() {
-  // const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-  // questionBtnDom.click()
   chatStore.createChat()
   resetValue()
   ms.success('新建会话成功，请提问~')
@@ -32,8 +31,7 @@ function createQuestion() {
 
 // 历史记录
 function toggleButtonEvent() {
-  const toggleButton = document.querySelector('.n-layout-toggle-button') as HTMLDivElement
-  toggleButton.click()
+  appStore.setSiderCollapsed(true)
 }
 
 async function jarvisEvent() {

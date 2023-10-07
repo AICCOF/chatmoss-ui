@@ -350,6 +350,11 @@ export const useChatStore = defineStore('chat-store', {
           this.chat[index].tem = this.chat[index].title as string
         }
         else {
+          // 点击取消按钮
+          if (edit.isCancel){
+            // this.chat[index].tem = this.chat[index].title as string
+            return 
+          }
           if (this.chat[index].tem !== undefined && this.chat[index].title !== this.chat[index].tem) {
             await editConversation({ title: this.chat[index].tem, conversationId: this.chat[index].id })
             this.chat[index].title = this.chat[index].tem as string

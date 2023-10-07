@@ -1,17 +1,31 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
-import { NInput, NPopconfirm, NCheckbox, NCheckboxGroup, NScrollbar } from 'naive-ui'
-// import {  useMessage } from 'naive-ui'
+import { NInput, NPopconfirm, NScrollbar } from 'naive-ui'
+import { CheckboxGroup, Checkbox } from 'ant-design-vue'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
+import dayjs from 'dayjs'
 // import { copyText } from '@/utils/format'
 const { isMobile } = useBasicLayout()
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
+let hover = ref({})
 // console.log(chatStore.$state)
 const dataSources = computed(() => chatStore.sortTimeChat)
+interface Props {
+  isDelete: boolean
+}
+let props = defineProps<Props>()
+
+const emit = defineEmits<Emit>()
+
+interface Emit {
+  (e: 'cancel'): void
+  (e: 'save'): void
+}
+
 // const Message = useMessage()
 async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
@@ -21,13 +35,17 @@ async function handleSelect({ id }: Chat.ChatInfo) {
   if (chatStore.active)
     chatStore.updateHistory(id, { isEdit: false })
 
-  if (isMobile.value)
-    appStore.setSiderCollapsed(true)
+  // if (isMobile.value)
+  //   appStore.setSiderCollapsed(true)
 }
 
 function handleEdit({ id }: Chat.ChatInfo, isEdit: boolean, event?: MouseEvent) {
   event?.stopPropagation()
   chatStore.updateHistory(id, { isEdit })
+}
+function handleCancel({ id }: Chat.ChatInfo, isEdit: boolean, event?: MouseEvent) {
+  event?.stopPropagation()
+  chatStore.updateHistory(id, { isEdit, isCancel: true })
 }
 
 function handleDelete(index: number, { id }: Chat.ChatInfo, event?: MouseEvent | TouchEvent) {
@@ -44,11 +62,57 @@ function handleEnter({ id }: Chat.ChatInfo, isEdit: boolean, event: KeyboardEven
 function isActive(id: any) {
   return chatStore.active === id
 }
+function handleInfoCancel() {
+  chatStore.deleteIds = [];
+  emit('cancel')
 
-function handleChoose(arr) {
+}
+function handleChoose() {
+  // title：高度 63px
+  // 高度： 57px
+  // console.log(dataSources.value)
+  let dom = document.querySelector('.my-drawer .n-scrollbar-container');
+  if (!dom) return;
+  let titleHeight = 63;
+  let cellHeight = 57;
+  let height = dom.scrollTop + cellHeight;
+  let calcHeight = 0 - titleHeight;
+
+  // height
+  let arr = [];
+  let flag = false;
+  // calcHeight += 63;
+  dataSources.value.forEach((row, i) => {
+    if (flag) {
+      row.data.forEach(data => {
+        // console.log(height, calcHeight, height < calcHeight)
+        // if (height <= calcHeight) {
+        //   arr.push(data)
+        // } else {
+        //   calcHeight += cellHeight;
+        // }
+      })
+    } else {
+      if (row.data.length === 0) return;
+      calcHeight += titleHeight;
+      console.log('calcHeight', calcHeight)
+      row.data.forEach(data => {
+        console.log(height, calcHeight, height < calcHeight)
+        if (height <= calcHeight) {
+          flag = true;
+          arr.push(data)
+        } else {
+          calcHeight += cellHeight;
+        }
+      })
+    }
 
 
 
+  })
+
+
+  chatStore.deleteIds = []
   arr.forEach(element => {
     let index = chatStore.deleteIds.indexOf(element.id)
     if (index === -1) {
@@ -60,10 +124,33 @@ function handleChoose(arr) {
 
 }
 
+function handleScroll(e) {
+  let dom = document.querySelector('.my-drawer .n-scrollbar-container')
+  console.log(dom.scrollTop)
+
+}
+function formatData(timestamp) {
+  return dayjs(timestamp).format("MM月DD HH: mm")
+}
 </script>
 
 <template>
-  <NScrollbar class="px-4">
+  <NScrollbar class="px-[22px] relative" @scroll="handleScroll">
+    <div class="absolute z-10 w-[100%] left-[0px] top-[107px] z-40" v-if="isDelete">
+      <div class="absolute h-[1px] w-[100%] bg-[#3875F6] top-[13px]">
+      </div>
+      <div class="absolute flex items-center justify-center right-[23px] text-[#3875F6] border-[#3875F6] cursor-pointer"
+        style="
+        width: 86px;
+        height: 27px;
+        background: #FFFFFF;
+        border-radius: 5px;
+        border-width: 1px;
+        border-style: solid;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 1" @click="handleChoose">选择以下消息</div>
+    </div>
     <div class="flex flex-col gap-2 text-sm scroll">
       <template v-if="!dataSources.length">
         <div class="flex flex-col items-center mt-4 text-center text-neutral-300">
@@ -72,55 +159,150 @@ function handleChoose(arr) {
         </div>
       </template>
       <template v-else>
-
-        <n-checkbox-group v-model:value="chatStore.deleteIds">
-          <div v-for="(row, i) of dataSources" :key="i">
-            <div v-if="row.data.length > 0" class="px-1 py-1 hover:text-[#0099FF] cursor-pointer"
-              @click="handleChoose(row.data)">
-              {{ row.title }}
+        <!-- {{ chatStore.deleteIds }} -->
+        <CheckboxGroup v-model:value="chatStore.deleteIds">
+          <div v-for="(row, i) of dataSources" class="position" :key="i">
+            <div v-if="row.data.length > 0" class="relative text-[12px] text-[#828793] text-center py-[22px]">
+              <div class="absolute" v-if="i == 0"
+                style="width:100%;height:0.5px;background-color: #e0e0e099;left: 0;top: 50%;"></div>
+              <div class="relative z-10 bg-[#fff] inline-block px-[10px]"> {{ row.title }}</div>
             </div>
             <div v-for="(item, index) of row.data" :key="index" class="group">
               <div
-                class="question-list relative flex items-center gap-3 px-3 py-3 mt-1 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
-                :class="isActive(item.id) && ['border-[#00CCFF]', 'bg-neutral-100', 'text-[#0099FF]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]', 'pr-14']"
+                class="question-list relative flex items-center gap-3 px-3 py-[17px] break-all cursor-pointer hover:bg-neutral-10 dark:border-neutral-800 dark:hover:bg-[#24272e] !border-[#e0e0e099] pr-[90px]"
+                :class="isActive(item.id) ? ['!border-[]', 'bg-neutral-100', 'text-[]', 'dark:bg-[#24272e]', 'dark:border-[#0099FF]',] : []"
                 @click="handleSelect(item)">
-                <span>
-                  <n-checkbox :value="item.id" label="" @click.stop />
-                </span>
-                <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
-                  <NInput v-if="item.isEdit" v-model:value="item.tem" size="tiny"
-                    @keypress="handleEnter(item, false, $event)" />
-                  <span v-else>{{ item.title || '新建问题' }}</span>
+                <div class="w-[100%]">
+                  <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap text-[#1A1A1A]">
+                    <input class="input-title bg-[#fff] border-[#3875F6]" v-if="item.isEdit" v-model="item.tem" size="tiny"
+                      @keypress="handleEnter(item, false, $event)" />
+                    <span v-else>{{ item.title || '新建问题' }}</span>
+                  </div>
+                  <!-- <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap text-[#828793]">
+                    <span>{{ item.remark || '描述' }}</span>
+                  </div> -->
                 </div>
                 <!-- v-if="isActive(item.uuid)" -->
-                <div class="absolute z-10 flex visible right-1">
-                  <template v-if="item.isEdit && isActive(item.id)">
-                    <button class="p-1" @click="handleEdit(item, false, $event)">
-                      <SvgIcon icon="ri:save-line" />
+                <div class="absolute z-10 flex visible right-1 text-[#818894]">
+                  <template v-if="isDelete">
+                    <div class="mr-[30px]">
+                      <Checkbox class="my-checkbox" :value="item.id" label="" @click.stop />
+                    </div>
+                  </template>
+                  <template v-if="!isDelete && item.isEdit && isActive(item.id)">
+                    <button class="p-1 !border-[#818894] rounded-[5px] mr-[5px] "
+                      @click="handleCancel(item, false, $event)" style="border:1px solid">
+                      取消
+                    </button>
+                    <button class="p-1 !border-[#818894] rounded-[5px]" @click="handleEdit(item, false, $event)"
+                      style="border:1px solid">
+                      保存
                     </button>
                   </template>
-                  <template v-if="!item.isEdit">
-                    <button v-if="isActive(item.id)" class="p-1">
-                      <SvgIcon icon="ri:edit-line" @click="handleEdit(item, true, $event)" />
-                    </button>
-                    <!-- group-hover:visible -->
-                    <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
-                      <NPopconfirm placement="bottom" @positive-click="handleDelete(index, item, $event)">
-                        <template #trigger>
-                          <button class="p-1" @click.stop>
-                            <SvgIcon icon="ri:delete-bin-line" />
-                          </button>
-                        </template>
-                        {{ $t('chat.deleteHistoryConfirm') }}
-                      </NPopconfirm>
+                  <template v-if="!isDelete && !item.isEdit">
+                    <div>
+                      <div class="text-[#828793] " v-if="!isActive(item.id)">{{ formatData(item.timestamp) }}</div>
+                      <div class="flex justify-center" v-if="isActive(item.id)">
+                        <div v-if="isActive(item.id)"
+                          class="w-[30px] h-[30px] flex items-center justify-center mr-[10px] rounded-[6px]" @mouseleave="() => {
+                            hover.edit = false
+                          }" @mouseenter="() => { hover.edit = true }">
+                          <img v-show="!hover.edit"
+                            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-edit.png"
+                            class="w-[17px] " alt="" @click="handleEdit(item, true, $event)" />
+                          <img v-show="hover.edit"
+                            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-edit_active.png"
+                            class="w-[17px]" alt="" @click="handleEdit(item, true, $event)" />
+                        </div>
+                        <!-- group-hover:visible -->
+                        <div :class="isActive(item.id) ? 'visible' : 'invisible group-hover:visible'">
+                          <NPopconfirm placement="bottom" @positive-click="handleDelete(index, item, $event)">
+                            <template #trigger>
+                              <div @mouseleave="() => { hover.delete = false }"
+                                @mouseenter="() => { hover.delete = true }"
+                                class="w-[30px] h-[30px] flex items-center justify-center rounded-[6px]">
+                                <img v-show="!hover.delete"
+                                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete.png"
+                                  class="w-[17px]" alt="">
+                                <img v-show="hover.delete"
+                                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_active.png"
+                                  class="w-[17px]" alt="">
+                              </div>
+
+                            </template>
+                            {{ $t('chat.deleteHistoryConfirm') }}
+                          </NPopconfirm>
+                        </div>
+                      </div>
                     </div>
                   </template>
                 </div>
               </div>
             </div>
           </div>
-        </n-checkbox-group>
+        </CheckboxGroup>
+        <div class="h-[94px] relative">
+          <div class="h-[94px] fixed w-[100%] left-[0px] bottom-[0px] bg-[#fff] z-10" v-if="isDelete">
+            <div class="flex items-center relative m-auto" style="
+          width: 342px;
+          height: 53px;
+          background: #FFFFFF;
+          border-radius: 11px;
+          border: 1px solid #E9EBF4;
+          ">
+              <div class="absolute left-[50%] top-[50%]" style="
+            width: 2px;
+            height: 16px;
+            background: #E9EBF4;
+            border-radius: 11px;
+            margin-left: -1px; 
+            margin-top: -8px;
+            "></div>
+              <div class="cursor-pointer flex items-center justify-center hover:text-[#3875F6]"
+                style="width: 50%; text-align: center;" @mouseleave="() => { hover.close = false }"
+                @mouseenter="() => { hover.close = true }" @click="handleInfoCancel">
+                <img v-show="!hover.close"
+                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-close.png"
+                  class="w-[33px]" alt="">
+                <img v-show="hover.close"
+                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-close_active.png"
+                  class="w-[33px]" alt="">
+                <span>取消选择</span>
+              </div>
+              <div class="cursor-pointer flex items-center justify-center hover:text-[#3875F6]"
+                style="width: 50%; text-align: center;" @mouseleave="() => { hover.save = false }"
+                @mouseenter="() => { hover.save = true }" @click="emit('save')">
+                <img v-show="!hover.save"
+                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose.png" alt=""
+                  class="w-[16px] mr-[6px]">
+                <img v-show="hover.save"
+                  src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose_active.png"
+                  alt="" class="w-[16px] mr-[6px]">
+                <span>删除已选</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </template>
     </div>
   </NScrollbar>
 </template>
+
+<style lang="less" scoped>
+.input-title {
+  width: 100%;
+  height: 32px;
+  // background: #FFFFFF;
+  border-radius: 5px;
+  // border: 1px solid #3875F6;
+  border-width: 1px;
+  border-style: solid;
+  box-sizing: border-box;
+  padding:0 10px;
+}
+
+.question-list {
+  // height: 75px;
+  border-bottom: 1px solid;
+}
+</style>

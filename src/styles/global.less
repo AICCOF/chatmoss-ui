@@ -417,3 +417,73 @@ p {
 		background-color: #3A3A3C;
 	}
 }
+
+.my-drawer {
+	// height: 74vh;
+
+	.ant-drawer-content-wrapper {
+		.ant-drawer-content {
+			background: #FFFFFF;
+			box-shadow: 0px -3px 15px 0px rgba(231, 232, 241, 1);
+			border-radius: 18px 18px 0px 0px;
+		}
+
+		.ant-drawer-body {
+			padding: 0px 0px;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+	}
+
+	.ant-drawer-header {
+		position: relative;
+		border-bottom: 0px;
+		// display: none;
+		text-align: center;
+
+		.ant-drawer-close {
+			position: absolute;
+			margin-right: 24px;
+			right: 0;
+			top: 16px
+		}
+	}
+}
+
+
+.my-checkbox {
+	.ant-checkbox-inner {
+		width: 20px;
+		height: 20px;
+		position: relative;
+		background: #FFFFFF;
+		border-radius: 4px;
+		border: 1px solid #3875F6;
+	}
+
+	.ant-checkbox-checked {
+		.ant-checkbox-inner {
+			width: 20px;
+			height: 20px;
+			background-color: #fff;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden;
+			&::after {
+				width: 16px;
+				height: 16px;
+				background-color: transparent;
+				background-image: url('https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-tick.png');
+				background-repeat: no-repeat;
+				background-size: contain;
+				left:2px;
+				top:3px;
+				transform: rotate(0deg) scale(1) translate(0%, 0%);
+				content:'';
+			}
+		}
+	}
+}

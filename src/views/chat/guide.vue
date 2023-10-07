@@ -79,7 +79,6 @@ const options = {
 
 const myCallbacks = {
   onStart: (currentStep: number) => {
-    appStore.setSiderCollapsed(true)
   },
   // onNextStep: (currentStep: number) => {
   //   if(currentStep==3){
