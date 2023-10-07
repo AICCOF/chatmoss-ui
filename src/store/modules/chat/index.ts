@@ -66,7 +66,9 @@ export const useChatStore = defineStore('chat-store', {
       const chat: Chat.ChatInfo[] = this.chat
       const localChat: Chat.ChatInfo[] = this.localChat
       if (getToken())
-        return [...chat.filter(row => row.title.includes(state.searchMsg))]
+        return [...chat.filter(row => {
+          return row.title.includes(state.searchMsg) || row.firstContent.includes(state.searchMsg)
+        })]
 
       else
         return [...localChat.filter(row => row.title.includes(state.searchMsg))]
@@ -76,27 +78,27 @@ export const useChatStore = defineStore('chat-store', {
         title: string
         data: Chat.ChatState[]
       }[] = [
-        {
-          title: '今天',
-          data: [],
-        },
-        {
-          title: '昨天',
-          data: [],
-        },
-        {
-          title: '三天前',
-          data: [],
-        },
-        {
-          title: '七天前',
-          data: [],
-        },
-        {
-          title: '一个月前',
-          data: [],
-        },
-      ]
+          {
+            title: '今天',
+            data: [],
+          },
+          {
+            title: '昨天',
+            data: [],
+          },
+          {
+            title: '三天前',
+            data: [],
+          },
+          {
+            title: '七天前',
+            data: [],
+          },
+          {
+            title: '一个月前',
+            data: [],
+          },
+        ]
       this.chatsCollect.forEach((row) => {
         const timestamp = row.timestamp
         if (timestamp >= dayjs().startOf('day').valueOf())
@@ -210,7 +212,12 @@ export const useChatStore = defineStore('chat-store', {
         const res = await getConversationList({
           appId: userStore.appIdValue,
         })
-        this.chat = res.list || []
+        this.chat = (res.list || []).map((row) => {
+          return {
+            ...row,
+            firstContent: row.firstContent && row.firstContent.length > 0 ? JSON.parse(row.firstContent)[0] :''
+          }
+        })
         this.active = this.chat[0] ? this.chat[0].id : null
         // console.log(res.list[0].id)
         this.getConversationDetail()
@@ -351,9 +358,9 @@ export const useChatStore = defineStore('chat-store', {
         }
         else {
           // 点击取消按钮
-          if (edit.isCancel){
+          if (edit.isCancel) {
             // this.chat[index].tem = this.chat[index].title as string
-            return 
+            return
           }
           if (this.chat[index].tem !== undefined && this.chat[index].title !== this.chat[index].tem) {
             await editConversation({ title: this.chat[index].tem, conversationId: this.chat[index].id })

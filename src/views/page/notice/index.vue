@@ -4,7 +4,10 @@ import { useBack } from '@/utils/router'
 import { getToken } from '@/store/modules/auth/helper'
 const back = useBack()
 import { jumpLink, replaceDom } from '@/utils/jumpLink'
+import { useAppStore, useUserStore } from '@/store'
+const userStore = useUserStore()
 
+userStore.getRedCountAPI()
 const url = computed(() => {
   // console.log(router.currentRoute)
   let dom = 'https://h5.aihao123.cn/pages/app/notice/index.html'

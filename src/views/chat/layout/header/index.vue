@@ -58,6 +58,12 @@ function handleClose(goName: any) {
   })
 }
 
+function goShop() {
+   const json = JSON.parse("{\"info\":{\"type\":\"iframe\",\"url\":\"http://h5.aihao123.cn/pages/app/shopV2/index.html\"},\"type\":\"web\"}")
+
+  jumpLink(json, router) 
+}
+
 onMounted(() => {
   // resetToken()
   userStore.setNotices()
@@ -135,7 +141,7 @@ onMounted(() => {
             </div>
           </div>
           <div class="flex  px-2 py-1  mt-2">
-            <NButton style="margin-right: 20px;" text color="#ff69b4" @click="handleClose('shop')">
+            <NButton style="margin-right: 20px;" text color="#ff69b4" @click="goShop">
               -> 去购买
             </NButton>
             <NButton text color="#ff69b4" @click="handleClose('detailedRule')">

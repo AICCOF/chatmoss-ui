@@ -76,7 +76,7 @@ async function handleSave() {
         hover.add = false
       }" @mouseenter="() => { hover.add = true }">
 
-        <Tooltip z-index="10000">
+        <Tooltip :z-index="10000">
           <template #title>新建回话</template>
           <div v-if="vantTheme === 'light'">
             <img v-show="!hover.add"
@@ -97,7 +97,7 @@ async function handleSave() {
         hover.delete = false
       }" @mouseenter="() => { hover.delete = true }" @click="handleDelete">
 
-        <Tooltip z-index="10000">
+        <Tooltip :z-index="10000">
           <template #title>批量删除</template>
           <div v-if="vantTheme === 'light'">
             <img v-show="!hover.delete"

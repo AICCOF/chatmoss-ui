@@ -277,7 +277,7 @@ function handleSave() {
         // position: absolute;
         width: 100%;
         opacity: 0.8;
-        font-size: 8px;
+        font-size: 12px;
         margin-top: 5px;
         // transform: scale(0.6);
         text-align: center;

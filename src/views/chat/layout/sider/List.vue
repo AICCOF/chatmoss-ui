@@ -200,7 +200,8 @@ function formatData(timestamp) {
                   </div>
                   <div
                     class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap text-[#828793] dark:text-[#8E8E8E]">
-                    <span>{{ item.remark || '描述' }}</span>
+                    <span v-if="item.firstContent">{{ item.firstContent }}</span>
+                    <span v-else>&nbsp;</span>
                   </div>
                 </div>
                 <!-- v-if="isActive(item.uuid)" -->
