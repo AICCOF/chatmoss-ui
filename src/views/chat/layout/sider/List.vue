@@ -88,18 +88,18 @@ function handleChoose() {
     if (flag) {
       row.data.forEach(data => {
         // console.log(height, calcHeight, height < calcHeight)
-        // if (height <= calcHeight) {
-        //   arr.push(data)
-        // } else {
-        //   calcHeight += cellHeight;
-        // }
+        if (height <= calcHeight) {
+          arr.push(data)
+        } else {
+          calcHeight += cellHeight;
+        }
       })
     } else {
       if (row.data.length === 0) return;
       calcHeight += titleHeight;
       console.log('calcHeight', calcHeight)
       row.data.forEach(data => {
-        console.log(height, calcHeight, height < calcHeight)
+        // console.log(height, calcHeight, height < calcHeight)
         if (height <= calcHeight) {
           flag = true;
           arr.push(data)
