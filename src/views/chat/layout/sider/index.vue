@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, ref, watch } from 'vue'
 // import Tips from '../../tips.vue'
-import { Drawer, Input } from 'ant-design-vue'
+import { Drawer, Input, Tooltip } from 'ant-design-vue'
 import List from './List.vue'
 import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useGo } from '@/utils/router'
@@ -44,54 +44,78 @@ async function handleSave() {
 
 <template>
   <Drawer class="my-drawer" placement="bottom" :visible="appStore.siderCollapsed" @close="handleUpdateCollapsed"
-    height="60vh" :z-index="1100">
+    height="65vh" :z-index="1100">
     <template #extra>
     </template>
     <template #title>历史记录</template>
-    <div class="flex px-[22px]">
+    <div class="flex px-[33px]">
       <div class="flex-1 mr-[11px] input-history"
-        :class="[hover.search ? 'border-[#3875F6] ' : 'border-[#C7CDE5] dark:border-[#3A3A3C] text-[#FFFFFF]']"
+        :class="[hover.search ? 'border-[#3875F6] dark:border-[#7569FF] ' : 'border-[#C7CDE5] text-[#FFFFFF]']"
         @mouseleave="() => {
           hover.search = false
         }" @mouseenter="() => { hover.search = true }">
-        <img src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-search.png"
-          class="input-search" v-show="!hover.search" alt="">
-        <img v-show="hover.search"
-          src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-search_active.png"
-          class="input-search" alt="">
-        <input type="text" v-model="chatStore.searchMsg" placeholder="搜索标题">
+
+        <div v-if="vantTheme === 'light'">
+          <img src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-search.png"
+            class="input-search" v-show="!hover.search" alt="">
+          <img v-show="hover.search"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-search_active.png"
+            class="input-search" alt="">
+        </div>
+        <div v-if="vantTheme === 'dark'">
+          <img src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-search.png"
+            class="input-search" v-show="!hover.search" alt="">
+          <img v-show="hover.search"
+            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-search_active.png"
+            class="input-search" alt="">
+        </div>
+
+        <input type="text" class="text-[#1a1a1a] dark:text-[#fff]  " v-model="chatStore.searchMsg" placeholder="搜索标题">
       </div>
       <div class="w-[32px] mr-[11px]" @click="handleAdd" @mouseleave="() => {
         hover.add = false
       }" @mouseenter="() => { hover.add = true }">
-        <div v-if="vantTheme === 'light'">
-          <img v-show="!hover.add"
-            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add.png" alt="">
-          <img v-show="hover.add"
-            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add_active.png" alt="">
-        </div>
-        <div v-if="vantTheme === 'dark'">
-          <img v-show="!hover.add" src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-add.png"
-            alt="">
-          <img v-show="hover.add"
-            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-add_active.png" alt="">
-        </div>
+
+        <Tooltip z-index="10000">
+          <template #title>新建回话</template>
+          <div v-if="vantTheme === 'light'">
+            <img v-show="!hover.add"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add.png" alt="">
+            <img v-show="hover.add"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add_active.png" alt="">
+          </div>
+          <div v-if="vantTheme === 'dark'">
+            <img v-show="!hover.add"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-add.png" alt="">
+            <img v-show="hover.add"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-add_active.png" alt="">
+          </div>
+        </Tooltip>
+
       </div>
       <div class="w-[32px]" @mouseleave="() => {
         hover.delete = false
       }" @mouseenter="() => { hover.delete = true }" @click="handleDelete">
-        <div v-if="vantTheme === 'light'">
-          <img v-show="!hover.delete"
-            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all.png" alt="">
-          <img v-show="hover.delete"
-            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all_active.png" alt="">
-        </div>
-        <div v-if="vantTheme === 'dark'">
-          <img v-show="!hover.delete"
-            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete_all.png" alt="">
-          <img v-show="hover.delete"
-            src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete_all_active.png" alt="">
-        </div>
+
+        <Tooltip z-index="10000">
+          <template #title>批量删除</template>
+          <div v-if="vantTheme === 'light'">
+            <img v-show="!hover.delete"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all.png" alt="">
+            <img v-show="hover.delete"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-delete_all_active.png"
+              alt="">
+          </div>
+          <div v-if="vantTheme === 'dark'">
+            <img v-show="!hover.delete"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete_all.png" alt="">
+            <img v-show="hover.delete"
+              src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-delete_all_active.png"
+              alt="">
+          </div>
+        </Tooltip>
+
+
       </div>
     </div>
     <List :is-delete="batchDelete" @cancel="handleCancel" @save="handleSave"></List>
@@ -125,9 +149,24 @@ async function handleSave() {
     font-size: 14px;
     border-radius: 5px;
     font-weight: 400;
-    color: #C9CDDB;
+    // color: #C9CDDB;
     background-color: transparent;
-    line-height: 20px
+
+    line-height: 20px;
+
+    &::placeholder {
+      color: #c9cddb;
+    }
+
+  }
+
+  .dark {
+    input {
+      &::placeholder {
+        color: #69696a;
+      }
+
+    }
   }
 }
 
