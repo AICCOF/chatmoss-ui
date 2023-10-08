@@ -213,9 +213,10 @@ export const useChatStore = defineStore('chat-store', {
           appId: userStore.appIdValue,
         })
         this.chat = (res.list || []).map((row) => {
+          // console.log(row.firstContent,'firstContent')
           return {
             ...row,
-            firstContent: row.firstContent && row.firstContent.length > 0 ? JSON.parse(row.firstContent)[0] :''
+            // firstContent: row.firstContent && row.firstContent.length > 0 ? JSON.parse(row.firstContent)[0] :''
           }
         })
         this.active = this.chat[0] ? this.chat[0].id : null

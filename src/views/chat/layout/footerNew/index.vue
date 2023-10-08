@@ -31,6 +31,7 @@ function createQuestion() {
 
 // 历史记录
 function toggleButtonEvent() {
+  chatStore.chatList()
   appStore.setSiderCollapsed(true)
 }
 

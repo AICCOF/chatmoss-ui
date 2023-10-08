@@ -500,7 +500,7 @@ function handleMember() {
   // background: #F6F7FA;
   background-repeat: no-repeat;
   background-size: cover;
-  overflow: scroll;
+  overflow: auto;
   padding-bottom: 74px;
 }
 </style>

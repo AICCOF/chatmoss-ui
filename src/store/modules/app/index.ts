@@ -4,7 +4,12 @@ import { getLocalSetting, setLocalSetting } from './helper'
 import { store } from '@/store'
 
 export const useAppStore = defineStore('app-store', {
-  state: (): AppState => getLocalSetting(),
+  state: (): AppState => {
+   return {
+     ...getLocalSetting(),
+     siderCollapsed: false
+   }
+  },
   actions: {
     setSiderCollapsed(collapsed: boolean) {
       this.siderCollapsed = collapsed
