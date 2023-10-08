@@ -67,7 +67,7 @@ export const useChatStore = defineStore('chat-store', {
       const localChat: Chat.ChatInfo[] = this.localChat
       if (getToken())
         return [...chat.filter(row => {
-          return row.title.includes(state.searchMsg) || row.firstContent.includes(state.searchMsg)
+          return row.title.includes(state.searchMsg) || (row.firstContent && row.firstContent.includes(state.searchMsg))
         })]
 
       else

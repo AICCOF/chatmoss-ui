@@ -33,10 +33,10 @@ async function handleSelect({ id }: Chat.ChatInfo) {
   if (isActive(id))
     return
   await chatStore.setActive(id)
-
+  appStore.siderCollapsed =false
   if (chatStore.active)
     chatStore.updateHistory(id, { isEdit: false })
-
+  
   // if (isMobile.value)
   //   appStore.setSiderCollapsed(true)
 }

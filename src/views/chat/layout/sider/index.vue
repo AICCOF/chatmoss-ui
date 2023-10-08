@@ -50,7 +50,7 @@ async function handleSave() {
     <template #title>历史记录</template>
     <div class="flex px-[33px]">
       <div class="flex-1 mr-[11px] input-history"
-        :class="[hover.search ? 'border-[#3875F6] dark:border-[#7569FF] ' : 'border-[#C7CDE5] text-[#FFFFFF]']"
+        :class="[hover.search ? 'border-[#3875F6] dark:border-[#7569FF]' : 'border-[#C7CDE5] text-[#FFFFFF] dark:border-[#3A3A3C]']"
         @mouseleave="() => {
           hover.search = false
         }" @mouseenter="() => { hover.search = true }">
