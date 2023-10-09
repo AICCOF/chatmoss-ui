@@ -378,6 +378,7 @@ async function replayQuestions(message, opt) {
       options: {
         ...options,
         ...chatOptions,
+        conversationId: chatStore.getUuid,
       },
       apiKey: userStore.useKey === '1' ? localStorage.getItem('apiKey') : '',
       signal: controller.signal,
@@ -662,11 +663,13 @@ async function newQuestions(message) {
       }
     }
 
+    console.log('data', options)
     const data = await fetchChatAPIProcess<Chat.ConversationResponse>({
       prompt: texts,
       options: {
         ...options,
         ...chatOptions,
+        conversationId: chatStore.getUuid,
       },
       apiKey: userStore.useKey === '1' ? localStorage.getItem('apiKey') : '',
       signal: controller.signal,

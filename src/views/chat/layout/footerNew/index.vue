@@ -96,7 +96,7 @@ function handleParamConfigs(item, row) {
 
     <footer class="">
       <div v-if="userStore.currentApp && userStore.currentApp.paramConfigs" class="flex">
-        <Popover v-for="(item, ii) of userStore.currentApp.paramConfigs" title="" trigger="hover" ::key="ii"
+        <Popover class='my-popover' v-for="(item, ii) of userStore.currentApp.paramConfigs" title="" trigger="hover" ::key="ii"
           overlay-class-name="ant-popover-my">
           <template #content>
             <div class="text-center" style="padding: 8px;min-width: 100px">
@@ -184,10 +184,10 @@ function handleParamConfigs(item, row) {
           </div>
           <div class="footer-item">
             <div class="header-right-item header-right-item-help">
-              <NPopover class="myPopover !bg-[#3A3A3C] !dark:bg-[#ffffff]" ref="popoverDom" trigger="hover" placement="top" >
+              <NPopover class="myPopover  dark:bg-[#ffffff]" ref="popoverDom" trigger="hover" placement="top" >
                 <template #trigger>
                   <div v-if="userStore.getModeVersion"
-                    class="model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff] flex items-center h-[29px] px-[9px] rounded-[13px]">
+                    class="model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff] flex items-center h-[29px] px-[9px] rounded-[13px] w-[114px]">
                     <img :src="userStore.getModeVersion.selectedIcon" class="w-[22px] h-[22px] mr-[4px]"  alt="">
                     <span>{{ userStore.getModeVersion.viewName }}</span>
                   </div>
@@ -398,21 +398,5 @@ function handleParamConfigs(item, row) {
   border: 1px solid #000;
   padding: 10px 0px;
   cursor: pointer;
-}
-</style>
-
-<style>
-.van-overlay {
-  z-index: 1000;
-}
-
-.ant-popover-inner-content {
-  padding: 0px !important;
-  max-height: 340px !important;
-  overflow: auto !important;
-}
-
-.ant-popover-inner {
-  border-radius: 8px !important;
 }
 </style>

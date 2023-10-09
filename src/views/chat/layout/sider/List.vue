@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
 import { NInput, NPopconfirm, NScrollbar } from 'naive-ui'
-import { CheckboxGroup, Checkbox } from 'ant-design-vue'
+import { CheckboxGroup, Checkbox,Popconfirm } from 'ant-design-vue'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
@@ -173,7 +173,6 @@ function formatData(timestamp) {
         </div>
       </template>
       <template v-else>
-        <!-- {{ chatStore.deleteIds }} -->
         <CheckboxGroup v-model:value="chatStore.deleteIds">
           <div v-for="(row, i) of dataSources" class="position" :key="i">
             <div v-if="row.data.length > 0" class="relative text-[12px] text-center pt-[22px]">
@@ -301,7 +300,7 @@ function formatData(timestamp) {
           border-width: 1px;
           border-style: solid;
           ">
-              <div class="absolute left-[50%] top-[50%] bg-[#E9EBF4] dark:bg-[#6A6A6A]" style="
+         <div class="absolute left-[50%] top-[50%] bg-[#E9EBF4] dark:bg-[#6A6A6A]" style="
             width: 2px;
             height: 16px;
             border-radius: 11px;
@@ -330,29 +329,37 @@ function formatData(timestamp) {
                 </div>
                 <span>取消选择</span>
               </div>
-              <div
-                class="cursor-pointer flex items-center justify-center text-[#818894] hover:text-[#3875F6] dark:text-[#8E8E8E] dark:hover:text-[#fff]"
-                style="width: 50%; text-align: center;" @mouseleave="() => { hover.save = false }"
-                @mouseenter="() => { hover.save = true }" @click="emit('save')">
-                <div v-if="vantTheme === 'light'" class="mr-[6px]">
-                  <img v-show="!hover.save"
-                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose.png" alt=""
-                    class="w-[32px] ">
-                  <img v-show="hover.save"
-                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose_active.png"
-                    alt="" class="w-[32px]">
-                </div>
-                <div v-if="vantTheme === 'dark'" class="mr-[6px]">
-                  <img v-show="!hover.save"
-                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-choose.png" alt=""
-                    class="w-[32px]">
-                  <img v-show="hover.save"
-                    src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-choose_active.png"
-                    alt="" class="w-[32px]">
-                </div>
 
-                <span>删除已选</span>
-              </div>
+              <Popconfirm :z-index='1100' title="确认删除？"
+                    ok-text="确认"
+                    cancel-text="取消"
+                    @confirm="()=>emit('save')"
+                    @cancel="()=>{}">
+                <div
+                    class="cursor-pointer flex items-center justify-center text-[#818894] hover:text-[#3875F6] dark:text-[#8E8E8E] dark:hover:text-[#fff]"
+                    style="width: 50%; text-align: center;" @mouseleave="() => { hover.save = false }"
+                    @mouseenter="() => { hover.save = true }">
+                    <div v-if="vantTheme === 'light'" class="mr-[6px]">
+                      <img v-show="!hover.save"
+                        src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose.png" alt=""
+                        class="w-[32px] ">
+                      <img v-show="hover.save"
+                        src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-choose_active.png"
+                        alt="" class="w-[32px]">
+                    </div>
+                    <div v-if="vantTheme === 'dark'" class="mr-[6px]">
+                      <img v-show="!hover.save"
+                        src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-choose.png" alt=""
+                        class="w-[32px]">
+                      <img v-show="hover.save"
+                        src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/dark/history/icon-choose_active.png"
+                        alt="" class="w-[32px]">
+                    </div>
+
+                    <span>删除已选</span>
+                  </div>
+              </Popconfirm>
+
             </div>
           </div>
         </div>

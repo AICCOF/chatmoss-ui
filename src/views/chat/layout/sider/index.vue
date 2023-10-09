@@ -20,6 +20,7 @@ const batchDelete = ref(false);
 const { resetValue } = useScroll()
 function handleAdd() {
   chatStore.createChat()
+  appStore.setSiderCollapsed(false)
   resetValue()
 }
 
@@ -77,7 +78,7 @@ async function handleSave() {
       }" @mouseenter="() => { hover.add = true }">
 
         <Tooltip :z-index="10000">
-          <template #title>新建回话</template>
+          <template #title>新建会话</template>
           <div v-if="vantTheme === 'light'">
             <img v-show="!hover.add"
               src="https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/light/history/icon-add.png" alt="">

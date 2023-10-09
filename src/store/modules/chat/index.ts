@@ -208,7 +208,7 @@ export const useChatStore = defineStore('chat-store', {
     async chatList() {
       if (getToken()) {
         const userStore = useUserStore()
-        this.active = null
+        // this.active = null
         const res = await getConversationList({
           appId: userStore.appIdValue,
         })
@@ -219,7 +219,16 @@ export const useChatStore = defineStore('chat-store', {
             // firstContent: row.firstContent && row.firstContent.length > 0 ? JSON.parse(row.firstContent)[0] :''
           }
         })
-        this.active = this.chat[0] ? this.chat[0].id : null
+        // 去找id是否存在
+        if (this.chat.length === 0) {
+          this.active = null
+        } else {
+          // 去找id是否存在
+          let index = this.chat.findIndex((row) => this.active === row.id)
+          // console.log(index)
+          this.active = index > -1 ? this.chat[index].id : this.chat[0].id
+        }
+
         // console.log(res.list[0].id)
         this.getConversationDetail()
       }
