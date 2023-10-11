@@ -122,7 +122,7 @@ function handleParamConfigs(item, row) {
                 @click="createQuestion">
                 新建会话
               </div>
-              <div v-if="!userStore.isQuestionMode" class="mr-[8px] hover:bg-[#edebf5] dark:hover:bg-[#292929] rounded-[6px]" @click="toggleButtonEvent"
+              <div class="mr-[8px] hover:bg-[#edebf5] dark:hover:bg-[#292929] rounded-[6px]" @click="toggleButtonEvent"
                 @mouseleave="() => { configs.search.active = false }"
                 @mouseenter="() => { configs.search.active = true }">
                 <Tooltip>

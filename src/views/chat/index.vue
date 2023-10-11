@@ -530,6 +530,9 @@ async function replayQuestions(message, opt) {
 }
 
 async function newQuestions(message) {
+  if(userStore.appIdValue==='2'){
+   await chatStore.createChat(message)
+  }
   await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
     createTime: new Date().toLocaleString(),
@@ -1102,7 +1105,7 @@ const iframePath = computed(() => {
             </transition>
 
             <div class="" style="width: 100%;">
-              <div v-if="!dataSources.length" class="no-data-info w-full" style="pointer-events: none;">
+              <div v-if="!dataSources.length && !userStore.isQuestionMode" class="no-data-info w-full" style="pointer-events: none;">
                 <!-- 应用介绍 -->
 
                 <!-- 空态占位图 -->
