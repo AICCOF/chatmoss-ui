@@ -113,27 +113,8 @@ let currentPage = ref(props.modelValue)
 defineExpose({ textRef })
 
 // 登录后才可使用
-const loginMessage = computed(() => {
-  let message = ['登录后才可使用', '您好，因为服务器成本问题，本软件已经暂停未登录用户使用自己的Key', '试用字符已经用尽，扫码登录后']
-  for (let i = 0; i < message.length; i++) {
-    const element = message[i];
-    if (props.text && props.text.indexOf(element) > -1) {
-      return true;
-    }
-  }
-  return false
-})
 
-const shopMessage = computed(() => {
-  let message = ['当前余额模型不足', '您可以先去左上角商城内购买']
-  for (let i = 0; i < message.length; i++) {
-    const element = message[i];
-    if (props.text && props.text.indexOf(element) > -1) {
-      return true;
-    }
-  }
-  return false
-})
+
 const router = useRouter()
 function handleLogin() {
 
@@ -158,8 +139,8 @@ function handleShop() {
         <div v-if="!inversion" class="markdown-body" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>
-      <div class="golink" v-if="!inversion && loginMessage" @click="handleLogin">去登录</div>
-      <div class="golink" v-if="!inversion && shopMessage" @click="handleShop">去购买</div>
+      <div class="golink" v-if="!inversion && props.info.code===204" @click="handleLogin">去登录</div>
+      <div class="golink" v-if="!inversion && props.info.code === 205" @click="handleShop">去购买</div>
     </div>
     <!-- 重新提问展示 -->
     <div v-if="!inversion && info.contentList && info.contentList.length > 1" style="width: 100px;">

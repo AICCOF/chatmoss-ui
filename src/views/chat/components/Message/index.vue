@@ -172,8 +172,6 @@ const message = computed(() => {
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent ref="textRef" v-model="currentPage" :inversion="inversion" :error="error" :text="text"
           :info="props.info" :loading="loading" />
-        <!-- <a v-if="!inversion && loginMessage" @click="handleLogin">去登录</a>
-        <a v-if="!inversion && shopMessage" @click="handleShop">去购买</a> -->
       </div>
       <p v-if="!inversion && message" class="text-xs mt-1 btns" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ message }} </span>

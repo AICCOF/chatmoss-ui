@@ -735,12 +735,13 @@ async function newQuestions(message) {
       ms.error('系统检测到当前可能正在输出异常英文，这个原因是OpenAI最大token限制是4090，当前对话可能已超过最大字符限制，请您新建问题，并精简问题，继续对话~ChatMoss无限上下文模式正在攻关中，敬请期待，感谢您的理解~')
 
     addTextNum(texts.length)
+    // console.log(data,'data')
 
     scrollToBottom()
   }
   catch (error: any) {
     // ms.error(error.msg || error.message)
-    console.log(error.msg, error.message)
+    console.log(error,error.msg, error.message)
 
     if (error.code === 10000) {
       showConfirmDialog({
@@ -808,6 +809,7 @@ async function newQuestions(message) {
       updateChatSome(chatStore.getUuid, dataSources.value.length - 1, {
         text: `${errorMessage}`,
         contentList: [errorMessage],
+        code: error.code,
         error: true,
         loading: false,
       })
