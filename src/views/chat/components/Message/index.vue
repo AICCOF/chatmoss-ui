@@ -11,8 +11,6 @@ import { useIconRender } from '@/hooks/useIconRender'
 // import { t } from '@/locales'
 import { useChatStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
-import { jumpLink } from '@/utils/jumpLink'
-import { useRouter } from 'vue-router'
 // Spin
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
@@ -129,37 +127,7 @@ const message = computed(() => {
   return `${props.viewMsg != undefined ? props.viewMsg : ''} 模式：${props.questionMode != undefined ? props.questionMode : ''}`
 })
 // console.log(props.info.mossReduceInfoList ,'Props.info1')
-// 登录后才可使用
-const loginMessage = computed(() => {
-  let message = ['登录后才可使用', '您好，因为服务器成本问题，本软件已经暂停未登录用户使用自己的Key', '试用字符已经用尽，扫码登录后']
-  for (let i = 0; i < message.length; i++) {
-    const element = message[i];
-    if (props.text && props.text.indexOf(element) > -1) {
-      return true;
-    }
-  }
-  return false
-})
 
-const shopMessage = computed(() => {
-  let message = ['当前余额模型不足','您可以先去左上角商城内购买']
-  for (let i = 0; i < message.length; i++) {
-    const element = message[i];
-    if (props.text && props.text.indexOf(element) > -1) {
-      return true;
-    }
-  }
-  return false
-})
-const router = useRouter()
-function handleLogin() {
-  
-  jumpLink({type:'path',info:{path:'login'}}, router)
-}
-function handleShop() {
-
-   jumpLink({ type: 'path', info: { path: 'shop' } }, router)
-}
 </script>
 
 <template>
@@ -204,8 +172,8 @@ function handleShop() {
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
         <TextComponent ref="textRef" v-model="currentPage" :inversion="inversion" :error="error" :text="text"
           :info="props.info" :loading="loading" />
-        <a v-if="!inversion && loginMessage" @click="handleLogin">去登录</a>
-        <a v-if="!inversion && shopMessage" @click="handleShop">去购买</a>
+        <!-- <a v-if="!inversion && loginMessage" @click="handleLogin">去登录</a>
+        <a v-if="!inversion && shopMessage" @click="handleShop">去购买</a> -->
       </div>
       <p v-if="!inversion && message" class="text-xs mt-1 btns" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ message }} </span>

@@ -9,6 +9,9 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
 import { isVscode } from '@/utils/vsCodeUtils'
 import { SvgIcon } from '@/components/common'
+
+import { jumpLink } from '@/utils/jumpLink'
+import { useRouter } from 'vue-router'
 interface Props {
   inversion?: boolean
   error?: boolean
@@ -108,6 +111,38 @@ function highlightBlock(str: string, lang?: string) {
 // console.log(props, 'props.value')
 let currentPage = ref(props.modelValue)
 defineExpose({ textRef })
+
+// 登录后才可使用
+const loginMessage = computed(() => {
+  let message = ['登录后才可使用', '您好，因为服务器成本问题，本软件已经暂停未登录用户使用自己的Key', '试用字符已经用尽，扫码登录后']
+  for (let i = 0; i < message.length; i++) {
+    const element = message[i];
+    if (props.text && props.text.indexOf(element) > -1) {
+      return true;
+    }
+  }
+  return false
+})
+
+const shopMessage = computed(() => {
+  let message = ['当前余额模型不足', '您可以先去左上角商城内购买']
+  for (let i = 0; i < message.length; i++) {
+    const element = message[i];
+    if (props.text && props.text.indexOf(element) > -1) {
+      return true;
+    }
+  }
+  return false
+})
+const router = useRouter()
+function handleLogin() {
+
+  jumpLink({ type: 'path', info: { path: 'login' } }, router)
+}
+function handleShop() {
+
+  jumpLink({ type: 'path', info: { path: 'shop' } }, router)
+}
 </script>
 
 <template>
@@ -123,13 +158,13 @@ defineExpose({ textRef })
         <div v-if="!inversion" class="markdown-body" />
         <div v-else class="whitespace-pre-wrap" v-text="text" />
       </div>
+      <div class="golink" v-if="!inversion && loginMessage" @click="handleLogin">去登录</div>
+      <div class="golink" v-if="!inversion && shopMessage" @click="handleShop">去购买</div>
     </div>
     <!-- 重新提问展示 -->
     <div v-if="!inversion && info.contentList && info.contentList.length > 1" style="width: 100px;">
-      <van-pagination
-        v-model="currentPage" :show-prev-button="false" :page-count="info.contentList.length" mode="simple"
-        class="my-pagination" @change="handleChange"
-      >
+      <van-pagination v-model="currentPage" :show-prev-button="false" :page-count="info.contentList.length" mode="simple"
+        class="my-pagination" @change="handleChange">
         <template #prev-text>
           <van-icon name="arrow-left" />
         </template>
@@ -153,5 +188,20 @@ defineExpose({ textRef })
   background-color: var(--moss-bg-ask-color);
   color: var(--moss-text-ask-color);
   text-align: left;
+}
+
+.golink {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 57px;
+  height: 27px;
+  border-radius: 13px;
+  border: 1px solid #5C86F5;
+  font-size: 11px;
+  font-weight: 400;
+  color: #5C86F5;
+  line-height: 15px;
 }
 </style>
