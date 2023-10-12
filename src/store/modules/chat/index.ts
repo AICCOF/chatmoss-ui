@@ -127,7 +127,19 @@ export const useChatStore = defineStore('chat-store', {
       })
       return timeList
     },
-
+    getChat(state: Chat.ChatState) {
+        const active = state.active as any
+        if (!active)
+          return []
+        if (verify(state.active)) { 
+          return (state.localChat.find(item => item.id === state.active))
+         }
+        else
+        // console.log(state.chat)
+        {
+          return (state.chat.find(item => item.id === state.active))
+        }   
+    },
     getChatByUuid(state: Chat.ChatState) {
       return () => {
         const active = state.active as any

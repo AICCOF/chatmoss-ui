@@ -927,13 +927,17 @@ const footerClass = computed(() => {
   return classes
 })
 
+// setInterval(()=>{ console.log(chatStore.getChat) },2000)
 // 初始化与vscode通信
 vsCodeUtils({
   handleVscodeMessage(selectedText: string) {
-    const questionListDom = document.querySelector('.question-list') as HTMLDivElement
-    const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
-    if (questionListDom === null || questionListDom.innerText !== '新建问题') {
-      questionBtnDom.click()
+
+    // const questionListDom = document.querySelector('.question-list') as HTMLDivElement
+    // const questionBtnDom = document.querySelector('#question-btn') as HTMLDivElement
+    // chatStore.getChat.title
+    if (chatStore.getChat && chatStore.getChat.title !== '新建问题') {
+      chatStore.createChat()
+        // questionBtnDom.click()
       console.log('新建问题')
       clickMessage()
     }
