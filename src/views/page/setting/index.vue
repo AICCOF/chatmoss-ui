@@ -134,6 +134,15 @@ function setOpenaiVersion(action) {
   userStore.saveOpenaiVersion(action)
   ms.success('模型切换成功')
 }
+
+function handleUseKey() {
+  if(userStore.useKey==='1'){
+    ms.success('启用Key成功')
+  }else{
+    ms.success('取消Key使用成功')
+  }
+ userStore.recordState()
+}
 </script>
 
 <template>
@@ -189,7 +198,7 @@ function setOpenaiVersion(action) {
         <div class="flex justify-between items-center text-[#1A1A1A] dark:text-[#ffffff] text-[16px]">
           <div>ApiKeys设置</div>
           <div>
-            <NSwitch v-model:value="userStore.useKey" class="setting-switch" @update:value="() => userStore.recordState()"
+            <NSwitch v-model:value="userStore.useKey" class="setting-switch" @update:value="handleUseKey"
               checked-value="1" unchecked-value="0" />
           </div>
         </div>

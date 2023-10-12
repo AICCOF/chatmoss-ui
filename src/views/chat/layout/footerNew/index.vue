@@ -44,6 +44,7 @@ async function jarvisEvent() {
 }
 
 function setOpenaiVersion(action) {
+  // console.log(action)
   userStore.saveOpenaiVersion(action)
   popoverDom.value.setShow(false)
   ms.success('模型切换成功')
@@ -187,7 +188,7 @@ function handleParamConfigs(item, row) {
               <NPopover class="myPopover  dark:bg-[#ffffff]" ref="popoverDom" trigger="hover" placement="top" >
                 <template #trigger>
                   <div v-if="userStore.getModeVersion"
-                    class="model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff] flex items-center h-[29px] px-[9px] rounded-[13px] w-[114px]">
+                    class="model-version dark:bg-[#6051FF] dark:text-[#FFFFFF] bg-[#6F22FE] text-[#fff] flex items-center h-[29px] px-[9px] rounded-[13px] w-[max-content]">
                     <img :src="userStore.getModeVersion.selectedIcon" class="w-[22px] h-[22px] mr-[4px]"  alt="">
                     <span>{{ userStore.getModeVersion.viewName }}</span>
                   </div>

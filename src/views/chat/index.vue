@@ -430,6 +430,24 @@ async function replayQuestions(message, opt) {
   catch (error: any) {
     // ms.error(error.msg || error.message)
     console.log(error)
+    if (error.code === 205) {
+      showConfirmDialog({
+        title: '模型余额不足',
+        message: `尊敬的用户您好，您暂未有${userStore.getOpenaiVersion}模型权限，系统检测到您可以使用3.5-4k模型，是否切换到3.5-4k模型上？`,
+        confirmButtonText: '新建问题',
+        cancelButtonText: '取消',
+      }).then(() => {
+        userStore.saveOpenaiVersion({
+          "viewName": "GPT3.5-4k",
+          "codeName": "3.5",
+          "desc": "回答能力7分，上下文容量4000字符",
+          "timesTypeEnum": "turbo_16k",
+          "icon": "https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/img/home_button_v2/gpt3.5.png",
+          "selectedIcon": "https://codemoss-1253302184.cos.ap-beijing.myqcloud.com/img/home_button_v2/gpt3.5_sel.png"
+        })
+        ms.success('模型切换成功')
+      })
+    }
     if (error.code === 10000) {
       showConfirmDialog({
         title: '问题',
@@ -530,8 +548,8 @@ async function replayQuestions(message, opt) {
 }
 
 async function newQuestions(message) {
-  if(userStore.appIdValue==='2'){
-   await chatStore.createChat(message)
+  if (userStore.appIdValue === '2') {
+    await chatStore.createChat(message)
   }
   await addChat(chatStore.getUuid, {
     timestamp: new Date().getTime(),
@@ -1105,7 +1123,8 @@ const iframePath = computed(() => {
             </transition>
 
             <div class="" style="width: 100%;">
-              <div v-if="!dataSources.length && !userStore.isQuestionMode" class="no-data-info w-full" style="pointer-events: none;">
+              <div v-if="!dataSources.length && !userStore.isQuestionMode" class="no-data-info w-full"
+                style="pointer-events: none;">
                 <!-- 应用介绍 -->
 
                 <!-- 空态占位图 -->

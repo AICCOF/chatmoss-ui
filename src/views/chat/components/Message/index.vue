@@ -11,6 +11,8 @@ import { useIconRender } from '@/hooks/useIconRender'
 // import { t } from '@/locales'
 import { useChatStore } from '@/store'
 import { getToken } from '@/store/modules/auth/helper'
+import { jumpLink } from '@/utils/jumpLink'
+import { useRouter } from 'vue-router'
 // Spin
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
@@ -127,6 +129,37 @@ const message = computed(() => {
   return `${props.viewMsg != undefined ? props.viewMsg : ''} 模式：${props.questionMode != undefined ? props.questionMode : ''}`
 })
 // console.log(props.info.mossReduceInfoList ,'Props.info1')
+// 登录后才可使用
+const loginMessage = computed(() => {
+  let message = ['登录后才可使用', '您好，因为服务器成本问题，本软件已经暂停未登录用户使用自己的Key', '试用字符已经用尽，扫码登录后']
+  for (let i = 0; i < message.length; i++) {
+    const element = message[i];
+    if (props.text && props.text.indexOf(element) > -1) {
+      return true;
+    }
+  }
+  return false
+})
+
+const shopMessage = computed(() => {
+  let message = ['当前余额模型不足','您可以先去左上角商城内购买']
+  for (let i = 0; i < message.length; i++) {
+    const element = message[i];
+    if (props.text && props.text.indexOf(element) > -1) {
+      return true;
+    }
+  }
+  return false
+})
+const router = useRouter()
+function handleLogin() {
+  
+  jumpLink({type:'path',info:{path:'login'}}, router)
+}
+function handleShop() {
+
+   jumpLink({ type: 'path', info: { path: 'shop' } }, router)
+}
 </script>
 
 <template>
@@ -139,28 +172,22 @@ const message = computed(() => {
         {{ dayjs(dateTime).format('MM月DD日 HH:mm') }} <span v-if="chatStore.active">会话ID:({{ chatStore.active }}) </span>
       </p>
 
-      <Collapse
-        v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
-        :bordered="false" class="my-collapse" expand-icon-position="right"
-      >
+      <Collapse v-if="!inversion && info.pluginInfo && info.pluginInfo.pluginId" v-model:activeKey="activeKey"
+        :bordered="false" class="my-collapse" expand-icon-position="right">
         <template #expandIcon="{ isActive }">
           <CaretRightOutlined :rotate="isActive ? 90 : 0" />
         </template>
-        <CollapsePanel
-          key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
-          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'"
-        >
+        <CollapsePanel key="1" :show-arrow="info.pluginInfo && !!info.pluginInfo.pluginMessage"
+          :collapsible="info.pluginInfo && !!info.pluginInfo.pluginMessage ? '' : 'disabled'">
           <template #header>
             <div v-if="info.pluginInfo.pluginId" class="flex-center" style="width: 100%">
-              <img
-                style="width: 16px; height: 16px; margin-right: 10px;"
-                :src="chatStore.pluginMap[info.pluginInfo.pluginId].icon" alt=""
-              >
+              <img style="width: 16px; height: 16px; margin-right: 10px;"
+                :src="chatStore.pluginMap[info.pluginInfo.pluginId].icon" alt="">
               <div>
                 {{
                   info.pluginInfo.pluginId
-                    ? chatStore.pluginMap[info.pluginInfo.pluginId].name
-                    : ''
+                  ? chatStore.pluginMap[info.pluginInfo.pluginId].name
+                  : ''
                 }}
               </div>
               <div v-if="chatStore.plugState === 1 && isEnd">
@@ -175,17 +202,15 @@ const message = computed(() => {
         </CollapsePanel>
       </Collapse>
       <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
-        <TextComponent
-          ref="textRef" v-model="currentPage" :inversion="inversion" :error="error" :text="text"
-          :info="props.info" :loading="loading"
-        />
+        <TextComponent ref="textRef" v-model="currentPage" :inversion="inversion" :error="error" :text="text"
+          :info="props.info" :loading="loading" />
+        <a v-if="!inversion && loginMessage" @click="handleLogin">去登录</a>
+        <a v-if="!inversion && shopMessage" @click="handleShop">去购买</a>
       </div>
       <p v-if="!inversion && message" class="text-xs mt-1 btns" :class="[inversion ? 'text-right' : 'text-left']">
         <span>{{ message }} </span>
-        <a
-          href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
-          target="_blank"
-        >查看字符计算器</a>
+        <a href="https://tiktoken.aigc2d.com/" style="margin-left: 10px; color: var(--moss-text-blue-color);"
+          target="_blank">查看字符计算器</a>
       </p>
       <div class="flex mt-2 ml-2 btns btns1" :class="[inversion ? 'justify-end' : 'justify-start']">
         <div v-for="(option, i) in options" :key="i" class="mr-3" text>
