@@ -37,7 +37,7 @@ jobs:
     needs: create-release
     strategy:
       fail-fast: false
-     matrix:
+      matrix:
         include:
           - platform: 'macos-latest' # for Arm based macs (M1 and above).
             args: '--target aarch64-apple-darwin'
